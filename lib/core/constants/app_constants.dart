@@ -32,8 +32,8 @@ class AppConstants {
   static const double titleTextSize = 24.0;
   static const double headingTextSize = 28.0;
   
-  // Font families
-  static const String primaryFont = 'Poppins';
+  // Font families (using system defaults for now)
+  // static const String primaryFont = 'Poppins';
   static const String secondaryFont = 'Arial';
   
   // Asset paths

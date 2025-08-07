@@ -16,9 +16,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     
-    // Navigate to home after splash duration
+    // Navigate to onboarding1 after splash duration
     Timer(AppConstants.splashDuration, () {
-      context.go('/home');
+      context.go('/onboarding1');
     });
   }
 

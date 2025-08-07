@@ -15,7 +15,10 @@ class AppColors {
   
   // Text colors
   static const Color white = Colors.white;
-  static const Color black = Colors.black;
+  static const Color black = Color(0xFF1E1E1E);
+  static const Color gray = Color(0xFF848484);
+  static const Color grayLight = Color(0x7F848484);
+  static const Color darkGray = Color(0xFF374151);
   
   // Background colors
   static const Color background = Colors.white;
@@ -25,6 +28,16 @@ class AppColors {
     begin: Alignment(0.00, 0.50),
     end: Alignment(1.00, 0.50),
     colors: [primaryGreen, primaryGreenLight],
+  );
+  
+  static const LinearGradient onboardingOverlay = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0x00FFFFFF),  // #FFFFFF00
+      Color(0xFAFFFFFF),  // #FFFFFFFA
+      Color(0xFFFFFFFF),  // #FFFFFF
+    ],
   );
   
   static const LinearGradient splashGradient = LinearGradient(

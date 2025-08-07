@@ -3,6 +3,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../constants/constants.dart';
 
 class ResponsiveHelper {
+  final BuildContext context;
+  
+  ResponsiveHelper(this.context);
+  
+  // Screen dimensions
+  double get screenWidth => MediaQuery.of(context).size.width;
+  double get screenHeight => MediaQuery.of(context).size.height;
+  
+  // Width percentage
+  double wp(double percentage) => (screenWidth * percentage / 100);
+  
+  // Height percentage  
+  double hp(double percentage) => (screenHeight * percentage / 100);
+  
+  // Responsive font size using ScreenUtil
+  double sp(double size) => size.sp;
+  
+  // Responsive width using ScreenUtil
+  double w(double width) => width.w;
+  
+  // Responsive height using ScreenUtil
+  double h(double height) => height.h;
   static bool isMobile(BuildContext context) {
     return MediaQuery.of(context).size.width < AppConstants.mobileBreakpoint;
   }
