@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/responsive_helper.dart';
 
 class Onboarding4Screen extends StatelessWidget {
@@ -28,7 +29,7 @@ class Onboarding4Screen extends StatelessWidget {
                 height: responsive.hp(64.5),
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/images/on_boarding_image4.jpg"),
+                    image: AssetImage(AppImages.onboarding4),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -63,7 +64,7 @@ class Onboarding4Screen extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: responsive.wp(5)),
                       child: Text(
-                        'Smart Fitness Powered by AI',
+                        'Smart Fitness Powered\nby AI',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.onboardingTitle.copyWith(
                           fontSize: responsive.sp(22),
@@ -72,7 +73,7 @@ class Onboarding4Screen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: responsive.hp(1)),
+                    SizedBox(height: responsive.hp(1.5)),
                     SizedBox(
                       width: responsive.wp(82.9),
                       child: Text(
@@ -93,11 +94,11 @@ class Onboarding4Screen extends StatelessWidget {
             // Skip button
             Positioned(
               right: responsive.wp(6.4),
-              top: responsive.hp(8.4),
+              top: responsive.hp(8),
               child: GestureDetector(
                 onTap: () {
                   // Navigate to home screen
-                  context.go('/home');
+                  context.push('/home');
                 },
                 child: Text(
                   'Skip',

@@ -36,6 +36,6 @@ class AppConstants {
   // static const String primaryFont = 'Poppins';
   static const String secondaryFont = 'Arial';
   
-  // Asset paths
-  static const String logoPath = 'assets/logos/the_track_fit_logo.svg';
+  // Asset paths (imported from app_assets.dart)
+  // Use AppAssets class for all asset paths
 } 
