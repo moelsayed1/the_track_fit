@@ -91,15 +91,7 @@ class Onboarding1Screen extends StatelessWidget {
               ),
             ),
             
-            // Page indicator
-            Positioned(
-              left: responsive.wp(43.5),
-              top: responsive.hp(72.4),
-              child: const PageIndicator(
-                currentPage: 0,
-                totalPages: 4,
-              ),
-            ),
+
             
             // Skip button
             Positioned(
@@ -107,7 +99,7 @@ class Onboarding1Screen extends StatelessWidget {
               top: responsive.hp(8.4),
               child: GestureDetector(
                 onTap: () {
-                  // Navigate to home or login screen
+                  // Navigate to home screen
                   context.go('/home');
                 },
                 child: Text(
@@ -116,72 +108,6 @@ class Onboarding1Screen extends StatelessWidget {
                   style: AppTextStyles.skipButton.copyWith(
                     fontSize: responsive.sp(16),
                   ),
-                ),
-              ),
-            ),
-            
-            // Bottom buttons
-            Positioned(
-              left: responsive.wp(4.3),
-              top: responsive.hp(77.1),
-              child: SizedBox(
-                width: responsive.wp(91.5),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Next button
-                    PrimaryButton(
-                      text: 'Next',
-                      onPressed: () {
-                        // Navigate to onboarding2
-                        // context.go('/onboarding2');
-                        // For now, navigate to home
-                        context.go('/home');
-                      },
-                      height: responsive.hp(6.9),
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-                    
-                    // Create Account button
-                    OutlineButton(
-                      text: 'Create Account',
-                      onPressed: () {
-                        // Navigate to signup screen
-                        context.go('/home');
-                      },
-                      height: responsive.hp(6.9),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            // Bottom safe area (home indicator)
-            Positioned(
-              left: 0,
-              bottom: 0,
-              child: SizedBox(
-                width: responsive.screenWidth,
-                height: responsive.hp(4.2),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: responsive.wp(32.3),
-                      bottom: responsive.hp(2.6),
-                      child: Container(
-                        width: responsive.wp(35.7),
-                        height: responsive.hp(0.6),
-                        decoration: ShapeDecoration(
-                          color: AppColors.darkGray,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
