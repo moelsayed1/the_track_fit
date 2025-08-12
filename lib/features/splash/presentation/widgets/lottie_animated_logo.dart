@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../../../../core/utils/responsive_helper.dart';
+import '../../../../core/constants/app_assets.dart';
 
 class LottieAnimatedLogo extends StatefulWidget {
   const LottieAnimatedLogo({super.key});
@@ -22,19 +23,19 @@ class _LottieAnimatedLogoState extends State<LottieAnimatedLogo>
     
     // Controller for the movement animation
     _moveController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     
     // Controller for the Lottie animation
     _lottieController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
 
     // Animation for moving from top-left to center
     _moveAnimation = Tween<Offset>(
-      begin: const Offset(-1.0, -1.0), // Start from top-left corner
+      begin: const Offset(-2.5, -2.5), // Start from top-left corner
       end: Offset.zero, // End at center (0,0)
     ).animate(CurvedAnimation(
       parent: _moveController,
@@ -54,7 +55,7 @@ class _LottieAnimatedLogoState extends State<LottieAnimatedLogo>
     _moveController.forward();
     
     // Start the Lottie animation after a small delay
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 250), () {
       if (mounted) {
         _lottieController.forward();
       }
@@ -85,7 +86,7 @@ class _LottieAnimatedLogoState extends State<LottieAnimatedLogo>
           child: Transform.scale(
             scale: _scaleAnimation.value,
             child: Lottie.asset(
-              'assets/the_track_fit_logo_animation.json',
+              AppAnimations.trackFitLogo,
               controller: _lottieController,
               width: logoSize,
               height: logoSize,

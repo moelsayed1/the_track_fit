@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../../core/constants/app_assets.dart';
 
-import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/page_indicator.dart';
 import '../../../../core/utils/responsive_helper.dart';
 
 class Onboarding3Screen extends StatelessWidget {
@@ -31,7 +30,7 @@ class Onboarding3Screen extends StatelessWidget {
                 height: responsive.hp(64.5),
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/images/on_boarding_image3.jpg"),
+                    image: AssetImage(AppImages.onboarding3),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -96,11 +95,11 @@ class Onboarding3Screen extends StatelessWidget {
             // Skip button
             Positioned(
               right: responsive.wp(6.4),
-              top: responsive.hp(8.4),
+              top: responsive.hp(8),
               child: GestureDetector(
                 onTap: () {
                   // Navigate to home screen
-                  context.go('/home');
+                  context.push('/home');
                 },
                 child: Text(
                   'Skip',

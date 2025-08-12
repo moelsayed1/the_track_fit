@@ -43,18 +43,10 @@ class _OnboardingPageViewScreenState extends State<OnboardingPageViewScreen> {
       );
     } else {
       // Navigate to home on last page
-      context.go('/home');
+      context.push('/home');
     }
   }
 
-  void _previousPage() {
-    if (_currentPage > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +119,6 @@ class OnboardingScreenWrapper extends StatelessWidget {
       children: [
         // Original screen content
         screen,
-        
-        // Override buttons with functional ones
         Positioned(
           left: ResponsiveHelper(context).wp(4.3),
           bottom: ResponsiveHelper(context).hp(8),
@@ -136,54 +126,68 @@ class OnboardingScreenWrapper extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Next/Get Started button
-              PrimaryButton(
-                text: showGetStarted ? 'Get Started' : 'Next',
-                onPressed: onNextPressed,
-                height: ResponsiveHelper(context).hp(6.9),
-              ),
-              SizedBox(height: ResponsiveHelper(context).hp(2)),
-              
-              // Create Account or Register link
-              if (!showGetStarted)
+              // Handle Get Started button differently
+              if (showGetStarted) ...[
+                // Custom Get Started button with custom size
+                PrimaryButton(
+                  text: 'Get Started',
+                  onPressed: onNextPressed,
+                  height: ResponsiveHelper(context).hp(16), // Custom height for Get Started
+                ),
+              ] else ...[
+                // Regular Next button (unchanged)
+                PrimaryButton(
+                  text: 'Next',
+                  onPressed: onNextPressed,
+                  height: ResponsiveHelper(context).hp(6.9),
+                ),
+                SizedBox(height: ResponsiveHelper(context).hp(2)),
                 OutlineButton(
                   text: 'Create Account',
                   onPressed: () {
                     // Navigate to signup screen
-                    context.go('/home');
+                    context.push('/signup');
                   },
                   height: ResponsiveHelper(context).hp(6.9),
-                )
-              else
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Don't have an account? ",
-                      style: TextStyle(
-                        color: AppColors.grayMedium,
-                        fontSize: ResponsiveHelper(context).sp(14),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to register screen
-                        context.go('/home');
-                      },
-                      child: Text(
-                        "Register",
-                        style: TextStyle(
-                          color: AppColors.primaryGreen,
-                          fontSize: ResponsiveHelper(context).sp(14),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
+              ],
             ],
           ),
         ),
+
+        // Separate positioned "Don't have an account" text for last screen
+        if (showGetStarted)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: ResponsiveHelper(context).hp(13.5), // CONTROL POSITION HERE
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Don't have an account? ",
+                  style: TextStyle(
+                    color: AppColors.grayMedium,
+                    fontSize: ResponsiveHelper(context).sp(14),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to register screen
+                    context.push('/signup');
+                  },
+                  child: Text(
+                    "Register",
+                    style: TextStyle(
+                      color: AppColors.primaryGreen,
+                      fontSize: ResponsiveHelper(context).sp(14),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
