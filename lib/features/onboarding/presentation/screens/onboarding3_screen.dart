@@ -111,36 +111,6 @@ class Onboarding3Screen extends StatelessWidget {
                 ),
               ),
             ),
-            
-
-
-            // Bottom safe area (home indicator)
-            Positioned(
-              left: 0,
-              bottom: 0,
-              child: SizedBox(
-                width: responsive.screenWidth,
-                height: responsive.hp(4.2),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: responsive.wp(32.3),
-                      bottom: responsive.hp(2.6),
-                      child: Container(
-                        width: responsive.wp(35.7),
-                        height: responsive.hp(0.6),
-                        decoration: ShapeDecoration(
-                          color: AppColors.darkGray,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
