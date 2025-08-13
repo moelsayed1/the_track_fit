@@ -23,6 +23,7 @@ class AppAssets {
 class AppLogos {
   static const String trackFit = 'assets/logos/the_track_fit_logo.svg';
   static const String signUp = 'assets/logos/sign_up_logo.svg';
+  static const String login = 'assets/logos/login_logo.svg';
 }
 
 class AppImages {

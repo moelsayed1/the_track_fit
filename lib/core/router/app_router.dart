@@ -7,6 +7,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding1_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_pageview_screen.dart';
 import '../../features/auth/presentation/screens/signup_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -17,6 +18,7 @@ class AppRouter {
   static const String onboarding4 = '/onboarding4';
   static const String home = '/home';
   static const String signup = '/signup';
+  static const String login = '/login';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -60,6 +62,11 @@ class AppRouter {
         path: signup,
         name: 'signup',
         builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: login,
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
       ),
     ],
   );
