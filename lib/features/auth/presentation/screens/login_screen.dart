@@ -9,37 +9,33 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _usernameController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  String? _validateEmail(String? value) {
+  String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return 'Phone number is required';
     }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Enter a valid email';
+    // Basic phone validation - you can make this more sophisticated
+    if (value.length < 10) {
+      return 'Please enter a valid phone number';
     }
     return null;
   }
@@ -54,42 +50,52 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Confirm password is required';
-    }
-    if (value != _passwordController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
-  }
-
-  String? _validateRequired(String? value, String fieldName) {
-    if (value == null || value.isEmpty) {
-      return '$fieldName is required';
-    }
-    return null;
-  }
-
-  void _handleSignup() {
+  void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement signup logic
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Simulate login process
+      await Future.delayed(const Duration(seconds: 2));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // TODO: Implement actual login logic
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created successfully!')),
+        const SnackBar(
+          content: Text('Login successful!'),
+          backgroundColor: AppColors.primaryGreen,
+        ),
       );
       context.push('/home');
     }
   }
 
-  void _handleGoogleSignup() {
-    // TODO: Implement Google signup
+  void _handleGoogleLogin() {
+    // TODO: Implement Google login
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Google signup not implemented yet')),
+      const SnackBar(
+        content: Text('Google login not implemented yet'),
+        backgroundColor: AppColors.grayMedium,
+      ),
     );
   }
 
-  void _navigateToLogin() {
-    context.push('/login');
+  void _handleForgotPassword() {
+    // TODO: Navigate to forgot password screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Forgot password feature coming soon'),
+        backgroundColor: AppColors.grayMedium,
+      ),
+    );
+  }
+
+  void _navigateToSignup() {
+    context.push('/signup');
   }
 
   @override
@@ -105,14 +111,14 @@ class _SignupScreenState extends State<SignupScreen> {
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: responsive.hp(1)),
+                SizedBox(height: responsive.hp(2.5)),
       
                 // Header with illustration
                 AuthHeader(
-                  title: "Let's Get You Started",
-                  subtitle: "Enter your email and password for login",
+                  title: "Log In",
+                  subtitle: "Welcome Back",
                   illustration: SvgPicture.asset(
-                    AppLogos.signUp,
+                    AppLogos.login,
                     width: responsive.wp(66.7),
                     height: responsive.wp(64.5),
                   ),
@@ -122,69 +128,68 @@ class _SignupScreenState extends State<SignupScreen> {
       
                 // Form fields
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomTextField(
-                      hintText: 'E-mail',
-                      prefixIconAsset: AppIcons.email,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: _validateEmail,
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    CustomTextField(
-                      hintText: 'Username',
-                      prefixIconAsset: AppIcons.username,
-                      controller: _usernameController,
-                      validator: (value) => _validateRequired(value, 'Username'),
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
                     CustomTextField(
                       hintText: 'Phone',
                       prefixIconAsset: AppIcons.phone,
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      validator: (value) => _validateRequired(value, 'Phone'),
+                      validator: _validatePhone,
                     ),
                     SizedBox(height: responsive.hp(2)),
       
-                    CustomTextField(
-                      hintText: 'Password',
-                      prefixIconAsset: AppIcons.lock,
-                      isPassword: true,
-                      controller: _passwordController,
-                      validator: _validatePassword,
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    CustomTextField(
-                      hintText: 'Confirm Password',
-                      prefixIconAsset: AppIcons.lock,
-                      isPassword: true,
-                      controller: _confirmPasswordController,
-                      validator: _validateConfirmPassword,
+                    // Password field with Forgot Password link
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTextField(
+                          hintText: 'Password',
+                          prefixIconAsset: AppIcons.lock,
+                          isPassword: true,
+                          controller: _passwordController,
+                          validator: _validatePassword,
+                        ),
+                        SizedBox(height: responsive.hp(1.25)), // 10px spacing like in your code
+                        // Forgot Password link positioned under password field
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: responsive.wp(3.5)), // 10px padding matching your code
+                          child: GestureDetector(
+                            onTap: _handleForgotPassword,
+                            child: Text(
+                              'Forget Password ?',
+                              style: TextStyle(
+                                color: AppColors.grayMedium,
+                                fontSize: responsive.sp(12),
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
       
                 SizedBox(height: responsive.hp(4)),
       
-                // Create Account button
+                // Login button
                 PrimaryButton(
-                  text: 'Create Account',
-                  onPressed: _handleSignup,
+                  text: 'Login',
+                  onPressed: _isLoading ? null : _handleLogin,
                   height: responsive.hp(7),
+                  isLoading: _isLoading,
                 ),
       
-                SizedBox(height: responsive.hp(1)),
+                SizedBox(height: responsive.hp(1.5)),
       
-                // Login link
+                // Sign up link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'You already have an account? ',
+                      "You don't have an account? ",
                       style: TextStyle(
                         color: AppColors.grayMedium,
                         fontSize: responsive.sp(14),
@@ -193,9 +198,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: _navigateToLogin,
+                      onTap: _navigateToSignup,
                       child: Text(
-                        'Login',
+                        'Sign Up',
                         style: TextStyle(
                           color: AppColors.primaryGreen,
                           fontSize: responsive.sp(14),
@@ -207,15 +212,15 @@ class _SignupScreenState extends State<SignupScreen> {
                   ],
                 ),
       
-                SizedBox(height: responsive.hp(4)),
+                SizedBox(height: responsive.hp(10)),
       
-                // Google signup button
+                // Google login button
                 SocialLoginButton(
                   text: 'Continue with Google',
                   iconPath: AppIcons.google,
-                  onPressed: _handleGoogleSignup,
+                  onPressed: _handleGoogleLogin,
                 ),
-                SizedBox(height: responsive.hp(4)),
+                SizedBox(height: responsive.hp(1.5)),
               ],
             ),
           ),
