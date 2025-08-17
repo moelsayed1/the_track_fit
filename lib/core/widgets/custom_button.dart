@@ -30,58 +30,60 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
     
-    final buttonWidth = width ?? responsive.screenWidth - (responsive.wp(8) * 2);
+    final buttonWidth = width ?? responsive.screenWidth - (responsive.wp(5) * 2);
     final buttonHeight = height ?? responsive.hp(7);
 
-    return Container(
-      width: buttonWidth,
+    return SizedBox(
+      width: buttonWidth.isFinite ? buttonWidth : null,
       height: buttonHeight,
-      margin: margin,
-      child: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            top: type == ButtonType.primary ? 2 : 0,
-            child: Container(
-              width: buttonWidth,
-              padding: EdgeInsets.symmetric(
-                horizontal: responsive.wp(4),
-                vertical: responsive.hp(1.7),
-              ),
-              decoration: _getButtonDecoration(responsive),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (isLoading)
-                    SizedBox(
-                      width: responsive.wp(4),
-                      height: responsive.wp(4),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          type == ButtonType.primary
-                              ? AppColors.white
-                              : AppColors.primaryGreen,
+      child: Container(
+        margin: margin,
+        child: Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: type == ButtonType.primary ? 2 : 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsive.wp(4),
+                  vertical: responsive.hp(1.7),
+                ),
+                decoration: _getButtonDecoration(responsive),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (isLoading)
+                      SizedBox(
+                        width: responsive.wp(4),
+                        height: responsive.wp(4),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            type == ButtonType.primary
+                                ? AppColors.white
+                                : AppColors.primaryGreen,
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: Text(
+                          text,
+                          textAlign: TextAlign.center,
+                          style: type == ButtonType.primary
+                              ? AppTextStyles.buttonPrimary
+                              : AppTextStyles.buttonSecondary,
                         ),
                       ),
-                    )
-                  else
-                    Expanded(
-                      child: Text(
-                        text,
-                        textAlign: TextAlign.center,
-                        style: type == ButtonType.primary
-                            ? AppTextStyles.buttonPrimary
-                            : AppTextStyles.buttonSecondary,
-                      ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

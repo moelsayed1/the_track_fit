@@ -6,8 +6,9 @@ import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding1_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_pageview_screen.dart';
-import '../../features/auth/presentation/screens/signup_screen.dart';
-import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/signup/presentation/signup_screen.dart';
+import '../../features/auth/login/presentation/screens/login_screen.dart';
+import '../../features/auth/forget_password/presentation/ui/forget_password_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -19,6 +20,7 @@ class AppRouter {
   static const String home = '/home';
   static const String signup = '/signup';
   static const String login = '/login';
+  static const String forgetPassword = '/forget-password';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -67,6 +69,11 @@ class AppRouter {
         path: login,
         name: 'login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: forgetPassword,
+        name: 'forgetPassword',
+        builder: (context, state) => const ForgetPasswordScreen(),
       ),
     ],
   );

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_assets.dart';
-import '../../../../core/utils/responsive_helper.dart';
-import '../../../../core/widgets/auth_header.dart';
-import '../../../../core/widgets/custom_text_field.dart';
-import '../../../../core/widgets/custom_button.dart';
-import '../../../../core/widgets/social_login_button.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/utils/responsive_helper.dart';
+import '../../../../../core/widgets/auth_header.dart';
+import '../../../../../core/widgets/custom_text_field.dart';
+import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/widgets/social_login_button.dart';
+import '../../../../../core/router/app_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -70,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: AppColors.primaryGreen,
         ),
       );
-      context.push('/home');
+      context.push(AppRouter.home);
     }
   }
 
@@ -85,17 +86,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleForgotPassword() {
-    // TODO: Navigate to forgot password screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Forgot password feature coming soon'),
-        backgroundColor: AppColors.grayMedium,
-      ),
-    );
+    context.push(AppRouter.forgetPassword);
   }
 
   void _navigateToSignup() {
-    context.push('/signup');
+    context.push(AppRouter.signup);
   }
 
   @override

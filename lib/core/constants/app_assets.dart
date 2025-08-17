@@ -2,6 +2,7 @@ class AppAssets {
   // Logos
   static const String trackFitLogo = 'assets/logos/the_track_fit_logo.svg';
   static const String signUpLogo = 'assets/logos/sign_up_logo.svg';
+  static const String forgetPasswordLogo = 'assets/logos/forget_password_logo.svg';
 
   // Images
   static const String onboardingImage1 = 'assets/images/on_boarding_image1.jpg';
@@ -10,7 +11,7 @@ class AppAssets {
   static const String onboardingImage4 = 'assets/images/on_boarding_image4.jpg';
 
   // Icons
-  static const String emailIcon = 'assets/images/email_icon.png';
+  static const String emailIcon = 'assets/images/email_icon.svg';
   static const String usernameIcon = 'assets/images/username_icon.svg';
   static const String phoneIcon = 'assets/images/phone_icon.svg';
   static const String lockIcon = 'assets/images/lock_icon.svg';
@@ -24,6 +25,7 @@ class AppLogos {
   static const String trackFit = 'assets/logos/the_track_fit_logo.svg';
   static const String signUp = 'assets/logos/sign_up_logo.svg';
   static const String login = 'assets/logos/login_logo.svg';
+  static const String forgetPassword = 'assets/logos/forget_password_logo.svg';
 }
 
 class AppImages {
