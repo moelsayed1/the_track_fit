@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/otp_input_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/router/app_router.dart';
 
 class OtpScreenBody extends StatefulWidget {
   final String email;
@@ -206,15 +208,17 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
       // TODO: Implement OTP verification logic
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
       
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('OTP verified successfully!'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        // TODO: Navigate to next screen
-      }
+              if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('OTP verified successfully!'),
+              backgroundColor: AppColors.primaryGreen,
+            ),
+          );
+          
+          // Navigate to New Password screen
+          context.push(AppRouter.newPassword);
+        }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
