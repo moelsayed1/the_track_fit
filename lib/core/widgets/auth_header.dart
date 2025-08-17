@@ -28,7 +28,7 @@ class AuthHeader extends StatelessWidget {
           Container(
             width: responsive.wp(66.7), // 250px equivalent
             height: responsive.wp(66.7),
-            margin: EdgeInsets.only(bottom: responsive.hp(2)),
+            margin: EdgeInsets.only(bottom: responsive.h(43)),
             child: illustration,
           ),
 
