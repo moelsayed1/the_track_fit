@@ -30,7 +30,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
     
-    final buttonWidth = width ?? responsive.screenWidth - (responsive.wp(8) * 2);
+    final buttonWidth = width ?? responsive.screenWidth - (responsive.wp(5) * 2);
     final buttonHeight = height ?? responsive.hp(7);
 
     return SizedBox(
