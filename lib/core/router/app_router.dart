@@ -1,0 +1,80 @@
+import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
+import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding3_screen.dart';
+import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
+import '../../features/splash/presentation/screens/splash_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/onboarding/presentation/screens/onboarding1_screen.dart';
+import '../../features/onboarding/presentation/screens/onboarding_pageview_screen.dart';
+import '../../features/auth/signup/presentation/signup_screen.dart';
+import '../../features/auth/login/presentation/screens/login_screen.dart';
+import '../../features/auth/forget_password/presentation/ui/forget_password_screen.dart';
+
+class AppRouter {
+  static const String splash = '/';
+  static const String onboarding = '/onboarding';
+  static const String onboarding1 = '/onboarding1';
+  static const String onboarding2 = '/onboarding2';
+  static const String onboarding3 = '/onboarding3';
+  static const String onboarding4 = '/onboarding4';
+  static const String home = '/home';
+  static const String signup = '/signup';
+  static const String login = '/login';
+  static const String forgetPassword = '/forget-password';
+
+  static final GoRouter router = GoRouter(
+    initialLocation: splash,
+    routes: [
+      GoRoute(
+        path: splash,
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: onboarding,
+        name: 'onboarding',
+        builder: (context, state) => const OnboardingPageViewScreen(),
+      ),
+      GoRoute(
+        path: onboarding1,
+        name: 'onboarding1',
+        builder: (context, state) => const Onboarding1Screen(),
+      ),
+      GoRoute(
+        path: onboarding2,
+        name: 'onboarding2',
+        builder: (context, state) => const Onboarding2Screen(),
+      ),
+      GoRoute(
+        path: onboarding3,
+        name: 'onboarding3',
+        builder: (context, state) => const Onboarding3Screen(),
+      ),
+      GoRoute(
+        path: onboarding4,
+        name: 'onboarding4',
+        builder: (context, state) => const Onboarding4Screen(),
+      ),
+      GoRoute(
+        path: home,
+        name: 'home',
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: signup,
+        name: 'signup',
+        builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: login,
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: forgetPassword,
+        name: 'forgetPassword',
+        builder: (context, state) => const ForgetPasswordScreen(),
+      ),
+    ],
+  );
+} 
