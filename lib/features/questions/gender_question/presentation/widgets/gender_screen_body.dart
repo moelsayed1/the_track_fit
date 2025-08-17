@@ -28,7 +28,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: responsive.hp(5)), // 44px equivalent
+        SizedBox(height: responsive.hp(0)), // 44px equivalent
         
         // Common Header
         QuestionHeader(
