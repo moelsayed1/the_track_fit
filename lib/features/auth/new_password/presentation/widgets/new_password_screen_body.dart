@@ -6,6 +6,7 @@ import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import 'reset_password_done.dart';
 
 class NewPasswordScreenBody extends StatefulWidget {
   const NewPasswordScreenBody({super.key});
@@ -187,13 +188,14 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
         await Future.delayed(const Duration(seconds: 2)); // Simulate API call
         
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Password updated successfully!'),
-              backgroundColor: AppColors.primaryGreen,
-            ),
+          // Show success dialog
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return const ResetPasswordDone();
+            },
           );
-          // TODO: Navigate to login screen
         }
       } catch (e) {
         if (mounted) {
