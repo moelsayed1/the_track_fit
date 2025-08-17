@@ -57,23 +57,44 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
 
-      // Simulate login process
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Simulate login process
+        await Future.delayed(const Duration(seconds: 2));
 
-      setState(() {
-        _isLoading = false;
-      });
+        // TODO: Implement actual login logic
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
 
-      // TODO: Implement actual login logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login successful!'),
-          backgroundColor: AppColors.primaryGreen,
-        ),
-      );
-      context.push(AppRouter.home);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login successful!'),
+              backgroundColor: AppColors.primaryGreen,
+            ),
+          );
+
+          // Always navigate to gender question after successful login
+          context.push(AppRouter.genderQuestion);
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Login failed: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
+
+
 
   void _handleGoogleLogin() {
     // TODO: Implement Google login
