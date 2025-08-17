@@ -12,6 +12,9 @@ import '../../features/auth/forget_password/presentation/ui/forget_password_scre
 import '../../features/auth/otp/presentation/ui/otp_screen.dart';
 import '../../features/auth/new_password/presentation/ui/new_password_screen.dart';
 import '../../features/auth/new_password/presentation/widgets/reset_password_done.dart';
+import '../../features/questions/gender_question/presentation/ui/gender_question_screen.dart';
+import '../../features/questions/fitness_level/ui/fitness_level_screen.dart';
+import '../../features/questions/height/ui/height_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -27,6 +30,9 @@ class AppRouter {
   static const String otp = '/otp';
   static const String newPassword = '/new-password';
   static const String resetPasswordDone = '/reset-password-done';
+  static const String genderQuestion = '/gender-question';
+  static const String fitnessLevel = '/fitness-level';
+  static const String heightQuestion = '/height-question';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -98,6 +104,21 @@ class AppRouter {
         path: resetPasswordDone,
         name: 'resetPasswordDone',
         builder: (context, state) => const ResetPasswordDone(),
+      ),
+      GoRoute(
+        path: genderQuestion,
+        name: 'genderQuestion',
+        builder: (context, state) => const GenderQuestionScreen(),
+      ),
+      GoRoute(
+        path: fitnessLevel,
+        name: 'fitnessLevel',
+        builder: (context, state) => const FitnessLevelScreen(),
+      ),
+      GoRoute(
+        path: heightQuestion,
+        name: 'heightQuestion',
+        builder: (context, state) => const HeightQuestionScreen(),
       ),
     ],
   );

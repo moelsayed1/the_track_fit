@@ -31,6 +31,8 @@ class AppLogos {
   static const String forgetPassword = 'assets/logos/forget_password_logo.svg';
   static const String otp = 'assets/logos/otp_logo.svg';
   static const String newPassword = 'assets/logos/new_password_logo.svg';
+  static const String female = 'assets/logos/female_logo.svg';
+  static const String male = 'assets/logos/male_logo.svg';
 }
 
 class AppImages {
