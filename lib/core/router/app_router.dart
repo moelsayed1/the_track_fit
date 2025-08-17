@@ -9,6 +9,7 @@ import '../../features/onboarding/presentation/screens/onboarding_pageview_scree
 import '../../features/auth/signup/presentation/signup_screen.dart';
 import '../../features/auth/login/presentation/screens/login_screen.dart';
 import '../../features/auth/forget_password/presentation/ui/forget_password_screen.dart';
+import '../../features/auth/otp/presentation/ui/otp_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -21,6 +22,7 @@ class AppRouter {
   static const String signup = '/signup';
   static const String login = '/login';
   static const String forgetPassword = '/forget-password';
+  static const String otp = '/otp';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -74,6 +76,14 @@ class AppRouter {
         path: forgetPassword,
         name: 'forgetPassword',
         builder: (context, state) => const ForgetPasswordScreen(),
+      ),
+      GoRoute(
+        path: otp,
+        name: 'otp',
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'] ?? 'user@example.com';
+          return OtpScreen(email: email);
+        },
       ),
     ],
   );

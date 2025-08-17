@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
@@ -7,6 +8,7 @@ import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/auth_header.dart';
+import '../../../../../core/router/app_router.dart';
 
 class ForgetPasswordBody extends StatefulWidget {
   const ForgetPasswordBody({super.key});
@@ -142,6 +144,9 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
               backgroundColor: AppColors.primaryGreen,
             ),
           );
+          
+          // Navigate to OTP screen
+          context.push('${AppRouter.otp}?email=${_emailController.text}');
         }
       } catch (e) {
         if (mounted) {
