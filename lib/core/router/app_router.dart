@@ -11,6 +11,7 @@ import '../../features/auth/login/presentation/screens/login_screen.dart';
 import '../../features/auth/forget_password/presentation/ui/forget_password_screen.dart';
 import '../../features/auth/otp/presentation/ui/otp_screen.dart';
 import '../../features/auth/new_password/presentation/ui/new_password_screen.dart';
+import '../../features/auth/new_password/presentation/widgets/reset_password_done.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -25,6 +26,7 @@ class AppRouter {
   static const String forgetPassword = '/forget-password';
   static const String otp = '/otp';
   static const String newPassword = '/new-password';
+  static const String resetPasswordDone = '/reset-password-done';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -91,6 +93,11 @@ class AppRouter {
         path: newPassword,
         name: 'newPassword',
         builder: (context, state) => const NewPasswordScreen(),
+      ),
+      GoRoute(
+        path: resetPasswordDone,
+        name: 'resetPasswordDone',
+        builder: (context, state) => const ResetPasswordDone(),
       ),
     ],
   );
