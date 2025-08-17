@@ -4,6 +4,7 @@ class AppAssets {
   static const String signUpLogo = 'assets/logos/sign_up_logo.svg';
   static const String forgetPasswordLogo = 'assets/logos/forget_password_logo.svg';
   static const String otpLogo = 'assets/logos/otp_logo.svg';
+  static const String newPasswordLogo = 'assets/logos/new_password_logo.svg';
 
   // Images
   static const String onboardingImage1 = 'assets/images/on_boarding_image1.jpg';
@@ -28,6 +29,7 @@ class AppLogos {
   static const String login = 'assets/logos/login_logo.svg';
   static const String forgetPassword = 'assets/logos/forget_password_logo.svg';
   static const String otp = 'assets/logos/otp_logo.svg';
+  static const String newPassword = 'assets/logos/new_password_logo.svg';
 }
 
 class AppImages {
