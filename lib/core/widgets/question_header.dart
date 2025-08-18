@@ -21,7 +21,7 @@ class QuestionHeader extends StatelessWidget {
 
     return Column(
       children: [
-        SizedBox(height: responsive.hp(5)),
+        SizedBox(height: responsive.hp(4)),
         
         // Title
         Text(
