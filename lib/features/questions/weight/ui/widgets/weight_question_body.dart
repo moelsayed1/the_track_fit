@@ -49,8 +49,8 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
 
   void _onContinuePressed() {
     if (_weightController.text.isNotEmpty) {
-      // Navigate to home after weight selection
-      context.push(AppRouter.home);
+      // Navigate to promotional offer after weight selection
+      context.push(AppRouter.promotionalOffer);
     }
   }
 
