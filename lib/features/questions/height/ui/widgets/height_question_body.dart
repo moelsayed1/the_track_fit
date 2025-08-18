@@ -283,9 +283,8 @@ class _HeightQuestionBodyState extends State<HeightQuestionBody> {
           ),
         );
         
-        // TODO: Navigate to next question screen
-        // For now, navigate to home after height selection
-        context.push(AppRouter.home);
+        // Navigate to next question screen
+        context.push(AppRouter.weightQuestion);
       }
     } catch (e) {
       if (mounted) {
