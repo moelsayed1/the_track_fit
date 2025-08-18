@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../widgets/gender_screen_body.dart';
 

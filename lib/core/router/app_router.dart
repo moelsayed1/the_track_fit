@@ -16,6 +16,7 @@ import '../../features/questions/gender_question/presentation/ui/gender_question
 import '../../features/questions/fitness_level/ui/fitness_level_screen.dart';
 import '../../features/questions/height/ui/height_screen.dart';
 import '../../features/questions/weight/ui/weight_screen.dart';
+import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -35,6 +36,7 @@ class AppRouter {
   static const String fitnessLevel = '/fitness-level';
   static const String heightQuestion = '/height-question';
   static const String weightQuestion = '/weight-question';
+  static const String promotionalOffer = '/promotional-offer';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -126,6 +128,11 @@ class AppRouter {
         path: weightQuestion,
         name: 'weightQuestion',
         builder: (context, state) => const WeightQuestionScreen(),
+      ),
+      GoRoute(
+        path: promotionalOffer,
+        name: 'promotionalOffer',
+        builder: (context, state) => const PromotionalOfferScreen(),
       ),
     ],
   );
