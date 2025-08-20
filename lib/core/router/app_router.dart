@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/features/home/presentation/widgets/home_screen_feature.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding3_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
@@ -16,6 +17,7 @@ import '../../features/questions/gender_question/presentation/ui/gender_question
 import '../../features/questions/fitness_level/ui/fitness_level_screen.dart';
 import '../../features/questions/height/ui/height_screen.dart';
 import '../../features/questions/weight/ui/weight_screen.dart';
+import '../../features/plans/presentation/screens/plan_screen.dart';
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 
 class AppRouter {
@@ -26,6 +28,7 @@ class AppRouter {
   static const String onboarding3 = '/onboarding3';
   static const String onboarding4 = '/onboarding4';
   static const String home = '/home';
+  static const String homeFeature= '/homeFeature';
   static const String signup = '/signup';
   static const String login = '/login';
   static const String forgetPassword = '/forget-password';
@@ -36,6 +39,7 @@ class AppRouter {
   static const String fitnessLevel = '/fitness-level';
   static const String heightQuestion = '/height-question';
   static const String weightQuestion = '/weight-question';
+  static const String plan = '/plan';
   static const String promotionalOffer = '/promotional-offer';
 
   static final GoRouter router = GoRouter(
@@ -75,6 +79,11 @@ class AppRouter {
         path: home,
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: homeFeature,
+        name: 'homeFeature',
+        builder: (context, state) => const HomeScreenFeature(),
       ),
       GoRoute(
         path: signup,
@@ -128,6 +137,11 @@ class AppRouter {
         path: weightQuestion,
         name: 'weightQuestion',
         builder: (context, state) => const WeightQuestionScreen(),
+      ),
+      GoRoute(
+        path: plan,
+        name: 'plan',
+        builder: (context, state) => const PlanScreen(),
       ),
       GoRoute(
         path: promotionalOffer,

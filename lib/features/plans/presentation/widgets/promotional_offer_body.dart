@@ -241,7 +241,7 @@ class PromotionalOfferBody extends StatelessWidget {
                     height: 50.h,
                     child: Center(
                       child: ElevatedButton(
-                        onPressed: () => context.push(AppRouter.home),
+                        onPressed: () => context.push(AppRouter.plan),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Color(0xFF28A228),
