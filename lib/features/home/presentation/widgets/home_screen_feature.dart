@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreenFeature extends StatefulWidget {
   const HomeScreenFeature({super.key});
@@ -313,7 +314,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        
+                        context.push('/store');
                       },
                       child: Text(
                         'Show all Products',
@@ -342,12 +343,15 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                     itemBuilder: (context, index) {
                                            return Padding(
                        padding: EdgeInsets.only(right: 8.w),
-                       child: ProductCard(
-                         productName: 'Product name',
-                         price: '20\$',
-                         exerciseIcon: 'assets/images/product_image.png',
-                         isFavorite: _favoriteStates[index],
-                         onFavoriteTapped: () => _onFavoriteToggled(index),
+                       child: GestureDetector(
+                         onTap: () => context.go('/store'),
+                         child: ProductCard(
+                           productName: 'Product name',
+                           price: '20\$',
+                           exerciseIcon: 'assets/images/product_image.png',
+                           isFavorite: _favoriteStates[index],
+                           onFavoriteTapped: () => _onFavoriteToggled(index),
+                         ),
                        ),
                      );
                     },
@@ -717,6 +721,7 @@ class ProductCard extends StatelessWidget {
   final String exerciseIcon;
   final bool isFavorite;
   final VoidCallback? onFavoriteTapped;
+  final VoidCallback? onTap;
 
   const ProductCard({
     super.key,
@@ -725,6 +730,7 @@ class ProductCard extends StatelessWidget {
     required this.exerciseIcon,
     this.isFavorite = false,
     this.onFavoriteTapped,
+    this.onTap,
   });
 
   @override
