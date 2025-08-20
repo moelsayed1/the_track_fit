@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/features/home/presentation/widgets/home_screen_feature.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
@@ -19,6 +20,8 @@ import '../../features/questions/height/ui/height_screen.dart';
 import '../../features/questions/weight/ui/weight_screen.dart';
 import '../../features/plans/presentation/screens/plan_screen.dart';
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
+import '../../features/store/presentation/ui/screens/store_screen.dart';
+import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -41,6 +44,8 @@ class AppRouter {
   static const String weightQuestion = '/weight-question';
   static const String plan = '/plan';
   static const String promotionalOffer = '/promotional-offer';
+  static const String store = '/store';
+  static const String productDetail = '/product-detail';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -147,6 +152,37 @@ class AppRouter {
         path: promotionalOffer,
         name: 'promotionalOffer',
         builder: (context, state) => const PromotionalOfferScreen(),
+      ),
+      GoRoute(
+        path: store,
+        name: 'store',
+        builder: (context, state) => const StoreScreen(),
+      ),
+      GoRoute(
+        path: productDetail,
+        name: 'productDetail',
+        builder: (context, state) {
+          // Check if we have valid product data
+          if (state.extra == null) {
+            // Redirect to store if no data
+            return const StoreScreen();
+          }
+          
+          try {
+            final productData = state.extra as Map<String, dynamic>;
+            final product = productData['product'];
+            
+            if (product == null) {
+              // Return to store if product is null
+              return const StoreScreen();
+            }
+            
+            return ProductDetailScreen(product: product);
+          } catch (e) {
+            // Return to store on any error
+            return const StoreScreen();
+          }
+        },
       ),
     ],
   );
