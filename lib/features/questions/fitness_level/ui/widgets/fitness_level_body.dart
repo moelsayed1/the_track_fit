@@ -16,7 +16,7 @@ class FitnessLevelBody extends StatefulWidget {
 class _FitnessLevelBodyState extends State<FitnessLevelBody> {
   String? _selectedFitnessLevel;
   bool _isLoading = false;
-  int _currentStep = 2; // This is question 2 of 6
+  final int _currentStep = 2; // This is question 2 of 6
   final int _totalSteps = 4;
 
   @override
