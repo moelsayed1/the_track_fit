@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
 
           // Always navigate to gender question after successful login
-          context.push(AppRouter.home);
+          context.push(AppRouter.promotionalOffer);
         }
       } catch (e) {
         if (mounted) {
