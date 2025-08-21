@@ -2,41 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
+import 'package:the_track_fit/features/auth/new_password/presentation/widgets/reset_password_done.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
 import 'package:the_track_fit/features/cart/domain/models/cart_item.dart';
 
-class CartScreenBody extends StatefulWidget {
-  const CartScreenBody({super.key});
+class CheckoutScreen extends StatefulWidget {
+  const CheckoutScreen({super.key});
 
   @override
-  State<CartScreenBody> createState() => _CartScreenBodyState();
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CartScreenBodyState extends State<CartScreenBody> {
+class _CheckoutScreenState extends State<CheckoutScreen> {
   bool isCartActive = true;
   bool isHeartActive = false;
+  bool showCouponInput = false;
+  final TextEditingController _couponController = TextEditingController();
   
-  // Cart items state using Product model
+  // Sample cart items for checkout
   List<CartItem> cartItems = [
     CartItem(
       product: Product(
         id: '1',
-        name: 'Premium Protein Powder',
-        price: 29.99,
+        name: 'Maxin Protein Powder',
+        price: 20.0,
         imageUrl: 'assets/images/product_image.png',
       ),
       quantity: 1,
     ),
-    CartItem(
-      product: Product(
-        id: '2',
-        name: 'Resistance Bands Set',
-        price: 19.99,
-        imageUrl: 'assets/images/product_image.png',
-      ),
-      quantity: 2,
-    ),
   ];
+
+  @override
+  void dispose() {
+    _couponController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             // Header Section
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: const Color(0x26848484),
               ),
@@ -67,7 +68,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                         ),
                       ),
                       Text(
-                        'Cart',
+                        'Checkout',
                         style: TextStyle(
                           color: Color(0xFF1E1E1E),
                           fontSize: 18.sp,
@@ -143,7 +144,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                           ),
                           child: Center(
                             child: Icon(
-                              isHeartActive ? Icons.favorite_border : Icons.favorite_border,
+                              isHeartActive ? Icons.favorite : Icons.favorite_border,
                               color: isHeartActive ? Colors.white : const Color(0xFF28A228),
                               size: 18.sp,
                             ),
@@ -156,70 +157,34 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               ),
             ),
             
-            // Product List Section
+            // Content Section
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(16.w),
                 child: Column(
                   children: [
-                    // Check if cart is empty
-                    if (cartItems.isEmpty)
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: 220.h),
-                            Icon(
-                              Icons.shopping_cart_outlined,
-                              size: 64.sp,
-                              color: Color(0xFF848484),
-                            ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              'Your cart is empty',
-                              style: TextStyle(
-                                color: Color(0xFF848484),
-                                fontSize: 18.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              'Add some products to get started',
-                              style: TextStyle(
-                                color: Color(0xFF848484),
-                                fontSize: 14.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else ...[
-                      // Dynamic Product Cards
-                      ...cartItems.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        CartItem cartItem = entry.value;
-                        return Column(
-                          children: [
-                            _buildProductCard(cartItem, index),
-                            if (index < cartItems.length - 1) SizedBox(height: 16.h),
-                          ],
-                        );
-                      }).toList().cast<Widget>(),
-                      
-                      SizedBox(height: 180),
-                      
-                      // Payment Summary Section
-                      _buildPaymentSummary(),
-                      
-                      SizedBox(height: 32.h),
-                      
-                      // Checkout Button
-                      _buildCheckoutButton(),
-                    ],
+                    // Product Card
+                    _buildProductCard(cartItems[0]),
+                    
+                    SizedBox(height: 24.h),
+                    
+                    // Address Section
+                    _buildAddressSection(),
+                    
+                    SizedBox(height: 24.h),
+                    
+                    // Coupon Section
+                    _buildCouponSection(),
+                    
+                    SizedBox(height: 24.h),
+                    
+                    // Payment Summary
+                    _buildPaymentSummary(),
+                    
+                    SizedBox(height: 32.h),
+                    
+                    // Confirm Order Button
+                    _buildConfirmOrderButton(),
                   ],
                 ),
               ),
@@ -230,7 +195,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     );
   }
 
-    Widget _buildProductCard(CartItem cartItem, int index) {
+  Widget _buildProductCard(CartItem cartItem) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -259,20 +224,34 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 height: 64.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
-                  image: DecorationImage(
-                    image: AssetImage(cartItem.product.imageUrl),
+                  color: Color(0xFFF0F0F0),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Image.asset(
+                    cartItem.product.imageUrl,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Color(0xFFF0F0F0),
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Color(0xFF848484),
+                          size: 24.sp,
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
-              SizedBox(width: 8.w),
+              SizedBox(width: 16.w),
               // Product Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cartItem.product.name,
+                      'Product name',
                       style: TextStyle(
                         color: Color(0xFF1E1E1E),
                         fontSize: 16.sp,
@@ -292,7 +271,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      '\$${cartItem.product.price.toStringAsFixed(2)}',
+                      '${cartItem.product.price.toStringAsFixed(0)}\$',
                       style: TextStyle(
                         color: Color(0xFF28A228),
                         fontSize: 16.sp,
@@ -311,7 +290,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             right: -10,
             child: IconButton(
               onPressed: () {
-                _removeProduct(index);
+                // Handle remove product
               },
               icon: Container(
                 width: 20.w,
@@ -333,18 +312,185 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       ),
     );
   }
-  
-  // Method to remove product from cart
-  void _removeProduct(int index) {
-    setState(() {
-      cartItems.removeAt(index);
-    });
+
+  Widget _buildAddressSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Address',
+          style: TextStyle(
+            color: Color(0xFF1E1E1E),
+            fontSize: 16.sp,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 16.h),
+        
+        // Governorate Field
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30.r),
+            border: Border.all(color: Color(0xFFE0E0E0)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                color: Color(0xFF28A228),
+                size: 20.sp,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  'Governorate',
+                  style: TextStyle(
+                    color: Color(0xFF848484),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.keyboard_arrow_down,
+                color: Color(0xFF848484),
+                size: 20.sp,
+              ),
+            ],
+          ),
+        ),
+        
+        SizedBox(height: 12.h),
+        
+        // Address Field
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30.r),
+            border: Border.all(color: Color(0xFFE0E0E0)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                color: Color(0xFF28A228),
+                size: 20.sp,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Text(
+                  'Address',
+                  style: TextStyle(
+                    color: Color(0xFF848484),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
-   
+
+  Widget _buildCouponSection() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.r),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1E000000),
+            blurRadius: 4,
+            offset: Offset(0, 0),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Got a Coupon code ?',
+                style: TextStyle(
+                  color: Color(0xFF1E1E1E),
+                  fontSize: 14.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    showCouponInput = !showCouponInput;
+                  });
+                },
+                child: Text(
+                  'Apply Coupon',
+                  style: TextStyle(
+                    color: Color(0xFF28A228),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+                    decorationColor: Color(0xFF28A228),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          
+          if (showCouponInput) ...[
+            SizedBox(height: 16.h),
+            Container(
+              width: double.infinity,
+              height: 45.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color: Color(0xFFEDEDED),
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+                             child: TextField(
+                 controller: _couponController,
+                 textAlign: TextAlign.center,
+                 decoration: InputDecoration(
+                   hintText: 'Coupon',
+                   hintStyle: TextStyle(
+                     color: Color(0xFF848484),
+                     fontSize: 14.sp,
+                     fontFamily: 'Poppins',
+                     fontWeight: FontWeight.w400,
+                   ),
+                   border: InputBorder.none,
+                   contentPadding: EdgeInsets.zero,
+                   isDense: true,
+                 ),
+               ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildPaymentSummary() {
-    // Calculate totals dynamically
+    // Calculate totals
     double orderTotal = cartItems.fold(0.0, (sum, cartItem) => sum + cartItem.totalPrice);
-    double discount = orderTotal * 0.126; // 12.6% discount
+    double discount = 28.80; // Fixed discount for demo
     double total = orderTotal - discount;
     
     return Column(
@@ -372,18 +518,15 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
-                height: 1.14,
               ),
             ),
             Text(
               orderTotal.toStringAsFixed(2),
-              textAlign: TextAlign.right,
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
-                height: 1.29,
               ),
             ),
           ],
@@ -401,18 +544,15 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
-                height: 1.14,
               ),
             ),
             Text(
               '- ${discount.toStringAsFixed(2)}',
-              textAlign: TextAlign.right,
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
-                height: 1.29,
               ),
             ),
           ],
@@ -430,18 +570,15 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
-                height: 1.14,
               ),
             ),
             Text(
               'Free',
-              textAlign: TextAlign.right,
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,
-                height: 1.29,
               ),
             ),
           ],
@@ -468,19 +605,16 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 color: Color(0xFF1E1E1E),
                 fontSize: 16.sp,
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
-                height: 1.13,
+                fontWeight: FontWeight.w500,
               ),
             ),
             Text(
-              '${total.toStringAsFixed(2)} EGP',
-              textAlign: TextAlign.right,
+              '${total.toStringAsFixed(0)} EGP',
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
-                fontSize: 16.sp,
+                fontSize: 18.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
-                height: 1.13,
               ),
             ),
           ],
@@ -489,35 +623,58 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     );
   }
 
-  Widget _buildCheckoutButton() {
+  Widget _buildConfirmOrderButton() {
     return GestureDetector(
-      onTap: () {
-        // Navigate to checkout screen
-        context.push('/checkout');
+      onTap: () async{
+          try {
+        // TODO: Implement password reset logic
+        await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+        
+        if (mounted) {
+          // Show success dialog
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return ResetPasswordDone(
+                text: 'Your order has been confirmed',
+              );
+            },
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+          });
+        }
+      }
       },
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
-        decoration: ShapeDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment(0.00, 0.50),
-            end: Alignment(1.00, 0.50),
-            colors: [Color(0xFF28A228), Color(0xD85CD65C)],
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.r),
-          ),
-          shadows: const [
+        decoration: BoxDecoration(
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(30.r),
+          boxShadow: const [
             BoxShadow(
               color: Color(0x2628A228),
               blurRadius: 4,
-              offset: Offset(4, 0),
+              offset: Offset(0, 2),
               spreadRadius: 0,
             )
           ],
         ),
         child: Text(
-          'Checkout',
+          'Confirm Order',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -530,5 +687,8 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         ),
       ),
     );
+    
+    
   }
+  
 }
