@@ -35,13 +35,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _addToCart() {
-    // TODO: Implement add to cart functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${widget.product.name} added to cart (Qty: $quantity)'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  
+    context.push(AppRouter.cart);
   }
 
   @override
@@ -61,7 +56,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.go(AppRouter.store),
+                    onTap: () => context.push(AppRouter.store),
                     child: SizedBox(
                       width: 32.w,
                       height: 32.h,

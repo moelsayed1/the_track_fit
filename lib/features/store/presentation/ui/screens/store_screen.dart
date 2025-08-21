@@ -145,12 +145,8 @@ class _StoreScreenState extends State<StoreScreen> {
                           GestureDetector(
                             onTap: () {
                               // Handle cart tap
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Cart tapped'),
-                                  duration: Duration(seconds: 1),
-                                ),
-                              );
+                              context.push(AppRouter.cart);
+                              
                             },
                             child: Container(
                               width: 32.w,

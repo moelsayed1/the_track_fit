@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/features/cart/presentation/screens/cart_screen.dart';
 import 'package:the_track_fit/features/home/presentation/widgets/home_screen_feature.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding3_screen.dart';
@@ -46,6 +47,7 @@ class AppRouter {
   static const String promotionalOffer = '/promotional-offer';
   static const String store = '/store';
   static const String productDetail = '/product-detail';
+  static const String cart = '/cart';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -157,6 +159,11 @@ class AppRouter {
         path: store,
         name: 'store',
         builder: (context, state) => const StoreScreen(),
+      ),
+      GoRoute(
+        path: cart,
+        name: 'cart',
+        builder: (context, state) => const CartScreen(),
       ),
       GoRoute(
         path: productDetail,
