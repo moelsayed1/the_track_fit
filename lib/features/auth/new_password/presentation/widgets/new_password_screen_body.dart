@@ -193,7 +193,9 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
             context: context,
             barrierDismissible: false,
             builder: (BuildContext context) {
-              return const ResetPasswordDone();
+              return ResetPasswordDone(
+                text: 'Your Account is ready to use',
+              );
             },
           );
         }

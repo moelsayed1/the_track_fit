@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/features/cart/presentation/screens/cart_screen.dart';
 import 'package:the_track_fit/features/home/presentation/widgets/home_screen_feature.dart';
@@ -23,6 +22,7 @@ import '../../features/plans/presentation/screens/plan_screen.dart';
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 import '../../features/store/presentation/ui/screens/store_screen.dart';
 import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
+import '../../features/cart/presentation/screens/checkout_screen.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -48,6 +48,7 @@ class AppRouter {
   static const String store = '/store';
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';
+  static const String checkout = '/checkout';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -123,7 +124,9 @@ class AppRouter {
       GoRoute(
         path: resetPasswordDone,
         name: 'resetPasswordDone',
-        builder: (context, state) => const ResetPasswordDone(),
+        builder: (context, state) => ResetPasswordDone(
+          text: state.extra as String,
+        ),
       ),
       GoRoute(
         path: genderQuestion,
@@ -164,6 +167,11 @@ class AppRouter {
         path: cart,
         name: 'cart',
         builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: checkout,
+        name: 'checkout',
+        builder: (context, state) => const CheckoutScreen(),
       ),
       GoRoute(
         path: productDetail,
