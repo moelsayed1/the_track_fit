@@ -194,7 +194,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     // Quantity selector
                     Center(
                       child: Container(
-                        width: 95.w,
+                        width: 90.w,
                         height: 32.h,
                         decoration: ShapeDecoration(
                           color: const Color(0x26848484),
@@ -223,6 +223,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 ),
                               ),
                             ),
+                            SizedBox(width: 5.w),
                             Text(
                               quantity.toString(),
                               style: TextStyle(
@@ -233,6 +234,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 height: 1.13,
                               ),
                             ),
+                            SizedBox(width: 5.w),
                             GestureDetector(
                               onTap: _increaseQuantity,
                               child: Container(
