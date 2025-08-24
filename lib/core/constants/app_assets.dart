@@ -11,6 +11,11 @@ class AppAssets {
   static const String onboardingImage2 = 'assets/images/on_boarding_image2.jpg';
   static const String onboardingImage3 = 'assets/images/on_boarding_image3.jpg';
   static const String onboardingImage4 = 'assets/images/on_boarding_image4.jpg';
+  static const String exerciseImage = 'assets/images/exercise_image.jpg';
+  static const String exerciseImage2 = 'assets/images/exercise_image2.png';
+  static const String exerciseTest = 'assets/images/exercise_test.svg';
+  static const String cardioTypeImage = 'assets/images/cardio_type.png';
+
 
   // Icons
   static const String emailIcon = 'assets/images/email_icon.svg';
@@ -18,6 +23,12 @@ class AppAssets {
   static const String phoneIcon = 'assets/images/phone_icon.svg';
   static const String lockIcon = 'assets/images/lock_icon.svg';
   static const String googleLogo = 'assets/images/logo googleg 48dp.svg';
+  static const String exerciseIcon = 'assets/images/exercise_icon.svg';
+  static const String weightIcon = 'assets/images/weight_icon.svg';
+  static const String typeIcon = 'assets/images/type_icon.svg';
+  static const String stretchingIcon = 'assets/images/streching_icon.svg';
+  static const String equipmentIcon = 'assets/images/equipment_icon.svg';
+  static const String cardioIcon = 'assets/images/cardio_icon.svg';
 
   // Animations
   static const String trackFitLogoAnimation = 'assets/the_track_fit_logo_animation.json';
@@ -49,6 +60,13 @@ class AppIcons {
   static const String lock = 'assets/images/lock_icon.svg';
   static const String google = 'assets/images/logo googleg 48dp.svg';
   static const String eyeSlash = 'assets/images/eye-slash.svg';
+  static const String gymIcon = 'assets/images/gym_icon.png';
+  static const String weightIcon = 'assets/images/weight_icon.svg';
+  static const String typeIcon = 'assets/images/type_icon.svg';
+  static const String stretchingIcon = 'assets/images/streching.png';
+  static const String equipmentIcon = 'assets/images/equipment_icon.svg';
+  static const String cardioIcon = 'assets/images/cardio.png';
+  static const String justifyAlignLeftIcon = 'assets/images/justify_align_left.svg';
 }
 
 class AppAnimations {

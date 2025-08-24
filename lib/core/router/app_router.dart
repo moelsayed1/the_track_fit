@@ -22,7 +22,10 @@ import '../../features/plans/presentation/screens/plan_screen.dart';
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 import '../../features/store/presentation/ui/screens/store_screen.dart';
 import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
+import '../../features/workout/presentation/screens/workout_screen.dart';
+
 import '../../features/cart/presentation/screens/checkout_screen.dart';
+
 
 class AppRouter {
   static const String splash = '/';
@@ -48,6 +51,7 @@ class AppRouter {
   static const String store = '/store';
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';
+  static const String workout = '/workout';
   static const String checkout = '/checkout';
 
   static final GoRouter router = GoRouter(
@@ -169,6 +173,9 @@ class AppRouter {
         builder: (context, state) => const CartScreen(),
       ),
       GoRoute(
+        path: workout,
+        name: 'workout',
+        builder: (context, state) => const WorkoutScreen(),
         path: checkout,
         name: 'checkout',
         builder: (context, state) => const CheckoutScreen(),
