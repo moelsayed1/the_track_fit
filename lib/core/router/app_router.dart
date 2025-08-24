@@ -24,6 +24,9 @@ import '../../features/store/presentation/ui/screens/store_screen.dart';
 import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
 import '../../features/workout/presentation/screens/workout_screen.dart';
 
+import '../../features/cart/presentation/screens/checkout_screen.dart';
+
+
 class AppRouter {
   static const String splash = '/';
   static const String onboarding = '/onboarding';
@@ -49,6 +52,7 @@ class AppRouter {
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';
   static const String workout = '/workout';
+  static const String checkout = '/checkout';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -124,7 +128,9 @@ class AppRouter {
       GoRoute(
         path: resetPasswordDone,
         name: 'resetPasswordDone',
-        builder: (context, state) => const ResetPasswordDone(),
+        builder: (context, state) => ResetPasswordDone(
+          text: state.extra as String,
+        ),
       ),
       GoRoute(
         path: genderQuestion,
@@ -170,6 +176,9 @@ class AppRouter {
         path: workout,
         name: 'workout',
         builder: (context, state) => const WorkoutScreen(),
+        path: checkout,
+        name: 'checkout',
+        builder: (context, state) => const CheckoutScreen(),
       ),
       GoRoute(
         path: productDetail,

@@ -23,7 +23,7 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height,
     this.margin,
-    this.isLoading = false,
+    this.isLoading = false, TextStyle? style,
   });
 
   @override
@@ -126,7 +126,7 @@ class PrimaryButton extends StatelessWidget {
   final double? height;
   final EdgeInsetsGeometry? margin;
   final bool isLoading;
-
+  final TextStyle? style;
   const PrimaryButton({
     super.key,
     required this.text,
@@ -134,7 +134,7 @@ class PrimaryButton extends StatelessWidget {
     this.width,
     this.height,
     this.margin,
-    this.isLoading = false,
+    this.isLoading = false, this.style,
   });
 
   @override
@@ -143,6 +143,7 @@ class PrimaryButton extends StatelessWidget {
       onTap: isLoading ? null : onPressed,
       child: CustomButton(
         text: text,
+        style: style,
         type: ButtonType.primary,
         width: width,
         height: height,

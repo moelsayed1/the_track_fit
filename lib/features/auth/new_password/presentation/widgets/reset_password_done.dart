@@ -8,7 +8,10 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/router/app_router.dart';
 
 class ResetPasswordDone extends StatelessWidget {
-  const ResetPasswordDone({super.key});
+  const ResetPasswordDone({super.key, required this.text, this.textStyle});
+
+  final String text;
+  final TextStyle? textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class ResetPasswordDone extends StatelessWidget {
                 
                 // Subtitle
                 Text(
-                  'Your Account is ready to use',
+                  text,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: responsive.sp(14),
@@ -78,6 +81,9 @@ class ResetPasswordDone extends StatelessWidget {
                   height: responsive.h(56),
                   child: PrimaryButton(
                     text: 'Go To Home Page',
+                    style: TextStyle(
+                      fontSize: responsive.sp(18),
+                    ),
                     onPressed: () => _handleGoToHome(context),
                     height: responsive.h(56),
                   ),
