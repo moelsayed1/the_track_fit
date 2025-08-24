@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/features/workout/presentation/index.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,24 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _currentIndex = index;
     });
-
-    switch (index) {
-      case 0:
-        context.push(AppRouter.home);
-        break;
-      case 1:
-        // TODO: Add workout route when available
-        break;
-      case 2:
-        // TODO: Add scan route when available
-        break;
-      case 3:
-        // TODO: Add report route when available
-        break;
-      case 4:
-        // Already on plan screen
-        break;
-    }
   }
 
   Color _getTabColor(int index) =>
@@ -55,22 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _TopStatusBar(),
-                    _Header(
-                      title: _getScreenTitle(_currentIndex),
-                    ),
-                    _GreetingSection(),
-                    SizedBox(height: 32.h),
-                    _HomePlanIllustration(),
-                    SizedBox(height: 50.h),
-                    _MainCTASection(),
-                  ],
-                ),
-              ),
+              child: _buildContentForTab(_currentIndex),
             ),
             _BottomNavBar(
               currentIndex: _currentIndex,
@@ -79,6 +47,231 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildContentForTab(int tabIndex) {
+    switch (tabIndex) {
+      case 0: // Home
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _TopStatusBar(),
+              _Header(title: _getScreenTitle(tabIndex)),
+              _GreetingSection(),
+              SizedBox(height: 32.h),
+              _HomePlanIllustration(),
+              SizedBox(height: 50.h),
+              _MainCTASection(),
+            ],
+          ),
+        );
+      case 1: // Workout
+        return WorkoutScreen();
+      case 2: // Scan
+        return _ScanTabContent();
+      case 3: // Report
+        return _ReportTabContent();
+      case 4: // Plan
+        return _PlanTabContent();
+      default:
+        return _HomeTabContent();
+    }
+  }
+
+ 
+  Widget _buildExerciseItem(String title, String subtitle, bool isFavorite) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      width: 1,
+                      color: const Color(0x26848484),
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Container(
+                  width: 48.w,
+                  height: 48.h,
+                  decoration: ShapeDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/exercise_image.png'),
+                      fit: BoxFit.cover,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16.w),
+              SizedBox(
+                width: 115.w,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 115.w,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: 16.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    SizedBox(
+                      width: 115.w,
+                      child: Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: const Color(0xFF848484),
+                          fontSize: 14.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 24.w,
+            height: 24.h,
+            child: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? const Color(0xFF28A228) : const Color(0xFF848484),
+              size: 24.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _ScanTabContent() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.qr_code_scanner, size: 64.sp, color: const Color(0xFF848484)),
+          SizedBox(height: 16.h),
+          Text(
+            'Scan Feature',
+            style: TextStyle(
+              fontSize: 18.sp,
+              color: const Color(0xFF848484),
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Coming Soon',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF848484),
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _ReportTabContent() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.bar_chart, size: 64.sp, color: const Color(0xFF848484)),
+          SizedBox(height: 16.h),
+          Text(
+            'Report Feature',
+            style: TextStyle(
+              fontSize: 18.sp,
+              color: const Color(0xFF848484),
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Coming Soon',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF848484),
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _PlanTabContent() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.star, size: 64.sp, color: const Color(0xFF848484)),
+          SizedBox(height: 16.h),
+          Text(
+            'Plan Feature',
+            style: TextStyle(
+              fontSize: 18.sp,
+              color: const Color(0xFF848484),
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Coming Soon',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF848484),
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _HomeTabContent() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _TopStatusBar(),
+          _Header(title: _getScreenTitle(0)),
+          _GreetingSection(),
+          SizedBox(height: 32.h),
+          _HomePlanIllustration(),
+          SizedBox(height: 50.h),
+          _MainCTASection(),
+        ],
       ),
     );
   }

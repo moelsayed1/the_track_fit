@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/features/workout/presentation/screens/workout_screen.dart';
+import 'package:the_track_fit/features/workout/presentation/screens/select_type_screen.dart';
 
 class HomeScreenFeature extends StatefulWidget {
   const HomeScreenFeature({super.key});
@@ -23,24 +25,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     setState(() {
       _currentIndex = index;
     });
-    
-    switch (index) {
-      case 0: // Home
-// Show welcome UI
-        break;
-      case 1: // Workout
-// Show workout UI
-        break;
-      case 2: // Scan
-        // TODO: Add scan route when available
-        break;
-      case 3: // Report
-        // TODO: Add report route when available
-        break;
-      case 4: // Plan
-        // TODO: Add plan route when available
-        break;
-    }
   }
 
      Color _getTabColor(int index) {
@@ -103,6 +87,22 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     setState(() {
       _completedExercises[index] = !_completedExercises[index];
     });
+  }
+
+  void _onTypeFilterTapped() {
+    // Show the Select Type screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectTypeScreen(
+          selectedType: null,
+          onTypeSelected: (typeId) {
+            // Handle type selection if needed
+            print('Selected type: $typeId');
+          },
+        ),
+      ),
+    );
   }
 
   int get _completedWorkoutsCount {
@@ -174,7 +174,245 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                ),
             // Main content
             Expanded(
-              child: _buildWorkoutUI(),
+              child: _buildContentForTab(_currentIndex),
+            ),
+            // Bottom navigation bar
+            Container(
+              width: double.infinity,
+              decoration: const ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w, bottom: 0.h),
+                    decoration: const ShapeDecoration(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      shadows: [
+                        BoxShadow(
+                          color: Color(0x2628A228),
+                          blurRadius: 4,
+                          offset: Offset(4, 0),
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Home tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _onTabTapped(0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/logos/home_icon.svg',
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                  colorFilter: ColorFilter.mode(
+                                    _getTabColor(0),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  'Home',
+                                  style: TextStyle(
+                                    color: _getTabColor(0),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.33,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Workout tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _onTabTapped(1),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/logos/gym_icon.svg',
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                  colorFilter: ColorFilter.mode(
+                                    _getTabColor(1),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  'Workout',
+                                  style: TextStyle(
+                                    color: _getTabColor(1),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.33,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Central action button
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _onTabTapped(2),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(14.w),
+                                  decoration: ShapeDecoration(
+                                    color: _currentIndex == 2
+                                        ? const Color(0xFF28A228)
+                                        : const Color(0xFF28A228),
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 4,
+                                        strokeAlign: BorderSide.strokeAlignOutside,
+                                        color: Colors.white,
+                                      ),
+                                      borderRadius: BorderRadius.circular(100.r),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 30.w,
+                                        height: 30.h,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                              'assets/logos/scan_icon.svg',
+                                              width: 28.w,
+                                              height: 28.h,
+                                              fit: BoxFit.contain,
+                                              colorFilter: const ColorFilter.mode(
+                                                Colors.white,
+                                                BlendMode.srcIn,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Report tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _onTabTapped(3),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/logos/progressive_icon.svg',
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                  colorFilter: ColorFilter.mode(
+                                    _getTabColor(3),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  'report',
+                                  style: TextStyle(
+                                    color: _getTabColor(3),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.33,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Plan tab
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => _onTabTapped(4),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/logos/premium_icon.png',
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                  color: _getTabColor(4),
+                                ),
+                                SizedBox(height: 6.h),
+                                Text(
+                                  'Plan',
+                                  style: TextStyle(
+                                    color: _getTabColor(4),
+                                    fontSize: 12.sp,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.33,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -182,8 +420,406 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     );
   }
 
+  Widget _buildContentForTab(int tabIndex) {
+    switch (tabIndex) {
+      case 0: // Home
+        return _buildHomeUI();
+      case 1: // Workout
+        return WorkoutScreen();
+      case 2: // Scan
+        return _buildScanUI();
+      case 3: // Report
+        return _buildReportUI();
+      case 4: // Plan
+        return _buildPlanUI();
+      default:
+        return _buildHomeUI();
+    }
+  }
+
   
   Widget _buildWorkoutUI() {
+    return Column(
+      children: [
+        // Header with points, title, and profile
+        _Header(title: _getScreenTitle(_currentIndex)),
+        
+        // Main content
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Search Bar
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Container(
+                    width: 343.w,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    decoration: ShapeDecoration(
+                      color: const Color(0x26848484),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 24.w,
+                          height: 24.h,
+                          child: Icon(
+                            Icons.search,
+                            color: const Color(0xBF848484),
+                            size: 20.sp,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Expanded(
+                          child: Text(
+                            'Search exercies',
+                            style: TextStyle(
+                              color: const Color(0xBF848484),
+                              fontSize: 12.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w400,
+                              height: 1.33,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                SizedBox(height: 16.h),
+                
+                // Filter Chips
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: SizedBox(
+                    width: 343.w,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                                                 Expanded(
+                           child: GestureDetector(
+                             onTap: _onTypeFilterTapped,
+                             child: Container(
+                               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                               decoration: ShapeDecoration(
+                                 color: const Color(0x26848484),
+                                 shape: RoundedRectangleBorder(
+                                   borderRadius: BorderRadius.circular(30),
+                                 ),
+                               ),
+                               child: Row(
+                                 mainAxisSize: MainAxisSize.min,
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                 children: [
+                                   SizedBox(
+                                     width: 20.w,
+                                     height: 20.h,
+                                     child: Icon(
+                                       Icons.person,
+                                       color: const Color(0xFF1E1E1E),
+                                       size: 20.sp,
+                                     ),
+                                   ),
+                                   SizedBox(width: 8.w),
+                                   Text(
+                                     'Type',
+                                     style: TextStyle(
+                                       color: const Color(0xFF1E1E1E),
+                                       fontSize: 10.sp,
+                                       fontFamily: 'Poppins',
+                                       fontWeight: FontWeight.w400,
+                                       height: 1.60,
+                                     ),
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           ),
+                         ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                            decoration: ShapeDecoration(
+                              color: const Color(0x26848484),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: Icon(
+                                    Icons.fitness_center,
+                                    color: const Color(0xFF1E1E1E),
+                                    size: 20.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  'Gym',
+                                  style: TextStyle(
+                                    color: const Color(0xFF1E1E1E),
+                                    fontSize: 10.sp,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.60,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                            decoration: ShapeDecoration(
+                              color: const Color(0x26848484),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: Icon(
+                                    Icons.sports_gymnastics,
+                                    color: const Color(0xFF1E1E1E),
+                                    size: 20.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  'Equipment',
+                                  style: TextStyle(
+                                    color: const Color(0xFF1E1E1E),
+                                    fontSize: 10.sp,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                    height: 1.60,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                SizedBox(height: 12.h),
+                
+                // Section Header
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                        child: Icon(
+                          Icons.menu,
+                          color: const Color(0xFF1E1E1E),
+                          size: 20.sp,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      Text(
+                        'All exercise',
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: 14.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          height: 1.14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                SizedBox(height: 16.h),
+                
+                // Exercise List
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    children: [
+                      _buildExerciseItem('Exercise Title', '4 Sets x 8 reps', false),
+                      SizedBox(height: 16.h),
+                      _buildExerciseItem('Exercise Title', '4 Sets x 8 reps', true),
+                      SizedBox(height: 16.h),
+                      _buildExerciseItem('Exercise Title', '4 Sets x 8 reps', false),
+                      SizedBox(height: 16.h),
+                      _buildExerciseItem('Exercise Title', '4 Sets x 8 reps', true),
+                      SizedBox(height: 16.h),
+                      _buildExerciseItem('Exercise Title', '4 Sets x 8 reps', false),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExerciseItem(String title, String subtitle, bool isFavorite) {
+    return Container(
+      width: double.infinity,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      width: 1,
+                      color: const Color(0x26848484),
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Container(
+                  width: 48.w,
+                  height: 48.h,
+                  decoration: ShapeDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/exercise_image.png'),
+                      fit: BoxFit.cover,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16.w),
+              SizedBox(
+                width: 115.w,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 115.w,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: 16.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    SizedBox(
+                      width: 115.w,
+                      child: Text(
+                        subtitle,
+                        style: TextStyle(
+                          color: const Color(0xFF848484),
+                          fontSize: 14.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: 24.w,
+            height: 24.h,
+            child: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? const Color(0xFF28A228) : const Color(0xFF848484),
+              size: 24.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateItem(String day, String date, int index) {
+    bool isSelected = _selectedDateIndex == index;
+    return GestureDetector(
+      onTap: () => _onDateSelected(index),
+      child: Container(
+        width: 35.w,
+        height: 50.h,
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(15.r),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              day,
+              style: TextStyle(
+                color: isSelected ? const Color(0xFF28A228) : Colors.white,
+                fontSize: 11.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Text(
+              date,
+              style: TextStyle(
+                color: isSelected ? const Color(0xFF28A228) : Colors.white,
+                fontSize: 11.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomeUI() {
     return Column(
       children: [
         // Header with points, title, and profile
@@ -247,7 +883,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                               child: Container(
                                 height: 7.h,
                                 decoration: ShapeDecoration(
-                                  color: _completedExercises[0] ? const Color(0xFFFFCC4D) : Colors.white, // Light orange when completed
+                                color: _completedExercises[0] ? const Color(0xFFFFCC4D) : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
@@ -259,7 +895,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                               child: Container(
                                 height: 7.h,
                                 decoration: ShapeDecoration(
-                                  color: _completedExercises[1] ? const Color(0xFFFFB366) : Colors.white, // Light orange when completed
+                                color: _completedExercises[1] ? const Color(0xFFFFB366) : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
@@ -271,7 +907,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                               child: Container(
                                 height: 7.h,
                                 decoration: ShapeDecoration(
-                                  color: _completedExercises[2] ? const Color(0xFFFFB366) : Colors.white, // Light orange when completed
+                                color: _completedExercises[2] ? const Color(0xFFFFB366) : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
@@ -415,7 +1051,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                                                  child: ExerciseCard(
                           exerciseTitle: 'Exercise Title',
                           setsAndReps: '4 Sets x 8 reps',
-                          isLocked: index > 0, // First exercise is unlocked
+                          isLocked: index > 0,
                           isSelected: _selectedExerciseIndex == index,
                           isCompleted: _completedExercises[index],
                           onLockTapped: _onLockTapped,
@@ -426,247 +1062,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                    },
                  ),
                ),
-
-              SizedBox(height: 30.h), // Reduced padding for bottom nav
-            ],
-          ),
-        ),
-        
-        // Bottom navigation bar
-        Container(
-          width: double.infinity,
-          decoration: const ShapeDecoration(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w),
-                decoration: const ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x2628A228),
-                      blurRadius: 4,
-                      offset: Offset(4, 0),
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Home tab
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _onTabTapped(0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/logos/home_icon.svg',
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                              colorFilter: ColorFilter.mode(
-                                _getTabColor(0),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            SizedBox(height: 6.h),
-                            Text(
-                              'Home',
-                              style: TextStyle(
-                                color: _getTabColor(0),
-                                fontSize: 12.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                height: 1.33,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Workout tab
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _onTabTapped(1),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/logos/gym_icon.svg',
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                              colorFilter: ColorFilter.mode(
-                                _getTabColor(1),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            SizedBox(height: 6.h),
-                            Text(
-                              'Workout',
-                              style: TextStyle(
-                                color: _getTabColor(1),
-                                fontSize: 12.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                height: 1.33,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Central action button
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _onTabTapped(2),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(14.w),
-                              decoration: ShapeDecoration(
-                                color: _currentIndex == 2
-                                    ? const Color(0xFF28A228)
-                                    : const Color(0xFF28A228),
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                    width: 4,
-                                    strokeAlign: BorderSide.strokeAlignOutside,
-                                    color: Colors.white,
-                                  ),
-                                  borderRadius: BorderRadius.circular(100.r),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 30.w,
-                                    height: 30.h,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/logos/scan_icon.svg',
-                                          width: 28.w,
-                                          height: 28.h,
-                                          fit: BoxFit.contain,
-                                          colorFilter: const ColorFilter.mode(
-                                            Colors.white,
-                                            BlendMode.srcIn,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Report tab
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _onTabTapped(3),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/logos/progressive_icon.svg',
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                              colorFilter: ColorFilter.mode(
-                                _getTabColor(3),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            SizedBox(height: 6.h),
-                            Text(
-                              'report',
-                              style: TextStyle(
-                                color: _getTabColor(3),
-                                fontSize: 12.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                height: 1.33,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Plan tab
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _onTabTapped(4),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/logos/premium_icon.png',
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                              color: _getTabColor(4),
-                            ),
-                            SizedBox(height: 6.h),
-                            Text(
-                              'Plan',
-                              style: TextStyle(
-                                color: _getTabColor(4),
-                                fontSize: 12.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                height: 1.33,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
@@ -674,41 +1069,89 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     );
   }
 
-  Widget _buildDateItem(String day, String date, int index) {
-    bool isSelected = _selectedDateIndex == index;
-    return GestureDetector(
-      onTap: () => _onDateSelected(index),
-      child: Container(
-        width: 35.w,
-        height: 50.h,
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(15.r),
-        ),
+  Widget _buildScanUI() {
+    return Center(
+          child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+          Icon(Icons.qr_code_scanner, size: 64.sp, color: const Color(0xFF848484)),
+          SizedBox(height: 16.h),
+                            Text(
+            'Scan Feature',
+                              style: TextStyle(
+              fontSize: 18.sp,
+              color: const Color(0xFF848484),
+                                fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 8.h),
+                            Text(
+            'Coming Soon',
+                              style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF848484),
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+    );
+  }
+
+  Widget _buildReportUI() {
+    return Center(
+                        child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+          Icon(Icons.bar_chart, size: 64.sp, color: const Color(0xFF848484)),
+          SizedBox(height: 16.h),
+                            Text(
+            'Report Feature',
+                              style: TextStyle(
+              fontSize: 18.sp,
+              color: const Color(0xFF848484),
+                                fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 8.h),
+                            Text(
+            'Coming Soon',
+                              style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0xFF848484),
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ],
+                        ),
+    );
+  }
+
+  Widget _buildPlanUI() {
+    return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+          Icon(Icons.star, size: 64.sp, color: const Color(0xFF848484)),
+          SizedBox(height: 16.h),
             Text(
-              day,
+            'Plan Feature',
               style: TextStyle(
-                color: isSelected ? const Color(0xFF28A228) : Colors.white,
-                fontSize: 11.sp,
+              fontSize: 18.sp,
+              color: const Color(0xFF848484),
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 1.h),
+          SizedBox(height: 8.h),
             Text(
-              date,
+            'Coming Soon',
               style: TextStyle(
-                color: isSelected ? const Color(0xFF28A228) : Colors.white,
-                fontSize: 11.sp,
+              fontSize: 14.sp,
+              color: const Color(0xFF848484),
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
               ),
             ),
           ],
-        ),
       ),
     );
   }
