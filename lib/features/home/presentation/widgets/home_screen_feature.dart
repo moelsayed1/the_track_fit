@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -98,7 +100,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           selectedType: null,
           onTypeSelected: (typeId) {
             // Handle type selection if needed
-            print('Selected type: $typeId');
+            log('Selected type: $typeId');
           },
         ),
       ),
@@ -195,7 +197,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w, bottom: 0.h),
+                    padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w, bottom: 1.h),
                     decoration: const ShapeDecoration(
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
@@ -691,7 +693,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   }
 
   Widget _buildExerciseItem(String title, String subtitle, bool isFavorite) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Row(
         mainAxisSize: MainAxisSize.min,
