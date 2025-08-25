@@ -176,6 +176,9 @@ class AppRouter {
         path: workout,
         name: 'workout',
         builder: (context, state) => const WorkoutScreen(),
+        
+      ),
+      GoRoute(
         path: checkout,
         name: 'checkout',
         builder: (context, state) => const CheckoutScreen(),

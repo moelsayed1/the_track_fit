@@ -1,67 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
-import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
 
-class SelectTypeScreen extends StatefulWidget {
-  final String? selectedType;
-  final Function(String) onTypeSelected;
+class SelectEquipmentScreen extends StatefulWidget {
+  final String? selectedEquipment;
+  final Function(String) onEquipmentSelected;
 
-  const SelectTypeScreen({
+  const SelectEquipmentScreen({
     super.key,
-    this.selectedType,
-    required this.onTypeSelected,
+    this.selectedEquipment,
+    required this.onEquipmentSelected,
   });
 
   @override
-  State<SelectTypeScreen> createState() => _SelectTypeScreenState();
+  State<SelectEquipmentScreen> createState() => _SelectEquipmentScreenState();
 }
 
-class _SelectTypeScreenState extends State<SelectTypeScreen> {
-  late List<WorkoutType> workoutTypes;
-  String? selectedTypeId;
+class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
+  late List<EquipmentOption> equipmentOptions;
+  String? selectedEquipmentId;
 
   @override
   void initState() {
     super.initState();
-    selectedTypeId = widget.selectedType;
-    _initializeWorkoutTypes();
+    selectedEquipmentId = widget.selectedEquipment;
+    _initializeEquipmentOptions();
   }
 
-  void _initializeWorkoutTypes() {
-    workoutTypes = [
-      WorkoutType(
-        id: 'cardio',
-        name: 'Cardio',
-        iconPath: 'assets/images/cardio.png',
-        isSelected: selectedTypeId == 'cardio',
+  void _initializeEquipmentOptions() {
+    equipmentOptions = [
+      EquipmentOption(
+        id: 'no_equipment',
+        name: 'No Equipment',
+        iconPath: null, // No icon for this option
+        isSelected: selectedEquipmentId == 'no_equipment',
       ),
-      WorkoutType(
-        id: 'dumbbell',
-        name: 'dumbbell',
-        iconPath: 'assets/images/gym_icon.png',
-        isSelected: selectedTypeId == 'dumbbell',
+      EquipmentOption(
+        id: 'mat_only',
+        name: 'Mat Only',
+        iconPath: 'assets/images/mat_only.png',
+        isSelected: selectedEquipmentId == 'mat_only',
       ),
-      WorkoutType(
-        id: 'stretching',
-        name: 'Stretching',
-        iconPath: 'assets/images/streching.png',
-        isSelected: selectedTypeId == 'stretching',
+      EquipmentOption(
+        id: 'machines',
+        name: 'Machines',
+        iconPath: 'assets/images/machines.png',
+        isSelected: selectedEquipmentId == 'machines',
       ),
     ];
   }
 
-  void _onTypeSelected(String typeId) {
+  void _onEquipmentSelected(String equipmentId) {
     setState(() {
-      selectedTypeId = typeId;
-      workoutTypes = workoutTypes.map((type) {
-        return type.copyWith(isSelected: type.id == typeId);
+      selectedEquipmentId = equipmentId;
+      equipmentOptions = equipmentOptions.map((option) {
+        return option.copyWith(isSelected: option.id == equipmentId);
       }).toList();
     });
     
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
-      widget.onTypeSelected(typeId);
+      widget.onEquipmentSelected(equipmentId);
       Navigator.pop(context);
     });
   }
@@ -110,7 +109,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                     ),
                     SizedBox(width: responsiveHelper.w(8)),
                     Text(
-                      'Select Type',
+                      'Select Equipment',
                       style: TextStyle(
                         color: const Color(0xFF1E1E1E),
                         fontSize: responsiveHelper.sp(18),
@@ -125,13 +124,13 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               
               SizedBox(height: responsiveHelper.h(16)),
               
-              // Type options list
+              // Equipment options list
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(4)),
                   child: Column(
                     children: [
-                      ...workoutTypes.map((type) => _buildTypeItem(type, responsiveHelper)),
+                      ...equipmentOptions.map((option) => _buildEquipmentItem(option, responsiveHelper)),
                     ],
                   ),
                 ),
@@ -143,16 +142,16 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
     );
   }
 
-  Widget _buildTypeItem(WorkoutType type, ResponsiveHelper responsiveHelper) {
+  Widget _buildEquipmentItem(EquipmentOption option, ResponsiveHelper responsiveHelper) {
     return Column(
       children: [
         GestureDetector(
-          onTap: () => _onTypeSelected(type.id),
+          onTap: () => _onEquipmentSelected(option.id),
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.all(responsiveHelper.w(16)),
             decoration: BoxDecoration(
-              color: type.isSelected 
+              color: option.isSelected 
                   ? const Color(0xFFD8F1D8) // Light green background when selected
                   : Colors.white, // White background when not selected
             ),
@@ -161,28 +160,27 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: responsiveHelper.w(32),
-                  height: responsiveHelper.h(32),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(type.iconPath),
-                      fit: BoxFit.cover,
-                      colorFilter: type.isSelected 
-                          ? const ColorFilter.mode(
-                              Color(0xFF4CAF50), // Green color when selected
-                              BlendMode.srcIn,
-                            )
+                if (option.iconPath != null) ...[
+                  SizedBox(
+                    width: responsiveHelper.w(24),
+                    height: responsiveHelper.h(24),
+                    child: Image.asset(
+                      option.iconPath!,
+                      width: responsiveHelper.w(24),
+                      height: responsiveHelper.h(24),
+                      fit: BoxFit.contain,
+                      color: option.isSelected 
+                          ? const Color(0xFF4CAF50) // Green color when selected
                           : null, // No color filter when not selected
                     ),
                   ),
-                ),
-                SizedBox(width: responsiveHelper.w(8)),
+                  SizedBox(width: responsiveHelper.w(24)),
+                ],
                 Expanded(
                   child: Text(
-                    type.name,
+                    option.name,
                     style: TextStyle(
-                      color: type.isSelected 
+                      color: option.isSelected 
                           ? const Color(0xFF4CAF50) // Green text when selected
                           : const Color(0xFF1E1E1E), // Black text when not selected
                       fontSize: responsiveHelper.sp(16),
@@ -193,7 +191,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                   ),
                 ),
                 // Checkmark icon when selected
-                if (type.isSelected)
+                if (option.isSelected)
                   Icon(
                     Icons.check_circle,
                     color: const Color(0xFF4CAF50), // Green checkmark
@@ -214,6 +212,34 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class EquipmentOption {
+  final String id;
+  final String name;
+  final String? iconPath; // Can be null for "No Equipment"
+  final bool isSelected;
+
+  EquipmentOption({
+    required this.id,
+    required this.name,
+    this.iconPath,
+    this.isSelected = false,
+  });
+
+  EquipmentOption copyWith({
+    String? id,
+    String? name,
+    String? iconPath,
+    bool? isSelected,
+  }) {
+    return EquipmentOption(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      iconPath: iconPath ?? this.iconPath,
+      isSelected: isSelected ?? this.isSelected,
     );
   }
 }

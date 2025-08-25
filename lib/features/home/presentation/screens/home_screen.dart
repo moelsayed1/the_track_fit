@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
  
   Widget _buildExerciseItem(String title, String subtitle, bool isFavorite) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Row(
         mainAxisSize: MainAxisSize.min,

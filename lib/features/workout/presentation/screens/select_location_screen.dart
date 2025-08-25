@@ -1,67 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
-import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
 
-class SelectTypeScreen extends StatefulWidget {
-  final String? selectedType;
-  final Function(String) onTypeSelected;
+class SelectLocationScreen extends StatefulWidget {
+  final String? selectedLocation;
+  final Function(String) onLocationSelected;
 
-  const SelectTypeScreen({
+  const SelectLocationScreen({
     super.key,
-    this.selectedType,
-    required this.onTypeSelected,
+    this.selectedLocation,
+    required this.onLocationSelected,
   });
 
   @override
-  State<SelectTypeScreen> createState() => _SelectTypeScreenState();
+  State<SelectLocationScreen> createState() => _SelectLocationScreenState();
 }
 
-class _SelectTypeScreenState extends State<SelectTypeScreen> {
-  late List<WorkoutType> workoutTypes;
-  String? selectedTypeId;
+class _SelectLocationScreenState extends State<SelectLocationScreen> {
+  late List<LocationOption> locationOptions;
+  String? selectedLocationId;
 
   @override
   void initState() {
     super.initState();
-    selectedTypeId = widget.selectedType;
-    _initializeWorkoutTypes();
+    selectedLocationId = widget.selectedLocation;
+    _initializeLocationOptions();
   }
 
-  void _initializeWorkoutTypes() {
-    workoutTypes = [
-      WorkoutType(
-        id: 'cardio',
-        name: 'Cardio',
-        iconPath: 'assets/images/cardio.png',
-        isSelected: selectedTypeId == 'cardio',
+  void _initializeLocationOptions() {
+    locationOptions = [
+      LocationOption(
+        id: 'home',
+        name: 'At Home',
+        iconPath: 'assets/images/home_icon.png',
+        isSelected: selectedLocationId == 'home',
       ),
-      WorkoutType(
-        id: 'dumbbell',
-        name: 'dumbbell',
+      LocationOption(
+        id: 'gym',
+        name: 'At Gym',
         iconPath: 'assets/images/gym_icon.png',
-        isSelected: selectedTypeId == 'dumbbell',
-      ),
-      WorkoutType(
-        id: 'stretching',
-        name: 'Stretching',
-        iconPath: 'assets/images/streching.png',
-        isSelected: selectedTypeId == 'stretching',
+        isSelected: selectedLocationId == 'gym',
       ),
     ];
   }
 
-  void _onTypeSelected(String typeId) {
+  void _onLocationSelected(String locationId) {
     setState(() {
-      selectedTypeId = typeId;
-      workoutTypes = workoutTypes.map((type) {
-        return type.copyWith(isSelected: type.id == typeId);
+      selectedLocationId = locationId;
+      locationOptions = locationOptions.map((option) {
+        return option.copyWith(isSelected: option.id == locationId);
       }).toList();
     });
     
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
-      widget.onTypeSelected(typeId);
+      widget.onLocationSelected(locationId);
       Navigator.pop(context);
     });
   }
@@ -110,7 +103,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                     ),
                     SizedBox(width: responsiveHelper.w(8)),
                     Text(
-                      'Select Type',
+                      'Select Location',
                       style: TextStyle(
                         color: const Color(0xFF1E1E1E),
                         fontSize: responsiveHelper.sp(18),
@@ -125,13 +118,13 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               
               SizedBox(height: responsiveHelper.h(16)),
               
-              // Type options list
+              // Location options list
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(4)),
                   child: Column(
                     children: [
-                      ...workoutTypes.map((type) => _buildTypeItem(type, responsiveHelper)),
+                      ...locationOptions.map((option) => _buildLocationItem(option, responsiveHelper)),
                     ],
                   ),
                 ),
@@ -143,16 +136,16 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
     );
   }
 
-  Widget _buildTypeItem(WorkoutType type, ResponsiveHelper responsiveHelper) {
+  Widget _buildLocationItem(LocationOption option, ResponsiveHelper responsiveHelper) {
     return Column(
       children: [
         GestureDetector(
-          onTap: () => _onTypeSelected(type.id),
+          onTap: () => _onLocationSelected(option.id),
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.all(responsiveHelper.w(16)),
             decoration: BoxDecoration(
-              color: type.isSelected 
+              color: option.isSelected 
                   ? const Color(0xFFD8F1D8) // Light green background when selected
                   : Colors.white, // White background when not selected
             ),
@@ -161,28 +154,25 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: responsiveHelper.w(32),
-                  height: responsiveHelper.h(32),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(type.iconPath),
-                      fit: BoxFit.cover,
-                      colorFilter: type.isSelected 
-                          ? const ColorFilter.mode(
-                              Color(0xFF4CAF50), // Green color when selected
-                              BlendMode.srcIn,
-                            )
-                          : null, // No color filter when not selected
-                    ),
+                SizedBox(
+                  width: responsiveHelper.w(24),
+                  height: responsiveHelper.h(24),
+                  child: Image.asset(
+                    option.iconPath,
+                    width: responsiveHelper.w(24),
+                    height: responsiveHelper.h(24),
+                    fit: BoxFit.contain,
+                    color: option.isSelected 
+                        ? const Color(0xFF4CAF50) // Green color when selected
+                        : null, // No color filter when not selected
                   ),
                 ),
                 SizedBox(width: responsiveHelper.w(8)),
                 Expanded(
                   child: Text(
-                    type.name,
+                    option.name,
                     style: TextStyle(
-                      color: type.isSelected 
+                      color: option.isSelected 
                           ? const Color(0xFF4CAF50) // Green text when selected
                           : const Color(0xFF1E1E1E), // Black text when not selected
                       fontSize: responsiveHelper.sp(16),
@@ -193,7 +183,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                   ),
                 ),
                 // Checkmark icon when selected
-                if (type.isSelected)
+                if (option.isSelected)
                   Icon(
                     Icons.check_circle,
                     color: const Color(0xFF4CAF50), // Green checkmark
@@ -214,6 +204,34 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class LocationOption {
+  final String id;
+  final String name;
+  final String iconPath;
+  final bool isSelected;
+
+  LocationOption({
+    required this.id,
+    required this.name,
+    required this.iconPath,
+    this.isSelected = false,
+  });
+
+  LocationOption copyWith({
+    String? id,
+    String? name,
+    String? iconPath,
+    bool? isSelected,
+  }) {
+    return LocationOption(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      iconPath: iconPath ?? this.iconPath,
+      isSelected: isSelected ?? this.isSelected,
     );
   }
 }
