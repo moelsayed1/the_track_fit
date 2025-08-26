@@ -6,6 +6,7 @@ import 'package:the_track_fit/features/onboarding/presentation/screens/onboardin
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
 import 'package:the_track_fit/features/questions/weight/ui/widgets/question_done.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
+import 'package:the_track_fit/features/scan_meals/presentation/screens/widgets/scan_your_meal.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding1_screen.dart';
@@ -57,6 +58,7 @@ class AppRouter {
   static const String workout = '/workout';
   static const String checkout = '/checkout';
   static const String meal = '/meal';
+  static const String scanYourMeal = '/scan-your-meal';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -196,6 +198,11 @@ class AppRouter {
         path: checkout,
         name: 'checkout',
         builder: (context, state) => const CheckoutScreen(),
+      ),
+      GoRoute(
+        path: scanYourMeal,
+        name: 'scanYourMeal',
+        builder: (context, state) => const ScanYourMeal(),
       ),
       GoRoute(
         path: productDetail,
