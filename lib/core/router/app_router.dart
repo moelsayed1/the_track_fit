@@ -4,6 +4,8 @@ import 'package:the_track_fit/features/home/presentation/widgets/home_screen_fea
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding3_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
+import 'package:the_track_fit/features/questions/weight/ui/widgets/question_done.dart';
+import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding1_screen.dart';
@@ -46,6 +48,7 @@ class AppRouter {
   static const String fitnessLevel = '/fitness-level';
   static const String heightQuestion = '/height-question';
   static const String weightQuestion = '/weight-question';
+  static const String questionDone = '/question-done';
   static const String plan = '/plan';
   static const String promotionalOffer = '/promotional-offer';
   static const String store = '/store';
@@ -53,6 +56,7 @@ class AppRouter {
   static const String cart = '/cart';
   static const String workout = '/workout';
   static const String checkout = '/checkout';
+  static const String meal = '/meal';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -153,6 +157,11 @@ class AppRouter {
         builder: (context, state) => const WeightQuestionScreen(),
       ),
       GoRoute(
+        path: questionDone,
+        name: 'questionDone',
+        builder: (context, state) => const QuestionDone(),
+      ),
+      GoRoute(
         path: plan,
         name: 'plan',
         builder: (context, state) => const PlanScreen(),
@@ -177,6 +186,11 @@ class AppRouter {
         name: 'workout',
         builder: (context, state) => const WorkoutScreen(),
         
+      ),
+      GoRoute(
+        path: meal,
+        name: 'meal',
+        builder: (context, state) => const MealScreen(),
       ),
       GoRoute(
         path: checkout,
