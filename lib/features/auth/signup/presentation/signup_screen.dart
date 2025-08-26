@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/responsive_helper.dart';
@@ -73,11 +74,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void _handleSignup() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement signup logic
+      context.push(AppRouter.genderQuestion);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Account created successfully!')),
       );
-      context.push('/home');
     }
   }
 
