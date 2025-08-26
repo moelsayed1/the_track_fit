@@ -173,29 +173,27 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                         else if (_scanComplete)
                           // Show camera icon placeholder after scan complete
                           Center(
-                            child: Container(
-                              width: 80.w,
-                              height: 80.h,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: const Color(0xFF28A228).withValues(alpha: 0.1),
-                              ),
-                              child: Center(
+                            child: GestureDetector(
+                              onTap: _openCamera,
+                              child: Container(
+                                padding: EdgeInsets.all(12.w), // للتحكم في حجم الدائرة
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFF28A228).withValues(alpha: 0.2), // لون البوردر الخارجي
+                                    width: 2.w, // سمك البوردر
+                                  ),
+                                ),
                                 child: Container(
-                                  width: 28.w,
-                                  height: 28.h,
+                                  padding: EdgeInsets.all(24.w),
                                   decoration: BoxDecoration(
+                                    color: const Color(0xFF28A228).withValues(alpha: 0.2), // الخلفية الداخلية الفاتحة
                                     shape: BoxShape.circle,
-                                    color: const Color(0xFF28A228).withValues(alpha: 0.3),
                                   ),
                                   child: SvgPicture.asset(
                                     'assets/images/camera.svg',
                                     width: 28.w,
                                     height: 28.h,
-                                    // colorFilter: const ColorFilter.mode(
-                                    //   Color(0xFF28A228),
-                                    //   BlendMode.srcIn,
-                                    // ),
                                   ),
                                 ),
                               ),
