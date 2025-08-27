@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/index.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1: // Workout
         return WorkoutScreen();
       case 2: // Scan
-        return _ScanTabContent();
+        return  MealScreen();
       case 3: // Report
         return _ReportTabContent();
       case 4: // Plan
@@ -82,95 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
  
-  Widget _buildExerciseItem(String title, String subtitle, bool isFavorite) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                      width: 1,
-                      color: const Color(0x26848484),
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: Container(
-                  width: 48.w,
-                  height: 48.h,
-                  decoration: ShapeDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/exercise_image.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 16.w),
-              SizedBox(
-                width: 115.w,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 115.w,
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                          color: const Color(0xFF1E1E1E),
-                          fontSize: 16.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    SizedBox(
-                      width: 115.w,
-                      child: Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: const Color(0xFF848484),
-                          fontSize: 14.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            width: 24.w,
-            height: 24.h,
-            child: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? const Color(0xFF28A228) : const Color(0xFF848484),
-              size: 24.sp,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _ScanTabContent() {
     return Center(

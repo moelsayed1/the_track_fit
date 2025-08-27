@@ -131,7 +131,8 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                       ),
                     ),
                   
-                  if (_isScanning) SizedBox(height: 24.h),
+                  if (_isScanning) 
+                  SizedBox(height: 24.h),
                   
                   // Dashed Rectangle Scanning Area
                   Container(

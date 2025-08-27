@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
-import 'package:the_track_fit/features/scan_meals/presentation/screens/widgets/scan_your_meal.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/widgets/date_selector.dart';
