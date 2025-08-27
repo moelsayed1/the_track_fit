@@ -1,13 +1,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/constants/app_assets.dart';
+
 import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_type_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_location_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_equipment_screen.dart';
+import 'package:the_track_fit/features/workout/presentation/widgets/esercise_detail.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -728,124 +732,129 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                             ...filteredExercises.asMap().entries.map((entry) {
                               final index = entry.key;
                               final exercise = entry.value;
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.all(responsiveHelper.w(8)),
-                                              decoration: ShapeDecoration(
-                                                shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                    width: 1,
-                                                    color: const Color(0x26848484),
+                              return GestureDetector(
+                                onTap: () {
+                                 context.push(AppRouter.exerciseDetail, extra: exercise);
+                                },
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(responsiveHelper.w(8)),
+                                                decoration: ShapeDecoration(
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                      width: 1,
+                                                      color: const Color(0x26848484),
+                                                    ),
+                                                    borderRadius: BorderRadius.circular(15),
                                                   ),
-                                                  borderRadius: BorderRadius.circular(15),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: responsiveHelper.w(48),
+                                                      height: responsiveHelper.h(48),
+                                                      decoration: ShapeDecoration(
+                                                        image: DecorationImage(
+                                                          image: AssetImage(exercise.imagePath),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    width: responsiveHelper.w(48),
-                                                    height: responsiveHelper.h(48),
-                                                    decoration: ShapeDecoration(
-                                                      image: DecorationImage(
-                                                        image: AssetImage(exercise.imagePath),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(10),
+                                              SizedBox(width: responsiveHelper.w(16)),
+                                              SizedBox(
+                                                width: responsiveHelper.w(115),
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: responsiveHelper.w(115),
+                                                      child: Text(
+                                                        exercise.title,
+                                                        style: TextStyle(
+                                                          color: const Color(0xFF1E1E1E), // black
+                                                          fontSize: responsiveHelper.sp(16),
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(height: responsiveHelper.h(4)),
+                                                    SizedBox(
+                                                      width: responsiveHelper.w(115),
+                                                      child: Text(
+                                                        exercise.subtitle,
+                                                        style: TextStyle(
+                                                          color: const Color(0xFF848484), // gray
+                                                          fontSize: responsiveHelper.sp(14),
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight: FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(width: responsiveHelper.w(16)),
-                                            SizedBox(
-                                              width: responsiveHelper.w(115),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    width: responsiveHelper.w(115),
-                                                    child: Text(
-                                                      exercise.title,
-                                                    style: TextStyle(
-                                                      color: const Color(0xFF1E1E1E), // black
-                                                      fontSize: responsiveHelper.sp(16),
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight: FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(height: responsiveHelper.h(4)),
-                                                SizedBox(
-                                                  width: responsiveHelper.w(115),
-                                                  child: Text(
-                                                    exercise.subtitle,
-                                                    style: TextStyle(
-                                                      color: const Color(0xFF848484), // gray
-                                                      fontSize: responsiveHelper.sp(14),
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight: FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            width: responsiveHelper.w(24),
+                                            height: responsiveHelper.h(24),
+                                            child: GestureDetector(
+                                              onTap: () => _toggleFavorite(exercise.id),
+                                              child: Icon(
+                                                exercise.isFavorite ? Icons.favorite : Icons.favorite_border,
+                                                color: exercise.isFavorite ? AppColors.primaryGreen : const Color(0xFF848484),
+                                                size: responsiveHelper.sp(24),
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      SizedBox(
-                                        width: responsiveHelper.w(24),
-                                        height: responsiveHelper.h(24),
-                                        child: GestureDetector(
-                                          onTap: () => _toggleFavorite(exercise.id),
-                                          child: Icon(
-                                            exercise.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                            color: exercise.isFavorite ? AppColors.primaryGreen : const Color(0xFF848484),
-                                            size: responsiveHelper.sp(24),
+                                    ),
+                                    SizedBox(height: responsiveHelper.h(16)),
+                                    if (index < filteredExercises.length - 1)
+                                      Container(
+                                        width: double.infinity,
+                                        height: responsiveHelper.h(1),
+                                        decoration: ShapeDecoration(
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                              width: 1,
+                                              strokeAlign: BorderSide.strokeAlignCenter,
+                                              color: const Color(0x26848484),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    SizedBox(height: responsiveHelper.h(16)),
+                                  ],
                                 ),
-                                SizedBox(height: responsiveHelper.h(16)),
-                                if (index < filteredExercises.length - 1)
-                                  Container(
-                                    width: double.infinity,
-                                    height: responsiveHelper.h(1),
-                                    decoration: ShapeDecoration(
-                                      shape: RoundedRectangleBorder(
-                                        side: BorderSide(
-                                          width: 1,
-                                          strokeAlign: BorderSide.strokeAlignCenter,
-                                          color: const Color(0x26848484),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                SizedBox(height: responsiveHelper.h(16)),
-                              ],
-                            );
-                          }),
+                              );
+                            }),
                         ],
                       ),
                     ),

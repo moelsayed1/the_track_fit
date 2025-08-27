@@ -15,6 +15,7 @@ class AppAssets {
   static const String exerciseImage2 = 'assets/images/exercise_image2.png';
   static const String exerciseTest = 'assets/images/exercise_test.svg';
   static const String cardioTypeImage = 'assets/images/cardio_type.png';
+  static const String exerciseGif = 'assets/images/exercise.gif';
 
 
   // Icons

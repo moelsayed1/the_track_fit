@@ -7,6 +7,8 @@ import 'package:the_track_fit/features/onboarding/presentation/screens/onboardin
 import 'package:the_track_fit/features/questions/weight/ui/widgets/question_done.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/widgets/scan_your_meal.dart';
+import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
+import 'package:the_track_fit/features/workout/presentation/widgets/esercise_detail.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding1_screen.dart';
@@ -56,6 +58,7 @@ class AppRouter {
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';
   static const String workout = '/workout';
+  static const String exerciseDetail = '/exercise-detail';
   static const String checkout = '/checkout';
   static const String meal = '/meal';
   static const String scanYourMeal = '/scan-your-meal';
@@ -188,6 +191,11 @@ class AppRouter {
         name: 'workout',
         builder: (context, state) => const WorkoutScreen(),
         
+      ),
+      GoRoute(
+        path: exerciseDetail,
+        name: 'exerciseDetail',
+        builder: (context, state) => ExerciseDetail(exercise: state.extra as Exercise),
       ),
       GoRoute(
         path: meal,
