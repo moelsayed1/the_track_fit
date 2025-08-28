@@ -328,72 +328,73 @@ class _ReportScreenState extends State<ReportScreen> {
                     gridData: const FlGridData(show: false),
                   ),
                 ),
-                if (hoveredTooltip != null && tooltipPosition != null)
-                  Positioned(
-                    left: tooltipPosition!.dx,
-                    top: tooltipPosition!.dy,
-                    child: _buildCustomTooltip(
-                      hoveredTooltip!,
-                      hoveredImagePath!,
-                      responsiveHelper,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          SizedBox(height: responsiveHelper.h(24)),
-          Divider(
-            color: Colors.grey.withValues(alpha: 0.2),
-            height: 1,
-            thickness: 2,
-          ),
-          SizedBox(height: responsiveHelper.h(24)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLegend(
-                responsiveHelper: responsiveHelper,
-                color: const Color(0xFF28A228),
-                text: "Minutes",
-              ),
-              SizedBox(width: responsiveHelper.w(80)),
-              _buildLegend(
-                responsiveHelper: responsiveHelper,
-                color: const Color(0xFFCB574D),
-                text: "Kcal",
-              ),
-            ],
-          ),
-          if (isDropdownOpen)
-            Positioned(
-              top: responsiveHelper.h(50),
-              right: responsiveHelper.w(0),
-              child: Container(
-                width: responsiveHelper.w(160),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDropdownItem("Today", responsiveHelper),
-                    _buildDropdownItem("This Week", responsiveHelper),
-                    _buildDropdownItem("Last week", responsiveHelper),
-                    _buildDropdownItem("Last Month", responsiveHelper),
-                    _buildDropdownItem("Last 6 months", responsiveHelper),
-                  ],
-                ),
-              ),
-            ),
-                      ],
+                                 if (hoveredTooltip != null && tooltipPosition != null)
+                   Positioned(
+                     left: tooltipPosition!.dx,
+                     top: tooltipPosition!.dy,
+                     child: _buildCustomTooltip(
+                       hoveredTooltip!,
+                       hoveredImagePath!,
+                       responsiveHelper,
+                     ),
+                   ),
+                 // Dropdown positioned relative to the Stack
+                                   if (isDropdownOpen)
+                    Positioned(
+                      top: responsiveHelper.h(0),
+                      right: -responsiveHelper.w(10),
+                      child: Container(
+                       width: responsiveHelper.w(160),
+                       decoration: BoxDecoration(
+                         color: Colors.white,
+                         borderRadius: BorderRadius.circular(12.r),
+                         boxShadow: [
+                           BoxShadow(
+                             color: Colors.black.withValues(alpha: 0.1),
+                             blurRadius: 8,
+                             offset: const Offset(0, 4),
+                           ),
+                         ],
+                       ),
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           _buildDropdownItem("Today", responsiveHelper),
+                           _buildDropdownItem("This Week", responsiveHelper),
+                           _buildDropdownItem("Last week", responsiveHelper),
+                           _buildDropdownItem("Last Month", responsiveHelper),
+                           _buildDropdownItem("Last 6 months", responsiveHelper),
+                         ],
+                       ),
+                     ),
+                   ),
+               ],
+             ),
+           ),
+           SizedBox(height: responsiveHelper.h(24)),
+           Divider(
+             color: Colors.grey.withValues(alpha: 0.2),
+             height: 1,
+             thickness: 2,
+           ),
+           SizedBox(height: responsiveHelper.h(24)),
+           Row(
+             mainAxisAlignment: MainAxisAlignment.center,
+             children: [
+               _buildLegend(
+                 responsiveHelper: responsiveHelper,
+                 color: const Color(0xFF28A228),
+                 text: "Minutes",
+               ),
+               SizedBox(width: responsiveHelper.w(80)),
+               _buildLegend(
+                 responsiveHelper: responsiveHelper,
+                 color: const Color(0xFFCB574D),
+                 text: "Kcal",
+               ),
+             ],
+           ),
+                       ],
           ),
         ],
       ),
