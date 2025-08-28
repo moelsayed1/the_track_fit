@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
+import 'package:the_track_fit/features/plans/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/workout_screen.dart';
@@ -180,8 +182,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             Expanded(
               child: _buildContentForTab(_currentIndex),
             ),
-            // Bottom navigation bar
-            Container(
+            // Hide bottom navigation bar when showing Plan tab
+            if (_currentIndex != 4)
+              Container(
               width: double.infinity,
               decoration: const ShapeDecoration(
                 color: Colors.white,
@@ -435,7 +438,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       case 3: // Report
         return ReportScreen();
       case 4: // Plan
-        return _buildPlanUI();
+        return PlanSubscriptionScreen();
       default:
         return _buildHomeUI();
     }
@@ -581,7 +584,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                           ],
                         ),
                        SizedBox(height: 6.h),
-                                               Text(
+                       Text(
                           '$_completedWorkoutsCount/3 workouts',
                           style: TextStyle(
                             color: Colors.white,

@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
+import 'package:the_track_fit/features/plans/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/index.dart';
@@ -42,11 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: _buildContentForTab(_currentIndex),
             ),
-            _BottomNavBar(
-              currentIndex: _currentIndex,
-              onTabTapped: _onTabTapped,
-              getTabColor: _getTabColor,
-            ),
+            // Hide bottom navigation bar when showing Plan tab
+            if (_currentIndex != 4)
+              _BottomNavBar(
+                currentIndex: _currentIndex,
+                onTabTapped: _onTabTapped,
+                getTabColor: _getTabColor,
+              ),
           ],
         ),
       ),
@@ -77,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3: // Report
         return ReportScreen();
       case 4: // Plan
-        return _PlanTabContent();
+        return PlanSubscriptionScreen();
       default:
         return _HomeTabContent();
     }
