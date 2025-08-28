@@ -4,6 +4,9 @@ import 'package:the_track_fit/features/home/presentation/widgets/home_screen_fea
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding3_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
+import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
+import 'package:the_track_fit/features/plan/presentation/widgets/premium_plan.dart';
+import 'package:the_track_fit/features/plan/presentation/widgets/subscribtion_done.dart';
 import 'package:the_track_fit/features/questions/weight/ui/widgets/question_done.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
@@ -24,13 +27,12 @@ import '../../features/questions/gender_question/presentation/ui/gender_question
 import '../../features/questions/fitness_level/ui/fitness_level_screen.dart';
 import '../../features/questions/height/ui/height_screen.dart';
 import '../../features/questions/weight/ui/weight_screen.dart';
-import '../../features/plans/presentation/screens/plan_screen.dart';
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 import '../../features/store/presentation/ui/screens/store_screen.dart';
 import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
 import '../../features/workout/presentation/screens/workout_screen.dart';
-
 import '../../features/cart/presentation/screens/checkout_screen.dart';
+import '../../features/plan/presentation/widgets/checkout_plan_screen.dart';
 
 
 class AppRouter {
@@ -64,6 +66,10 @@ class AppRouter {
   static const String meal = '/meal';
   static const String scanYourMeal = '/scan-your-meal';
   static const String report = '/report';
+  static const String planSubscription = '/plan-subscription';
+  static const String checkoutPlan = '/checkout-plan';
+  static const String subscribtionDone = '/subscribtion-done';
+  static const String premiumPlan = '/premium-plan';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -171,7 +177,17 @@ class AppRouter {
       GoRoute(
         path: plan,
         name: 'plan',
-        builder: (context, state) => const PlanScreen(),
+        builder: (context, state) => const PlanSubscriptionScreen(),
+      ),
+      GoRoute(
+        path: checkoutPlan,
+        name: 'checkoutPlan',
+        builder: (context, state) => const CheckoutPlanScreen(),
+      ),
+      GoRoute(
+        path: premiumPlan,
+        name: 'premiumPlan',
+        builder: (context, state) => const PremiumPlan(),
       ),
       GoRoute(
         path: promotionalOffer,
@@ -213,6 +229,16 @@ class AppRouter {
         path: report,
         name: 'report',
         builder: (context, state) => const ReportScreen(),
+      ),
+      GoRoute(
+        path: planSubscription,
+        name: 'planSubscription',
+        builder: (context, state) => const PlanSubscriptionScreen(),
+      ),
+      GoRoute(
+        path: subscribtionDone,
+        name: 'subscribtionDone',
+        builder: (context, state) => const SubscribtionDone(),
       ),
       GoRoute(
         path: scanYourMeal,
