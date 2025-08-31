@@ -13,10 +13,18 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? selectedSection;
+  String currentLanguage = 'Arabic'; // Default language
 
   void _selectSection(String section) {
     setState(() {
       selectedSection = section;
+    });
+  }
+
+  void _toggleLanguage() {
+    setState(() {
+      currentLanguage = currentLanguage == 'Arabic' ? 'English' : 'Arabic';
+      selectedSection = 'Language';
     });
   }
 
@@ -25,12 +33,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SingleChildScrollView(
-        child: Stack(
-          children: [
+    child: Stack(
+        children: [
             // Green background container (Top Wave)
             Positioned(
               top: 0,
-              left: 0,
+                left: 0,
               right: 0,
               child: ClipPath(
                 clipper: TopWaveClipper(), // استخدام الـ Clipper المحدث
@@ -50,19 +58,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Profile Content
                   _buildProfileContent(),
                 ],
-              ),
-            ),
-          ],
-        ),
-      ),
+                                ),
+                            ),
+                        ],
+                    ),
+                ),
     );
   }
 
   Widget _buildProfileHeader() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        children: [
+                    child: Column(
+                        children: [
           SizedBox(height: 16.h),
           // Back Button
           Align(
@@ -82,10 +90,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Color(0xFF1E1E1E),
                     BlendMode.srcIn,
                   ),
-                ),
-              ),
-            ),
-          ),
+                                                    ),
+                                                ),
+                                            ),
+                                        ),
           
           SizedBox(height: 20.h),
           
@@ -107,16 +115,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 8.h),
                 Text(
                   'Disha', // تم تغيير الاسم ليتناسب مع الصورة
-                  style: TextStyle(
+                                    style: TextStyle(
                     color: const Color(0xFF1E1E1E),
                     fontSize: 16.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                  ),
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                ),
+                            ),
+                        ],
+                    ),
                 ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -125,8 +133,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfileContent() {
     return Padding(
       padding: EdgeInsets.all(16.w),
-      child: Column(
-        children: [
+                    child: Column(
+                        children: [
           SizedBox(height: 16.h),
           
           // Products Section
@@ -169,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context.push(AppRouter.store);
       },
       child: Container(
-        width: double.infinity,
+                                width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0x2628A228) : Colors.white,
@@ -178,9 +186,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: isSelected ? const Color(0xFF28A228) : const Color(0x26848484),
             width: 1.w,
           ),
-        ),
-        child: Row(
-          children: [
+                                ),
+                                child: Row(
+                                    children: [
             SvgPicture.asset(
               'assets/images/product_profile.svg',
               width: 24.w,
@@ -191,56 +199,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             SizedBox(width: 8.w),
-            Text(
-              'Products',
-              style: TextStyle(
+                                        Text(
+                                            'Products',
+                                            style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                                                fontFamily: 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+                                            ),
+                                        ),
+                                    ],
+                                ),
+                            ),
     );
   }
 
   Widget _buildProfileManagementSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
         Text(
-          'Profile Management',
-          style: TextStyle(
+                                                            'Profile Management',
+                                                            style: TextStyle(
             color: const Color(0xFF1E1E1E),
             fontSize: 14.sp,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+                                                                fontFamily: 'Poppins',
+                                                                fontWeight: FontWeight.w400,
+                                                            ),
+                                                        ),
         SizedBox(height: 8.h),
-        Container(
-          width: double.infinity,
+                                                    Container(
+                                                        width: double.infinity,
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+                                                            color: Colors.white,
             borderRadius: BorderRadius.circular(15.r),
             border: Border.all(
-              color: const Color(0x26848484),
+                                                                    color: const Color(0x26848484),
               width: 1.w,
-            ),
+                                                                ),
             boxShadow: [
-              BoxShadow(
+                                                                BoxShadow(
                 color: const Color(0x19000000),
                 blurRadius: 4.r,
-                offset: Offset(0, 0),
-                spreadRadius: 0,
+                                                                    offset: Offset(0, 0),
+                                                                    spreadRadius: 0,
               ),
-            ],
-          ),
-          child: Column(
-            children: [
+                                                            ],
+                                                        ),
+                                                        child: Column(
+                                                            children: [
               _buildProfileItem(
                 icon: 'assets/images/edit_profile.svg',
                 title: 'Edit Profile',
@@ -255,49 +263,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: 'assets/images/card_payment.png',
                 title: 'Payment Info',
                 showDivider: false,
-              ),
-            ],
-          ),
-        ),
-      ],
+                                                                ),
+                                                            ],
+                                                        ),
+                                                    ),
+                                                ],
     );
   }
 
   Widget _buildSettingsSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
         Text(
-          'Setting',
-          style: TextStyle(
+                                                            'Setting',
+                                                            style: TextStyle(
             color: const Color(0xFF1E1E1E),
             fontSize: 14.sp,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
-          ),
-        ),
+                                                                fontFamily: 'Poppins',
+                                                                fontWeight: FontWeight.w400,
+                                                            ),
+                                                        ),
         SizedBox(height: 8.h),
-        Container(
-          width: double.infinity,
+                                                    Container(
+                                                        width: double.infinity,
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+                                                            color: Colors.white,
             borderRadius: BorderRadius.circular(15.r),
             border: Border.all(
-              color: const Color(0x26848484),
+                                                                    color: const Color(0x26848484),
               width: 1.w,
-            ),
+                                                                ),
             boxShadow: [
-              BoxShadow(
+                                                                BoxShadow(
                 color: const Color(0x19000000),
                 blurRadius: 4.r,
-                offset: Offset(0, 0),
-                spreadRadius: 0,
+                                                                    offset: Offset(0, 0),
+                                                                    spreadRadius: 0,
               ),
-            ],
-          ),
-          child: Column(
-            children: [
+                                                            ],
+                                                        ),
+                                                        child: Column(
+                                                            children: [
               _buildProfileItem(
                 icon: 'assets/images/lock_icon.svg',
                 title: 'Change Password',
@@ -305,16 +313,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               _buildLanguageItem(),
             ],
-          ),
-        ),
-      ],
+                                                                            ),
+                                                                        ),
+                                                                    ],
     );
   }
 
   Widget _buildNotificationsSection() {
     bool isSelected = selectedSection == "Notifications";
     return GestureDetector(
-      onTap: () => _selectSection("Notifications"),
+      onTap: () {
+        _selectSection("Notifications");
+        context.push('/notification');
+      },
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
@@ -326,8 +337,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 1.w,
           ),
         ),
-        child: Row(
-          children: [
+                                                                    child: Row(
+                                                                        children: [
             SvgPicture.asset(
               'assets/images/notification.svg',
               width: 24.w,
@@ -338,25 +349,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             SizedBox(width: 8.w),
-            Text(
+                                                                            Text(
               'Notifications',
-              style: TextStyle(
+                                                                                style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                                                                                    fontFamily: 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+                                                                                ),
+                                                                            ),
+                                                                        ],
+                                                                    ),
+                                                                ),
     );
   }
 
   Widget _buildMainGoalSection() {
     bool isSelected = selectedSection == "Main Goal";
     return GestureDetector(
-      onTap: () => _selectSection("Main Goal"),
+      onTap: () {
+        _selectSection("Main Goal");
+        context.push('/main-goal');
+      },
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
@@ -387,20 +401,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontSize: 16.sp,
                 fontFamily: 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
     );
   }
 
   Widget _buildFavouriteExerciseSection() {
     bool isSelected = selectedSection == "Favourite Exercise";
     return GestureDetector(
-      onTap: () => _selectSection("Favourite Exercise"),
+      onTap: () {
+        _selectSection("Favourite Exercise");
+        context.push(AppRouter.favouriteExercise);
+      },
       child: Container(
-        width: double.infinity,
+                                            width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0x2628A228) : Colors.white,
@@ -409,9 +426,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: isSelected ? const Color(0xFF28A228) : const Color(0x26848484),
             width: 1.w,
           ),
-        ),
-        child: Row(
-          children: [
+                                            ),
+                                            child: Row(
+                                                children: [
             SvgPicture.asset(
               'assets/images/favourite.svg',
               width: 24.w,
@@ -422,18 +439,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             SizedBox(width: 8.w),
-            Text(
+                                                    Text(
               'Favourite Exercise',
-              style: TextStyle(
+                                                        style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                                                            fontFamily: 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
     );
   }
 
@@ -480,26 +497,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: const Color(0xFF28A228),
                     ),
               SizedBox(width: 8.w),
-              Text(
+                                                    Text(
                 title,
-                style: TextStyle(
+                                                        style: TextStyle(
                   color: isSelected ? const Color(0xFF28A228) : const Color(0xFF1E1E1E),
                   fontSize: 16.sp,
-                  fontFamily: 'Poppins',
+                                                            fontFamily: 'Poppins',
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            ),
           if (showDivider) ...[
             SizedBox(height: 16.h),
-            Container(
+                                        Container(
               width: 311.w,
               height: 1.h,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: const Color(0x26848484),
+                                                        color: const Color(0x26848484),
                     width: 1.w,
                   ),
                 ),
@@ -515,14 +532,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildLanguageItem() {
     bool isSelected = selectedSection == "Language";
     return GestureDetector(
-      onTap: () => _selectSection("Language"),
+      onTap: () => _toggleLanguage(),
       child: Container(
         color: Colors.transparent,
-        child: Row(
+                                            child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              children: [
+                                                children: [
                 SvgPicture.asset(
                   'assets/images/language.svg',
                   width: 24.w,
@@ -533,29 +550,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                Text(
+                                                    Text(
                   'Language',
-                  style: TextStyle(
+                                                        style: TextStyle(
                     color: isSelected ? const Color(0xFF28A228) : const Color(0xFF1E1E1E),
                     fontSize: 16.sp,
-                    fontFamily: 'Poppins',
+                                                            fontFamily: 'Poppins',
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
+                                                        ),
+                                                    ),
+                                                ],
+                                            ),
             Text(
-              'Arabic',
+              currentLanguage,
               style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : const Color(0xFF1E1E1E),
                 fontSize: 14.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      ),
+                                ),
+                            ),
+                        ],
+                    ),
+                ),
     );
   }
 }

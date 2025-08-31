@@ -37,22 +37,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
+      // body الآن يحتوي على المحتوى الرئيسي فقط، مع SafeArea لضمان الجزء العلوي
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: _buildContentForTab(_currentIndex),
-            ),
-            // Hide bottom navigation bar when showing Plan tab
-            if (_currentIndex != 4)
-              _BottomNavBar(
-                currentIndex: _currentIndex,
-                onTabTapped: _onTabTapped,
-                getTabColor: _getTabColor,
-              ),
-          ],
-        ),
+        top: true, // حماية الجزء العلوي فقط
+        bottom: false, // لا تحمي الجزء السفلي هنا، Scaffold سيتولى أمر bottomNavigationBar
+        child: _buildContentForTab(_currentIndex),
       ),
+      // استخدام bottomNavigationBar المخصص في Scaffold
+      bottomNavigationBar: _currentIndex != 4
+          ? _BottomNavBar(
+              currentIndex: _currentIndex,
+              onTabTapped: _onTabTapped,
+              getTabColor: _getTabColor,
+            )
+          : null, // لا تعرض شريط التنقل إذا كانت الشاشة هي 'Plan'
     );
   }
 
@@ -76,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1: // Workout
         return WorkoutScreen();
       case 2: // Scan
-        return  MealScreen();
+        return MealScreen();
       case 3: // Report
         return ReportScreen();
       case 4: // Plan
@@ -85,8 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return _HomeTabContent();
     }
   }
-
- 
 
   Widget _ScanTabContent() {
     return Center(
@@ -518,6 +514,7 @@ class _BottomNavBar extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
+            height: 85.h,
             padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w),
             decoration: const ShapeDecoration(
               color: Colors.white,
@@ -538,7 +535,7 @@ class _BottomNavBar extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
+             // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _NavBarItem(
                   icon: SvgPicture.asset(
@@ -635,6 +632,8 @@ class _NavBarItem extends StatelessWidget {
         onTap: onTap,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             icon,
             SizedBox(height: 6.h),

@@ -18,6 +18,28 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
   bool isCurrentPasswordVisible = false;
   bool isNewPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
+  bool showActionButtons = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Add listeners to all controllers to detect when text changes
+    currentPasswordController.addListener(_checkIfShouldShowButtons);
+    newPasswordController.addListener(_checkIfShouldShowButtons);
+    confirmPasswordController.addListener(_checkIfShouldShowButtons);
+  }
+
+  void _checkIfShouldShowButtons() {
+    bool hasText = currentPasswordController.text.isNotEmpty ||
+                   newPasswordController.text.isNotEmpty ||
+                   confirmPasswordController.text.isNotEmpty;
+    
+    if (hasText != showActionButtons) {
+      setState(() {
+        showActionButtons = hasText;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -48,99 +70,156 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
-        child: Stack(
+        child: Column( // استخدام Column بدلاً من Stack لتنظيم العناصر عمودياً
           children: [
-            // Main Content
-            SingleChildScrollView(
-              child: Column(
+            // Custom Header at the top
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: const BoxDecoration(color: Color(0x26848484)),
+              child: Row(
                 children: [
-                  SizedBox(height: 65.h),
-
-                  // Password Input Fields Container
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
-                    child: SizedBox(
-                      width: 347.w,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          // Current Password Field
-                          _buildPasswordField(
-                            controller: currentPasswordController,
-                            hintText: 'Current Password',
-                            isPasswordVisible: isCurrentPasswordVisible,
-                            onToggleVisibility: () => _togglePasswordVisibility('current'),
-                          ),
-
-                          SizedBox(height: 16.h),
-
-                          // New Password Field
-                          _buildPasswordField(
-                            controller: newPasswordController,
-                            hintText: 'New Password',
-                            isPasswordVisible: isNewPasswordVisible,
-                            onToggleVisibility: () => _togglePasswordVisibility('new'),
-                          ),
-
-                          SizedBox(height: 16.h),
-
-                          // Confirm Password Field
-                          _buildPasswordField(
-                            controller: confirmPasswordController,
-                            hintText: 'Confirm Password',
-                            isPasswordVisible: isConfirmPasswordVisible,
-                            onToggleVisibility: () => _togglePasswordVisibility('confirm'),
-                          ),
-                        ],
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: SvgPicture.asset(
+                      'assets/logos/arrow_left.svg',
+                      width: 24.w,
+                      height: 24.h,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF1E1E1E),
+                        BlendMode.srcIn,
                       ),
                     ),
                   ),
-
-                  SizedBox(height: 100.h), // Bottom spacing
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Change Password',
+                    style: TextStyle(
+                      color: const Color(0xFF1E1E1E),
+                      fontSize: 18.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                      height: 0.89,
+                    ),
+                  ),
                 ],
               ),
             ),
+            
+            // Main Content (Input Fields)
+            Expanded( // Expanded يأخذ كل المساحة المتاحة
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 24.h),
+                      _buildPasswordField(
+                        controller: currentPasswordController,
+                        hintText: 'Current Password',
+                        isPasswordVisible: isCurrentPasswordVisible,
+                        onToggleVisibility: () => _togglePasswordVisibility('current'),
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildPasswordField(
+                        controller: newPasswordController,
+                        hintText: 'New Password',
+                        isPasswordVisible: isNewPasswordVisible,
+                        onToggleVisibility: () => _togglePasswordVisibility('new'),
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildPasswordField(
+                        controller: confirmPasswordController,
+                        hintText: 'Confirm Password',
+                        isPasswordVisible: isConfirmPasswordVisible,
+                        onToggleVisibility: () => _togglePasswordVisibility('confirm'),
+                      ),
+                      // لا نحتاج إلى SizedBox هنا
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-            // Custom Header at the top
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: BoxDecoration(color: const Color(0x26848484)),
+                          // Action Buttons at the bottom
+              if (showActionButtons) ...[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: Container(
+                width: 347.w,
+                padding: EdgeInsets.symmetric(vertical: 20.h), // مساحة علوية وسفلية
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // توزيع الأزرار
                   children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: SvgPicture.asset(
-                        'assets/logos/arrow_left.svg',
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1E1E1E),
-                          BlendMode.srcIn,
+                    Container(
+                      width: 246.w,
+                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+                      decoration: ShapeDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment(0.00, 0.50),
+                          end: Alignment(1.00, 0.50),
+                          colors: [Color(0xFF28A228), Color(0xD85CD65C)],
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        shadows: const [
+                          BoxShadow(
+                            color: Color(0x2628A228),
+                            blurRadius: 4,
+                            offset: Offset(4, 0),
+                            spreadRadius: 0,
+                          )
+                        ],
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            // Handle save changes
+                          },
+                          borderRadius: BorderRadius.circular(30.r),
+                          child: Center(
+                            child: Text(
+                              'Save Changes',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                height: 1.50,
+                                letterSpacing: 0.50,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Change Password',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        height: 0.89,
+                    GestureDetector(
+                      onTap: () {
+                        currentPasswordController.clear();
+                        newPasswordController.clear();
+                        confirmPasswordController.clear();
+                      },
+                      child: Text(
+                        'Cancel',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: const Color(0xFF848484),
+                          fontSize: 16.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          height: 1.50,
+                          letterSpacing: 0.50,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+          ],
           ],
         ),
       ),
@@ -155,7 +234,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
   }) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -172,35 +251,59 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(width: 8.w),
-              SvgPicture.asset(
-                'assets/images/lock_icon.svg',
-                width: 20.w,
-                height: 20.h,
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                hintText,
-                style: TextStyle(
-                  color: const Color(0xB2848484),
-                  fontSize: 12.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: 8.w),
+                SvgPicture.asset(
+                  'assets/images/lock_icon.svg',
+                  width: 20.w,
+                  height: 20.h,
+                  colorFilter: const ColorFilter.mode(
+                    Color(0xFF28A228),
+                    BlendMode.srcIn,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    obscureText: !isPasswordVisible,
+                    style: TextStyle(
+                      color: const Color(0xFF1E1E1E),
+                      fontSize: 12.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      hintStyle: TextStyle(
+                        color: const Color(0xB2848484),
+                        fontSize: 12.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           GestureDetector(
             onTap: onToggleVisibility,
             child: SvgPicture.asset(
-              'assets/images/eye-slash.svg',
+              isPasswordVisible ? 'assets/images/eye-slash.svg' : 'assets/images/eye.svg' ,
               width: 20.w,
               height: 20.h,
+              colorFilter: const ColorFilter.mode(
+                Color(0xFF848484),
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ],

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -13,6 +16,8 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   bool _isAnyFieldEditing = false;
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
 
   void _onFieldEditingChanged(bool isEditing) {
     setState(() {
@@ -22,6 +27,139 @@ class _EditProfileState extends State<EditProfile> {
 
   bool _getIsAnyFieldEditing() {
     return _isAnyFieldEditing;
+  }
+
+  Future<void> _showImageSourceDialog() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: Text(
+            'Choose Image Source',
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: const Color(0xFF28A228),
+                  size: 24.sp,
+                ),
+                title: Text(
+                  'Camera',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.photo_library,
+                  color: const Color(0xFF28A228),
+                  size: 24.sp,
+                ),
+                title: Text(
+                  'Gallery',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 300,
+        maxHeight: 300,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error picking image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget _buildDefaultProfileImage() {
+    return Container(
+      width: 150.w,
+      height: 150.h,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFFE0E0E0),
+      ),
+      child: Icon(
+        Icons.person,
+        size: 60.sp,
+        color: const Color(0xFF9E9E9E),
+      ),
+    );
+  }
+
+  void _saveChanges() {
+    // Here you can add logic to save the image and other changes
+    // For now, we'll just show a success message and reset the state
+    
+    setState(() {
+      _isAnyFieldEditing = false;
+      // Keep the selected image as it's now "saved"
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Profile updated successfully!',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        backgroundColor: const Color(0xFF28A228),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+      ),
+    );
   }
 
   @override
@@ -95,25 +233,21 @@ class _EditProfileState extends State<EditProfile> {
                                   color: const Color(0xFFE0E0E0),
                                 ),
                                 child: ClipOval(
-                                  child: Image.asset(
-                                    'assets/images/profile_image.png',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        width: 150.w,
-                                        height: 150.h,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: const Color(0xFFE0E0E0),
+                                  child: _selectedImage != null
+                                      ? Image.file(
+                                          _selectedImage!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return _buildDefaultProfileImage();
+                                          },
+                                        )
+                                      : Image.asset(
+                                          'assets/images/profile_image.png',
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return _buildDefaultProfileImage();
+                                          },
                                         ),
-                                        child: Icon(
-                                          Icons.person,
-                                          size: 60.sp,
-                                          color: const Color(0xFF9E9E9E),
-                                        ),
-                                      );
-                                    },
-                                  ),
                                 ),
                               ),
                             ),
@@ -122,25 +256,31 @@ class _EditProfileState extends State<EditProfile> {
                             Positioned(
                               left: 96.w,
                               top: 112.h,
-                              child: Container(
-                                width: 46.w,
-                                height: 46.h,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF5F5F5),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    width: 5,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/images/edit_profile.svg',
-                                    width: 24.w,
-                                    height: 24.h,
-                                    colorFilter: const ColorFilter.mode(
-                                      Color(0xFF1E1E1E),
-                                      BlendMode.srcIn,
+                              child: Tooltip(
+                                message: 'Tap to change profile picture',
+                                child: GestureDetector(
+                                  onTap: _showImageSourceDialog,
+                                  child: Container(
+                                    width: 46.w,
+                                    height: 46.h,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF5F5F5),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        width: 5,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: SvgPicture.asset(
+                                        'assets/images/edit_profile.svg',
+                                        width: 24.w,
+                                        height: 24.h,
+                                        colorFilter: const ColorFilter.mode(
+                                          Color(0xFF1E1E1E),
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -191,48 +331,37 @@ class _EditProfileState extends State<EditProfile> {
              ),
              
              // Action Buttons at the bottom of the screen
-             if (_getIsAnyFieldEditing())
+             if (_getIsAnyFieldEditing() || _selectedImage != null)
                Positioned(
-                 bottom: 0,
+                 bottom: 16.h,
                  left: 0,
                  right: 0,
-                 child: Container(
-                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                   decoration: BoxDecoration(
-                     color: Colors.white,
-                     boxShadow: [
-                       BoxShadow(
-                         color: const Color(0x19000000),
-                         blurRadius: 8.r,
-                         offset: Offset(0, -2),
-                         spreadRadius: 0,
-                       ),
-                     ],
-                   ),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       Container(
-                         width: 246.w,
-                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
-                         decoration: ShapeDecoration(
-                           gradient: LinearGradient(
-                             begin: Alignment(0.00, 0.50),
-                             end: Alignment(1.00, 0.50),
-                             colors: [const Color(0xFF28A228), const Color(0xD85CD65C)],
-                           ),
-                           shape: RoundedRectangleBorder(
-                             borderRadius: BorderRadius.circular(30.r),
-                           ),
-                           shadows: [
-                             BoxShadow(
-                               color: const Color(0x2628A228),
-                               blurRadius: 4.r,
-                               offset: Offset(4, 0),
-                               spreadRadius: 0,
-                             )
-                           ],
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Container(
+                       width: 246.w,
+                       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
+                       decoration: ShapeDecoration(
+                         gradient: LinearGradient(
+                           begin: Alignment(0.00, 0.50),
+                           end: Alignment(1.00, 0.50),
+                           colors: AppColors.primaryGradient.colors,
                          ),
+                         shape: RoundedRectangleBorder(
+                           borderRadius: BorderRadius.circular(30.r),
+                         ),
+                         shadows: [
+                           BoxShadow(
+                             color: const Color(0x2628A228),
+                             blurRadius: 4.r,
+                             offset: Offset(4, 0),
+                             spreadRadius: 0,
+                           )
+                         ],
+                       ),
+                       child: GestureDetector(
+                         onTap: _saveChanges,
                          child: Row(
                            mainAxisSize: MainAxisSize.min,
                            mainAxisAlignment: MainAxisAlignment.center,
@@ -253,8 +382,16 @@ class _EditProfileState extends State<EditProfile> {
                            ],
                          ),
                        ),
-                       SizedBox(width: 16.w),
-                       Text(
+                     ),
+                     SizedBox(width: 16.w),
+                     GestureDetector(
+                       onTap: () {
+                         setState(() {
+                           _selectedImage = null;
+                           _isAnyFieldEditing = false;
+                         });
+                       },
+                       child: Text(
                          'Cancel',
                          textAlign: TextAlign.center,
                          style: TextStyle(
@@ -266,8 +403,8 @@ class _EditProfileState extends State<EditProfile> {
                            letterSpacing: 0.50,
                          ),
                        ),
-                     ],
-                   ),
+                     ),
+                   ],
                  ),
                ),
            ],

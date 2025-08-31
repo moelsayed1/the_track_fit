@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +8,6 @@ import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dar
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/workout_screen.dart';
-import 'package:the_track_fit/features/workout/presentation/screens/select_type_screen.dart';
 
 class HomeScreenFeature extends StatefulWidget {
   const HomeScreenFeature({super.key});
@@ -95,21 +93,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     });
   }
 
-  void _onTypeFilterTapped() {
-    // Show the Select Type screen
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectTypeScreen(
-          selectedType: null,
-          onTypeSelected: (typeId) {
-            // Handle type selection if needed
-            log('Selected type: $typeId');
-          },
-        ),
-      ),
-    );
-  }
 
   int get _completedWorkoutsCount {
     return _completedExercises.where((completed) => completed).length;
@@ -183,242 +166,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               child: _buildContentForTab(_currentIndex),
             ),
             // Hide bottom navigation bar when showing Plan tab
-            if (_currentIndex != 4)
-              Container(
-              width: double.infinity,
-              decoration: const ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
+            if (_currentIndex != 4) ...[
+              _BottomNavBar(
+                currentIndex: _currentIndex,
+                onTabTapped: _onTabTapped,
+                getTabColor: _getTabColor,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w, bottom: 1.h),
-                    decoration: const ShapeDecoration(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                      ),
-                      shadows: [
-                        BoxShadow(
-                          color: Color(0x2628A228),
-                          blurRadius: 4,
-                          offset: Offset(4, 0),
-                          spreadRadius: 0,
-                        )
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        // Home tab
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _onTabTapped(0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/logos/home_icon.svg',
-                                  width: 24.w,
-                                  height: 24.h,
-                                  fit: BoxFit.contain,
-                                  colorFilter: ColorFilter.mode(
-                                    _getTabColor(0),
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                SizedBox(height: 6.h),
-                                Text(
-                                  'Home',
-                                  style: TextStyle(
-                                    color: _getTabColor(0),
-                                    fontSize: 12.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.33,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Workout tab
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _onTabTapped(1),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/logos/gym_icon.svg',
-                                  width: 24.w,
-                                  height: 24.h,
-                                  fit: BoxFit.contain,
-                                  colorFilter: ColorFilter.mode(
-                                    _getTabColor(1),
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                SizedBox(height: 6.h),
-                                Text(
-                                  'Workout',
-                                  style: TextStyle(
-                                    color: _getTabColor(1),
-                                    fontSize: 12.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.33,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Central action button
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _onTabTapped(2),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(14.w),
-                                  decoration: ShapeDecoration(
-                                    color: _currentIndex == 2
-                                        ? const Color(0xFF28A228)
-                                        : const Color(0xFF28A228),
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                        width: 4,
-                                        strokeAlign: BorderSide.strokeAlignOutside,
-                                        color: Colors.white,
-                                      ),
-                                      borderRadius: BorderRadius.circular(100.r),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 30.w,
-                                        height: 30.h,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                              'assets/logos/scan_icon.svg',
-                                              width: 28.w,
-                                              height: 28.h,
-                                              fit: BoxFit.contain,
-                                              colorFilter: const ColorFilter.mode(
-                                                Colors.white,
-                                                BlendMode.srcIn,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Report tab
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _onTabTapped(3),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/logos/progressive_icon.svg',
-                                  width: 24.w,
-                                  height: 24.h,
-                                  fit: BoxFit.contain,
-                                  colorFilter: ColorFilter.mode(
-                                    _getTabColor(3),
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                SizedBox(height: 6.h),
-                                Text(
-                                  'report',
-                                  style: TextStyle(
-                                    color: _getTabColor(3),
-                                    fontSize: 12.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.33,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Plan tab
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _onTabTapped(4),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/logos/premium_icon.png',
-                                  width: 24.w,
-                                  height: 24.h,
-                                  fit: BoxFit.contain,
-                                  color: _getTabColor(4),
-                                ),
-                                SizedBox(height: 6.h),
-                                Text(
-                                  'Plan',
-                                  style: TextStyle(
-                                    color: _getTabColor(4),
-                                    fontSize: 12.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                    height: 1.33,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ],
         ),
       ),
@@ -485,16 +239,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   }
 
   Widget _buildHomeUI() {
-    return Column(
-      children: [
-        // Header with points, title, and profile
-        _Header(title: _getScreenTitle(_currentIndex)),
-        
-                 // Main content
-         Expanded(
-           child: ListView(
-             padding: EdgeInsets.zero,
-             children: [
+    return ListView(
+    padding: EdgeInsets.zero,
+    children: [
+      // Header with points, title, and profile
+      _Header(title: _getScreenTitle(_currentIndex)),
                              // Greeting section
                Padding(
                  padding: EdgeInsets.only(top: 20.h, bottom: 24.h, left: 16.w),
@@ -728,73 +477,234 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                  ),
                ),
             ],
+          );
+    
+  }
+
+ }
+
+// Reusable Product Card Widget
+
+class _BottomNavBar extends StatelessWidget {
+  final int currentIndex;
+  final void Function(int) onTabTapped;
+  final Color Function(int) getTabColor;
+
+  const _BottomNavBar({
+    required this.currentIndex,
+    required this.onTabTapped,
+    required this.getTabColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: const ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
           ),
         ),
-      ],
-    );
-  }
-
-
-  Widget _buildReportUI() {
-    return Center(
-                        child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-          Icon(Icons.bar_chart, size: 64.sp, color: const Color(0xFF848484)),
-          SizedBox(height: 16.h),
-                            Text(
-            'Report Feature',
-                              style: TextStyle(
-              fontSize: 18.sp,
-              color: const Color(0xFF848484),
-                                fontFamily: 'Poppins',
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 85.h,
+            padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w),
+            decoration: const ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              shadows: [
+                BoxShadow(
+                  color: Color(0x2628A228),
+                  blurRadius: 4,
+                  offset: Offset(4, 0),
+                  spreadRadius: 0,
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+             // crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _NavBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/logos/home_icon.svg',
+                    width: 24.w,
+                    height: 24.h,
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                      getTabColor(0),
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  label: 'Home',
+                  selected: currentIndex == 0,
+                  onTap: () => onTabTapped(0),
+                  color: getTabColor(0),
+                ),
+                _NavBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/logos/gym_icon.svg',
+                    width: 24.w,
+                    height: 24.h,
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                      getTabColor(1),
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  label: 'Workout',
+                  selected: currentIndex == 1,
+                  onTap: () => onTabTapped(1),
+                  color: getTabColor(1),
+                ),
+                _NavBarCentralButton(
+                  onTap: () => onTabTapped(2),
+                ),
+                _NavBarItem(
+                  icon: SvgPicture.asset(
+                    'assets/logos/progressive_icon.svg',
+                    width: 24.w,
+                    height: 24.h,
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                      getTabColor(3),
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  label: 'Report',
+                  selected: currentIndex == 3,
+                  onTap: () => onTabTapped(3),
+                  color: getTabColor(3),
+                ),
+                _NavBarItem(
+                  icon: Image.asset(
+                    'assets/logos/premium_icon.png',
+                    width: 24.w,
+                    height: 24.h,
+                    fit: BoxFit.contain,
+                    color: getTabColor(4),
+                  ),
+                  label: 'Plan',
+                  selected: currentIndex == 4,
+                  onTap: () => onTabTapped(4),
+                  color: getTabColor(4),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 8.h),
-                            Text(
-            'Coming Soon',
-                              style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF848484),
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ],
-                        ),
-    );
-  }
-
-  Widget _buildPlanUI() {
-    return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-          Icon(Icons.star, size: 64.sp, color: const Color(0xFF848484)),
-          SizedBox(height: 16.h),
-            Text(
-            'Plan Feature',
-              style: TextStyle(
-              fontSize: 18.sp,
-              color: const Color(0xFF848484),
-                fontFamily: 'Poppins',
-              ),
-            ),
-          SizedBox(height: 8.h),
-            Text(
-            'Coming Soon',
-              style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF848484),
-                fontFamily: 'Poppins',
-              ),
-            ),
-          ],
+        ],
       ),
     );
   }
 }
 
-// Reusable Product Card Widget
+class _NavBarItem extends StatelessWidget {
+  final Widget icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final Color color;
+
+  const _NavBarItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            icon,
+            SizedBox(height: 6.h),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+                height: 1.33,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavBarCentralButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _NavBarCentralButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.all(14.w),
+              decoration: ShapeDecoration(
+                color: const Color(0xFF28A228),
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(
+                    width: 4,
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                    color: Colors.white,
+                  ),
+                  borderRadius: BorderRadius.circular(100.r),
+                ),
+              ),
+              child: SizedBox(
+                width: 30.w,
+                height: 30.h,
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/logos/scan_icon.svg',
+                    width: 28.w,
+                    height: 28.h,
+                    fit: BoxFit.contain,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class ProductCard extends StatelessWidget {
   final String productName;
   final String price;
@@ -1144,4 +1054,3 @@ class _ProfileContainer extends StatelessWidget {
     );
   }
 }
-        

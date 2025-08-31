@@ -8,6 +8,8 @@ import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dar
 import 'package:the_track_fit/features/plan/presentation/widgets/premium_plan.dart';
 import 'package:the_track_fit/features/plan/presentation/widgets/subscribtion_done.dart';
 import 'package:the_track_fit/features/profile/presentation/widgets/edit_profile.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/main_goal.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/notification.dart';
 import 'package:the_track_fit/features/profile/presentation/widgets/payment_info.dart';
 import 'package:the_track_fit/features/profile/presentation/widgets/subscription.dart';
 import 'package:the_track_fit/features/profile/presentation/widgets/update_payment_method.dart';
@@ -39,6 +41,7 @@ import '../../features/workout/presentation/screens/workout_screen.dart';
 import '../../features/cart/presentation/screens/checkout_screen.dart';
 import '../../features/plan/presentation/widgets/checkout_plan_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/profile/presentation/widgets/favourite_exercise.dart';
 
 
 class AppRouter {
@@ -82,7 +85,10 @@ class AppRouter {
   static const String paymentInfo = '/payment-info';
   static const String updatePaymentMethod = '/update-payment-method';
   static const String changePassword = '/change-password';
-
+  static const String notification = '/notification';
+  static const String mainGoal = '/main-goal';
+  static const String favouriteExercise = '/favourite-exercise';
+  
   static final GoRouter router = GoRouter(
     initialLocation: splash,
     routes: [
@@ -286,6 +292,21 @@ class AppRouter {
         path: changePassword,
         name: 'changePassword',
         builder: (context, state) => const ChangePasswordProfile(),
+      ),
+      GoRoute(
+        path: notification,
+        name: 'notification',
+        builder: (context, state) => const NotificationProfile(),
+      ),
+      GoRoute(
+        path: mainGoal,
+        name: 'mainGoal',
+        builder: (context, state) => const MainGoalProfile(),
+      ),
+      GoRoute(
+        path: favouriteExercise,
+        name: 'favouriteExercise',
+        builder: (context, state) => const FavouriteExerciseProfile(),
       ),
       GoRoute(
         path: productDetail,
