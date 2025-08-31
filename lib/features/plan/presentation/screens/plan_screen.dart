@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
-import 'package:the_track_fit/features/plan/presentation/widgets/checkout_plan_screen.dart';
 
 class PlanSubscriptionScreen extends StatefulWidget {
   const PlanSubscriptionScreen({super.key});

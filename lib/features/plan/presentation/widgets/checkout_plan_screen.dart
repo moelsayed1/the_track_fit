@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 
 class CheckoutPlanScreen extends StatefulWidget {
