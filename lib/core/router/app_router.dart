@@ -7,6 +7,11 @@ import 'package:the_track_fit/features/onboarding/presentation/screens/onboardin
 import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/plan/presentation/widgets/premium_plan.dart';
 import 'package:the_track_fit/features/plan/presentation/widgets/subscribtion_done.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/edit_profile.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/payment_info.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/subscription.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/update_payment_method.dart';
+import 'package:the_track_fit/features/profile/presentation/widgets/change_password_profile.dart';
 import 'package:the_track_fit/features/questions/weight/ui/widgets/question_done.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
@@ -33,6 +38,7 @@ import '../../features/store/presentation/ui/screens/product_detail_screen.dart'
 import '../../features/workout/presentation/screens/workout_screen.dart';
 import '../../features/cart/presentation/screens/checkout_screen.dart';
 import '../../features/plan/presentation/widgets/checkout_plan_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
 
 
 class AppRouter {
@@ -70,6 +76,12 @@ class AppRouter {
   static const String checkoutPlan = '/checkout-plan';
   static const String subscribtionDone = '/subscribtion-done';
   static const String premiumPlan = '/premium-plan';
+  static const String profile = '/profile';
+  static const String editProfile = '/edit-profile';
+  static const String subscription = '/subscription';
+  static const String paymentInfo = '/payment-info';
+  static const String updatePaymentMethod = '/update-payment-method';
+  static const String changePassword = '/change-password';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -241,9 +253,39 @@ class AppRouter {
         builder: (context, state) => const SubscribtionDone(),
       ),
       GoRoute(
+        path: profile,
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: editProfile,
+        name: 'editProfile',
+        builder: (context, state) => const EditProfile(),
+      ),
+      GoRoute(
         path: scanYourMeal,
         name: 'scanYourMeal',
         builder: (context, state) => const ScanYourMeal(),
+      ),
+      GoRoute(
+        path: subscription,
+        name: 'subscription',
+        builder: (context, state) => const Subscription(),
+      ),
+      GoRoute(
+        path: paymentInfo,
+        name: 'paymentInfo',
+        builder: (context, state) => const PaymentInfo(),
+      ),
+      GoRoute(
+        path: updatePaymentMethod,
+        name: 'updatePaymentMethod',
+        builder: (context, state) => const UpdatePaymentMethod(),
+      ),
+      GoRoute(
+        path: changePassword,
+        name: 'changePassword',
+        builder: (context, state) => const ChangePasswordProfile(),
       ),
       GoRoute(
         path: productDetail,

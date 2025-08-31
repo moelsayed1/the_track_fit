@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
-import 'package:the_track_fit/features/plans/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/index.dart';

@@ -11,7 +11,6 @@ import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_type_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_location_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_equipment_screen.dart';
-import 'package:the_track_fit/features/workout/presentation/widgets/esercise_detail.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});

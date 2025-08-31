@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
-import 'package:the_track_fit/features/plans/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/workout_screen.dart';
@@ -196,7 +196,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 ),
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -221,7 +220,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       ],
                     ),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -440,7 +438,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       case 4: // Plan
         return PlanSubscriptionScreen();
       default:
-        return _buildHomeUI();
+        return HomeScreenFeature();
     }
   }
 
@@ -1062,7 +1060,12 @@ class _Header extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            _ProfileContainer(),
+            GestureDetector(
+              onTap: () {
+                context.push(AppRouter.profile);
+              },
+              child: _ProfileContainer(),
+            ),
           ],
         ),
       ),
