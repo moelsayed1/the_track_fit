@@ -11,6 +11,8 @@ import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_type_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_location_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/select_equipment_screen.dart';
+import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -206,6 +208,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           isFavorite: !exercises[exerciseIndex].isFavorite,
         );
         _applyFilters(); // Reapply all filters
+        
+        // Update the ExerciseCubit state
+        final exerciseCubit = context.read<ExerciseCubit>();
+        if (exercises[exerciseIndex].isFavorite) {
+          exerciseCubit.addToFavourites(exercises[exerciseIndex]);
+        } else {
+          exerciseCubit.removeFromFavourites(exerciseId);
+        }
       }
     });
   }

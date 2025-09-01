@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/constants/constants.dart';
 import 'core/router/app_router.dart';
+import 'features/workout/data/cubit/exercise_cubit.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,13 +20,16 @@ class TrackFit extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: AppConstants.appName,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.splashDarkGreen),
+        return BlocProvider(
+          create: (context) => ExerciseCubit(),
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: AppConstants.appName,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.splashDarkGreen),
+            ),
+            routerConfig: AppRouter.router,
           ),
-          routerConfig: AppRouter.router,
         );
       },
     );

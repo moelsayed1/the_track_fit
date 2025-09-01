@@ -28,7 +28,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
               alignment: Alignment.topRight,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pop();
+                  context.pop();
                 },
                 child: Container(
                   width: 24.w,
