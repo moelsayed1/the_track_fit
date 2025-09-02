@@ -28,7 +28,12 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
               alignment: Alignment.topRight,
               child: GestureDetector(
                 onTap: () {
-                  context.pop();
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    // If we can't pop, navigate to home or use goNamed
+                    context.go(AppRouter.homeFeature);
+                  }
                 },
                 child: Container(
                   width: 24.w,

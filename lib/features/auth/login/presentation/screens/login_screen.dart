@@ -19,13 +19,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -147,10 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomTextField(
-                      hintText: 'Phone',
-                      prefixIconAsset: AppIcons.phone,
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
+                      hintText: 'Email',
+                      prefixIconAsset: AppIcons.email,
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
                       validator: _validatePhone,
                     ),
                     SizedBox(height: responsive.hp(2)),

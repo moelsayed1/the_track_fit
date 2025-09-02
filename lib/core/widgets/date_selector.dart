@@ -35,25 +35,27 @@ class _DateSelectorState extends State<DateSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 70.h,
-      decoration: BoxDecoration(
-        color: const Color(0xFF28A228).withValues(alpha: 0.80),
-       
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: widget.dates.asMap().entries.map((entry) {
-            final index = entry.key;
-            final date = entry.value;
-            return _buildDateItem(date['day']!, date['date']!, index);
-          }).toList(),
-        ),
-      ),
-    );
-  }
+    return  Container(
+                 width: double.infinity,
+                 padding: EdgeInsets.symmetric(vertical: 8.h),
+                 decoration: BoxDecoration(
+                   color: const Color(0xFF28A228),
+                 ),
+                 child: Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                   children: [
+                     _buildDateItem('Fri', '5', 0),
+                     _buildDateItem('Sat', '6', 1),
+                     _buildDateItem('Sun', '11', 2),
+                     _buildDateItem('Mon', '7', 3),
+                     _buildDateItem('Tue', '8', 4),
+                     _buildDateItem('Wed', '9', 5),
+                     _buildDateItem('Thu', '10', 6),
+                   ],
+                 ),
+               );
+
+            }
 
   Widget _buildDateItem(String day, String date, int index) {
     bool isSelected = _selectedDateIndex == index;
@@ -61,7 +63,7 @@ class _DateSelectorState extends State<DateSelector> {
       onTap: () => _onDateSelected(index),
       child: Container(
         width: 35.w,
-        height: 80.h,
+        height: 60.h,
 
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,

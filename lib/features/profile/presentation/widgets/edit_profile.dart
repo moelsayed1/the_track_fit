@@ -102,7 +102,7 @@ class _EditProfileState extends State<EditProfile> {
         maxWidth: 300,
         maxHeight: 300,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImage = File(image.path);
@@ -136,14 +136,10 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _saveChanges() {
-    // Here you can add logic to save the image and other changes
-    // For now, we'll just show a success message and reset the state
-    
     setState(() {
       _isAnyFieldEditing = false;
-      // Keep the selected image as it's now "saved"
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -164,254 +160,253 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: const Color(0x26848484),
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: SvgPicture.asset(
-                      'assets/logos/arrow_left.svg',
-                      width: 24.w,
-                      height: 24.h,
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF1E1E1E),
-                        BlendMode.srcIn,
+            Column(
+              children: [
+                // Header
+                Container(
+                  width: double.infinity,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0x26848484),
+                  ),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: SvgPicture.asset(
+                          'assets/logos/arrow_left.svg',
+                          width: 24.w,
+                          height: 24.h,
+                          colorFilter: const ColorFilter.mode(
+                            Color(0xFF1E1E1E),
+                            BlendMode.srcIn,
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        'Edit Profile',
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: 18.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          height: 0.89,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    'Edit Profile',
-                    style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
-                      fontSize: 18.sp,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      height: 0.89,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Profile Content
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  children: [
-                    SizedBox(height: 24.h),
-                    
-                    // Profile Picture Section
-                    Center(
-                      child: SizedBox(
-                        width: 150.w,
-                        height: 158.h,
-                        child: Stack(
-                          children: [
-                            // Main Profile Picture
-                            Positioned(
-                              left: 0,
-                              top: 0,
-                              child: Container(
-                                width: 150.w,
-                                height: 150.h,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFFE0E0E0),
-                                ),
-                                child: ClipOval(
-                                  child: _selectedImage != null
-                                      ? Image.file(
-                                          _selectedImage!,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return _buildDefaultProfileImage();
-                                          },
-                                        )
-                                      : Image.asset(
-                                          'assets/images/profile_image.png',
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return _buildDefaultProfileImage();
-                                          },
-                                        ),
-                                ),
-                              ),
-                            ),
-                            
-                            // Edit Button Overlay
-                            Positioned(
-                              left: 96.w,
-                              top: 112.h,
-                              child: Tooltip(
-                                message: 'Tap to change profile picture',
-                                child: GestureDetector(
-                                  onTap: _showImageSourceDialog,
+                ),
+
+                // Profile Content
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 24.h),
+
+                        // Profile Picture Section
+                        Center(
+                          child: SizedBox(
+                            width: 150.w,
+                            height: 158.h,
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  left: 0,
+                                  top: 0,
                                   child: Container(
-                                    width: 46.w,
-                                    height: 46.h,
+                                    width: 150.w,
+                                    height: 150.h,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF5F5F5),
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                        width: 5,
-                                        color: Colors.white,
-                                      ),
+                                      color: const Color(0xFFE0E0E0),
                                     ),
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        'assets/images/edit_profile.svg',
-                                        width: 24.w,
-                                        height: 24.h,
-                                        colorFilter: const ColorFilter.mode(
-                                          Color(0xFF1E1E1E),
-                                          BlendMode.srcIn,
+                                    child: ClipOval(
+                                      child: _selectedImage != null
+                                          ? Image.file(
+                                              _selectedImage!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return _buildDefaultProfileImage();
+                                              },
+                                            )
+                                          : Image.asset(
+                                              'assets/images/profile_image.png',
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                  stackTrace) {
+                                                return _buildDefaultProfileImage();
+                                              },
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 96.w,
+                                  top: 112.h,
+                                  child: Tooltip(
+                                    message:
+                                        'Tap to change profile picture',
+                                    child: GestureDetector(
+                                      onTap: _showImageSourceDialog,
+                                      child: Container(
+                                        width: 46.w,
+                                        height: 46.h,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF5F5F5),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            width: 5,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: SvgPicture.asset(
+                                            'assets/images/edit_profile.svg',
+                                            width: 24.w,
+                                            height: 24.h,
+                                            colorFilter:
+                                                const ColorFilter.mode(
+                                              Color(0xFF1E1E1E),
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 24.h),
+
+                        // Input Fields Section
+                        SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            children: [
+                              _buildInputField(
+                                icon: 'assets/images/email_icon.svg',
+                                label: 'E-mail',
+                                value: 'user@example.com',
+                              ),
+                              SizedBox(height: 16.h),
+                              _buildInputField(
+                                icon: 'assets/images/phone_icon.svg',
+                                label: 'Phone',
+                                value: '+1234567890',
+                              ),
+                              SizedBox(height: 16.h),
+                              _buildInputField(
+                                icon: 'assets/images/person_card.svg',
+                                label: 'Username',
+                                value: 'username123',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // ✅ زرار الحفظ والإلغاء في Positioned جوه Stack
+            if (_getIsAnyFieldEditing() || _selectedImage != null)
+              Positioned(
+                bottom: 16.h,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 246.w,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.w, vertical: 16.h),
+                      decoration: ShapeDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment(0.00, 0.50),
+                          end: Alignment(1.00, 0.50),
+                          colors: AppColors.primaryGradient.colors,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        shadows: [
+                          BoxShadow(
+                            color: const Color(0x2628A228),
+                            blurRadius: 4.r,
+                            offset: Offset(4, 0),
+                            spreadRadius: 0,
+                          )
+                        ],
+                      ),
+                      child: GestureDetector(
+                        onTap: _saveChanges,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Save Changes',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                                height: 1.50,
+                                letterSpacing: 0.50,
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    
-                    SizedBox(height: 24.h),
-                    
-                    // Input Fields Section
-                    SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        children: [
-                          // Email Field
-                          _buildInputField(
-                            icon: 'assets/images/email_icon.svg',
-                            label: 'E-mail',
-                            value: 'user@example.com',
-                          ),
-                          
-                          SizedBox(height: 16.h),
-                          
-                          // Phone Field
-                          _buildInputField(
-                            icon: 'assets/images/phone_icon.svg',
-                            label: 'Phone',
-                            value: '+1234567890',
-                          ),
-                          
-                          SizedBox(height: 16.h),
-                          
-                          // Username Field
-                          _buildInputField(
-                            icon: 'assets/images/person_card.svg',
-                            label: 'Username',
-                            value: 'username123',
-                          ),
-                        ],
+                    SizedBox(width: 16.w),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedImage = null;
+                          _isAnyFieldEditing = false;
+                        });
+                      },
+                      child: Text(
+                        'Cancel',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: const Color(0xFF848484),
+                          fontSize: 16.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          height: 1.50,
+                          letterSpacing: 0.50,
+                        ),
                       ),
-                                         ),
-                   ],
-                 ),
-               ),
-             ),
-             
-             // Action Buttons at the bottom of the screen
-             if (_getIsAnyFieldEditing() || _selectedImage != null)
-               Positioned(
-                 bottom: 16.h,
-                 left: 0,
-                 right: 0,
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.center,
-                   children: [
-                     Container(
-                       width: 246.w,
-                       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
-                       decoration: ShapeDecoration(
-                         gradient: LinearGradient(
-                           begin: Alignment(0.00, 0.50),
-                           end: Alignment(1.00, 0.50),
-                           colors: AppColors.primaryGradient.colors,
-                         ),
-                         shape: RoundedRectangleBorder(
-                           borderRadius: BorderRadius.circular(30.r),
-                         ),
-                         shadows: [
-                           BoxShadow(
-                             color: const Color(0x2628A228),
-                             blurRadius: 4.r,
-                             offset: Offset(4, 0),
-                             spreadRadius: 0,
-                           )
-                         ],
-                       ),
-                       child: GestureDetector(
-                         onTap: _saveChanges,
-                         child: Row(
-                           mainAxisSize: MainAxisSize.min,
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           crossAxisAlignment: CrossAxisAlignment.center,
-                           children: [
-                             Text(
-                               'Save Changes',
-                               textAlign: TextAlign.center,
-                               style: TextStyle(
-                                 color: Colors.white,
-                                 fontSize: 16.sp,
-                                 fontFamily: 'Poppins',
-                                 fontWeight: FontWeight.w500,
-                                 height: 1.50,
-                                 letterSpacing: 0.50,
-                               ),
-                             ),
-                           ],
-                         ),
-                       ),
-                     ),
-                     SizedBox(width: 16.w),
-                     GestureDetector(
-                       onTap: () {
-                         setState(() {
-                           _selectedImage = null;
-                           _isAnyFieldEditing = false;
-                         });
-                       },
-                       child: Text(
-                         'Cancel',
-                         textAlign: TextAlign.center,
-                         style: TextStyle(
-                           color: const Color(0xFF848484),
-                           fontSize: 16.sp,
-                           fontFamily: 'Poppins',
-                           fontWeight: FontWeight.w400,
-                           height: 1.50,
-                           letterSpacing: 0.50,
-                         ),
-                       ),
-                     ),
-                   ],
-                 ),
-               ),
-           ],
-         ),
-       ),
-     );
-   }
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildInputField({
     required String icon,
@@ -441,7 +436,8 @@ class _EditableTextFormField extends StatefulWidget {
   });
 
   @override
-  State<_EditableTextFormField> createState() => _EditableTextFormFieldState();
+  State<_EditableTextFormField> createState() =>
+      _EditableTextFormFieldState();
 }
 
 class _EditableTextFormFieldState extends State<_EditableTextFormField> {
@@ -467,16 +463,12 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
     setState(() {
       _isEditing = !_isEditing;
       if (_isEditing) {
-        // Entering edit mode - focus the text field
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _focusNode.requestFocus();
         });
       } else {
-        // Exiting edit mode - unfocus and save changes
         _focusNode.unfocus();
-        // You can add validation or API calls here
       }
-      // Notify parent about editing state change
       widget.onEditingChanged(_isEditing);
     });
   }
@@ -503,7 +495,9 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(30.r),
         border: Border.all(
-          color: _isEditing ? const Color(0xFF28A228) : const Color(0x26848484),
+          color: _isEditing
+              ? const Color(0xFF28A228)
+              : const Color(0x26848484),
           width: _isEditing ? 2 : 1,
         ),
       ),
@@ -519,46 +513,44 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
                   height: 20.h,
                 ),
                 SizedBox(width: 8.w),
-                 if (_isEditing)
-                        Expanded(
-                          child: TextFormField(
-                            controller: _controller,
-                            style: TextStyle(
-                              color: const Color(0xFF1E1E1E),
-                              fontSize: 14.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.zero,
-                              isDense: true,
-                              hintText: 'Enter ${widget.label.toLowerCase()}',
-                              hintStyle: TextStyle(
-                                color: const Color(0x66848484),
-                                fontSize: 14.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            focusNode: _focusNode,
-                            autofocus: true,
-                            keyboardType: _getKeyboardType(),
-                            textInputAction: TextInputAction.done,
-                            onFieldSubmitted: (_) => _toggleEdit(),
-                            onChanged: (value) {
-                              // Auto-disable edit mode when text becomes empty
-                              if (value.isEmpty) {
-                                setState(() {
-                                  _isEditing = false;
-                                  _focusNode.unfocus();
-                                });
-                                // Notify parent about editing state change
-                                widget.onEditingChanged(false);
-                              }
-                            },
-                          ),
-                        )
+                if (_isEditing)
+                  Expanded(
+                    child: TextFormField(
+                      controller: _controller,
+                      style: TextStyle(
+                        color: const Color(0xFF1E1E1E),
+                        fontSize: 14.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        isDense: true,
+                        hintText: 'Enter ${widget.label.toLowerCase()}',
+                        hintStyle: TextStyle(
+                          color: const Color(0x66848484),
+                          fontSize: 14.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      focusNode: _focusNode,
+                      autofocus: true,
+                      keyboardType: _getKeyboardType(),
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _toggleEdit(),
+                      onChanged: (value) {
+                        if (value.isEmpty) {
+                          setState(() {
+                            _isEditing = false;
+                            _focusNode.unfocus();
+                          });
+                          widget.onEditingChanged(false);
+                        }
+                      },
+                    ),
+                  )
                 else
                   Text(
                     widget.label,
@@ -580,7 +572,7 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
               width: 20.w,
               height: 20.h,
               colorFilter: ColorFilter.mode(
-                _isEditing ? const Color(0xFF28A228) :  Colors.grey,
+                _isEditing ? const Color(0xFF28A228) : Colors.grey,
                 BlendMode.srcIn,
               ),
             ),
@@ -589,5 +581,4 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
       ),
     );
   }
-
 }
