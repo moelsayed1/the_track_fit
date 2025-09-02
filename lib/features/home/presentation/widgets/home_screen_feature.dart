@@ -102,7 +102,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
                          // Warning Dialog
@@ -386,7 +388,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               Padding(
                 padding: EdgeInsets.only(left: 16.w),
                 child: SizedBox(
-                  height: 120.h,
+                  height: 140.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 4,
@@ -409,7 +411,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 ),
               ),
 
-              SizedBox(height: 32.h),
+              SizedBox(height: 24.h),
 
               // Your Activity Section
               Padding(
@@ -498,116 +500,98 @@ class _BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: const ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
+ return Container(
+  width: double.infinity,
+  height: 85.h, // تأكد أن الارتفاع مضبوط
+  padding: EdgeInsets.only(top: 4.h, left: 12.w, right: 12.w),
+  decoration: const ShapeDecoration(
+    color: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(30),
+        topRight: Radius.circular(30),
+      ),
+    ),
+    shadows: [
+      BoxShadow(
+        color: Color(0x2628A228),
+        blurRadius: 4,
+        offset: Offset(4, 0),
+        spreadRadius: 0,
+      )
+    ],
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      _NavBarItem(
+        icon: SvgPicture.asset(
+          'assets/logos/home_icon.svg',
+          width: 24.w,
+          height: 24.h,
+          fit: BoxFit.contain,
+          colorFilter: ColorFilter.mode(
+            getTabColor(0),
+            BlendMode.srcIn,
           ),
         ),
+        label: 'Home',
+        selected: currentIndex == 0,
+        onTap: () => onTabTapped(0),
+        color: getTabColor(0),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            height: 85.h,
-            padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w),
-            decoration: const ShapeDecoration(
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
-                ),
-              ),
-              shadows: [
-                BoxShadow(
-                  color: Color(0x2628A228),
-                  blurRadius: 4,
-                  offset: Offset(4, 0),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-             // crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _NavBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/logos/home_icon.svg',
-                    width: 24.w,
-                    height: 24.h,
-                    fit: BoxFit.contain,
-                    colorFilter: ColorFilter.mode(
-                      getTabColor(0),
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  label: 'Home',
-                  selected: currentIndex == 0,
-                  onTap: () => onTabTapped(0),
-                  color: getTabColor(0),
-                ),
-                _NavBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/logos/gym_icon.svg',
-                    width: 24.w,
-                    height: 24.h,
-                    fit: BoxFit.contain,
-                    colorFilter: ColorFilter.mode(
-                      getTabColor(1),
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  label: 'Workout',
-                  selected: currentIndex == 1,
-                  onTap: () => onTabTapped(1),
-                  color: getTabColor(1),
-                ),
-                _NavBarCentralButton(
-                  onTap: () => onTabTapped(2),
-                ),
-                _NavBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/logos/progressive_icon.svg',
-                    width: 24.w,
-                    height: 24.h,
-                    fit: BoxFit.contain,
-                    colorFilter: ColorFilter.mode(
-                      getTabColor(3),
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  label: 'Report',
-                  selected: currentIndex == 3,
-                  onTap: () => onTabTapped(3),
-                  color: getTabColor(3),
-                ),
-                _NavBarItem(
-                  icon: Image.asset(
-                    'assets/logos/premium_icon.png',
-                    width: 24.w,
-                    height: 24.h,
-                    fit: BoxFit.contain,
-                    color: getTabColor(4),
-                  ),
-                  label: 'Plan',
-                  selected: currentIndex == 4,
-                  onTap: () => onTabTapped(4),
-                  color: getTabColor(4),
-                ),
-              ],
-            ),
+      _NavBarItem(
+        icon: SvgPicture.asset(
+          'assets/logos/gym_icon.svg',
+          width: 24.w,
+          height: 24.h,
+          fit: BoxFit.contain,
+          colorFilter: ColorFilter.mode(
+            getTabColor(1),
+            BlendMode.srcIn,
           ),
-        ],
+        ),
+        label: 'Workout',
+        selected: currentIndex == 1,
+        onTap: () => onTabTapped(1),
+        color: getTabColor(1),
       ),
-    );
-  }
+      _NavBarCentralButton(
+        onTap: () => onTabTapped(2),
+      ),
+      _NavBarItem(
+        icon: SvgPicture.asset(
+          'assets/logos/progressive_icon.svg',
+          width: 24.w,
+          height: 24.h,
+          fit: BoxFit.contain,
+          colorFilter: ColorFilter.mode(
+            getTabColor(3),
+            BlendMode.srcIn,
+          ),
+        ),
+        label: 'Report',
+        selected: currentIndex == 3,
+        onTap: () => onTabTapped(3),
+        color: getTabColor(3),
+      ),
+      _NavBarItem(
+        icon: Image.asset(
+          'assets/logos/premium_icon.png',
+          width: 24.w,
+          height: 24.h,
+          fit: BoxFit.contain,
+          color: getTabColor(4),
+        ),
+        label: 'Plan',
+        selected: currentIndex == 4,
+        onTap: () => onTabTapped(4),
+        color: getTabColor(4),
+      ),
+    ],
+  ),
+);
+}
 }
 
 class _NavBarItem extends StatelessWidget {
@@ -712,6 +696,7 @@ class ProductCard extends StatelessWidget {
   final bool isFavorite;
   final VoidCallback? onFavoriteTapped;
   final VoidCallback? onTap;
+  final bool alignCenter; // لو true = في النص ، false = على اليمين
 
   const ProductCard({
     super.key,
@@ -721,13 +706,14 @@ class ProductCard extends StatelessWidget {
     this.isFavorite = false,
     this.onFavoriteTapped,
     this.onTap,
+    this.alignCenter = false, // الافتراضي في النص
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 120.w,
-      height: 120.h,
+      height: 160.h,
       padding: EdgeInsets.all(8.w),
       decoration: ShapeDecoration(
         color: const Color(0xFFD8F1D8),
@@ -743,39 +729,32 @@ class ProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-                     // Heart icon
-           GestureDetector(
-             onTap: onFavoriteTapped,
-             child: SizedBox(
-               width: 24.w,
-               height: 24.h,
-               child: Icon(
-                 isFavorite ? Icons.favorite : Icons.favorite_border,
-                 color: isFavorite ? Color(0xFF28A228) : const Color(0xFF28A228),
-                 size: 20.w,
-               ),
-             ),
-           ),
-          SizedBox(height: 0.h),
-                     // Product image
-           Expanded(
-             child: Center(
-               child: SizedBox(
-                 width: 60.w,
-                 height: 60.h,
-                 child: Image.asset(
-                   exerciseIcon,
-                   width: 70.w,
-                   height: 70.h,
-                   fit: BoxFit.contain,
-                 ),
-               ),
-             ),
-           ),
-          // Product details
+          // Heart icon
+          GestureDetector(
+            onTap: onFavoriteTapped,
+            child: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: const Color(0xFF28A228),
+              size: 20.w,
+            ),
+          ),
+          // Product image
+          Expanded(
+            child: Center(
+              child: Image.asset(
+                exerciseIcon,
+                width: 70.w,
+                height: 70.h,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          // Product details (اسم + سعر)
           Column(
-            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment:
+                alignCenter ? CrossAxisAlignment.center : CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 4.h),
               Text(
                 productName,
                 style: TextStyle(
@@ -784,9 +763,9 @@ class ProductCard extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                 ),
-                textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: alignCenter ? TextAlign.start : TextAlign.start,
               ),
               SizedBox(height: 2.h),
               Text(
@@ -797,7 +776,7 @@ class ProductCard extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                 ),
-                textAlign: TextAlign.center,
+                textAlign: alignCenter ? TextAlign.center : TextAlign.start,
               ),
             ],
           ),

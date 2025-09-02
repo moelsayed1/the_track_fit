@@ -100,13 +100,12 @@ class _StoreScreenState extends State<StoreScreen> {
                    // Left side - Back button and Store title
                    Row(
                      children: [
-                                               GestureDetector(
+                       GestureDetector(
                           onTap: () => context.go(AppRouter.home),
                           child: SizedBox(
                             width: 32.w,
                             height: 32.h,
-                           
-                                                         child: Center(
+                            child: Center(
                                child: SvgPicture.asset(
                                  'assets/logos/arrow_left.svg',
                                  width: 20.w,
@@ -125,7 +124,7 @@ class _StoreScreenState extends State<StoreScreen> {
                           ),
                         ),
                         SizedBox(width: 8.w),
-                                               Text(
+                         Text(
                           'Store',
                           style: TextStyle(
                             color: const Color(0xFF1E1E1E),
@@ -137,16 +136,13 @@ class _StoreScreenState extends State<StoreScreen> {
                         ),
                      ],
                    ),
-                  
                   // Right side - Action icons
                   Row(
-                    children: [
-                                                                                                                                             // Cart Icon - Light green background with green border and dark green icon
+                    children: [                                                                                                             // Cart Icon - Light green background with green border and dark green icon
                           GestureDetector(
                             onTap: () {
                               // Handle cart tap
                               context.push(AppRouter.cart);
-                              
                             },
                             child: Container(
                               width: 32.w,
@@ -161,7 +157,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                   borderRadius: BorderRadius.circular(16.r),
                                 ),
                               ),
-                                                                                                                      child: Center(
+                                child: Center(
                                  child: SvgPicture.asset(
                                    'assets/logos/cart_icon.svg',
                                    width: 20.w,
@@ -174,16 +170,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                ),
                             ),
                           ),
-                       
-                       SizedBox(width: 8.w),
-                       
-                                                                                                                                               // Favorite Icon - Light green background with green border and dark green icon
+                       SizedBox(width: 8.w),                                                                                                              // Favorite Icon - Light green background with green border and dark green icon
                           GestureDetector(
                             onTap: _toggleFavoriteFilter,
                             child: Container(
                               width: 32.w,
-                              height: 32.h,
-                                                           decoration: ShapeDecoration(
+                              height: 32.h,                      decoration: ShapeDecoration(
                                color: _showOnlyFavorites 
                                    ? const Color(0xFF28A228) // Solid green background when active
                                    : const Color(0xFFC0DEC0), // Light green background when inactive
@@ -208,16 +200,13 @@ class _StoreScreenState extends State<StoreScreen> {
                              ),
                             ),
                           ),
-                       
-                       SizedBox(width: 8.w),
-                       
-                                                                                                                                                                                         // Search Icon - Toggleable with tap functionality
+                       SizedBox(width: 8.w),                                                                                                                                                  // Search Icon - Toggleable with tap functionality
                         GestureDetector(
                           onTap: _toggleSearchMode,
                           child: Container(
                             width: 32.w,
                             height: 32.h,
-                                                         decoration: ShapeDecoration(
+                             decoration: ShapeDecoration(
                                color: _isSearchMode 
                                    ? const Color(0xFFC0DEC0) // Light green background when search is active
                                    : const Color(0xFF28A228), // Solid green background when search is inactive
@@ -226,7 +215,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                  borderRadius: BorderRadius.circular(16.r),
                                ),
                              ),
-                                                          child: Center(
+                              child: Center(
                                child: Icon(
                                  Icons.search, // Always search icon (magnifying glass)
                                  color: _isSearchMode 
@@ -241,9 +230,7 @@ class _StoreScreenState extends State<StoreScreen> {
                   ),
                 ],
               ),
-            ),
-            
-                                                                                                                               // Conditional Search Bar - shows when search mode is NOT active
+            ),                                                                                                   // Conditional Search Bar - shows when search mode is NOT active
             if (!_isSearchMode)
               Container(
                 width: 343.w,
@@ -277,8 +264,8 @@ class _StoreScreenState extends State<StoreScreen> {
                      ),
                     ),
                     SizedBox(width: 4.w),
-                   Expanded(
-                                            child: TextField(
+                   Expanded( 
+                    child: TextField(
                          controller: _searchController,
                          onChanged: _onSearchChanged,
                          decoration: InputDecoration(

@@ -224,7 +224,9 @@ class _Header extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            _ProfileContainer(),
+            GestureDetector(onTap: () {
+              context.push(AppRouter.profile);
+            }, child: _ProfileContainer()),
           ],
         ),
       ),
@@ -515,7 +517,7 @@ class _BottomNavBar extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 85.h,
-            padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w),
+            padding: EdgeInsets.only(top: 2.h, left: 12.w, right: 12.w),
             decoration: const ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(

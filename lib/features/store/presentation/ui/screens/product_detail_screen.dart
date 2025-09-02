@@ -189,10 +189,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     // Quantity selector
                     Center(
                       child: Container(
-                        width: 95.w,
+                        width: 120.w,
                         height: 32.h,
                         decoration: ShapeDecoration(
-                          color: const Color(0x26848484),
+                          color: Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(60.r),
                           ),
