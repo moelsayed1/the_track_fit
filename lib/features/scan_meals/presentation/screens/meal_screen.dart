@@ -49,25 +49,23 @@ class _MealScreenState extends State<MealScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Scan Your Meal Section
-            _buildScanSection(),
-            SizedBox(height: 12.h),
-            
-            // Your Meals Section
-            _buildMealsSection(),
-            
-            // Meals List
-            Expanded(
-              child: _buildMealsList(),
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          // Header
+          _buildHeader(),
+          
+          // Scan Your Meal Section
+          _buildScanSection(),
+          SizedBox(height: 12.h),
+          
+          // Your Meals Section
+          _buildMealsSection(),
+          
+          // Meals List
+          Expanded(
+            child: _buildMealsList(),
+          ),
+        ],
       ),
     );
   }
@@ -172,7 +170,7 @@ class _MealScreenState extends State<MealScreen> {
 
   Widget _buildMealsList() {
     return Container(
-      margin: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
+      margin: EdgeInsets.only(top: 0.h, left: 16.w, right: 16.w),
       child: ListView(
         children: [
           MealCard(

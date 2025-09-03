@@ -75,18 +75,15 @@ class ScanExerciseScreen extends StatefulWidget {
 }
 
 class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
-  bool _isScanning = false;
 
   void _startScan() {
     setState(() {
-      _isScanning = true;
     });
     // TODO: Implement actual scanning logic
   }
 
   void _stopScan() {
     setState(() {
-      _isScanning = false;
     });
     // TODO: Implement stop scanning logic
   }
