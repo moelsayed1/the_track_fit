@@ -242,750 +242,748 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
-      body: SafeArea(
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFFF6FFF6), // Background
-          ),
-          child: Column(
-            children: [
-              // App Bar
-              SizedBox(
-                width: double.infinity,
-                height: responsiveHelper.h(6),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: responsiveHelper.w(16),
-                      top: responsiveHelper.h(14),
-                      child: Container(
-                        width: responsiveHelper.w(54),
-                        height: responsiveHelper.h(21),
-                        decoration: ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32),
-                          ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: Color(0xFFF6FFF6), // Background
+        ),
+        child: Column(
+          children: [
+            // App Bar
+            SizedBox(
+              width: double.infinity,
+              height: responsiveHelper.h(6),
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: responsiveHelper.w(16),
+                    top: responsiveHelper.h(14),
+                    child: Container(
+                      width: responsiveHelper.w(54),
+                      height: responsiveHelper.h(21),
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-
-              // Title
-              Center(
-                child: Text(
-                  'Workout',
-                  style: TextStyle(
-                    color: const Color(0xFF1E1E1E), // black
-                    fontSize: responsiveHelper.sp(24),
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
                   ),
+                ],
+              ),
+            ),
+      
+            // Title
+            Center(
+              child: Text(
+                'Workout',
+                style: TextStyle(
+                  color: const Color(0xFF1E1E1E), // black
+                  fontSize: responsiveHelper.sp(24),
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-
-              SizedBox(height: responsiveHelper.h(4)),
-
-              // Search Bar
-              Padding(
+            ),
+      
+            SizedBox(height: responsiveHelper.h(4)),
+      
+            // Search Bar
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: responsiveHelper.w(16),
+              ),
+              child: Container(
+                width: responsiveHelper.w(343),
                 padding: EdgeInsets.symmetric(
                   horizontal: responsiveHelper.w(16),
+                  vertical: responsiveHelper.h(10),
                 ),
-                child: Container(
-                  width: responsiveHelper.w(343),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: responsiveHelper.w(16),
-                    vertical: responsiveHelper.h(10),
+                decoration: ShapeDecoration(
+                  color: _searchFocusNode.hasFocus
+                      ? const Color(0xFFE8F5E8) // Light green when focused
+                      : const Color(
+                          0x26848484,
+                        ), // Semi-transparent gray when not focused
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    side: _searchFocusNode.hasFocus
+                        ? const BorderSide(
+                            color: Color(0xFF4CAF50),
+                            width: 1,
+                          ) // Green border when focused
+                        : BorderSide.none,
                   ),
-                  decoration: ShapeDecoration(
-                    color: _searchFocusNode.hasFocus
-                        ? const Color(0xFFE8F5E8) // Light green when focused
-                        : const Color(
-                            0x26848484,
-                          ), // Semi-transparent gray when not focused
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      side: _searchFocusNode.hasFocus
-                          ? const BorderSide(
-                              color: Color(0xFF4CAF50),
-                              width: 1,
-                            ) // Green border when focused
-                          : BorderSide.none,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: responsiveHelper.w(24),
-                        height: responsiveHelper.h(24),
-                        child: Icon(
-                          Icons.search,
-                          color: _searchFocusNode.hasFocus
-                              ? const Color(0xFF4CAF50) // Green when focused
-                              : const Color(
-                                  0xBF848484,
-                                ), // Gray when not focused
-                          size: responsiveHelper.sp(20),
-                        ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: responsiveHelper.w(24),
+                      height: responsiveHelper.h(24),
+                      child: Icon(
+                        Icons.search,
+                        color: _searchFocusNode.hasFocus
+                            ? const Color(0xFF4CAF50) // Green when focused
+                            : const Color(
+                                0xBF848484,
+                              ), // Gray when not focused
+                        size: responsiveHelper.sp(20),
                       ),
-                      SizedBox(width: responsiveHelper.w(4)),
-                      Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          focusNode: _searchFocusNode,
-                          onChanged: _onSearchChanged,
-                          onSubmitted: (value) {
-                            // Handle search submission (e.g., hide keyboard)
-                            _searchFocusNode.unfocus();
-                          },
-                          style: TextStyle(
-                            color: const Color(0xFF1E1E1E),
+                    ),
+                    SizedBox(width: responsiveHelper.w(4)),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        focusNode: _searchFocusNode,
+                        onChanged: _onSearchChanged,
+                        onSubmitted: (value) {
+                          // Handle search submission (e.g., hide keyboard)
+                          _searchFocusNode.unfocus();
+                        },
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: responsiveHelper.sp(12),
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          height: 1.33,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Search exercises',
+                          hintStyle: TextStyle(
+                            color: const Color(0xBF848484),
                             fontSize: responsiveHelper.sp(12),
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,
                             height: 1.33,
                           ),
-                          decoration: InputDecoration(
-                            hintText: 'Search exercises',
-                            hintStyle: TextStyle(
-                              color: const Color(0xBF848484),
-                              fontSize: responsiveHelper.sp(12),
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w400,
-                              height: 1.33,
-                            ),
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ),
-                      // Clear search button
-                      if (_searchController.text.isNotEmpty)
-                        GestureDetector(
-                          onTap: _clearSearch,
-                          child: Icon(
-                            Icons.close,
-                            color: const Color(0xBF848484),
-                            size: responsiveHelper.sp(16),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(height: responsiveHelper.h(16)),
-
-              // Filter Chips
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: responsiveHelper.w(16),
-                ),
-                child: SizedBox(
-                  width: responsiveHelper.w(343),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: _showTypeSelection,
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: responsiveHelper.w(16),
-                                  vertical: responsiveHelper.h(10),
-                                ),
-                                decoration: ShapeDecoration(
-                                  color: selectedFilter != null
-                                      ? const Color(
-                                          0xFFD8F1D8,
-                                        ) // أخضر فاتح لما يتحدد
-                                      : const Color(
-                                          0x26848484,
-                                        ), // رمادي شفاف لما مش متحدد
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    side: selectedFilter != null
-                                        ? const BorderSide(
-                                            color: Color(
-                                              0xFF4CAF50,
-                                            ), // أخضر غامق للبوردر
-                                            width: 1,
-                                          )
-                                        : BorderSide.none,
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (selectedFilter == null) ...[
-                                      SvgPicture.asset(
-                                        AppIcons.typeIcon,
-                                        width: responsiveHelper.w(16),
-                                        height: responsiveHelper.h(16),
-                                        colorFilter: const ColorFilter.mode(
-                                          Color(0xFF1E1E1E),
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                      SizedBox(width: responsiveHelper.w(6)),
-                                    ],
-                                    Flexible(
-                                      child: Text(
-                                        selectedFilter ?? 'Type',
-                                        style: TextStyle(
-                                          color: const Color(0xFF1E1E1E),
-                                          fontSize: responsiveHelper.sp(12),
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              // الـ X icon تبقى برا الزرار
-                              if (selectedFilter != null)
-                                Positioned(
-                                  right: -6,
-                                  top: -6,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedFilter = null;
-                                        _applyFilters();
-                                      });
-                                    },
-                                    child: Container(
-                                      width: responsiveHelper.w(20),
-                                      height: responsiveHelper.h(20),
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.primaryGreen,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(width: responsiveHelper.w(8)),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: _showLocationSelection,
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: responsiveHelper.w(16),
-                                  vertical: responsiveHelper.h(10),
-                                ),
-                                decoration: ShapeDecoration(
-                                  color: selectedLocation != null
-                                      ? const Color(
-                                          0xFFD8F1D8,
-                                        ) // Light green when selected
-                                      : const Color(
-                                          0x26848484,
-                                        ), // Semi-transparent gray when not selected
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    side: selectedLocation != null
-                                        ? const BorderSide(
-                                            color: Color(
-                                              0xFF4CAF50,
-                                            ), // Green border when selected
-                                            width: 1,
-                                          )
-                                        : BorderSide.none,
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: responsiveHelper.w(20),
-                                      height: responsiveHelper.h(20),
-                                      child: Image.asset(
-                                        AppIcons.gymIcon,
-                                        width: responsiveHelper.w(20),
-                                        height: responsiveHelper.h(20),
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                    SizedBox(width: responsiveHelper.w(8)),
-                                    Flexible(
-                                      child: Text(
-                                        selectedLocation == 'gym'
-                                            ? 'At Gym'
-                                            : selectedLocation == 'home'
-                                            ? 'At Home'
-                                            : 'Gym',
-                                        style: TextStyle(
-                                          color: const Color(
-                                            0xFF1E1E1E,
-                                          ), // black
-                                          fontSize: responsiveHelper.sp(12),
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w500,
-                                          height: 1.60,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Clear button for location filter
-                              if (selectedLocation != null)
-                                Positioned(
-                                  right: -6,
-                                  top: -6,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedLocation = null;
-                                        _applyFilters();
-                                      });
-                                    },
-                                    child: Container(
-                                      width: responsiveHelper.w(20),
-                                      height: responsiveHelper.h(20),
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.primaryGreen,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: responsiveHelper.w(8)),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: _showEquipmentSelection,
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: responsiveHelper.w(16),
-                                  vertical: responsiveHelper.h(10),
-                                ),
-                                decoration: ShapeDecoration(
-                                  color: selectedEquipment != null
-                                      ? const Color(
-                                          0xFFD8F1D8,
-                                        ) // Light green when selected
-                                      : const Color(
-                                          0x26848484,
-                                        ), // Semi-transparent gray when not selected
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    side: selectedEquipment != null
-                                        ? const BorderSide(
-                                            color: Color(
-                                              0xFF4CAF50,
-                                            ), // Green border when selected
-                                            width: 1,
-                                          )
-                                        : BorderSide.none,
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: responsiveHelper.w(20),
-                                      height: responsiveHelper.h(20),
-                                      child: SvgPicture.asset(
-                                        AppIcons.equipmentIcon,
-                                        width: responsiveHelper.w(20),
-                                        height: responsiveHelper.w(20),
-                                        colorFilter: const ColorFilter.mode(
-                                          Color(0xFF1E1E1E),
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: responsiveHelper.w(8)),
-                                    Flexible(
-                                      child: Text(
-                                        selectedEquipment == 'no_equipment'
-                                            ? 'No Equipment'
-                                            : selectedEquipment == 'mat_only'
-                                            ? 'Mat Only'
-                                            : selectedEquipment == 'machines'
-                                            ? 'Machines'
-                                            : 'Equipment',
-                                        style: TextStyle(
-                                          color: const Color(
-                                            0xFF1E1E1E,
-                                          ), // black
-                                          fontSize: responsiveHelper.sp(12),
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w500,
-                                          height: 1.60,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Clear button for equipment filter
-                              if (selectedEquipment != null)
-                                Positioned(
-                                  right: -6,
-                                  top: -6,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedEquipment = null;
-                                        _applyFilters();
-                                      });
-                                    },
-                                    child: Container(
-                                      width: responsiveHelper.w(20),
-                                      height: responsiveHelper.h(20),
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.primaryGreen,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.white,
-                                        size: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(height: responsiveHelper.h(12)),
-
-              // Section Header
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: responsiveHelper.w(16),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: responsiveHelper.w(20),
-                      height: responsiveHelper.h(20),
-                      child: SvgPicture.asset(
-                        AppIcons.justifyAlignLeftIcon,
-                        width: responsiveHelper.w(20),
-                        height: responsiveHelper.h(20),
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1E1E1E),
-                          BlendMode.srcIn,
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
                         ),
                       ),
                     ),
-                    SizedBox(width: responsiveHelper.w(6)),
-                    Text(
-                      'All exercise',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E), // black
-                        fontSize: responsiveHelper.sp(14),
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w400,
-                        height: 1.14,
+                    // Clear search button
+                    if (_searchController.text.isNotEmpty)
+                      GestureDetector(
+                        onTap: _clearSearch,
+                        child: Icon(
+                          Icons.close,
+                          color: const Color(0xBF848484),
+                          size: responsiveHelper.sp(16),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+      
+            SizedBox(height: responsiveHelper.h(16)),
+      
+            // Filter Chips
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: responsiveHelper.w(16),
+              ),
+              child: SizedBox(
+                width: responsiveHelper.w(343),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _showTypeSelection,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: responsiveHelper.w(16),
+                                vertical: responsiveHelper.h(10),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: selectedFilter != null
+                                    ? const Color(
+                                        0xFFD8F1D8,
+                                      ) // أخضر فاتح لما يتحدد
+                                    : const Color(
+                                        0x26848484,
+                                      ), // رمادي شفاف لما مش متحدد
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  side: selectedFilter != null
+                                      ? const BorderSide(
+                                          color: Color(
+                                            0xFF4CAF50,
+                                          ), // أخضر غامق للبوردر
+                                          width: 1,
+                                        )
+                                      : BorderSide.none,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (selectedFilter == null) ...[
+                                    SvgPicture.asset(
+                                      AppIcons.typeIcon,
+                                      width: responsiveHelper.w(16),
+                                      height: responsiveHelper.h(16),
+                                      colorFilter: const ColorFilter.mode(
+                                        Color(0xFF1E1E1E),
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    SizedBox(width: responsiveHelper.w(6)),
+                                  ],
+                                  Flexible(
+                                    child: Text(
+                                      selectedFilter ?? 'Type',
+                                      style: TextStyle(
+                                        color: const Color(0xFF1E1E1E),
+                                        fontSize: responsiveHelper.sp(12),
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+      
+                            // الـ X icon تبقى برا الزرار
+                            if (selectedFilter != null)
+                              Positioned(
+                                right: -6,
+                                top: -6,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedFilter = null;
+                                      _applyFilters();
+                                    });
+                                  },
+                                  child: Container(
+                                    width: responsiveHelper.w(20),
+                                    height: responsiveHelper.h(20),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primaryGreen,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+      
+                    SizedBox(width: responsiveHelper.w(8)),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _showLocationSelection,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: responsiveHelper.w(16),
+                                vertical: responsiveHelper.h(10),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: selectedLocation != null
+                                    ? const Color(
+                                        0xFFD8F1D8,
+                                      ) // Light green when selected
+                                    : const Color(
+                                        0x26848484,
+                                      ), // Semi-transparent gray when not selected
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  side: selectedLocation != null
+                                      ? const BorderSide(
+                                          color: Color(
+                                            0xFF4CAF50,
+                                          ), // Green border when selected
+                                          width: 1,
+                                        )
+                                      : BorderSide.none,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: responsiveHelper.w(20),
+                                    height: responsiveHelper.h(20),
+                                    child: Image.asset(
+                                      AppIcons.gymIcon,
+                                      width: responsiveHelper.w(20),
+                                      height: responsiveHelper.h(20),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  SizedBox(width: responsiveHelper.w(8)),
+                                  Flexible(
+                                    child: Text(
+                                      selectedLocation == 'gym'
+                                          ? 'At Gym'
+                                          : selectedLocation == 'home'
+                                          ? 'At Home'
+                                          : 'Gym',
+                                      style: TextStyle(
+                                        color: const Color(
+                                          0xFF1E1E1E,
+                                        ), // black
+                                        fontSize: responsiveHelper.sp(12),
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.60,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Clear button for location filter
+                            if (selectedLocation != null)
+                              Positioned(
+                                right: -6,
+                                top: -6,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedLocation = null;
+                                      _applyFilters();
+                                    });
+                                  },
+                                  child: Container(
+                                    width: responsiveHelper.w(20),
+                                    height: responsiveHelper.h(20),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primaryGreen,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: responsiveHelper.w(8)),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: _showEquipmentSelection,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: responsiveHelper.w(16),
+                                vertical: responsiveHelper.h(10),
+                              ),
+                              decoration: ShapeDecoration(
+                                color: selectedEquipment != null
+                                    ? const Color(
+                                        0xFFD8F1D8,
+                                      ) // Light green when selected
+                                    : const Color(
+                                        0x26848484,
+                                      ), // Semi-transparent gray when not selected
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  side: selectedEquipment != null
+                                      ? const BorderSide(
+                                          color: Color(
+                                            0xFF4CAF50,
+                                          ), // Green border when selected
+                                          width: 1,
+                                        )
+                                      : BorderSide.none,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: responsiveHelper.w(20),
+                                    height: responsiveHelper.h(20),
+                                    child: SvgPicture.asset(
+                                      AppIcons.equipmentIcon,
+                                      width: responsiveHelper.w(20),
+                                      height: responsiveHelper.w(20),
+                                      colorFilter: const ColorFilter.mode(
+                                        Color(0xFF1E1E1E),
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: responsiveHelper.w(8)),
+                                  Flexible(
+                                    child: Text(
+                                      selectedEquipment == 'no_equipment'
+                                          ? 'No Equipment'
+                                          : selectedEquipment == 'mat_only'
+                                          ? 'Mat Only'
+                                          : selectedEquipment == 'machines'
+                                          ? 'Machines'
+                                          : 'Equipment',
+                                      style: TextStyle(
+                                        color: const Color(
+                                          0xFF1E1E1E,
+                                        ), // black
+                                        fontSize: responsiveHelper.sp(12),
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.60,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Clear button for equipment filter
+                            if (selectedEquipment != null)
+                              Positioned(
+                                right: -6,
+                                top: -6,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedEquipment = null;
+                                      _applyFilters();
+                                    });
+                                  },
+                                  child: Container(
+                                    width: responsiveHelper.w(20),
+                                    height: responsiveHelper.h(20),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primaryGreen,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-
-              SizedBox(height: responsiveHelper.h(16)),
-
-              // Exercise List
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: responsiveHelper.w(16),
+            ),
+      
+            SizedBox(height: responsiveHelper.h(12)),
+      
+            // Section Header
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: responsiveHelper.w(16),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: responsiveHelper.w(20),
+                    height: responsiveHelper.h(20),
+                    child: SvgPicture.asset(
+                      AppIcons.justifyAlignLeftIcon,
+                      width: responsiveHelper.w(20),
+                      height: responsiveHelper.h(20),
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF1E1E1E),
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
-                  child: SizedBox(
-                    width: responsiveHelper.w(343),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (filteredExercises.isEmpty)
-                            // No results found message
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                vertical: responsiveHelper.h(40),
-                                horizontal: responsiveHelper.w(20),
-                              ),
+                  SizedBox(width: responsiveHelper.w(6)),
+                  Text(
+                    'All exercise',
+                    style: TextStyle(
+                      color: const Color(0xFF1E1E1E), // black
+                      fontSize: responsiveHelper.sp(14),
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      height: 1.14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      
+            SizedBox(height: responsiveHelper.h(16)),
+      
+            // Exercise List
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsiveHelper.w(16),
+                ),
+                child: SizedBox(
+                  width: responsiveHelper.w(343),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (filteredExercises.isEmpty)
+                          // No results found message
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              vertical: responsiveHelper.h(40),
+                              horizontal: responsiveHelper.w(20),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: responsiveHelper.sp(48),
+                                  color: const Color(0xBF848484),
+                                ),
+                                SizedBox(height: responsiveHelper.h(16)),
+                                Text(
+                                  'No exercises found',
+                                  style: TextStyle(
+                                    color: const Color(0xFF1E1E1E),
+                                    fontSize: responsiveHelper.sp(16),
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: responsiveHelper.h(8)),
+                                Text(
+                                  'Try adjusting your search or filters',
+                                  style: TextStyle(
+                                    color: const Color(0xBF848484),
+                                    fontSize: responsiveHelper.sp(12),
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          )
+                        else
+                          ...filteredExercises.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final exercise = entry.value;
+                            return GestureDetector(
+                              onTap: () {
+                                context.push(
+                                  AppRouter.exerciseDetail,
+                                  extra: exercise,
+                                );
+                              },
                               child: Column(
                                 children: [
-                                  Icon(
-                                    Icons.search_off,
-                                    size: responsiveHelper.sp(48),
-                                    color: const Color(0xBF848484),
-                                  ),
-                                  SizedBox(height: responsiveHelper.h(16)),
-                                  Text(
-                                    'No exercises found',
-                                    style: TextStyle(
-                                      color: const Color(0xFF1E1E1E),
-                                      fontSize: responsiveHelper.sp(16),
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(height: responsiveHelper.h(8)),
-                                  Text(
-                                    'Try adjusting your search or filters',
-                                    style: TextStyle(
-                                      color: const Color(0xBF848484),
-                                      fontSize: responsiveHelper.sp(12),
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            )
-                          else
-                            ...filteredExercises.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final exercise = entry.value;
-                              return GestureDetector(
-                                onTap: () {
-                                  context.push(
-                                    AppRouter.exerciseDetail,
-                                    extra: exercise,
-                                  );
-                                },
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.all(
-                                                  responsiveHelper.w(8),
-                                                ),
-                                                decoration: ShapeDecoration(
-                                                  shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                      width: 1,
-                                                      color: const Color(
-                                                        0x26848484,
-                                                      ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(
+                                                responsiveHelper.w(8),
+                                              ),
+                                              decoration: ShapeDecoration(
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                    width: 1,
+                                                    color: const Color(
+                                                      0x26848484,
                                                     ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          15,
-                                                        ),
                                                   ),
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      width: responsiveHelper.w(
-                                                        48,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        15,
                                                       ),
-                                                      height: responsiveHelper
-                                                          .h(48),
-                                                      decoration: ShapeDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                            exercise.imagePath,
-                                                          ),
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                10,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: responsiveHelper.w(16),
-                                              ),
-                                              SizedBox(
-                                                width: responsiveHelper.w(115),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: responsiveHelper.w(
-                                                        115,
-                                                      ),
-                                                      child: Text(
-                                                        exercise.title,
-                                                        style: TextStyle(
-                                                          color: const Color(
-                                                            0xFF1E1E1E,
-                                                          ), // black
-                                                          fontSize:
-                                                              responsiveHelper
-                                                                  .sp(16),
-                                                          fontFamily: 'Poppins',
-                                                          fontWeight:
-                                                              FontWeight.w500,
+                                              child: Row(
+                                                mainAxisSize:
+                                                    MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    width: responsiveHelper.w(
+                                                      48,
+                                                    ),
+                                                    height: responsiveHelper
+                                                        .h(48),
+                                                    decoration: ShapeDecoration(
+                                                      image: DecorationImage(
+                                                        image: AssetImage(
+                                                          exercise.imagePath,
                                                         ),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              10,
+                                                            ),
                                                       ),
                                                     ),
-                                                    SizedBox(
-                                                      height: responsiveHelper
-                                                          .h(4),
-                                                    ),
-                                                    SizedBox(
-                                                      width: responsiveHelper.w(
-                                                        115,
-                                                      ),
-                                                      child: Text(
-                                                        exercise.subtitle,
-                                                        style: TextStyle(
-                                                          color: const Color(
-                                                            0xFF848484,
-                                                          ), // gray
-                                                          fontSize:
-                                                              responsiveHelper
-                                                                  .sp(14),
-                                                          fontFamily: 'Poppins',
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: responsiveHelper.w(24),
-                                            height: responsiveHelper.h(24),
-                                            child: GestureDetector(
-                                              onTap: () =>
-                                                  _toggleFavorite(exercise.id),
-                                              child: Icon(
-                                                exercise.isFavorite
-                                                    ? Icons.favorite
-                                                    : Icons.favorite_border,
-                                                color: exercise.isFavorite
-                                                    ? AppColors.primaryGreen
-                                                    : const Color(0xFF848484),
-                                                size: responsiveHelper.sp(24),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: responsiveHelper.h(16)),
-                                    if (index < filteredExercises.length - 1)
-                                      Container(
-                                        width: double.infinity,
-                                        height: responsiveHelper.h(1),
-                                        decoration: ShapeDecoration(
-                                          shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                              width: 1,
-                                              strokeAlign:
-                                                  BorderSide.strokeAlignCenter,
-                                              color: const Color(0x26848484),
+                                            SizedBox(
+                                              width: responsiveHelper.w(16),
+                                            ),
+                                            SizedBox(
+                                              width: responsiveHelper.w(115),
+                                              child: Column(
+                                                mainAxisSize:
+                                                    MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: responsiveHelper.w(
+                                                      115,
+                                                    ),
+                                                    child: Text(
+                                                      exercise.title,
+                                                      style: TextStyle(
+                                                        color: const Color(
+                                                          0xFF1E1E1E,
+                                                        ), // black
+                                                        fontSize:
+                                                            responsiveHelper
+                                                                .sp(16),
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: responsiveHelper
+                                                        .h(4),
+                                                  ),
+                                                  SizedBox(
+                                                    width: responsiveHelper.w(
+                                                      115,
+                                                    ),
+                                                    child: Text(
+                                                      exercise.subtitle,
+                                                      style: TextStyle(
+                                                        color: const Color(
+                                                          0xFF848484,
+                                                        ), // gray
+                                                        fontSize:
+                                                            responsiveHelper
+                                                                .sp(14),
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: responsiveHelper.w(24),
+                                          height: responsiveHelper.h(24),
+                                          child: GestureDetector(
+                                            onTap: () =>
+                                                _toggleFavorite(exercise.id),
+                                            child: Icon(
+                                              exercise.isFavorite
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: exercise.isFavorite
+                                                  ? AppColors.primaryGreen
+                                                  : const Color(0xFF848484),
+                                              size: responsiveHelper.sp(24),
                                             ),
                                           ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: responsiveHelper.h(16)),
+                                  if (index < filteredExercises.length - 1)
+                                    Container(
+                                      width: double.infinity,
+                                      height: responsiveHelper.h(1),
+                                      decoration: ShapeDecoration(
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            width: 1,
+                                            strokeAlign:
+                                                BorderSide.strokeAlignCenter,
+                                            color: const Color(0x26848484),
+                                          ),
+                                        ),
                                       ),
-                                    SizedBox(height: responsiveHelper.h(16)),
-                                  ],
-                                ),
-                              );
-                            }),
-                        ],
-                      ),
+                                    ),
+                                  SizedBox(height: responsiveHelper.h(16)),
+                                ],
+                              ),
+                            );
+                          }),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

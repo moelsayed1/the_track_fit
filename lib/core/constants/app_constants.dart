@@ -42,8 +42,8 @@ class AppConstants {
   // API Configuration
   static const String baseUrl = 'https://thetrackfit.com'; // Replace with your actual API base URL
   static const String registerEndpoint = '/api/register';
-  static const String loginEndpoint = '/login';
-  static const String logoutEndpoint = '/logout';
-  static const String sendOtpEndpoint = '/send-otp';
-  static const String resetPasswordEndpoint = '/reset-password';
+  static const String loginEndpoint = '/api/login';
+  static const String logoutEndpoint = '/api/logout';
+  static const String sendOtpEndpoint = '/api/send-otp';
+  static const String resetPasswordEndpoint = '/api/reset-password';
 } 

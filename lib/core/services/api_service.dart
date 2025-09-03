@@ -9,6 +9,8 @@ class ApiService {
   ApiService._internal();
 
   late Dio _dio;
+  String? _csrfToken;
+  String? _bearerToken;
 
   void init() {
     _dio = Dio(BaseOptions(
@@ -17,9 +19,9 @@ class ApiService {
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
       validateStatus: (status) {
-        // Accept 200-299 and 422 (validation errors) as valid responses
+        // Accept 200-299, 422 (validation errors), and 419 (CSRF token mismatch) as valid responses
         log('validateStatus called with status: $status');
-        final isValid = status != null && (status < 300 || status == 422);
+        final isValid = status != null && (status < 300 || status == 422 || status == 419);
         log('validateStatus returning: $isValid');
         return isValid;
       },
@@ -37,11 +39,40 @@ class ApiService {
     ));
 
     _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        // Add CSRF token to requests if available
+        if (_csrfToken != null) {
+          options.headers['X-CSRF-TOKEN'] = _csrfToken;
+        }
+        // Add Bearer token to requests if available
+        if (_bearerToken != null) {
+          options.headers['Authorization'] = 'Bearer $_bearerToken';
+        }
+        handler.next(options);
+      },
       onError: (error, handler) {
         // Handle common errors
         if (error.response?.statusCode == 401) {
           // Handle unauthorized access
           log('Unauthorized access');
+        } else if (error.response?.statusCode == 419) {
+          // Handle CSRF token mismatch - try to get new token
+          log('CSRF token mismatch, attempting to get new token');
+          _getCsrfToken().then((_) {
+            // Retry the original request
+            final options = error.requestOptions;
+            if (_csrfToken != null) {
+              options.headers['X-CSRF-TOKEN'] = _csrfToken;
+            }
+            _dio.fetch(options).then((response) {
+              handler.resolve(response);
+            }).catchError((retryError) {
+              handler.next(retryError);
+            });
+          }).catchError((_) {
+            handler.next(error);
+          });
+          return;
         }
         handler.next(error);
       },
@@ -49,6 +80,48 @@ class ApiService {
   }
 
   Dio get dio => _dio;
+
+  // Get CSRF token from the server
+  Future<void> _getCsrfToken() async {
+    try {
+      log('Getting CSRF token...');
+      final response = await _dio.get('/sanctum/csrf-cookie');
+      log('CSRF token response status: ${response.statusCode}');
+      
+      // Extract CSRF token from cookies
+      final cookies = response.headers['set-cookie'];
+      if (cookies != null) {
+        for (final cookie in cookies) {
+          if (cookie.contains('XSRF-TOKEN=')) {
+            final tokenMatch = RegExp(r'XSRF-TOKEN=([^;]+)').firstMatch(cookie);
+            if (tokenMatch != null) {
+              _csrfToken = Uri.decodeComponent(tokenMatch.group(1)!);
+              log('CSRF token obtained: $_csrfToken');
+              break;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      log('Failed to get CSRF token: $e');
+      _csrfToken = null;
+    }
+  }
+
+  // Initialize CSRF token
+  Future<void> initializeCsrfToken() async {
+    await _getCsrfToken();
+  }
+
+  // Set Bearer token for authenticated requests
+  void setBearerToken(String token) {
+    _bearerToken = token;
+  }
+
+  // Clear Bearer token
+  void clearBearerToken() {
+    _bearerToken = null;
+  }
 
   // Generic GET request
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
@@ -64,6 +137,23 @@ class ApiService {
   Future<Response> post(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
     try {
       final response = await _dio.post(path, data: data, queryParameters: queryParameters);
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // POST request with form data
+  Future<Response> postForm(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters}) async {
+    try {
+      final response = await _dio.post(
+        path, 
+        data: data,
+        queryParameters: queryParameters,
+        options: Options(
+          contentType: 'application/x-www-form-urlencoded',
+        ),
+      );
       return response;
     } on DioException catch (e) {
       throw _handleError(e);

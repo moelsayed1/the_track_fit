@@ -32,70 +32,68 @@ class _ReportScreenState extends State<ReportScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: responsiveHelper.h(12)),
-              Center(
-                child: Text(
-                  'Report',
-                  style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
-                    fontSize: responsiveHelper.sp(24),
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                  ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: responsiveHelper.h(12)),
+            Center(
+              child: Text(
+                'Report',
+                style: TextStyle(
+                  color: const Color(0xFF1E1E1E),
+                  fontSize: responsiveHelper.sp(24),
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: responsiveHelper.h(30)),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: responsiveHelper.w(16)),
-                padding: EdgeInsets.all(responsiveHelper.w(4)),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(
-                    color: Colors.grey.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildSummaryCard(
-                        responsiveHelper: responsiveHelper,
-                        icon: 'assets/images/cal.png',
-                        value: '0',
-                        unit: 'Kcal',
-                      ),
-                    ),
-                    SizedBox(width: responsiveHelper.w(12)),
-                    Expanded(
-                      child: _buildSummaryCard(
-                        responsiveHelper: responsiveHelper,
-                        icon: 'assets/images/time.png',
-                        value: '0',
-                        unit: 'Minute',
-                      ),
-                    ),
-                    SizedBox(width: responsiveHelper.w(12)),
-                    Expanded(
-                      child: _buildSummaryCard(
-                        responsiveHelper: responsiveHelper,
-                        icon: 'assets/images/dumbbell.png',
-                        value: '0',
-                        unit: 'Workout',
-                      ),
-                    ),
-                  ],
+            ),
+            SizedBox(height: responsiveHelper.h(30)),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: responsiveHelper.w(16)),
+              padding: EdgeInsets.all(responsiveHelper.w(4)),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  width: 1,
                 ),
               ),
-              SizedBox(height: responsiveHelper.h(30)),
-              _buildStatisticsCard(responsiveHelper),
-              SizedBox(height: responsiveHelper.h(30)),
-            ],
-          ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildSummaryCard(
+                      responsiveHelper: responsiveHelper,
+                      icon: 'assets/images/cal.png',
+                      value: '0',
+                      unit: 'Kcal',
+                    ),
+                  ),
+                  SizedBox(width: responsiveHelper.w(12)),
+                  Expanded(
+                    child: _buildSummaryCard(
+                      responsiveHelper: responsiveHelper,
+                      icon: 'assets/images/time.png',
+                      value: '0',
+                      unit: 'Minute',
+                    ),
+                  ),
+                  SizedBox(width: responsiveHelper.w(12)),
+                  Expanded(
+                    child: _buildSummaryCard(
+                      responsiveHelper: responsiveHelper,
+                      icon: 'assets/images/dumbbell.png',
+                      value: '0',
+                      unit: 'Workout',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: responsiveHelper.h(30)),
+            _buildStatisticsCard(responsiveHelper),
+            SizedBox(height: responsiveHelper.h(30)),
+          ],
         ),
       ),
     );

@@ -37,21 +37,28 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: bottomInset),
-        child: Scaffold(
-          backgroundColor: const Color(0xFFF6FFF6),
-          // body الآن يحتوي على المحتوى الرئيسي فقط، مع SafeArea لضمان الجزء العلوي
-          body: _buildContentForTab(_currentIndex),
-          // استخدام bottomNavigationBar المخصص في Scaffold
-          bottomNavigationBar: _currentIndex != 4
-              ? _BottomNavBar(
-                  currentIndex: _currentIndex,
-                  onTabTapped: _onTabTapped,
-                  getTabColor: _getTabColor,
-                )
-              : null, // لا تعرض شريط التنقل إذا كانت الشاشة هي 'Plan'
+    final hasSystemNavBar = bottomInset > 0;
+    
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6FFF6),
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // Main content
+            Expanded(child: _buildContentForTab(_currentIndex)),
+            // Hide bottom navigation bar when showing Plan tab
+            if (_currentIndex != 4) ...[
+              _BottomNavBar(
+                currentIndex: _currentIndex,
+                onTabTapped: _onTabTapped,
+                getTabColor: _getTabColor,
+                hasSystemNavBar: hasSystemNavBar,
+                bottomInset: bottomInset,
+              ),
+            ],
+          ],
         ),
       ),
     );
@@ -410,11 +417,15 @@ class _BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final void Function(int) onTabTapped;
   final Color Function(int) getTabColor;
+  final bool hasSystemNavBar;
+  final double bottomInset;
 
   const _BottomNavBar({
     required this.currentIndex,
     required this.onTabTapped,
     required this.getTabColor,
+    required this.hasSystemNavBar,
+    required this.bottomInset,
   });
 
   @override
@@ -435,8 +446,13 @@ class _BottomNavBar extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            height: 85.h,
-            padding: EdgeInsets.only(top: 2.h, left: 12.w, right: 12.w),
+            height: 85.h + (hasSystemNavBar ? bottomInset : 0), // إضافة المساحة إذا كان هناك system nav bar
+            padding: EdgeInsets.only(
+              top: 6.h, 
+              left: 12.w, 
+              right: 12.w,
+              bottom: hasSystemNavBar ? bottomInset : 0, // إضافة padding من الأسفل إذا كان هناك system nav bar
+            ),
             decoration: const ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(

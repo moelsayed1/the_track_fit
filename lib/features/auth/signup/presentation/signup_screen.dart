@@ -10,6 +10,7 @@ import '../../../../core/widgets/auth_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
+import '../../../../core/widgets/custom_snackbar.dart';
 import '../../data/cubit/auth_cubit.dart';
 import '../../data/cubit/auth_states.dart';
 
@@ -94,11 +95,11 @@ class _SignupScreenState extends State<SignupScreen> {
   void _showValidationErrors(Map<String, String> errors) {
     // Show the first validation error
     final firstError = errors.values.first;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(firstError),
-        backgroundColor: Colors.orange,
-      ),
+    CustomSnackbar.show(
+      context,
+      title: 'Validation Error',
+      message: firstError,
+      type: SnackbarType.warning,
     );
   }
 
@@ -108,45 +109,27 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthLoading) {
-          // Show loading indicator
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is AuthRegisterSuccess) {
-          // Hide loading indicator
-          Navigator.of(context).pop();
-          
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.response.message),
-              backgroundColor: Colors.green,
-            ),
+        if (state is AuthRegisterSuccess) {
+          // Show success message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Registration Successful!',
+            message: state.response.message,
+            type: SnackbarType.success,
           );
           
           // Navigate to next screen
           context.push(AppRouter.genderQuestion);
         } else if (state is AuthValidationError) {
-          // Hide loading indicator
-          Navigator.of(context).pop();
-          
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
         } else if (state is AuthError) {
-          // Hide loading indicator
-          Navigator.of(context).pop();
-          
-          // Show error message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+          // Show error message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Registration Failed',
+            message: state.message,
+            type: SnackbarType.error,
           );
         }
       },
@@ -228,9 +211,10 @@ class _SignupScreenState extends State<SignupScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     return PrimaryButton(
-                      text: state is AuthLoading ? 'Creating Account...' : 'Create Account',
-                      onPressed: state is AuthLoading ? null : _handleSignup,
+                      text: 'Create Account',
+                      onPressed: _handleSignup,
                       height: responsive.hp(7),
+                      isLoading: state is AuthLoading,
                     );
                   },
                 ),

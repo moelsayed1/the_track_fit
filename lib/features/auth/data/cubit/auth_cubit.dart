@@ -101,6 +101,36 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  /// Verify OTP
+  Future<void> verifyOtp({
+    required String email,
+    required String otp,
+  }) async {
+    emit(const AuthLoading());
+    
+    try {
+      // Validate input
+      final validationErrors = _validateOtpInput(
+        email: email,
+        otp: otp,
+      );
+      
+      if (validationErrors.isNotEmpty) {
+        emit(AuthValidationError(validationErrors));
+        return;
+      }
+
+      // For now, we'll simulate OTP verification
+      // In a real app, you'd call an API endpoint to verify the OTP
+      await Future.delayed(const Duration(seconds: 1));
+      emit(const AuthOtpVerifiedSuccess('OTP verified successfully'));
+    } catch (e) {
+      log('AuthCubit VerifyOtp Error: $e');
+      final errorMessage = _extractErrorMessage(e);
+      emit(AuthError(errorMessage));
+    }
+  }
+
   /// Reset password
   Future<void> resetPassword({
     required String email,
@@ -220,6 +250,28 @@ class AuthCubit extends Cubit<AuthState> {
     return errors;
   }
 
+  /// Validate OTP input
+  Map<String, String> _validateOtpInput({
+    required String email,
+    required String otp,
+  }) {
+    final errors = <String, String>{};
+    
+    if (email.trim().isEmpty) {
+      errors['email'] = 'Email is required';
+    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email.trim())) {
+      errors['email'] = 'Please enter a valid email address';
+    }
+    
+    if (otp.trim().isEmpty) {
+      errors['otp'] = 'OTP is required';
+    } else if (otp.trim().length != 6) {
+      errors['otp'] = 'OTP must be 6 digits';
+    }
+    
+    return errors;
+  }
+
   Map<String, String> _validateResetPasswordInput({
     required String email,
     required String otp,
@@ -235,6 +287,8 @@ class AuthCubit extends Cubit<AuthState> {
     
     if (otp.trim().isEmpty) {
       errors['otp'] = 'OTP is required';
+    } else if (otp.trim().length != 6) {
+      errors['otp'] = 'OTP must be 6 digits';
     }
     
     if (newPassword.isEmpty) {

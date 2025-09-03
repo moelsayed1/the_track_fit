@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/core/widgets/custom_snackbar.dart';
+import '../../../auth/data/cubit/auth_cubit.dart';
+import '../../../auth/data/cubit/auth_states.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -28,39 +32,132 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            // Green background container (Top Wave)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: ClipPath(
-                clipper: TopWaveClipper(), // استخدام الـ Clipper المحدث
-                child: Container(
-                  height: 220.h, // يمكنك ضبط الارتفاع حسب الحاجة
-                  color: const Color(0x4028A228), // اللون الجديد: #28A22840
-                ),
+  void _handleLogout() {
+    // Show confirmation dialog
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "Close",
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Align(
+          alignment: Alignment.center,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: 250.w,
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.r),
               ),
-            ),
-
-            SafeArea(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Profile Header
-                  _buildProfileHeader(),
-
-                  // Profile Content
-                  _buildProfileContent(),
+                  const Text(
+                    'Logout',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Are you sure you want to logout?',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: const Color(0xFFFF4444),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          context.read<AuthCubit>().logout();
+                        },
+                        child: const Text('Logout'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ],
+          ),
+        );
+      },
+      transitionBuilder: (context, anim, secondaryAnim, child) {
+        final offsetAnimation = Tween<Offset>(
+          begin: const Offset(0, 1),
+          end: Offset.zero,
+        ).animate(anim);
+        return SlideTransition(position: offsetAnimation, child: child);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+                if (state is AuthLogoutSuccess) {
+          // Show success message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Logout Successful!',
+            message: state.message,
+            type: SnackbarType.success,
+          );
+ 
+          // Navigate to login screen
+          context.go('/login');
+        } else if (state is AuthError) {
+          // Show error message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Logout Failed',
+            message: state.message,
+            type: SnackbarType.error,
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF6FFF6),
+        body: SingleChildScrollView(
+          child: Stack(
+            children: [
+              // Green background container (Top Wave)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ClipPath(
+                  clipper: TopWaveClipper(), // استخدام الـ Clipper المحدث
+                  child: Container(
+                    height: 220.h, // يمكنك ضبط الارتفاع حسب الحاجة
+                    color: const Color(0x4028A228), // اللون الجديد: #28A22840
+                  ),
+                ),
+              ),
+
+              SafeArea(
+                child: Column(
+                  children: [
+                    // Profile Header
+                    _buildProfileHeader(),
+
+                    // Profile Content
+                    _buildProfileContent(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -164,6 +261,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Favourite Exercise Section
           _buildFavouriteExerciseSection(),
+
+          SizedBox(height: 16.h),
+
+          // Logout Section
+          _buildLogoutSection(),
         ],
       ),
     );
@@ -461,6 +563,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLogoutSection() {
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: _handleLogout,
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.r),
+              border: Border.all(
+                color: const Color(0x26FF4444), // Light red border
+                width: 1.w,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.logout,
+                  color: const Color(0xFFFF4444), // Red color for logout
+                  size: 24.w,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  state is AuthLoading ? 'Logging out...' : 'Logout',
+                  style: TextStyle(
+                    color: const Color(0xFFFF4444), // Red color for logout
+                    fontSize: 16.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (state is AuthLoading) ...[
+                  SizedBox(width: 8.w),
+                  SizedBox(
+                    width: 16.w,
+                    height: 16.h,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        const Color(0xFFFF4444),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -105,85 +105,84 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: bottomInset),
-        child: Scaffold(
-          backgroundColor: const Color(0xFFF6FFF6),
-          resizeToAvoidBottomInset: false,
-          body: Column(
-            children: [
-              // Warning Dialog
-              if (_showWarningDialog)
-                Container(
-                  width: 375.w,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x19000000),
-                        blurRadius: 4,
-                        offset: const Offset(4, 0),
-                        spreadRadius: 0,
+    final hasSystemNavBar = bottomInset > 0;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6FFF6),
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            // Warning Dialog
+            if (_showWarningDialog)
+              Container(
+                width: 375.w,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0x19000000),
+                      blurRadius: 4,
+                      offset: const Offset(4, 0),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Warning icon
+                    Container(
+                      width: 18.w,
+                      height: 18.w,
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                        shape: BoxShape.circle,
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Warning icon
-                      Container(
-                        width: 18.w,
-                        height: 18.w,
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      child: const Center(
+                        child: Text(
+                          '!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      // Reduced spacing from 8.w to 4.w
-                      // Warning text
-                      SizedBox(width: 8.w),
-                      Text(
-                        'Please Finish The previous challenge first.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: const Color(0xFF1E1E1E),
-                          fontSize: 13.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                    // Reduced spacing from 8.w to 4.w
+                    // Warning text
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Please Finish The previous challenge first.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color(0xFF1E1E1E),
+                        fontSize: 13.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              // Main content
-              Expanded(child: _buildContentForTab(_currentIndex)),
-              // Hide bottom navigation bar when showing Plan tab
-              if (_currentIndex != 4) ...[
-                _BottomNavBar(
-                  currentIndex: _currentIndex,
-                  onTabTapped: _onTabTapped,
-                  getTabColor: _getTabColor,
-                ),
-              ],
+              ),
+            // Main content
+            Expanded(child: _buildContentForTab(_currentIndex)),
+            // Hide bottom navigation bar when showing Plan tab
+            if (_currentIndex != 4) ...[
+              _BottomNavBar(
+                currentIndex: _currentIndex,
+                onTabTapped: _onTabTapped,
+                getTabColor: _getTabColor,
+                hasSystemNavBar: hasSystemNavBar,
+                bottomInset: bottomInset,
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -212,7 +211,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       onTap: () => _onDateSelected(index),
       child: Container(
         width: 35.w,
-        height: 50.h,
+        height: 60.h,
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(15.r),
@@ -253,7 +252,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         _Header(title: _getScreenTitle(_currentIndex)),
         // Greeting section
         Padding(
-          padding: EdgeInsets.only(top: 20.h, bottom: 24.h, left: 16.w),
+          padding: EdgeInsets.only(top: 20.h, bottom: 16.h, left: 16.w),
           child: Row(
             children: [
               Text(
@@ -407,7 +406,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
                   child: GestureDetector(
-                    onTap: () => context.go('/store'),
+                    onTap: () => context.push(AppRouter.productDetail),
                     child: ProductCard(
                       productName: 'Product name',
                       price: '20\$',
@@ -498,19 +497,34 @@ class _BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final void Function(int) onTabTapped;
   final Color Function(int) getTabColor;
+  final bool hasSystemNavBar;
+  final double bottomInset;
 
   const _BottomNavBar({
     required this.currentIndex,
     required this.onTabTapped,
     required this.getTabColor,
+    required this.hasSystemNavBar,
+    required this.bottomInset,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 85.h, // تأكد أن الارتفاع مضبوط
-      padding: EdgeInsets.only(top: 4.h, left: 12.w, right: 12.w),
+      height:
+          85.h +
+          (hasSystemNavBar
+              ? bottomInset
+              : 0), // إضافة المساحة إذا كان هناك system nav bar
+      padding: EdgeInsets.only(
+        top: 12.h,
+        left: 12.w,
+        right: 12.w,
+        bottom: hasSystemNavBar
+            ? bottomInset
+            : 0, // إضافة padding من الأسفل إذا كان هناك system nav bar
+      ),
       decoration: const ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(

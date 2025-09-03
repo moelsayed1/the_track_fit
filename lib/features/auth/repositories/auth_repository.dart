@@ -13,8 +13,11 @@ class AuthRepository {
   /// Register a new user
   Future<RegisterResponse> register(RegisterRequest request) async {
     try {
+      // Initialize CSRF token before registration
+      await _apiService.initializeCsrfToken();
+      
       log('Sending register request: ${request.toJson()}');
-      final response = await _apiService.post(
+      final response = await _apiService.postForm(
         AppConstants.registerEndpoint,
         data: request.toJson(),
       );
@@ -23,7 +26,12 @@ class AuthRepository {
       log('Response data: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return RegisterResponse.fromJson(response.data);
+        final registerResponse = RegisterResponse.fromJson(response.data);
+        // Store the Bearer token for future authenticated requests
+        if (registerResponse.data?.token != null) {
+          _apiService.setBearerToken(registerResponse.data!.token);
+        }
+        return registerResponse;
       } else if (response.statusCode == 422) {
         // Handle validation errors
         log('422 Error Response: ${response.data}');
@@ -54,7 +62,10 @@ class AuthRepository {
   /// Login user
   Future<RegisterResponse> login(String email, String password) async {
     try {
-      final response = await _apiService.post(
+      // Initialize CSRF token before login
+      await _apiService.initializeCsrfToken();
+      
+      final response = await _apiService.postForm(
         AppConstants.loginEndpoint,
         data: {
           'email': email,
@@ -63,7 +74,20 @@ class AuthRepository {
       );
 
       if (response.statusCode == 200) {
-        return RegisterResponse.fromJson(response.data);
+        final registerResponse = RegisterResponse.fromJson(response.data);
+        // Store the Bearer token for future authenticated requests
+        if (registerResponse.data?.token != null) {
+          _apiService.setBearerToken(registerResponse.data!.token);
+        }
+        return registerResponse;
+      } else if (response.statusCode == 422) {
+        // Handle validation errors
+        log('422 Error Response: ${response.data}');
+        final errorResponse = ApiErrorResponse.fromJson(response.data);
+        log('Parsed Error Response: $errorResponse');
+        final errorMessage = errorResponse.getFirstValidationError();
+        log('Error Message: $errorMessage');
+        throw Exception(errorMessage);
       } else {
         throw Exception('Login failed with status: ${response.statusCode}');
       }
@@ -82,7 +106,10 @@ class AuthRepository {
   /// Send OTP for password reset
   Future<bool> sendOtp(String email) async {
     try {
-      final response = await _apiService.post(
+      // Initialize CSRF token before sending OTP
+      await _apiService.initializeCsrfToken();
+      
+      final response = await _apiService.postForm(
         AppConstants.sendOtpEndpoint,
         data: {'email': email},
       );
@@ -103,7 +130,10 @@ class AuthRepository {
   /// Reset password
   Future<bool> resetPassword(String email, String otp, String newPassword) async {
     try {
-      final response = await _apiService.post(
+      // Initialize CSRF token before resetting password
+      await _apiService.initializeCsrfToken();
+      
+      final response = await _apiService.postForm(
         AppConstants.resetPasswordEndpoint,
         data: {
           'email': email,
@@ -128,8 +158,18 @@ class AuthRepository {
   /// Logout user
   Future<bool> logout() async {
     try {
-      final response = await _apiService.post(AppConstants.logoutEndpoint);
-      return response.statusCode == 200;
+      // Initialize CSRF token before logout
+      await _apiService.initializeCsrfToken();
+      
+      final response = await _apiService.postForm(AppConstants.logoutEndpoint);
+      
+      if (response.statusCode == 200) {
+        // Clear the Bearer token after successful logout
+        _apiService.clearBearerToken();
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       if (e is DioException) {
         throw Exception(e.message ?? 'Logout failed');

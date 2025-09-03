@@ -63,6 +63,22 @@ class AuthOtpSentSuccess extends AuthState {
   int get hashCode => message.hashCode;
 }
 
+/// Success state for OTP verification
+class AuthOtpVerifiedSuccess extends AuthState {
+  final String message;
+  
+  const AuthOtpVerifiedSuccess(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthOtpVerifiedSuccess && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
 /// Success state for password reset
 class AuthPasswordResetSuccess extends AuthState {
   final String message;

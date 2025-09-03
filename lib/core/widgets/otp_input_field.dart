@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
-import '../constants/app_text_styles.dart';
 import '../utils/responsive_helper.dart';
+
+class OtpInputFormatter extends TextInputFormatter {
+  final VoidCallback? onBackspace;
+  final int index;
+
+  OtpInputFormatter({this.onBackspace, required this.index});
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // If the new value is empty and old value had a character, trigger backspace
+    if (newValue.text.isEmpty && oldValue.text.isNotEmpty) {
+      if (onBackspace != null) {
+        onBackspace!();
+      }
+    }
+    return newValue;
+  }
+}
 
 class OtpInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -11,15 +31,19 @@ class OtpInputField extends StatelessWidget {
   final VoidCallback? onTap;
   final FocusNode? focusNode;
   final ValueChanged<String>? onChanged;
+  final VoidCallback? onBackspace;
+  final int index;
 
   const OtpInputField({
     super.key,
     required this.controller,
+    required this.index,
     this.isActive = false,
     this.isFilled = false,
     this.onTap,
     this.focusNode,
     this.onChanged,
+    this.onBackspace,
   });
 
   @override
@@ -27,11 +51,11 @@ class OtpInputField extends StatelessWidget {
     final responsive = ResponsiveHelper(context);
     
     return Container(
-      width: responsive.w(70),
-      height: responsive.h(56),
+      width: responsive.w(40),
+      height: responsive.h(48),
       padding: EdgeInsets.symmetric(
-        horizontal: responsive.w(20),
-        vertical: responsive.h(16),
+        horizontal: responsive.w(6),
+        vertical: responsive.h(6),
       ),
       decoration: ShapeDecoration(
         color: Colors.white,
@@ -45,35 +69,45 @@ class OtpInputField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-              child: Center(
-          child: TextFormField(
-            controller: controller,
-            focusNode: focusNode,
-            onTap: onTap,
-            onChanged: onChanged,
-            textAlign: TextAlign.center,
-            textAlignVertical: TextAlignVertical.center,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(1),
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-                         style: AppTextStyles.bodyLarge.copyWith(
-               fontSize: responsive.sp(16),
-               fontWeight: FontWeight.w500,
-               color: isActive 
-                 ? AppColors.primaryGreen 
-                 : (isFilled ? AppColors.gray : AppColors.gray),
-               height: 1.0, // Ensure single line height
-             ),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-              isDense: true, // Makes the field more compact
-              counterText: '', // Removes character counter
+      child: Center(
+        child: TextFormField(
+          controller: controller,
+          focusNode: focusNode,
+          onTap: onTap,
+          onChanged: onChanged,
+          textAlign: TextAlign.center,
+          textAlignVertical: TextAlignVertical.center,
+          keyboardType: TextInputType.number,
+          maxLength: 1,
+          showCursor: true,
+          cursorColor: AppColors.primaryGreen,
+
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(1),
+            FilteringTextInputFormatter.digitsOnly,
+            OtpInputFormatter(
+              index: index,
+              onBackspace: onBackspace,
             ),
+          ],
+          style: TextStyle(
+            fontSize: responsive.sp(20),
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF111827), // Dark gray for better visibility
+            height: 1.0,
+            fontFamily: 'Poppins',
+          ),
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+            isDense: true,
+            counterText: '',
+            hintText: '',
           ),
         ),
+      ),
     );
   }
 }

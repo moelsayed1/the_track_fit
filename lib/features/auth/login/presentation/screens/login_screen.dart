@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,6 +10,7 @@ import '../../../../../core/widgets/auth_header.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/social_login_button.dart';
+import '../../../../../core/widgets/custom_snackbar.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../data/cubit/auth_cubit.dart';
 import '../../../data/cubit/auth_states.dart';
@@ -59,11 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void _showValidationErrors(Map<String, String> errors) {
     // Show the first validation error
     final firstError = errors.values.first;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(firstError),
-        backgroundColor: Colors.orange,
-      ),
+    CustomSnackbar.show(
+      context,
+      title: 'Validation Error',
+      message: firstError,
+      type: SnackbarType.warning,
     );
   }
 
@@ -93,45 +95,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthLoading) {
-          // Show loading indicator
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else if (state is AuthLoginSuccess) {
-          // Hide loading indicator
-          Navigator.of(context).pop();
-          
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.response.message),
-              backgroundColor: Colors.green,
-            ),
+        if (state is AuthLoginSuccess) {
+          // Show success message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Login Successful!',
+            message: state.response.message,
+            type: SnackbarType.success,
           );
           
           // Navigate to next screen
           context.push(AppRouter.promotionalOffer);
         } else if (state is AuthValidationError) {
-          // Hide loading indicator
-          Navigator.of(context).pop();
-          
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
         } else if (state is AuthError) {
-          // Hide loading indicator
-          Navigator.of(context).pop();
-          
-          // Show error message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+          // Show error message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Login Failed',
+            message: state.message,
+            type: SnackbarType.error,
           );
         }
       },
@@ -211,9 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     return PrimaryButton(
-                      text: state is AuthLoading ? 'Logging in...' : 'Login',
-                      onPressed: state is AuthLoading ? null : _handleLogin,
+                      text: 'Login',
+                      onPressed: _handleLogin,
                       height: responsive.hp(7),
+                      isLoading: state is AuthLoading,
                     );
                   },
                 ),
