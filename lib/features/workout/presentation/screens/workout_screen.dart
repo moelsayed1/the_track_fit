@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -34,7 +33,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   void initState() {
     super.initState();
     _initializeExercises();
-    
+
     // Add listener to focus node to trigger rebuild when focus changes
     _searchFocusNode.addListener(() {
       setState(() {});
@@ -142,49 +141,64 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   void _applyFilters() {
     List<Exercise> filtered = exercises;
-    
+
     // Apply type filter
     if (selectedFilter != null && selectedFilter!.isNotEmpty) {
-      filtered = filtered.where((exercise) => exercise.type == selectedFilter).toList();
+      filtered = filtered
+          .where((exercise) => exercise.type == selectedFilter)
+          .toList();
     }
-    
+
     // Apply location filter (gym/home)
     if (selectedLocation != null && selectedLocation!.isNotEmpty) {
       // For now, we'll filter by a location property if it exists
       // You can modify this logic based on your exercise model
       if (selectedLocation == 'gym') {
         // Filter exercises that require gym equipment
-        filtered = filtered.where((exercise) => exercise.type == 'gym').toList();
+        filtered = filtered
+            .where((exercise) => exercise.type == 'gym')
+            .toList();
       } else if (selectedLocation == 'home') {
         // Filter exercises that can be done at home
-        filtered = filtered.where((exercise) => exercise.type != 'gym').toList();
+        filtered = filtered
+            .where((exercise) => exercise.type != 'gym')
+            .toList();
       }
     }
-    
+
     // Apply equipment filter
     if (selectedEquipment != null && selectedEquipment!.isNotEmpty) {
       if (selectedEquipment == 'no_equipment') {
         // Filter exercises that don't require equipment
-        filtered = filtered.where((exercise) => exercise.type == 'cardio' || exercise.type == 'stretching').toList();
+        filtered = filtered
+            .where(
+              (exercise) =>
+                  exercise.type == 'cardio' || exercise.type == 'stretching',
+            )
+            .toList();
       } else if (selectedEquipment == 'mat_only') {
         // Filter exercises that only need a mat
-        filtered = filtered.where((exercise) => exercise.type == 'stretching').toList();
+        filtered = filtered
+            .where((exercise) => exercise.type == 'stretching')
+            .toList();
       } else if (selectedEquipment == 'machines') {
         // Filter exercises that require gym machines
-        filtered = filtered.where((exercise) => exercise.type == 'gym').toList();
+        filtered = filtered
+            .where((exercise) => exercise.type == 'gym')
+            .toList();
       }
     }
-    
+
     // Apply search filter if there's a search query
     if (_searchController.text.isNotEmpty) {
       final searchLower = _searchController.text.toLowerCase();
       filtered = filtered.where((exercise) {
         return exercise.title.toLowerCase().contains(searchLower) ||
-               exercise.subtitle.toLowerCase().contains(searchLower) ||
-               exercise.type.toLowerCase().contains(searchLower);
+            exercise.subtitle.toLowerCase().contains(searchLower) ||
+            exercise.type.toLowerCase().contains(searchLower);
       }).toList();
     }
-    
+
     setState(() {
       filteredExercises = filtered;
     });
@@ -202,13 +216,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   void _toggleFavorite(String exerciseId) {
     setState(() {
-      final exerciseIndex = exercises.indexWhere((exercise) => exercise.id == exerciseId);
+      final exerciseIndex = exercises.indexWhere(
+        (exercise) => exercise.id == exerciseId,
+      );
       if (exerciseIndex != -1) {
         exercises[exerciseIndex] = exercises[exerciseIndex].copyWith(
           isFavorite: !exercises[exerciseIndex].isFavorite,
         );
         _applyFilters(); // Reapply all filters
-        
+
         // Update the ExerciseCubit state
         final exerciseCubit = context.read<ExerciseCubit>();
         if (exercises[exerciseIndex].isFavorite) {
@@ -223,7 +239,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     final responsiveHelper = ResponsiveHelper(context);
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
@@ -238,7 +254,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               // App Bar
               SizedBox(
                 width: double.infinity,
-                height: responsiveHelper.h(2),
+                height: responsiveHelper.h(6),
                 child: Stack(
                   children: [
                     Positioned(
@@ -257,7 +273,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ],
                 ),
               ),
-              
+
               // Title
               Center(
                 child: Text(
@@ -270,12 +286,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                 ),
               ),
-              
+
               SizedBox(height: responsiveHelper.h(4)),
-              
+
               // Search Bar
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(16)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsiveHelper.w(16),
+                ),
                 child: Container(
                   width: responsiveHelper.w(343),
                   padding: EdgeInsets.symmetric(
@@ -283,13 +301,18 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     vertical: responsiveHelper.h(10),
                   ),
                   decoration: ShapeDecoration(
-                    color: _searchFocusNode.hasFocus 
+                    color: _searchFocusNode.hasFocus
                         ? const Color(0xFFE8F5E8) // Light green when focused
-                        : const Color(0x26848484), // Semi-transparent gray when not focused
+                        : const Color(
+                            0x26848484,
+                          ), // Semi-transparent gray when not focused
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                       side: _searchFocusNode.hasFocus
-                          ? const BorderSide(color: Color(0xFF4CAF50), width: 1) // Green border when focused
+                          ? const BorderSide(
+                              color: Color(0xFF4CAF50),
+                              width: 1,
+                            ) // Green border when focused
                           : BorderSide.none,
                     ),
                   ),
@@ -303,9 +326,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         height: responsiveHelper.h(24),
                         child: Icon(
                           Icons.search,
-                          color: _searchFocusNode.hasFocus 
+                          color: _searchFocusNode.hasFocus
                               ? const Color(0xFF4CAF50) // Green when focused
-                              : const Color(0xBF848484), // Gray when not focused
+                              : const Color(
+                                  0xBF848484,
+                                ), // Gray when not focused
                           size: responsiveHelper.sp(20),
                         ),
                       ),
@@ -355,12 +380,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                 ),
               ),
-              
+
               SizedBox(height: responsiveHelper.h(16)),
-              
+
               // Filter Chips
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(16)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsiveHelper.w(16),
+                ),
                 child: SizedBox(
                   width: responsiveHelper.w(343),
                   child: Row(
@@ -368,95 +395,101 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                     Expanded(
-  child: GestureDetector(
-    onTap: _showTypeSelection,
-    child: Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: responsiveHelper.w(16),
-            vertical: responsiveHelper.h(10),
-          ),
-          decoration: ShapeDecoration(
-            color: selectedFilter != null
-                ? const Color(0xFFD8F1D8) // أخضر فاتح لما يتحدد
-                : const Color(0x26848484), // رمادي شفاف لما مش متحدد
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-              side: selectedFilter != null
-                  ? const BorderSide(
-                      color: Color(0xFF4CAF50), // أخضر غامق للبوردر
-                      width: 1,
-                    )
-                  : BorderSide.none,
-            ),
-          ),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (selectedFilter == null) ...[
-                SvgPicture.asset(
-                  AppIcons.typeIcon,
-                  width: responsiveHelper.w(16),
-                  height: responsiveHelper.h(16),
-                  colorFilter: const ColorFilter.mode(
-                    Color(0xFF1E1E1E),
-                    BlendMode.srcIn,
-                  ),
-                ),
-                SizedBox(width: responsiveHelper.w(6)),
-              ],
-              Flexible(
-                child: Text(
-                  selectedFilter ?? 'Type',
-                  style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
-                    fontSize: responsiveHelper.sp(12),
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: _showTypeSelection,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: responsiveHelper.w(16),
+                                  vertical: responsiveHelper.h(10),
+                                ),
+                                decoration: ShapeDecoration(
+                                  color: selectedFilter != null
+                                      ? const Color(
+                                          0xFFD8F1D8,
+                                        ) // أخضر فاتح لما يتحدد
+                                      : const Color(
+                                          0x26848484,
+                                        ), // رمادي شفاف لما مش متحدد
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    side: selectedFilter != null
+                                        ? const BorderSide(
+                                            color: Color(
+                                              0xFF4CAF50,
+                                            ), // أخضر غامق للبوردر
+                                            width: 1,
+                                          )
+                                        : BorderSide.none,
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (selectedFilter == null) ...[
+                                      SvgPicture.asset(
+                                        AppIcons.typeIcon,
+                                        width: responsiveHelper.w(16),
+                                        height: responsiveHelper.h(16),
+                                        colorFilter: const ColorFilter.mode(
+                                          Color(0xFF1E1E1E),
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      SizedBox(width: responsiveHelper.w(6)),
+                                    ],
+                                    Flexible(
+                                      child: Text(
+                                        selectedFilter ?? 'Type',
+                                        style: TextStyle(
+                                          color: const Color(0xFF1E1E1E),
+                                          fontSize: responsiveHelper.sp(12),
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-        // الـ X icon تبقى برا الزرار
-        if (selectedFilter != null)
-          Positioned(
-            right: -6,
-            top: -6,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedFilter = null;
-                  _applyFilters();
-                });
-              },
-              child: Container(
-                width: responsiveHelper.w(20),
-                height: responsiveHelper.h(20),
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryGreen,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 14,
-                ),
-              ),
-            ),
-          ),
-      ],
-    ),
-  ),
-),
+                              // الـ X icon تبقى برا الزرار
+                              if (selectedFilter != null)
+                                Positioned(
+                                  right: -6,
+                                  top: -6,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedFilter = null;
+                                        _applyFilters();
+                                      });
+                                    },
+                                    child: Container(
+                                      width: responsiveHelper.w(20),
+                                      height: responsiveHelper.h(20),
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.primaryGreen,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
 
                       SizedBox(width: responsiveHelper.w(8)),
                       Expanded(
@@ -472,13 +505,19 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 ),
                                 decoration: ShapeDecoration(
                                   color: selectedLocation != null
-                                      ? const Color(0xFFD8F1D8) // Light green when selected
-                                      : const Color(0x26848484), // Semi-transparent gray when not selected
+                                      ? const Color(
+                                          0xFFD8F1D8,
+                                        ) // Light green when selected
+                                      : const Color(
+                                          0x26848484,
+                                        ), // Semi-transparent gray when not selected
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                     side: selectedLocation != null
                                         ? const BorderSide(
-                                            color: Color(0xFF4CAF50), // Green border when selected
+                                            color: Color(
+                                              0xFF4CAF50,
+                                            ), // Green border when selected
                                             width: 1,
                                           )
                                         : BorderSide.none,
@@ -502,9 +541,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                     SizedBox(width: responsiveHelper.w(8)),
                                     Flexible(
                                       child: Text(
-                                        selectedLocation == 'gym' ? 'At Gym' : selectedLocation == 'home' ? 'At Home' : 'Gym',
+                                        selectedLocation == 'gym'
+                                            ? 'At Gym'
+                                            : selectedLocation == 'home'
+                                            ? 'At Home'
+                                            : 'Gym',
                                         style: TextStyle(
-                                          color: const Color(0xFF1E1E1E), // black
+                                          color: const Color(
+                                            0xFF1E1E1E,
+                                          ), // black
                                           fontSize: responsiveHelper.sp(12),
                                           fontFamily: 'Poppins',
                                           fontWeight: FontWeight.w500,
@@ -561,13 +606,19 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 ),
                                 decoration: ShapeDecoration(
                                   color: selectedEquipment != null
-                                      ? const Color(0xFFD8F1D8) // Light green when selected
-                                      : const Color(0x26848484), // Semi-transparent gray when not selected
+                                      ? const Color(
+                                          0xFFD8F1D8,
+                                        ) // Light green when selected
+                                      : const Color(
+                                          0x26848484,
+                                        ), // Semi-transparent gray when not selected
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                     side: selectedEquipment != null
                                         ? const BorderSide(
-                                            color: Color(0xFF4CAF50), // Green border when selected
+                                            color: Color(
+                                              0xFF4CAF50,
+                                            ), // Green border when selected
                                             width: 1,
                                           )
                                         : BorderSide.none,
@@ -594,11 +645,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                     SizedBox(width: responsiveHelper.w(8)),
                                     Flexible(
                                       child: Text(
-                                        selectedEquipment == 'no_equipment' ? 'No Equipment' : 
-                                        selectedEquipment == 'mat_only' ? 'Mat Only' : 
-                                        selectedEquipment == 'machines' ? 'Machines' : 'Equipment',
+                                        selectedEquipment == 'no_equipment'
+                                            ? 'No Equipment'
+                                            : selectedEquipment == 'mat_only'
+                                            ? 'Mat Only'
+                                            : selectedEquipment == 'machines'
+                                            ? 'Machines'
+                                            : 'Equipment',
                                         style: TextStyle(
-                                          color: const Color(0xFF1E1E1E), // black
+                                          color: const Color(
+                                            0xFF1E1E1E,
+                                          ), // black
                                           fontSize: responsiveHelper.sp(12),
                                           fontFamily: 'Poppins',
                                           fontWeight: FontWeight.w500,
@@ -645,12 +702,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                 ),
               ),
-              
+
               SizedBox(height: responsiveHelper.h(12)),
-              
+
               // Section Header
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(16)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: responsiveHelper.w(16),
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -659,7 +718,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     SizedBox(
                       width: responsiveHelper.w(20),
                       height: responsiveHelper.h(20),
-                      child:SvgPicture.asset(
+                      child: SvgPicture.asset(
                         AppIcons.justifyAlignLeftIcon,
                         width: responsiveHelper.w(20),
                         height: responsiveHelper.h(20),
@@ -683,13 +742,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ],
                 ),
               ),
-              
+
               SizedBox(height: responsiveHelper.h(16)),
-              
+
               // Exercise List
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(16)),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: responsiveHelper.w(16),
+                  ),
                   child: SizedBox(
                     width: responsiveHelper.w(343),
                     child: SingleChildScrollView(
@@ -743,7 +804,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                               final exercise = entry.value;
                               return GestureDetector(
                                 onTap: () {
-                                 context.push(AppRouter.exerciseDetail, extra: exercise);
+                                  context.push(
+                                    AppRouter.exerciseDetail,
+                                    extra: exercise,
+                                  );
                                 },
                                 child: Column(
                                   children: [
@@ -751,76 +815,120 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                       width: double.infinity,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           Row(
                                             mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
                                               Container(
-                                                padding: EdgeInsets.all(responsiveHelper.w(8)),
+                                                padding: EdgeInsets.all(
+                                                  responsiveHelper.w(8),
+                                                ),
                                                 decoration: ShapeDecoration(
                                                   shape: RoundedRectangleBorder(
                                                     side: BorderSide(
                                                       width: 1,
-                                                      color: const Color(0x26848484),
+                                                      color: const Color(
+                                                        0x26848484,
+                                                      ),
                                                     ),
-                                                    borderRadius: BorderRadius.circular(15),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          15,
+                                                        ),
                                                   ),
                                                 ),
                                                 child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
                                                   children: [
                                                     Container(
-                                                      width: responsiveHelper.w(48),
-                                                      height: responsiveHelper.h(48),
+                                                      width: responsiveHelper.w(
+                                                        48,
+                                                      ),
+                                                      height: responsiveHelper
+                                                          .h(48),
                                                       decoration: ShapeDecoration(
                                                         image: DecorationImage(
-                                                          image: AssetImage(exercise.imagePath),
+                                                          image: AssetImage(
+                                                            exercise.imagePath,
+                                                          ),
                                                           fit: BoxFit.cover,
                                                         ),
                                                         shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(10),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                10,
+                                                              ),
                                                         ),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(width: responsiveHelper.w(16)),
+                                              SizedBox(
+                                                width: responsiveHelper.w(16),
+                                              ),
                                               SizedBox(
                                                 width: responsiveHelper.w(115),
                                                 child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     SizedBox(
-                                                      width: responsiveHelper.w(115),
+                                                      width: responsiveHelper.w(
+                                                        115,
+                                                      ),
                                                       child: Text(
                                                         exercise.title,
                                                         style: TextStyle(
-                                                          color: const Color(0xFF1E1E1E), // black
-                                                          fontSize: responsiveHelper.sp(16),
+                                                          color: const Color(
+                                                            0xFF1E1E1E,
+                                                          ), // black
+                                                          fontSize:
+                                                              responsiveHelper
+                                                                  .sp(16),
                                                           fontFamily: 'Poppins',
-                                                          fontWeight: FontWeight.w500,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(height: responsiveHelper.h(4)),
                                                     SizedBox(
-                                                      width: responsiveHelper.w(115),
+                                                      height: responsiveHelper
+                                                          .h(4),
+                                                    ),
+                                                    SizedBox(
+                                                      width: responsiveHelper.w(
+                                                        115,
+                                                      ),
                                                       child: Text(
                                                         exercise.subtitle,
                                                         style: TextStyle(
-                                                          color: const Color(0xFF848484), // gray
-                                                          fontSize: responsiveHelper.sp(14),
+                                                          color: const Color(
+                                                            0xFF848484,
+                                                          ), // gray
+                                                          fontSize:
+                                                              responsiveHelper
+                                                                  .sp(14),
                                                           fontFamily: 'Poppins',
-                                                          fontWeight: FontWeight.w400,
+                                                          fontWeight:
+                                                              FontWeight.w400,
                                                         ),
                                                       ),
                                                     ),
@@ -833,10 +941,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                             width: responsiveHelper.w(24),
                                             height: responsiveHelper.h(24),
                                             child: GestureDetector(
-                                              onTap: () => _toggleFavorite(exercise.id),
+                                              onTap: () =>
+                                                  _toggleFavorite(exercise.id),
                                               child: Icon(
-                                                exercise.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                                color: exercise.isFavorite ? AppColors.primaryGreen : const Color(0xFF848484),
+                                                exercise.isFavorite
+                                                    ? Icons.favorite
+                                                    : Icons.favorite_border,
+                                                color: exercise.isFavorite
+                                                    ? AppColors.primaryGreen
+                                                    : const Color(0xFF848484),
                                                 size: responsiveHelper.sp(24),
                                               ),
                                             ),
@@ -853,7 +966,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                           shape: RoundedRectangleBorder(
                                             side: BorderSide(
                                               width: 1,
-                                              strokeAlign: BorderSide.strokeAlignCenter,
+                                              strokeAlign:
+                                                  BorderSide.strokeAlignCenter,
                                               color: const Color(0x26848484),
                                             ),
                                           ),

@@ -3,10 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'core/constants/constants.dart';
 import 'core/router/app_router.dart';
+import 'core/services/api_service.dart';
 import 'features/workout/data/cubit/exercise_cubit.dart';
+import 'features/auth/data/cubit/auth_cubit.dart';
+import 'features/auth/repositories/auth_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize API service
+  ApiService().init();
+  
   runApp(const TrackFit());
 }
 
@@ -20,8 +27,11 @@ class TrackFit extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return BlocProvider(
-          create: (context) => ExerciseCubit(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => ExerciseCubit()),
+            BlocProvider(create: (context) => AuthCubit(AuthRepository())),
+          ],
           child: MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: AppConstants.appName,

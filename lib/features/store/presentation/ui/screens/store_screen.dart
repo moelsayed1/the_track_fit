@@ -101,7 +101,7 @@ class _StoreScreenState extends State<StoreScreen> {
                    Row(
                      children: [
                        GestureDetector(
-                          onTap: () => context.go(AppRouter.home),
+                          onTap: () => context.pop(),
                           child: SizedBox(
                             width: 32.w,
                             height: 32.h,

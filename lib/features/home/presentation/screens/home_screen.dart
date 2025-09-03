@@ -25,8 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Color _getTabColor(int index) =>
-      _currentIndex == index ? const Color(0xFF28A228) : const Color(0xFF848484);
+  Color _getTabColor(int index) => _currentIndex == index
+      ? const Color(0xFF28A228)
+      : const Color(0xFF848484);
 
   String _getScreenTitle(int index) {
     const titles = ['Home', 'Workout', 'Scan', 'Report', 'Plan'];
@@ -35,22 +36,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
-      // body الآن يحتوي على المحتوى الرئيسي فقط، مع SafeArea لضمان الجزء العلوي
-      body: SafeArea(
-        top: true, // حماية الجزء العلوي فقط
-        bottom: false, // لا تحمي الجزء السفلي هنا، Scaffold سيتولى أمر bottomNavigationBar
-        child: _buildContentForTab(_currentIndex),
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF6FFF6),
+          // body الآن يحتوي على المحتوى الرئيسي فقط، مع SafeArea لضمان الجزء العلوي
+          body: _buildContentForTab(_currentIndex),
+          // استخدام bottomNavigationBar المخصص في Scaffold
+          bottomNavigationBar: _currentIndex != 4
+              ? _BottomNavBar(
+                  currentIndex: _currentIndex,
+                  onTabTapped: _onTabTapped,
+                  getTabColor: _getTabColor,
+                )
+              : null, // لا تعرض شريط التنقل إذا كانت الشاشة هي 'Plan'
+        ),
       ),
-      // استخدام bottomNavigationBar المخصص في Scaffold
-      bottomNavigationBar: _currentIndex != 4
-          ? _BottomNavBar(
-              currentIndex: _currentIndex,
-              onTabTapped: _onTabTapped,
-              getTabColor: _getTabColor,
-            )
-          : null, // لا تعرض شريط التنقل إذا كانت الشاشة هي 'Plan'
     );
   }
 
@@ -82,93 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
       default:
         return _HomeTabContent();
     }
-  }
-
-  Widget _ScanTabContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.qr_code_scanner, size: 64.sp, color: const Color(0xFF848484)),
-          SizedBox(height: 16.h),
-          Text(
-            'Scan Feature',
-            style: TextStyle(
-              fontSize: 18.sp,
-              color: const Color(0xFF848484),
-              fontFamily: 'Poppins',
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Coming Soon',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF848484),
-              fontFamily: 'Poppins',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _ReportTabContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.bar_chart, size: 64.sp, color: const Color(0xFF848484)),
-          SizedBox(height: 16.h),
-          Text(
-            'Report Feature',
-            style: TextStyle(
-              fontSize: 18.sp,
-              color: const Color(0xFF848484),
-              fontFamily: 'Poppins',
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Coming Soon',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF848484),
-              fontFamily: 'Poppins',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _PlanTabContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.star, size: 64.sp, color: const Color(0xFF848484)),
-          SizedBox(height: 16.h),
-          Text(
-            'Plan Feature',
-            style: TextStyle(
-              fontSize: 18.sp,
-              color: const Color(0xFF848484),
-              fontFamily: 'Poppins',
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Coming Soon',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF848484),
-              fontFamily: 'Poppins',
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _HomeTabContent() {
@@ -224,9 +140,12 @@ class _Header extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            GestureDetector(onTap: () {
-              context.push(AppRouter.profile);
-            }, child: _ProfileContainer()),
+            GestureDetector(
+              onTap: () {
+                context.push(AppRouter.profile);
+              },
+              child: _ProfileContainer(),
+            ),
           ],
         ),
       ),
@@ -287,10 +206,7 @@ class _ProfileContainer extends StatelessWidget {
       decoration: ShapeDecoration(
         color: const Color(0x3328A228),
         shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            width: 1,
-            color: Color(0xFF28A228),
-          ),
+          side: const BorderSide(width: 1, color: Color(0xFF28A228)),
           borderRadius: BorderRadius.circular(20.r),
         ),
       ),
@@ -331,10 +247,7 @@ class _GreetingSection extends StatelessWidget {
                 SizedBox(
                   width: 20.w,
                   height: 20.h,
-                  child: const Text(
-                    '👋',
-                    style: TextStyle(fontSize: 20),
-                  ),
+                  child: const Text('👋', style: TextStyle(fontSize: 20)),
                 ),
               ],
             ),
@@ -443,26 +356,32 @@ class _MainCTASection extends StatelessWidget {
                     height: 50.h,
                     child: ElevatedButton(
                       onPressed: () => context.push(AppRouter.homeFeature),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF28A228),
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                        shadowColor: const Color(0x1928A228),
-                        textStyle: TextStyle(
-                          fontSize: 16.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          height: 1.50,
-                          letterSpacing: 0.50,
-                        ),
-                      ).copyWith(
-                        elevation: WidgetStateProperty.all(0),
-                        shadowColor: WidgetStateProperty.all(const Color(0x1928A228)),
-                      ),
+                      style:
+                          ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF28A228),
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 14.h,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.r),
+                            ),
+                            shadowColor: const Color(0x1928A228),
+                            textStyle: TextStyle(
+                              fontSize: 16.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              height: 1.50,
+                              letterSpacing: 0.50,
+                            ),
+                          ).copyWith(
+                            elevation: WidgetStateProperty.all(0),
+                            shadowColor: WidgetStateProperty.all(
+                              const Color(0x1928A228),
+                            ),
+                          ),
                       child: Text(
                         'Start Workout',
                         textAlign: TextAlign.center,
@@ -532,12 +451,12 @@ class _BottomNavBar extends StatelessWidget {
                   blurRadius: 4,
                   offset: Offset(4, 0),
                   spreadRadius: 0,
-                )
+                ),
               ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-             // crossAxisAlignment: CrossAxisAlignment.end,
+              // crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 _NavBarItem(
                   icon: SvgPicture.asset(
@@ -571,9 +490,7 @@ class _BottomNavBar extends StatelessWidget {
                   onTap: () => onTabTapped(1),
                   color: getTabColor(1),
                 ),
-                _NavBarCentralButton(
-                  onTap: () => onTabTapped(2),
-                ),
+                _NavBarCentralButton(onTap: () => onTabTapped(2)),
                 _NavBarItem(
                   icon: SvgPicture.asset(
                     'assets/logos/progressive_icon.svg',

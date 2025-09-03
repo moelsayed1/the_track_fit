@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -9,6 +10,8 @@ import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/social_login_button.dart';
 import '../../../../../core/router/app_router.dart';
+import '../../../data/cubit/auth_cubit.dart';
+import '../../../data/cubit/auth_states.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,7 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -30,13 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  String? _validatePhone(String? value) {
+  // Simplified validation - the cubit handles detailed validation
+  String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Phone number is required';
-    }
-    // Basic phone validation - you can make this more sophisticated
-    if (value.length < 10) {
-      return 'Please enter a valid phone number';
+      return 'Email is required';
     }
     return null;
   }
@@ -45,53 +44,27 @@ class _LoginScreenState extends State<LoginScreen> {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
     return null;
   }
 
-  void _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+  void _handleLogin() {
+    // Call the login method from AuthCubit
+    // The cubit will handle validation internally
+    context.read<AuthCubit>().login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+  }
 
-      try {
-        // Simulate login process
-        await Future.delayed(const Duration(seconds: 2));
-
-        // TODO: Implement actual login logic
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login successful!'),
-              backgroundColor: AppColors.primaryGreen,
-            ),
-          );
-
-          // Always navigate to gender question after successful login
-          context.push(AppRouter.promotionalOffer);
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Login failed: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    }
+  void _showValidationErrors(Map<String, String> errors) {
+    // Show the first validation error
+    final firstError = errors.values.first;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(firstError),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
 
@@ -118,7 +91,51 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Scaffold(
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLoading) {
+          // Show loading indicator
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (state is AuthLoginSuccess) {
+          // Hide loading indicator
+          Navigator.of(context).pop();
+          
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.response.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+          
+          // Navigate to next screen
+          context.push(AppRouter.promotionalOffer);
+        } else if (state is AuthValidationError) {
+          // Hide loading indicator
+          Navigator.of(context).pop();
+          
+          // Show validation errors
+          _showValidationErrors(state.fieldErrors);
+        } else if (state is AuthError) {
+          // Hide loading indicator
+          Navigator.of(context).pop();
+          
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
       backgroundColor: const Color(0xFFF6FFF6), // Light green background
       body: SingleChildScrollView(
         child: Padding(
@@ -151,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIconAsset: AppIcons.email,
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      validator: _validatePhone,
+                      validator: _validateEmail,
                     ),
                     SizedBox(height: responsive.hp(2)),
       
@@ -191,11 +208,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: responsive.hp(4)),
       
                 // Login button
-                PrimaryButton(
-                  text: 'Login',
-                  onPressed: _isLoading ? null : _handleLogin,
-                  height: responsive.hp(7),
-                  isLoading: _isLoading,
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    return PrimaryButton(
+                      text: state is AuthLoading ? 'Logging in...' : 'Login',
+                      onPressed: state is AuthLoading ? null : _handleLogin,
+                      height: responsive.hp(7),
+                    );
+                  },
                 ),
       
                 SizedBox(height: responsive.hp(1.5)),
@@ -242,6 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }

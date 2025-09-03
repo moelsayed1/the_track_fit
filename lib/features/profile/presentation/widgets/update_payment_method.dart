@@ -33,10 +33,6 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
     super.dispose();
   }
 
-  void _onTextChanged() {
-    // This method is no longer needed for showing buttons
-    // Buttons now show when Card is selected
-  }
 
   void _selectPaymentMethod(String method) {
     setState(() {

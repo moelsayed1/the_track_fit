@@ -55,6 +55,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
       widget.onLocationSelected(locationId);
+      // ignore: use_build_context_synchronously
       Navigator.pop(context);
     });
   }
