@@ -45,5 +45,6 @@ class AppConstants {
   static const String loginEndpoint = '/api/login';
   static const String logoutEndpoint = '/api/logout';
   static const String sendOtpEndpoint = '/api/send-otp';
+  static const String verifyOtpEndpoint = '/api/verify-otp';
   static const String resetPasswordEndpoint = '/api/reset-password';
 } 
