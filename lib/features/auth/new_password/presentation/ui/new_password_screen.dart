@@ -5,7 +5,14 @@ import '../../../../../core/utils/responsive_helper.dart';
 import '../widgets/new_password_screen_body.dart';
 
 class NewPasswordScreen extends StatelessWidget {
-  const NewPasswordScreen({super.key});
+  final String email;
+  final String otp;
+  
+  const NewPasswordScreen({
+    super.key,
+    required this.email,
+    required this.otp,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,7 @@ class NewPasswordScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: NewPasswordScreenBody(),
+          child: NewPasswordScreenBody(email: email, otp: otp),
         ),
       ),
     );

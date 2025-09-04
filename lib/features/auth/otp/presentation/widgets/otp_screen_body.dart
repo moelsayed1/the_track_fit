@@ -83,28 +83,36 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
     final responsive = ResponsiveHelper(context);
 
     return BlocListener<AuthCubit, AuthState>(
+      listenWhen: (previous, current) {
+        // Only listen to states relevant to OTP verification
+        // Don't listen to forget password specific states
+        return current is AuthOtpVerifiedSuccess || 
+               current is AuthValidationError || 
+               current is AuthOtpVerificationError;
+      },
       listener: (context, state) {
-        if (state is AuthOtpSentSuccess) {
-          CustomSnackbar.show(
-            context,
-            title: 'OTP Sent!',
-            message: state.message,
-            type: SnackbarType.success,
-          );
-          _startResendCountdown();
-        } else if (state is AuthOtpVerifiedSuccess) {
+        if (state is AuthOtpVerifiedSuccess) {
           CustomSnackbar.show(
             context,
             title: 'OTP Verified!',
             message: state.message,
             type: SnackbarType.success,
           );
-          // Navigate to New Password screen
-          context.push(AppRouter.newPassword);
-        } else if (state is AuthError) {
+          // Navigate to New Password screen with email and OTP
+          context.push('${AppRouter.newPassword}?email=${widget.email}&otp=$_otpCode');
+        } else if (state is AuthValidationError) {
+          // Show validation errors
+          final firstError = state.fieldErrors.values.first;
           CustomSnackbar.show(
             context,
-            title: 'Error',
+            title: 'Validation Error',
+            message: firstError,
+            type: SnackbarType.error,
+          );
+        } else if (state is AuthOtpVerificationError) {
+          CustomSnackbar.show(
+            context,
+            title: 'Verification Failed',
             message: state.message,
             type: SnackbarType.error,
           );
@@ -289,11 +297,34 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
   }
 
   void _handleVerify() {
+    // Check if OTP is empty
+    if (_otpCode.isEmpty) {
+      CustomSnackbar.show(
+        context,
+        title: 'Validation Error',
+        message: 'Please enter the OTP code',
+        type: SnackbarType.warning,
+      );
+      return;
+    }
+    
+    // Check if OTP is complete (6 digits)
     if (_otpCode.length != 6) {
       CustomSnackbar.show(
         context,
         title: 'Validation Error',
         message: 'Please enter the complete 6-digit OTP',
+        type: SnackbarType.warning,
+      );
+      return;
+    }
+
+    // Check if OTP contains only numbers
+    if (!RegExp(r'^\d{6}$').hasMatch(_otpCode)) {
+      CustomSnackbar.show(
+        context,
+        title: 'Validation Error',
+        message: 'OTP must contain only numbers',
         type: SnackbarType.warning,
       );
       return;

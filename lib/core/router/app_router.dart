@@ -158,7 +158,11 @@ class AppRouter {
       GoRoute(
         path: newPassword,
         name: 'newPassword',
-        builder: (context, state) => const NewPasswordScreen(),
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'] ?? 'user@example.com';
+          final otp = state.uri.queryParameters['otp'] ?? '123456';
+          return NewPasswordScreen(email: email, otp: otp);
+        },
       ),
       GoRoute(
         path: resetPasswordDone,

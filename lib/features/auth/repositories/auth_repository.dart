@@ -104,19 +104,45 @@ class AuthRepository {
   }
 
   /// Send OTP for password reset
-  Future<bool> sendOtp(String email) async {
+  Future<String?> sendOtp(String email) async {
     try {
+      log('AuthRepository: sendOtp called with email: $email');
+      log('AuthRepository: sendOtp endpoint: ${AppConstants.sendOtpEndpoint}');
       // Initialize CSRF token before sending OTP
       await _apiService.initializeCsrfToken();
       
+      log('AuthRepository: About to send POST request to sendOtp');
       final response = await _apiService.postForm(
         AppConstants.sendOtpEndpoint,
         data: {'email': email},
       );
 
-      return response.statusCode == 200;
+      log('AuthRepository: sendOtp response status: ${response.statusCode}');
+      log('AuthRepository: sendOtp response data: ${response.data}');
+      log('AuthRepository: sendOtp response headers: ${response.headers}');
+      
+      if (response.statusCode == 200) {
+        log('AuthRepository: OTP sent successfully via API');
+        // Try to extract OTP from response if available
+        if (response.data != null && response.data is Map) {
+          final data = response.data as Map<String, dynamic>;
+          log('AuthRepository: Response data keys: ${data.keys.toList()}');
+          if (data.containsKey('otp')) {
+            log('AuthRepository: Found OTP in response: ${data['otp']}');
+            return data['otp'].toString();
+          }
+        }
+        // If no OTP in response, return success indicator
+        log('AuthRepository: No OTP in response, returning API_SUCCESS');
+        return "API_SUCCESS";
+      } else {
+        log('AuthRepository: sendOtp failed with status: ${response.statusCode}');
+        return null;
+      }
     } catch (e) {
+      log('AuthRepository: sendOtp error: $e');
       if (e is DioException) {
+        log('AuthRepository: sendOtp DioException details: ${e.response?.data}');
         if (e.response?.data != null) {
           final errorResponse = ApiErrorResponse.fromJson(e.response!.data);
           throw Exception(errorResponse.getFirstValidationError());
@@ -127,9 +153,11 @@ class AuthRepository {
     }
   }
 
+
   /// Reset password
   Future<bool> resetPassword(String email, String otp, String newPassword) async {
     try {
+      log('AuthRepository: resetPassword called with email: $email, otp: $otp');
       // Initialize CSRF token before resetting password
       await _apiService.initializeCsrfToken();
       
@@ -139,11 +167,16 @@ class AuthRepository {
           'email': email,
           'otp': otp,
           'password': newPassword,
+          'password_confirmation': newPassword, // Add password confirmation as required by API
         },
       );
 
+      log('AuthRepository: resetPassword response status: ${response.statusCode}');
+      log('AuthRepository: resetPassword response data: ${response.data}');
+      
       return response.statusCode == 200;
     } catch (e) {
+      log('AuthRepository: resetPassword error: $e');
       if (e is DioException) {
         if (e.response?.data != null) {
           final errorResponse = ApiErrorResponse.fromJson(e.response!.data);

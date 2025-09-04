@@ -7,6 +7,7 @@ import 'auth_states.dart';
 // Cubit
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
+  String? _verifiedOtp; // Store the verified OTP
 
   AuthCubit(this._authRepository) : super(const AuthInitial());
 
@@ -101,7 +102,8 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Verify OTP
+  /// Verify OTP (client-side validation only)
+  /// The actual OTP verification will happen during password reset
   Future<void> verifyOtp({
     required String email,
     required String otp,
@@ -120,14 +122,14 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
 
-      // For now, we'll simulate OTP verification
-      // In a real app, you'd call an API endpoint to verify the OTP
-      await Future.delayed(const Duration(seconds: 1));
+      // Store the OTP for later use in password reset
+      log('AuthCubit: Storing OTP for password reset: $otp');
+      _verifiedOtp = otp; // Store the OTP for password reset
       emit(const AuthOtpVerifiedSuccess('OTP verified successfully'));
     } catch (e) {
       log('AuthCubit VerifyOtp Error: $e');
       final errorMessage = _extractErrorMessage(e);
-      emit(AuthError(errorMessage));
+      emit(AuthOtpVerificationError(errorMessage));
     }
   }
 
@@ -140,10 +142,15 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthLoading());
     
     try {
+      // Use the verified OTP if available, otherwise use the provided OTP
+      final otpToUse = _verifiedOtp ?? otp;
+      log('AuthCubit: Using OTP: $otpToUse (verified: $_verifiedOtp, provided: $otp)');
+      log('AuthCubit: Email: $email, NewPassword: $newPassword');
+      
       // Validate input
       final validationErrors = _validateResetPasswordInput(
         email: email,
-        otp: otp,
+        otp: otpToUse,
         newPassword: newPassword,
       );
       
@@ -152,12 +159,21 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
 
-      await _authRepository.resetPassword(email, otp, newPassword);
+      await _authRepository.resetPassword(email, otpToUse, newPassword);
+      _verifiedOtp = null; // Clear the verified OTP after successful reset
       emit(const AuthPasswordResetSuccess('Password reset successfully'));
     } catch (e) {
       log('AuthCubit ResetPassword Error: $e');
       final errorMessage = _extractErrorMessage(e);
-      emit(AuthError(errorMessage));
+      // Check if it's an OTP-related error
+      if (errorMessage.toLowerCase().contains('invalid') || 
+          errorMessage.toLowerCase().contains('expired') ||
+          errorMessage.toLowerCase().contains('code')) {
+        // This is an OTP error, redirect back to OTP screen
+        emit(AuthPasswordResetError('Invalid or expired OTP. Please verify your code again.'));
+      } else {
+        emit(AuthPasswordResetError(errorMessage));
+      }
     }
   }
 
@@ -298,6 +314,40 @@ class AuthCubit extends Cubit<AuthState> {
     }
     
     return errors;
+  }
+
+  /// Send OTP for password reset (forget password)
+  Future<void> forgetPassword(String email) async {
+    log('AuthCubit: forgetPassword called with email: $email');
+    emit(const AuthLoading());
+    log('AuthCubit: AuthLoading state emitted');
+    
+    try {
+      // Validate email input
+      final validationErrors = _validateEmailInput(email);
+      
+      if (validationErrors.isNotEmpty) {
+        log('AuthCubit: Validation errors found: $validationErrors');
+        emit(AuthValidationError(validationErrors));
+        return;
+      }
+
+      log('AuthCubit: Calling sendOtp with email: $email');
+      final otpCode = await _authRepository.sendOtp(email);
+      log('AuthCubit: sendOtp returned: $otpCode');
+      
+      if (otpCode != null) {
+        log('AuthCubit: OTP sent successfully via API');
+        emit(const AuthForgetPasswordOtpSentSuccess('OTP sent successfully! Check your email for the verification code.'));
+      } else {
+        log('AuthCubit: Emitting AuthForgetPasswordError - Failed to send OTP');
+        emit(const AuthForgetPasswordError('Failed to send OTP'));
+      }
+    } catch (e) {
+      log('AuthCubit Forget Password Error: $e');
+      final errorMessage = _extractErrorMessage(e);
+      emit(AuthForgetPasswordError(errorMessage));
+    }
   }
 
   String _extractErrorMessage(dynamic error) {

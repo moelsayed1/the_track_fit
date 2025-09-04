@@ -63,6 +63,22 @@ class AuthOtpSentSuccess extends AuthState {
   int get hashCode => message.hashCode;
 }
 
+/// Success state for forget password OTP sending
+class AuthForgetPasswordOtpSentSuccess extends AuthState {
+  final String message;
+  
+  const AuthForgetPasswordOtpSentSuccess(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthForgetPasswordOtpSentSuccess && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
 /// Success state for OTP verification
 class AuthOtpVerifiedSuccess extends AuthState {
   final String message;
@@ -129,6 +145,38 @@ class AuthError extends AuthState {
   int get hashCode => message.hashCode ^ errorCode.hashCode;
 }
 
+/// Error state for forget password flow
+class AuthForgetPasswordError extends AuthState {
+  final String message;
+  
+  const AuthForgetPasswordError(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthForgetPasswordError && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
+/// Error state for OTP verification flow
+class AuthOtpVerificationError extends AuthState {
+  final String message;
+  
+  const AuthOtpVerificationError(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthOtpVerificationError && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
 /// Validation error state for form validation
 class AuthValidationError extends AuthState {
   final Map<String, String> fieldErrors;
@@ -144,4 +192,20 @@ class AuthValidationError extends AuthState {
   
   @override
   int get hashCode => fieldErrors.hashCode;
+}
+
+/// Password reset error state
+class AuthPasswordResetError extends AuthState {
+  final String message;
+  
+  const AuthPasswordResetError(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthPasswordResetError && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
 }

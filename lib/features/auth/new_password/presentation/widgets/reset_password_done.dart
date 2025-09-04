@@ -80,11 +80,11 @@ class ResetPasswordDone extends StatelessWidget {
                   width: responsive.w(279),
                   height: responsive.h(56),
                   child: PrimaryButton(
-                    text: 'Go To Home Page',
+                    text: 'Go To Login Page',
                     style: TextStyle(
                       fontSize: responsive.sp(18),
                     ),
-                    onPressed: () => _handleGoToHome(context),
+                    onPressed: () => _handleGoToLogin(context),
                     height: responsive.h(56),
                   ),
                 ),
@@ -96,8 +96,8 @@ class ResetPasswordDone extends StatelessWidget {
     );
   }
 
-  void _handleGoToHome(BuildContext context) {
+  void _handleGoToLogin(BuildContext context) {
     // Navigate to home page
-    context.push(AppRouter.home);
+    context.push(AppRouter.login);
   }
 }
