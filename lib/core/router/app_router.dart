@@ -189,9 +189,20 @@ class AppRouter {
       GoRoute(
         path: resetPasswordDone,
         name: 'resetPasswordDone',
-        builder: (context, state) => ResetPasswordDone(
-          text: state.extra as String,
-        ),
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            return ResetPasswordDone(
+              text: extra['text'] as String,
+              isFromCheckout: extra['isFromCheckout'] as bool? ?? false,
+            );
+          } else {
+            return ResetPasswordDone(
+              text: extra as String,
+              isFromCheckout: false,
+            );
+          }
+        },
       ),
       GoRoute(
         path: ageQuestion,

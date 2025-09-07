@@ -8,10 +8,16 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/router/app_router.dart';
 
 class ResetPasswordDone extends StatelessWidget {
-  const ResetPasswordDone({super.key, required this.text, this.textStyle});
+  const ResetPasswordDone({
+    super.key, 
+    required this.text, 
+    this.textStyle,
+    this.isFromCheckout = false,
+  });
 
   final String text;
   final TextStyle? textStyle;
+  final bool isFromCheckout;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +29,7 @@ class ResetPasswordDone extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.60),
+          color: Colors.transparent,
         ),
         child: Center(
           child: Container(
@@ -75,16 +81,16 @@ class ResetPasswordDone extends StatelessWidget {
                 
                 SizedBox(height: responsive.h(24)),
                 
-                // Go To Home Page Button
+                // Conditional Button
                 SizedBox(
                   width: responsive.w(279),
                   height: responsive.h(56),
                   child: PrimaryButton(
-                    text: 'Go To Login Page',
+                    text: isFromCheckout ? 'Go to Home Page' : 'Go to Login Page',
                     style: TextStyle(
                       fontSize: responsive.sp(18),
                     ),
-                    onPressed: () => _handleGoToLogin(context),
+                    onPressed: () => _handleNavigation(context),
                     height: responsive.h(56),
                   ),
                 ),
@@ -96,8 +102,13 @@ class ResetPasswordDone extends StatelessWidget {
     );
   }
 
-  void _handleGoToLogin(BuildContext context) {
-    // Navigate to home page
-    context.push(AppRouter.login);
+  void _handleNavigation(BuildContext context) {
+    if (isFromCheckout) {
+      // Navigate to home page when coming from checkout
+      context.push(AppRouter.home);
+    } else {
+      // Navigate to login page when coming from reset password
+      context.push(AppRouter.login);
+    }
   }
 }
