@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/auth/new_password/presentation/widgets/reset_password_done.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
 import 'package:the_track_fit/features/cart/domain/models/cart_item.dart';
@@ -174,14 +175,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     SizedBox(height: 24.h),
                     
                     // Coupon Section
-                    _buildCouponSection(),
+                   // _buildCouponSection(),
                     
-                    SizedBox(height: 24.h),
+                    //SizedBox(height: 24.h),
                     
                     // Payment Summary
                     _buildPaymentSummary(),
                     
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 120.h),
                     
                     // Confirm Order Button
                     _buildConfirmOrderButton(),
@@ -490,8 +491,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget _buildPaymentSummary() {
     // Calculate totals
     double orderTotal = cartItems.fold(0.0, (sum, cartItem) => sum + cartItem.totalPrice);
-    double discount = 28.80; // Fixed discount for demo
-    double total = orderTotal - discount;
+   // Fixed discount for demo
+    double total = orderTotal ;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -534,30 +535,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         SizedBox(height: 16.h),
         
         // Items Discount
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Items Discount',
-              style: TextStyle(
-                color: Color(0xFF848484),
-                fontSize: 14.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            Text(
-              '- ${discount.toStringAsFixed(2)}',
-              style: TextStyle(
-                color: Color(0xFF1E1E1E),
-                fontSize: 14.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 16.h),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //   children: [
+        //     Text(
+        //       'Items Discount',
+        //       style: TextStyle(
+        //         color: Color(0xFF848484),
+        //         fontSize: 14.sp,
+        //         fontFamily: 'Poppins',
+        //         fontWeight: FontWeight.w400,
+        //       ),
+        //     ),
+        //     Text(
+        //       '- ${discount.toStringAsFixed(2)}',
+        //       style: TextStyle(
+        //         color: Color(0xFF1E1E1E),
+        //         fontSize: 14.sp,
+        //         fontFamily: 'Poppins',
+        //         fontWeight: FontWeight.w400,
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        // SizedBox(height: 16.h),
         
         // Shipping
         Row(
@@ -630,18 +631,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         // TODO: Implement password reset logic
         await Future.delayed(const Duration(seconds: 1)); // Simulate API call
         
-        if (mounted) {
-          // Show success dialog
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return ResetPasswordDone(
-                text: 'Your order has been confirmed',
-              );
-            },
-          );
-        }
+          if (mounted) {
+            // Show success dialog
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return ResetPasswordDone(
+                  text: 'Your order has been confirmed successfully!',
+                  isFromCheckout: true,
+                );
+              },
+            );
+          }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
