@@ -56,7 +56,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.push(AppRouter.store),
+                    onTap: () => context.pop(),
                     child: SizedBox(
                       width: 32.w,
                       height: 32.h,

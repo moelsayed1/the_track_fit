@@ -6,18 +6,27 @@ import '../../../../../core/widgets/question_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
-class FitnessLevelBody extends StatefulWidget {
-  const FitnessLevelBody({super.key});
+class AgeQuestionBody extends StatefulWidget {
+  const AgeQuestionBody({super.key});
 
   @override
-  State<FitnessLevelBody> createState() => _FitnessLevelBodyState();
+  State<AgeQuestionBody> createState() => _AgeQuestionBodyState();
 }
 
-class _FitnessLevelBodyState extends State<FitnessLevelBody> {
-  String? _selectedFitnessLevel;
+class _AgeQuestionBodyState extends State<AgeQuestionBody> {
+  String? _selectedAge;
   bool _isLoading = false;
-  final int _currentStep = 3; // This is question 3 of 14
+  final int _currentStep = 1; // This is question 1 of 14
   final int _totalSteps = 14;
+
+  // Age options from the API response
+  final List<Map<String, String>> _ageOptions = [
+    {'value': 'under_18', 'label': 'Under 18'},
+    {'value': '18_25', 'label': '18-25'},
+    {'value': '26_35', 'label': '26-35'},
+    {'value': '36_45', 'label': '36-45'},
+    {'value': 'over_45', 'label': 'Over 45'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +49,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Fitness Level ?',
+            'What\'s your Age?',
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -52,8 +61,8 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
         
         SizedBox(height: responsive.hp(6)),
         
-        // Fitness Level Options
-        _buildFitnessLevelOptions(responsive),
+        // Age Options
+        _buildAgeOptions(responsive),
         
         const Spacer(),
         
@@ -65,47 +74,31 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
     );
   }
 
-  Widget _buildFitnessLevelOptions(ResponsiveHelper responsive) {
+  Widget _buildAgeOptions(ResponsiveHelper responsive) {
     return Column(
-      children: [
-        // Beginner Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Beginner',
-          description: 'I\'m just getting started with workouts.',
-          isSelected: _selectedFitnessLevel == 'Beginner',
-          onTap: () => _selectFitnessLevel('Beginner'),
-        ),
-        
-        SizedBox(height: responsive.h(16)),
-        
-        // Intermediate Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Intermediate',
-          description: 'I exercise regularly and know the basics.',
-          isSelected: _selectedFitnessLevel == 'Intermediate',
-          onTap: () => _selectFitnessLevel('Intermediate'),
-        ),
-        
-        SizedBox(height: responsive.h(16)),
-        
-        // Advanced Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Advanced',
-          description: 'I\'ve been training for a while and want serious results.',
-          isSelected: _selectedFitnessLevel == 'Advanced',
-          onTap: () => _selectFitnessLevel('Advanced'),
-        ),
-      ],
+      children: _ageOptions.map((option) {
+        final isSelected = _selectedAge == option['value'];
+        return Column(
+          children: [
+            _buildAgeOption(
+              responsive,
+              value: option['value']!,
+              label: option['label']!,
+              isSelected: isSelected,
+              onTap: () => _selectAge(option['value']!),
+            ),
+            if (option != _ageOptions.last)
+              SizedBox(height: responsive.h(16)),
+          ],
+        );
+      }).toList(),
     );
   }
 
-  Widget _buildFitnessOption(
+  Widget _buildAgeOption(
     ResponsiveHelper responsive, {
-    required String level,
-    required String description,
+    required String value,
+    required String label,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -134,7 +127,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
             Container(
               width: responsive.w(22),
               height: responsive.h(22),
-              padding: EdgeInsets.all(responsive.w(4)),
+              padding: EdgeInsets.all(responsive.w(5)),
               decoration: ShapeDecoration(
                 color: isSelected ? AppColors.primaryGreen : Colors.transparent,
                 shape: RoundedRectangleBorder(
@@ -144,16 +137,16 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
                         ? AppColors.primaryGreen 
                         : const Color(0xFF848484),
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(15), // Circular radio button
                 ),
               ),
               child: isSelected
                   ? Container(
-                      width: responsive.w(9),
-                      height: responsive.h(9),
-                      decoration: const ShapeDecoration(
+                      width: responsive.w(8),
+                      height: responsive.h(8),
+                      decoration: const BoxDecoration(
                         color: Colors.white,
-                        shape: OvalBorder(),
+                        shape: BoxShape.circle,
                       ),
                     )
                   : null,
@@ -163,29 +156,13 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
             
             // Text Content
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    level,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: responsive.sp(16),
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  SizedBox(height: responsive.h(4)),
-                  Text(
-                    description,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: responsive.sp(12),
-                      fontWeight: FontWeight.w400,
-                      color: isSelected 
-                          ? const Color(0xFF1E1E1E) 
-                          : const Color(0xFF848484),
-                    ),
-                  ),
-                ],
+              child: Text(
+                label,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: responsive.sp(16),
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
               ),
             ),
           ],
@@ -195,7 +172,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    final isEnabled = _selectedFitnessLevel != null;
+    final isEnabled = _selectedAge != null;
     
     return SizedBox(
       width: double.infinity,
@@ -257,32 +234,32 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
     );
   }
 
-  void _selectFitnessLevel(String level) {
+  void _selectAge(String age) {
     setState(() {
-      _selectedFitnessLevel = level;
+      _selectedAge = age;
     });
   }
 
   void _handleContinue() async {
-    if (_selectedFitnessLevel == null) return;
+    if (_selectedAge == null) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // TODO: Implement fitness level selection logic
+      // TODO: Implement age selection logic
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Fitness level selected: $_selectedFitnessLevel'),
+            content: Text('Age selected: ${_ageOptions.firstWhere((option) => option['value'] == _selectedAge)['label']}'),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
         
-        // Navigate to next question screen (Height Question)
+        // Navigate to next question screen (Gender Question)
         context.push(AppRouter.heightQuestion);
       }
     } catch (e) {

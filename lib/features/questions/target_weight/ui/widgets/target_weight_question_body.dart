@@ -7,35 +7,37 @@ import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/widgets/question_header.dart';
 
-class WeightQuestionBody extends StatefulWidget {
-  const WeightQuestionBody({super.key});
+class TargetWeightQuestionBody extends StatefulWidget {
+  const TargetWeightQuestionBody({super.key});
 
   @override
-  State<WeightQuestionBody> createState() => _WeightQuestionBodyState();
+  State<TargetWeightQuestionBody> createState() => _TargetWeightQuestionBodyState();
 }
 
-class _WeightQuestionBodyState extends State<WeightQuestionBody> {
-  final TextEditingController _weightController = TextEditingController();
-  final FocusNode _weightFocusNode = FocusNode();
+class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
+  final TextEditingController _targetWeightController = TextEditingController();
+  final FocusNode _targetWeightFocusNode = FocusNode();
   bool _isInputFilled = false;
+  final int _currentStep = 6; // This is question 6 of 14
+  final int _totalSteps = 14;
 
   @override
   void initState() {
     super.initState();
-    _weightController.addListener(_onWeightChanged);
-    _weightFocusNode.addListener(_onFocusChanged);
+    _targetWeightController.addListener(_onTargetWeightChanged);
+    _targetWeightFocusNode.addListener(_onFocusChanged);
   }
 
   @override
   void dispose() {
-    _weightController.dispose();
-    _weightFocusNode.dispose();
+    _targetWeightController.dispose();
+    _targetWeightFocusNode.dispose();
     super.dispose();
   }
 
-  void _onWeightChanged() {
+  void _onTargetWeightChanged() {
     setState(() {
-      _isInputFilled = _weightController.text.isNotEmpty;
+      _isInputFilled = _targetWeightController.text.isNotEmpty;
     });
   }
 
@@ -45,12 +47,10 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
     });
   }
 
-
-
   void _onContinuePressed() {
-    if (_weightController.text.isNotEmpty) {
-      // Navigate to target weight question after current weight selection
-      context.push(AppRouter.targetWeightQuestion);
+    if (_targetWeightController.text.isNotEmpty) {
+      // Navigate to main goal question after target weight selection
+      context.push(AppRouter.mainGoalQuestion);
     }
   }
 
@@ -64,13 +64,13 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
       color: const Color(0xFFF6FFF6), // Background color from Figma
       child: Column(
         children: [
-          SizedBox(height: responsive.h(28)),
+          SizedBox(height: responsive.h(2)),
           
           // Question Header
           QuestionHeader(
             title: "Let's Set Up Your Plan",
-            currentStep: 5,
-            totalSteps: 14,
+            currentStep: _currentStep,
+            totalSteps: _totalSteps,
           ),
           
           SizedBox(height: responsive.h(34.5)),
@@ -80,8 +80,8 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
           
           SizedBox(height: responsive.h(24)),
           
-          // Weight Input Field
-          _buildWeightInputField(responsive),
+          // Target Weight Input Field
+          _buildTargetWeightInputField(responsive),
           
           const Spacer(),
           
@@ -89,7 +89,7 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
           _buildContinueButton(responsive),
           
           SizedBox(height: responsive.h(72)),
-                ],
+        ],
       ),
     );
   }
@@ -99,7 +99,7 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
       width: double.infinity,
       alignment: Alignment.centerLeft,
       child: Text(
-        "What's your Current\n Weight?",
+        "What's your Target\n Weight?",
         style: AppTextStyles.heading2.copyWith(
           fontSize: responsive.sp(24),
           fontWeight: FontWeight.w600,
@@ -110,22 +110,22 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
     );
   }
 
-    Widget _buildWeightInputField(ResponsiveHelper responsive) {
+  Widget _buildTargetWeightInputField(ResponsiveHelper responsive) {
     return Container(
       width: double.infinity,
       height: responsive.h(50), // Reduced height from default
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12), // Reduced vertical padding
       decoration: BoxDecoration(
         border: Border.all(
-          color: _weightFocusNode.hasFocus ? AppColors.primaryGreen : AppColors.gray, // Green when focused, gray when not
+          color: _targetWeightFocusNode.hasFocus ? AppColors.primaryGreen : AppColors.gray, // Green when focused, gray when not
           width: 1,
         ),
         borderRadius: BorderRadius.circular(15),
       ),
       child: Center(
         child: TextField(
-          controller: _weightController,
-          focusNode: _weightFocusNode,
+          controller: _targetWeightController,
+          focusNode: _targetWeightFocusNode,
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           textAlign: TextAlign.center,
@@ -193,5 +193,4 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
       ),
     );
   }
-
 }

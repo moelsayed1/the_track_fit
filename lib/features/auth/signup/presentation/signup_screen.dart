@@ -28,6 +28,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String? _selectedGender;
+  bool _showGenderValidation = false;
 
   @override
   void dispose() {
@@ -68,7 +70,21 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
+
   void _handleSignup() {
+    // Validate form first
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    
+    // Validate gender selection
+    if (_selectedGender == null) {
+      setState(() {
+        _showGenderValidation = true;
+      });
+      return;
+    }
+    
     // Call the register method from AuthCubit
     // The cubit will handle validation internally
     context.read<AuthCubit>().register(
@@ -77,7 +93,7 @@ class _SignupScreenState extends State<SignupScreen> {
       phone: _phoneController.text.trim(),
       password: _passwordController.text,
       passwordConfirmation: _confirmPasswordController.text,
-      gender: 'male', // Default value, you can add a gender selector later
+      gender: _selectedGender!,
     );
   }
 
@@ -119,7 +135,7 @@ class _SignupScreenState extends State<SignupScreen> {
           );
           
           // Navigate to next screen
-          context.push(AppRouter.genderQuestion);
+          context.push(AppRouter.ageQuestion);
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -183,6 +199,200 @@ class _SignupScreenState extends State<SignupScreen> {
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       validator: (value) => _validateRequired(value, 'Phone'),
+                    ),
+                    SizedBox(height: responsive.hp(2)),
+      
+                    // Gender Selection with Custom Toggle
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 12, bottom: 8),
+                          child: Text(
+                            'Gender',
+                            style: TextStyle(
+                              color: AppColors.grayMedium,
+                              fontSize: responsive.sp(12),
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            // Male Option
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedGender = 'male';
+                                    _showGenderValidation = false;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: _selectedGender == 'male' 
+                                        ? AppColors.primaryGreen
+                                        : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _selectedGender == 'male' 
+                                          ? AppColors.primaryGreen
+                                          : Colors.grey.shade300,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _selectedGender == 'male' 
+                                              ? Colors.white
+                                              : Colors.transparent,
+                                          border: Border.all(
+                                            color: _selectedGender == 'male' 
+                                                ? Colors.white
+                                                : Colors.grey.shade500,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: _selectedGender == 'male'
+                                            ? Center(
+                                                child: Container(
+                                                  width: 8,
+                                                  height: 8,
+                                                  decoration: const BoxDecoration(
+                                                    color: AppColors.primaryGreen,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Male',
+                                              style: TextStyle(
+                                                color: _selectedGender == 'male' 
+                                                    ? Colors.white
+                                                    : Colors.grey.shade700,
+                                                fontSize: responsive.sp(14),
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Female Option
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedGender = 'female';
+                                    _showGenderValidation = false;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(left: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: _selectedGender == 'female' 
+                                        ? AppColors.primaryGreen
+                                        : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _selectedGender == 'female' 
+                                          ? AppColors.primaryGreen
+                                          : Colors.grey.shade300,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _selectedGender == 'female' 
+                                              ? Colors.white
+                                              : Colors.transparent,
+                                          border: Border.all(
+                                            color: _selectedGender == 'female' 
+                                                ? Colors.white
+                                                : Colors.grey.shade500,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: _selectedGender == 'female'
+                                            ? Center(
+                                                child: Container(
+                                                  width: 8,
+                                                  height: 8,
+                                                  decoration: const BoxDecoration(
+                                                    color: AppColors.primaryGreen,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Female',
+                                              style: TextStyle(
+                                                color: _selectedGender == 'female' 
+                                                    ? Colors.white
+                                                    : Colors.grey.shade700,
+                                                fontSize: responsive.sp(14),
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_showGenderValidation && _selectedGender == null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16, top: 8),
+                            child: Text(
+                              'Gender is required',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: responsive.sp(12),
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     SizedBox(height: responsive.hp(2)),
       

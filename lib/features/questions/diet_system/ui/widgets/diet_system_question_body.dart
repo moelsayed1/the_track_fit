@@ -6,18 +6,28 @@ import '../../../../../core/widgets/question_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
-class FitnessLevelBody extends StatefulWidget {
-  const FitnessLevelBody({super.key});
+class DietSystemQuestionBody extends StatefulWidget {
+  const DietSystemQuestionBody({super.key});
 
   @override
-  State<FitnessLevelBody> createState() => _FitnessLevelBodyState();
+  State<DietSystemQuestionBody> createState() => _DietSystemQuestionBodyState();
 }
 
-class _FitnessLevelBodyState extends State<FitnessLevelBody> {
-  String? _selectedFitnessLevel;
+class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
+  List<String> _selectedDietSystems = [];
   bool _isLoading = false;
-  final int _currentStep = 3; // This is question 3 of 14
+  final int _currentStep = 11; // This is question 11 of 14
   final int _totalSteps = 14;
+
+  // Diet system options from the API response
+  final List<Map<String, String>> _dietSystemOptions = [
+    {'value': 'unstructured', 'label': 'Unstructured'},
+    {'value': 'three_meals', 'label': '3 Meals a Day'},
+    {'value': 'one_two_meals', 'label': 'One or Two Meals Only'},
+    {'value': 'intermittent_fasting', 'label': 'Intermittent Fasting'},
+    {'value': 'vegetarian', 'label': 'Vegetarian'},
+    {'value': 'gluten_free', 'label': 'Gluten-free'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +50,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Fitness Level ?',
+            'What\'s your Current Diet System?',
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -50,12 +60,14 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
           ),
         ),
         
-        SizedBox(height: responsive.hp(6)),
+        SizedBox(height: responsive.hp(2)),
         
-        // Fitness Level Options
-        _buildFitnessLevelOptions(responsive),
-        
-        const Spacer(),
+        // Diet System Options - Make scrollable
+        Expanded(
+          child: SingleChildScrollView(
+            child: _buildDietSystemOptions(responsive),
+          ),
+        ),
         
         // Continue Button
         _buildContinueButton(responsive),
@@ -65,47 +77,34 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
     );
   }
 
-  Widget _buildFitnessLevelOptions(ResponsiveHelper responsive) {
-    return Column(
-      children: [
-        // Beginner Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Beginner',
-          description: 'I\'m just getting started with workouts.',
-          isSelected: _selectedFitnessLevel == 'Beginner',
-          onTap: () => _selectFitnessLevel('Beginner'),
-        ),
-        
-        SizedBox(height: responsive.h(16)),
-        
-        // Intermediate Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Intermediate',
-          description: 'I exercise regularly and know the basics.',
-          isSelected: _selectedFitnessLevel == 'Intermediate',
-          onTap: () => _selectFitnessLevel('Intermediate'),
-        ),
-        
-        SizedBox(height: responsive.h(16)),
-        
-        // Advanced Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Advanced',
-          description: 'I\'ve been training for a while and want serious results.',
-          isSelected: _selectedFitnessLevel == 'Advanced',
-          onTap: () => _selectFitnessLevel('Advanced'),
-        ),
-      ],
+  Widget _buildDietSystemOptions(ResponsiveHelper responsive) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
+      child: Column(
+        children: _dietSystemOptions.map((option) {
+          final isSelected = _selectedDietSystems.contains(option['value']);
+          return Column(
+            children: [
+              _buildDietSystemOption(
+                responsive,
+                value: option['value']!,
+                label: option['label']!,
+                isSelected: isSelected,
+                onTap: () => _toggleDietSystem(option['value']!),
+              ),
+              if (option != _dietSystemOptions.last)
+                SizedBox(height: responsive.h(16)),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 
-  Widget _buildFitnessOption(
+  Widget _buildDietSystemOption(
     ResponsiveHelper responsive, {
-    required String level,
-    required String description,
+    required String value,
+    required String label,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -130,7 +129,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
         ),
         child: Row(
           children: [
-            // Radio Button
+            // Checkbox
             Container(
               width: responsive.w(22),
               height: responsive.h(22),
@@ -144,17 +143,14 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
                         ? AppColors.primaryGreen 
                         : const Color(0xFF848484),
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4), // Square checkbox
                 ),
               ),
               child: isSelected
-                  ? Container(
-                      width: responsive.w(9),
-                      height: responsive.h(9),
-                      decoration: const ShapeDecoration(
-                        color: Colors.white,
-                        shape: OvalBorder(),
-                      ),
+                  ? Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: responsive.w(14),
                     )
                   : null,
             ),
@@ -163,29 +159,13 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
             
             // Text Content
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    level,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: responsive.sp(16),
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  SizedBox(height: responsive.h(4)),
-                  Text(
-                    description,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: responsive.sp(12),
-                      fontWeight: FontWeight.w400,
-                      color: isSelected 
-                          ? const Color(0xFF1E1E1E) 
-                          : const Color(0xFF848484),
-                    ),
-                  ),
-                ],
+              child: Text(
+                label,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: responsive.sp(16),
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
               ),
             ),
           ],
@@ -195,7 +175,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    final isEnabled = _selectedFitnessLevel != null;
+    final isEnabled = _selectedDietSystems.isNotEmpty;
     
     return SizedBox(
       width: double.infinity,
@@ -257,33 +237,37 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
     );
   }
 
-  void _selectFitnessLevel(String level) {
+  void _toggleDietSystem(String dietSystem) {
     setState(() {
-      _selectedFitnessLevel = level;
+      if (_selectedDietSystems.contains(dietSystem)) {
+        _selectedDietSystems.remove(dietSystem);
+      } else {
+        _selectedDietSystems.add(dietSystem);
+      }
     });
   }
 
   void _handleContinue() async {
-    if (_selectedFitnessLevel == null) return;
+    if (_selectedDietSystems.isEmpty) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // TODO: Implement fitness level selection logic
+      // TODO: Implement diet system selection logic
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Fitness level selected: $_selectedFitnessLevel'),
+            content: Text('Diet systems selected: ${_selectedDietSystems.length}'),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
         
-        // Navigate to next question screen (Height Question)
-        context.push(AppRouter.heightQuestion);
+        // Navigate to next question screen
+        context.push(AppRouter.healthStatusQuestion);
       }
     } catch (e) {
       if (mounted) {
