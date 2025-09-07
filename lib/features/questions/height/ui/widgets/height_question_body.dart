@@ -14,12 +14,12 @@ class HeightQuestionBody extends StatefulWidget {
 }
 
 class _HeightQuestionBodyState extends State<HeightQuestionBody> {
-  int _selectedHeight = 185; // Default height in cm - now mutable
+  int _selectedHeight = 0; // Default height in cm - now mutable
   bool _isLoading = false;
-  final int _currentStep = 3; // This is question 3 of 6
-  final int _totalSteps = 4;
+  final int _currentStep = 4; // This is question 4 of 14
+  final int _totalSteps = 14;
   
-      final int _minHeight = 150; // Minimum height in cm
+      final int _minHeight = 140; // Minimum height in cm
   final int _maxHeight = 220; // Maximum height in cm
   
   @override

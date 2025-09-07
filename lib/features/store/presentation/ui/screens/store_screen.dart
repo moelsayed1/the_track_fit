@@ -86,8 +86,7 @@ class _StoreScreenState extends State<StoreScreen> {
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
         child: Column(
-          children: [
-                         // Custom AppBar matching Figma design
+          children: [ // Custom AppBar matching Figma design
              Container(
                width: double.infinity,
                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -175,7 +174,8 @@ class _StoreScreenState extends State<StoreScreen> {
                             onTap: _toggleFavoriteFilter,
                             child: Container(
                               width: 32.w,
-                              height: 32.h,                      decoration: ShapeDecoration(
+                              height: 32.h,
+                           decoration: ShapeDecoration(
                                color: _showOnlyFavorites 
                                    ? const Color(0xFF28A228) // Solid green background when active
                                    : const Color(0xFFC0DEC0), // Light green background when inactive
@@ -299,7 +299,7 @@ class _StoreScreenState extends State<StoreScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                                                     Icon(
+                           Icon(
                              _showOnlyFavorites
                                  ? Icons.favorite_border
                                  : Icons.search_off,
@@ -317,8 +317,7 @@ class _StoreScreenState extends State<StoreScreen> {
                           ),
                         ],
                       ),
-                    )
-                                     : ListView.builder(
+                    ) : ListView.builder(
                        padding: EdgeInsets.only(top: 16.h, left: 16.w, right: 16.w),
                        itemCount: _displayedProducts.length,
                       itemBuilder: (context, index) {

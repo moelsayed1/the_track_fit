@@ -30,13 +30,24 @@ import '../../features/auth/forget_password/presentation/ui/forget_password_scre
 import '../../features/auth/otp/presentation/ui/otp_screen.dart';
 import '../../features/auth/new_password/presentation/ui/new_password_screen.dart';
 import '../../features/auth/new_password/presentation/widgets/reset_password_done.dart';
-import '../../features/questions/gender_question/presentation/ui/gender_question_screen.dart';
+import '../../features/questions/age/ui/age_screen.dart';
 import '../../features/questions/fitness_level/ui/fitness_level_screen.dart';
 import '../../features/questions/height/ui/height_screen.dart';
 import '../../features/questions/weight/ui/weight_screen.dart';
+import '../../features/questions/target_weight/ui/target_weight_screen.dart';
+import '../../features/questions/main_goal/ui/main_goal_screen.dart';
+import '../../features/questions/activity_level/ui/activity_level_screen.dart';
+import '../../features/questions/training_types/ui/training_types_screen.dart';
+import '../../features/questions/equipment/ui/equipment_screen.dart';
+import '../../features/questions/diet_system/ui/diet_system_screen.dart';
+import '../../features/questions/health_status/ui/health_status_screen.dart';
+import '../../features/questions/special_diet/ui/special_diet_screen.dart';
+import '../../features/questions/injury/ui/injury_screen.dart';
+import '../../features/questions/additional_goals/ui/additional_goals_screen.dart';
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 import '../../features/store/presentation/ui/screens/store_screen.dart';
 import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
+import '../../features/store/domain/models/product.dart';
 import '../../features/workout/presentation/screens/workout_screen.dart';
 import '../../features/cart/presentation/screens/checkout_screen.dart';
 import '../../features/plan/presentation/widgets/checkout_plan_screen.dart';
@@ -59,10 +70,21 @@ class AppRouter {
   static const String otp = '/otp';
   static const String newPassword = '/new-password';
   static const String resetPasswordDone = '/reset-password-done';
+  static const String ageQuestion = '/age-question';
   static const String genderQuestion = '/gender-question';
   static const String fitnessLevel = '/fitness-level';
   static const String heightQuestion = '/height-question';
   static const String weightQuestion = '/weight-question';
+  static const String targetWeightQuestion = '/target-weight-question';
+  static const String mainGoalQuestion = '/main-goal-question';
+  static const String activityLevelQuestion = '/activity-level-question';
+  static const String trainingTypesQuestion = '/training-types-question';
+  static const String equipmentQuestion = '/equipment-question';
+  static const String dietSystemQuestion = '/diet-system-question';
+  static const String healthStatusQuestion = '/health-status-question';
+  static const String specialDietQuestion = '/special-diet-question';
+  static const String injuryQuestion = '/injury-question';
+  static const String additionalGoalsQuestion = '/additional-goals-question';
   static const String questionDone = '/question-done';
   static const String plan = '/plan';
   static const String promotionalOffer = '/promotional-offer';
@@ -172,10 +194,15 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: genderQuestion,
-        name: 'genderQuestion',
-        builder: (context, state) => const GenderQuestionScreen(),
+        path: ageQuestion,
+        name: 'ageQuestion',
+        builder: (context, state) => const AgeQuestionScreen(),
       ),
+      // GoRoute(
+      //   path: genderQuestion,
+      //   name: 'genderQuestion',
+      //   builder: (context, state) => const GenderQuestionScreen(),
+      // ),
       GoRoute(
         path: fitnessLevel,
         name: 'fitnessLevel',
@@ -190,6 +217,56 @@ class AppRouter {
         path: weightQuestion,
         name: 'weightQuestion',
         builder: (context, state) => const WeightQuestionScreen(),
+      ),
+      GoRoute(
+        path: targetWeightQuestion,
+        name: 'targetWeightQuestion',
+        builder: (context, state) => const TargetWeightQuestionScreen(),
+      ),
+      GoRoute(
+        path: mainGoalQuestion,
+        name: 'mainGoalQuestion',
+        builder: (context, state) => const MainGoalQuestionScreen(),
+      ),
+      GoRoute(
+        path: activityLevelQuestion,
+        name: 'activityLevelQuestion',
+        builder: (context, state) => const ActivityLevelQuestionScreen(),
+      ),
+      GoRoute(
+        path: trainingTypesQuestion,
+        name: 'trainingTypesQuestion',
+        builder: (context, state) => const TrainingTypesQuestionScreen(),
+      ),
+      GoRoute(
+        path: equipmentQuestion,
+        name: 'equipmentQuestion',
+        builder: (context, state) => const EquipmentQuestionScreen(),
+      ),
+      GoRoute(
+        path: dietSystemQuestion,
+        name: 'dietSystemQuestion',
+        builder: (context, state) => const DietSystemQuestionScreen(),
+      ),
+      GoRoute(
+        path: healthStatusQuestion,
+        name: 'healthStatusQuestion',
+        builder: (context, state) => const HealthStatusQuestionScreen(),
+      ),
+      GoRoute(
+        path: specialDietQuestion,
+        name: 'specialDietQuestion',
+        builder: (context, state) => const SpecialDietQuestionScreen(),
+      ),
+      GoRoute(
+        path: injuryQuestion,
+        name: 'injuryQuestion',
+        builder: (context, state) => const InjuryQuestionScreen(),
+      ),
+      GoRoute(
+        path: additionalGoalsQuestion,
+        name: 'additionalGoalsQuestion',
+        builder: (context, state) => const AdditionalGoalsQuestionScreen(),
       ),
       GoRoute(
         path: questionDone,
@@ -235,7 +312,13 @@ class AppRouter {
       GoRoute(
         path: exerciseDetail,
         name: 'exerciseDetail',
-        builder: (context, state) => ExerciseDetail(exercise: state.extra as Exercise),
+        builder: (context, state) {
+          if (state.extra == null) {
+            // Return to workout screen if no exercise data
+            return const ExerciseDetail(exercise: Exercise(id: 'default', title: 'Exercise name', subtitle: 'Exercise subtitle', imagePath: 'assets/images/exercise_image.png', type: 'Exercise type'));
+          }
+          return ExerciseDetail(exercise: state.extra as Exercise);
+        },
       ),
       GoRoute(
         path: meal,
@@ -318,8 +401,15 @@ class AppRouter {
         builder: (context, state) {
           // Check if we have valid product data
           if (state.extra == null) {
-            // Redirect to store if no data
-            return const StoreScreen();
+            // Return ProductDetailScreen with default product if no data
+            final defaultProduct = Product(
+              id: 'default',
+              name: 'Product name',
+              price: 20.0,
+              imageUrl: 'assets/images/product_image.png',
+              isFavorite: false,
+            );
+            return ProductDetailScreen(product: defaultProduct);
           }
           
           try {
@@ -328,13 +418,27 @@ class AppRouter {
             
             if (product == null) {
               // Return to store if product is null
-              return const StoreScreen();
+              final defaultProduct = Product(
+                id: 'default',
+                name: 'Product name',
+                price: 20.0,
+                imageUrl: 'assets/images/product_image.png',
+                isFavorite: false,
+              );
+              return ProductDetailScreen(product: defaultProduct);
             }
             
             return ProductDetailScreen(product: product);
           } catch (e) {
             // Return to store on any error
-            return const StoreScreen();
+            final defaultProduct = Product(
+              id: 'default',
+              name: 'Product name',
+              price: 20.0,
+              imageUrl: 'assets/images/product_image.png',
+              isFavorite: false,
+            );
+            return ProductDetailScreen(product: defaultProduct);
           }
         },
       ),

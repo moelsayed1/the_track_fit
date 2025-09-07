@@ -69,6 +69,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     setState(() {
       _selectedExerciseIndex = index;
     });
+    context.push(AppRouter.exerciseDetail);
   }
 
   void _onFavoriteToggled(int index) {
@@ -376,7 +377,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               ),
               GestureDetector(
                 onTap: () {
-                  context.push('/store');
+                  context.push(AppRouter.store);
                 },
                 child: Text(
                   'Show all Products',
@@ -405,15 +406,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
-                  child: GestureDetector(
+                  child: ProductCard(
                     onTap: () => context.push(AppRouter.productDetail),
-                    child: ProductCard(
-                      productName: 'Product name',
-                      price: '20\$',
-                      exerciseIcon: 'assets/images/product_image.png',
-                      isFavorite: _favoriteStates[index],
-                      onFavoriteTapped: () => _onFavoriteToggled(index),
-                    ),
+                    productName: 'Product name',
+                    price: '20\$',
+                    exerciseIcon: 'assets/images/product_image.png',
+                    isFavorite: _favoriteStates[index],
+                    onFavoriteTapped: () => _onFavoriteToggled(index),
                   ),
                 );
               },
@@ -720,74 +719,77 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 120.w,
-      height: 160.h,
-      padding: EdgeInsets.all(8.w),
-      decoration: ShapeDecoration(
-        color: const Color(0xFFD8F1D8),
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xFF28A228)),
-          borderRadius: BorderRadius.circular(15.r),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 120.w,
+        height: 160.h,
+        padding: EdgeInsets.all(8.w),
+        decoration: ShapeDecoration(
+          color: const Color(0xFFD8F1D8),
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(width: 1, color: Color(0xFF28A228)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Heart icon
-          GestureDetector(
-            onTap: onFavoriteTapped,
-            child: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: const Color(0xFF28A228),
-              size: 20.w,
-            ),
-          ),
-          // Product image
-          Expanded(
-            child: Center(
-              child: Image.asset(
-                exerciseIcon,
-                width: 70.w,
-                height: 70.h,
-                fit: BoxFit.contain,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Heart icon
+            GestureDetector(
+              onTap: onFavoriteTapped,
+              child: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: const Color(0xFF28A228),
+                size: 20.w,
               ),
             ),
-          ),
-          // Product details (اسم + سعر)
-          Column(
-            crossAxisAlignment: alignCenter
-                ? CrossAxisAlignment.center
-                : CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 4.h),
-              Text(
-                productName,
-                style: TextStyle(
-                  color: const Color(0xFF1E1E1E),
-                  fontSize: 12.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
+            // Product image
+            Expanded(
+              child: Center(
+                child: Image.asset(
+                  exerciseIcon,
+                  width: 70.w,
+                  height: 70.h,
+                  fit: BoxFit.contain,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: alignCenter ? TextAlign.start : TextAlign.start,
               ),
-              SizedBox(height: 2.h),
-              Text(
-                price,
-                style: TextStyle(
-                  color: const Color(0xFF28A228),
-                  fontSize: 14.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
+            ),
+            // Product details (اسم + سعر)
+            Column(
+              crossAxisAlignment: alignCenter
+                  ? CrossAxisAlignment.center
+                  : CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 4.h),
+                Text(
+                  productName,
+                  style: TextStyle(
+                    color: const Color(0xFF1E1E1E),
+                    fontSize: 12.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: alignCenter ? TextAlign.start : TextAlign.start,
                 ),
-                textAlign: alignCenter ? TextAlign.center : TextAlign.start,
-              ),
-            ],
-          ),
-        ],
+                SizedBox(height: 2.h),
+                Text(
+                  price,
+                  style: TextStyle(
+                    color: const Color(0xFF28A228),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: alignCenter ? TextAlign.center : TextAlign.start,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

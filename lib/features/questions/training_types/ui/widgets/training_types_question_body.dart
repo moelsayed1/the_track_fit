@@ -6,18 +6,28 @@ import '../../../../../core/widgets/question_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
-class FitnessLevelBody extends StatefulWidget {
-  const FitnessLevelBody({super.key});
+class TrainingTypesQuestionBody extends StatefulWidget {
+  const TrainingTypesQuestionBody({super.key});
 
   @override
-  State<FitnessLevelBody> createState() => _FitnessLevelBodyState();
+  State<TrainingTypesQuestionBody> createState() => _TrainingTypesQuestionBodyState();
 }
 
-class _FitnessLevelBodyState extends State<FitnessLevelBody> {
-  String? _selectedFitnessLevel;
+class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
+  List<String> _selectedTrainingTypes = [];
   bool _isLoading = false;
-  final int _currentStep = 3; // This is question 3 of 14
+  final int _currentStep = 9; // This is question 9 of 14
   final int _totalSteps = 14;
+
+  // Training types options from the API response
+  final List<Map<String, String>> _trainingTypeOptions = [
+    {'value': 'cardio', 'label': 'Cardio (Running, Cycling, Jumping Ropes)'},
+    {'value': 'resistance_training', 'label': 'Resistance Training (Iron or Bodyweight)'},
+    {'value': 'hiit', 'label': 'HIIT (High Intensity Interval Training)'},
+    {'value': 'home_training', 'label': 'Home Training'},
+    {'value': 'yoga_pilates', 'label': 'Yoga or Pilates'},
+    {'value': 'rehabilitation', 'label': 'Muscle/Sports Rehabilitation Exercises'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +50,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Fitness Level ?',
+            'What\'s your Preferred Training Types?',
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -50,12 +60,14 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
           ),
         ),
         
-        SizedBox(height: responsive.hp(6)),
+        SizedBox(height: responsive.hp(2)),
         
-        // Fitness Level Options
-        _buildFitnessLevelOptions(responsive),
-        
-        const Spacer(),
+        // Training Types Options - Make scrollable
+        Expanded(
+          child: SingleChildScrollView(
+            child: _buildTrainingTypeOptions(responsive),
+          ),
+        ),
         
         // Continue Button
         _buildContinueButton(responsive),
@@ -65,47 +77,34 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
     );
   }
 
-  Widget _buildFitnessLevelOptions(ResponsiveHelper responsive) {
-    return Column(
-      children: [
-        // Beginner Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Beginner',
-          description: 'I\'m just getting started with workouts.',
-          isSelected: _selectedFitnessLevel == 'Beginner',
-          onTap: () => _selectFitnessLevel('Beginner'),
-        ),
-        
-        SizedBox(height: responsive.h(16)),
-        
-        // Intermediate Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Intermediate',
-          description: 'I exercise regularly and know the basics.',
-          isSelected: _selectedFitnessLevel == 'Intermediate',
-          onTap: () => _selectFitnessLevel('Intermediate'),
-        ),
-        
-        SizedBox(height: responsive.h(16)),
-        
-        // Advanced Option
-        _buildFitnessOption(
-          responsive,
-          level: 'Advanced',
-          description: 'I\'ve been training for a while and want serious results.',
-          isSelected: _selectedFitnessLevel == 'Advanced',
-          onTap: () => _selectFitnessLevel('Advanced'),
-        ),
-      ],
+  Widget _buildTrainingTypeOptions(ResponsiveHelper responsive) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
+      child: Column(
+        children: _trainingTypeOptions.map((option) {
+          final isSelected = _selectedTrainingTypes.contains(option['value']);
+          return Column(
+            children: [
+              _buildTrainingTypeOption(
+                responsive,
+                value: option['value']!,
+                label: option['label']!,
+                isSelected: isSelected,
+                onTap: () => _toggleTrainingType(option['value']!),
+              ),
+              if (option != _trainingTypeOptions.last)
+                SizedBox(height: responsive.h(16)),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 
-  Widget _buildFitnessOption(
+  Widget _buildTrainingTypeOption(
     ResponsiveHelper responsive, {
-    required String level,
-    required String description,
+    required String value,
+    required String label,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -130,7 +129,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
         ),
         child: Row(
           children: [
-            // Radio Button
+            // Checkbox
             Container(
               width: responsive.w(22),
               height: responsive.h(22),
@@ -144,17 +143,14 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
                         ? AppColors.primaryGreen 
                         : const Color(0xFF848484),
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(4), // Square checkbox
                 ),
               ),
               child: isSelected
-                  ? Container(
-                      width: responsive.w(9),
-                      height: responsive.h(9),
-                      decoration: const ShapeDecoration(
-                        color: Colors.white,
-                        shape: OvalBorder(),
-                      ),
+                  ? Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: responsive.w(14),
                     )
                   : null,
             ),
@@ -163,29 +159,13 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
             
             // Text Content
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    level,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: responsive.sp(16),
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black,
-                    ),
-                  ),
-                  SizedBox(height: responsive.h(4)),
-                  Text(
-                    description,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: responsive.sp(12),
-                      fontWeight: FontWeight.w400,
-                      color: isSelected 
-                          ? const Color(0xFF1E1E1E) 
-                          : const Color(0xFF848484),
-                    ),
-                  ),
-                ],
+              child: Text(
+                label,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: responsive.sp(16),
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
               ),
             ),
           ],
@@ -195,7 +175,7 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    final isEnabled = _selectedFitnessLevel != null;
+    final isEnabled = _selectedTrainingTypes.isNotEmpty;
     
     return SizedBox(
       width: double.infinity,
@@ -257,33 +237,37 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
     );
   }
 
-  void _selectFitnessLevel(String level) {
+  void _toggleTrainingType(String trainingType) {
     setState(() {
-      _selectedFitnessLevel = level;
+      if (_selectedTrainingTypes.contains(trainingType)) {
+        _selectedTrainingTypes.remove(trainingType);
+      } else {
+        _selectedTrainingTypes.add(trainingType);
+      }
     });
   }
 
   void _handleContinue() async {
-    if (_selectedFitnessLevel == null) return;
+    if (_selectedTrainingTypes.isEmpty) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // TODO: Implement fitness level selection logic
+      // TODO: Implement training types selection logic
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Fitness level selected: $_selectedFitnessLevel'),
+            content: Text('Training types selected: ${_selectedTrainingTypes.length}'),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
         
-        // Navigate to next question screen (Height Question)
-        context.push(AppRouter.heightQuestion);
+        // Navigate to next question screen
+        context.push(AppRouter.equipmentQuestion);
       }
     } catch (e) {
       if (mounted) {

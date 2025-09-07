@@ -18,8 +18,8 @@ class GenderScreenBody extends StatefulWidget {
 class _GenderScreenBodyState extends State<GenderScreenBody> {
   String? _selectedGender;
   bool _isLoading = false;
-  int _currentStep = 0; // Start from question 1
-  final int _totalSteps = 4; // Total of 6 questions
+  int _currentStep = 2; // Start from question 2
+  final int _totalSteps = 14; // Total of 14 questions
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +203,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
   void _selectGender(String gender) {
     setState(() {
       _selectedGender = gender;
-      _currentStep = 1; // Update progress to 2/6 after selecting gender
+      _currentStep = 2; // Update progress to 2/12 after selecting gender
     });
   }
 
