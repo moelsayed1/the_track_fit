@@ -1,3 +1,5 @@
+import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -102,10 +104,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Load user profile data when screen initializes
+    context.read<AuthCubit>().loadUserProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-                if (state is AuthLogoutSuccess) {
+        print('ProfileScreen: BlocListener received state: ${state.runtimeType}');
+        if (state is AuthUserProfileLoaded) {
+          print('ProfileScreen: AuthUserProfileLoaded received in listener');
+          print('ProfileScreen: imagePath = ${state.imagePath}');
+        }
+        
+        if (state is AuthLogoutSuccess) {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
             context,
@@ -163,67 +178,135 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildProfileImage(String? imagePath) {
+    log('ProfileScreen: imagePath = $imagePath, type: ${imagePath.runtimeType}');
+    if (imagePath != null && imagePath.isNotEmpty) {
+      final imageFile = File(imagePath);
+      log('ProfileScreen: imageFile.existsSync() = ${imageFile.existsSync()}');
+      log('ProfileScreen: imageFile.path = ${imageFile.path}');
+      if (imageFile.existsSync()) {
+        log('ProfileScreen: Displaying image from file: ${imageFile.path}');
+        return Image.file(
+          imageFile,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            log('ProfileScreen: Error loading image: $error');
+            return _buildDefaultProfileImage();
+          },
+        );
+      } else {
+        log('ProfileScreen: Image file does not exist at path: $imagePath');
+        // Try to reload the profile data in case the image path has changed
+        log('ProfileScreen: Attempting to reload profile data...');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.read<AuthCubit>().loadUserProfile();
+        });
+      }
+    } else {
+      log('ProfileScreen: imagePath is null or empty');
+    }
+    
+    // Default person icon
+    log('ProfileScreen: Using default profile image');
+    return _buildDefaultProfileImage();
+  }
+
+  Widget _buildDefaultProfileImage() {
+    return Container(
+      width: 120.w,
+      height: 120.h,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFFE0E0E0),
+      ),
+      child: Icon(
+        Icons.person,
+        size: 40.sp,
+        color: const Color(0xFF9E9E9E),
+      ),
+    );
+  }
+
   Widget _buildProfileHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        children: [
-          SizedBox(height: 16.h),
-          // Back Button
-          Align(
-            alignment: Alignment.centerLeft,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: SizedBox(
-                width: 24.w,
-                height: 24.h,
-                child: SvgPicture.asset(
-                  'assets/logos/arrow_left.svg',
-                  width: 24.w,
-                  height: 24.h,
-                  colorFilter: const ColorFilter.mode(
-                    Color(0xFF1E1E1E),
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(height: 20.h),
-
-          // Profile Image and Name
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  width: 120.w,
-                  height: 120.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/profile_image.png'),
-                      fit: BoxFit.cover,
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, state) {
+        log('ProfileScreen: _buildProfileHeader called with state: ${state.runtimeType}');
+        String displayName = 'User';
+        String? imagePath;
+        
+        if (state is AuthUserProfileLoaded) {
+          log('ProfileScreen: AuthUserProfileLoaded state received');
+          log('ProfileScreen: state.name = ${state.name}');
+          log('ProfileScreen: state.imagePath = ${state.imagePath}');
+          log('ProfileScreen: state.imagePath type = ${state.imagePath.runtimeType}');
+          displayName = state.name.isNotEmpty ? state.name : 'User';
+          imagePath = state.imagePath;
+        } else {
+          log('ProfileScreen: Not AuthUserProfileLoaded state, using defaults');
+        }
+        
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Column(
+            children: [
+              SizedBox(height: 16.h),
+              // Back Button
+              Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: SizedBox(
+                    width: 24.w,
+                    height: 24.h,
+                    child: SvgPicture.asset(
+                      'assets/logos/arrow_left.svg',
+                      width: 24.w,
+                      height: 24.h,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF1E1E1E),
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Disha', // تم تغيير الاسم ليتناسب مع الصورة
-                  style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
-                    fontSize: 16.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                  ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              // Profile Image and Name
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 120.w,
+                      height: 120.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFE0E0E0),
+                      ),
+                      child: ClipOval(
+                        child: _buildProfileImage(imagePath),
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      displayName,
+                      style: TextStyle(
+                        color: const Color(0xFF1E1E1E),
+                        fontSize: 16.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

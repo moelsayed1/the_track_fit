@@ -14,7 +14,7 @@ class ActivityLevelQuestionBody extends StatefulWidget {
 }
 
 class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
-  List<String> _selectedActivities = [];
+  final List<String> _selectedActivities = [];
   bool _isLoading = false;
   final int _currentStep = 8; // This is question 8 of 14
   final int _totalSteps = 14;

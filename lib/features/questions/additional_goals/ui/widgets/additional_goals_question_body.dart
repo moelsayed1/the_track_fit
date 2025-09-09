@@ -14,7 +14,7 @@ class AdditionalGoalsQuestionBody extends StatefulWidget {
 }
 
 class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBody> {
-  List<String> _selectedAdditionalGoals = [];
+  final List<String> _selectedAdditionalGoals = [];
   bool _isLoading = false;
   final int _currentStep = 15; // This is question 15 of 15 (final question)
   final int _totalSteps = 15;

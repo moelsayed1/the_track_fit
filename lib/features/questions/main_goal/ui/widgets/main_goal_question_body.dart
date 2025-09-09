@@ -5,6 +5,7 @@ import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
+import '../../data/repositories/main_goal_repository.dart';
 
 class MainGoalQuestionBody extends StatefulWidget {
   const MainGoalQuestionBody({super.key});
@@ -16,20 +17,47 @@ class MainGoalQuestionBody extends StatefulWidget {
 class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
   String? _selectedGoal;
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
   final int _currentStep = 7; // This is question 7 of 14
   final int _totalSteps = 14;
 
   // Main goal options from the API response
-  final List<Map<String, String>> _goalOptions = [
-    {'value': 'weight_loss', 'label': 'Weight Loss'},
-    {'value': 'increase_muscle_mass', 'label': 'Increase Muscle Mass'},
-    {'value': 'general_fitness', 'label': 'General Fitness'},
-    {'value': 'recovery_after_injury', 'label': 'Recovery After Injury'},
-    {'value': 'athletic_performance', 'label': 'Athletic Performance (Like Football)'},
-    {'value': 'athletic_training_system', 'label': 'Athletic Training System for Health'},
-    {'value': 'home_training_light', 'label': 'Home Training (Light)'},
-    {'value': 'yoga_pilates_stretching', 'label': 'Yoga/ Pilates and Stretching'},
-  ];
+  List<String> _goalOptions = [];
+  final MainGoalRepository _mainGoalRepository = MainGoalRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMainGoalOptions();
+  }
+
+  Future<void> _loadMainGoalOptions() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+      });
+
+      final response = await _mainGoalRepository.getMainGoalOptions();
+      
+      setState(() {
+        _goalOptions = response.data;
+        _isLoadingOptions = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingOptions = false;
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load main goal options: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +94,15 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
         
         // Goal Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildGoalOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: _buildGoalOptions(responsive),
+                ),
         ),
         
         // Continue Button
@@ -80,19 +114,31 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
   }
 
   Widget _buildGoalOptions(ResponsiveHelper responsive) {
+    if (_goalOptions.isEmpty) {
+      return Center(
+        child: Text(
+          'No main goal options available',
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.black,
+            fontSize: responsive.sp(16),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
       child: Column(
         children: _goalOptions.map((option) {
-          final isSelected = _selectedGoal == option['value'];
+          final isSelected = _selectedGoal == option;
           return Column(
             children: [
               _buildGoalOption(
                 responsive,
-                value: option['value']!,
-                label: option['label']!,
+                value: option,
+                label: option,
                 isSelected: isSelected,
-                onTap: () => _selectGoal(option['value']!),
+                onTap: () => _selectGoal(option),
               ),
               if (option != _goalOptions.last)
                 SizedBox(height: responsive.h(16)),
@@ -262,7 +308,7 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Main goal selected: ${_goalOptions.firstWhere((option) => option['value'] == _selectedGoal)['label']}'),
+            content: Text('Main goal selected: $_selectedGoal'),
             backgroundColor: AppColors.primaryGreen,
           ),
         );

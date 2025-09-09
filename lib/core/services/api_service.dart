@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:the_track_fit/core/constants/app_constants.dart';
@@ -152,6 +153,51 @@ class ApiService {
         queryParameters: queryParameters,
         options: Options(
           contentType: 'application/x-www-form-urlencoded',
+        ),
+      );
+      return response;
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // POST request with multipart form data (for file uploads)
+  Future<Response> postMultipart(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters}) async {
+    try {
+      log('ApiService: postMultipart called with path: $path');
+      log('ApiService: data: $data');
+      
+      FormData formData = FormData();
+      
+      if (data != null) {
+        for (var entry in data.entries) {
+          if (entry.value is File) {
+            // Handle file upload
+            log('ApiService: Processing file field: ${entry.key} = ${entry.value.path}');
+            formData.files.add(MapEntry(
+              entry.key,
+              await MultipartFile.fromFile(
+                entry.value.path,
+                filename: entry.value.path.split('/').last,
+              ),
+            ));
+          } else if (entry.value != null) {
+            // Handle regular form fields
+            log('ApiService: Processing text field: ${entry.key} = ${entry.value}');
+            formData.fields.add(MapEntry(entry.key, entry.value.toString()));
+          }
+        }
+      }
+      
+      log('ApiService: FormData fields: ${formData.fields}');
+      log('ApiService: FormData files: ${formData.files.map((e) => '${e.key}: ${e.value.filename}').toList()}');
+
+      final response = await _dio.post(
+        path,
+        data: formData,
+        queryParameters: queryParameters,
+        options: Options(
+          contentType: 'multipart/form-data',
         ),
       );
       return response;

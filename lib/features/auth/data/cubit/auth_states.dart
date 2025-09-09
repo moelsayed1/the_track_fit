@@ -209,3 +209,66 @@ class AuthPasswordResetError extends AuthState {
   @override
   int get hashCode => message.hashCode;
 }
+
+/// Success state for change password
+class AuthChangePasswordSuccess extends AuthState {
+  final String message;
+  
+  const AuthChangePasswordSuccess(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthChangePasswordSuccess && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
+/// Error state for change password
+class AuthChangePasswordError extends AuthState {
+  final String message;
+  
+  const AuthChangePasswordError(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthChangePasswordError && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
+/// User profile data state
+class AuthUserProfileLoaded extends AuthState {
+  final String name;
+  final String email;
+  final String? imagePath;
+  final String? phone;
+  final String? gender;
+  
+  const AuthUserProfileLoaded({
+    required this.name,
+    required this.email,
+    this.imagePath,
+    this.phone,
+    this.gender,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthUserProfileLoaded &&
+        other.name == name &&
+        other.email == email &&
+        other.imagePath == imagePath &&
+        other.phone == phone &&
+        other.gender == gender;
+  }
+
+  @override
+  int get hashCode => Object.hash(name, email, imagePath, phone, gender);
+}

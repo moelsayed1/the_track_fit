@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
@@ -206,6 +207,88 @@ class AuthRepository {
     } catch (e) {
       if (e is DioException) {
         throw Exception(e.message ?? 'Logout failed');
+      }
+      throw Exception(e.toString());
+    }
+  }
+
+  /// Update profile (including password change)
+  Future<String> updateProfile({
+    String? name,
+    String? email,
+    String? phone,
+    String? password,
+    String? passwordConfirmation,
+    String? gender,
+    dynamic image, // Can be File or String
+  }) async {
+    try {
+      log('AuthRepository: updateProfile called');
+      
+      // Initialize CSRF token before update
+      await _apiService.initializeCsrfToken();
+      
+      // Build data map with only non-null values
+      final Map<String, dynamic> data = {};
+      if (name != null) data['name'] = name;
+      if (email != null) data['email'] = email;
+      if (phone != null) data['phone'] = phone;
+      if (password != null) data['password'] = password;
+      if (passwordConfirmation != null) data['password_confirmation'] = passwordConfirmation;
+      if (gender != null) data['gender'] = gender;
+      if (image != null) {
+        if (image is File) {
+          data['image'] = image;
+        } else if (image is String) {
+          data['image'] = File(image);
+        } else {
+          data['image'] = File(image.toString());
+        }
+      }
+      
+      log('AuthRepository: updateProfile data map: $data');
+      log('AuthRepository: image type: ${image.runtimeType}');
+      if (image is File) {
+        log('AuthRepository: image file path: ${image.path}');
+        log('AuthRepository: image file exists: ${image.existsSync()}');
+      }
+      
+      // Use multipart if there's an image, otherwise use regular form data
+      final response = image != null 
+          ? await _apiService.postMultipart(
+              AppConstants.updateProfileEndpoint,
+              data: data,
+            )
+          : await _apiService.postForm(
+              AppConstants.updateProfileEndpoint,
+              data: data,
+            );
+
+      if (response.statusCode == 200) {
+        log('Profile update successful');
+        return 'Profile updated successfully';
+      } else if (response.statusCode == 422) {
+        // Handle validation errors
+        log('422 Error Response: ${response.data}');
+        final errorResponse = ApiErrorResponse.fromJson(response.data);
+        log('Parsed Error Response: $errorResponse');
+        final errorMessage = errorResponse.getFirstValidationError();
+        log('Error Message: $errorMessage');
+        throw Exception(errorMessage);
+      } else {
+        throw Exception('Profile update failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      log('Exception caught in updateProfile: $e');
+      if (e is DioException) {
+        log('DioException caught: ${e.type}');
+        log('DioException response: ${e.response?.data}');
+        // Handle Dio errors
+        if (e.response?.data != null) {
+          final errorResponse = ApiErrorResponse.fromJson(e.response!.data);
+          throw Exception(errorResponse.getFirstValidationError());
+        }
+        throw Exception(e.message ?? 'Profile update failed');
       }
       throw Exception(e.toString());
     }

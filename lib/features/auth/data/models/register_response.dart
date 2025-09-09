@@ -98,7 +98,7 @@ class UserData {
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       gender: json['gender'] ?? '',
-      image: json['image'],
+      image: json['image']?.toString(),
       type: json['type'] ?? 'customer',
       emailVerifiedAt: json['email_verified_at'],
       createdAt: json['created_at'] ?? '',

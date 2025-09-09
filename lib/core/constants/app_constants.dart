@@ -47,4 +47,6 @@ class AppConstants {
   static const String sendOtpEndpoint = '/api/send-otp';
   static const String verifyOtpEndpoint = '/api/verify-otp';
   static const String resetPasswordEndpoint = '/api/reset-password';
+  static const String updateProfileEndpoint = '/api/update';
+  static const String mainGoalOptionEndpoint = '/api/main-goal-option';
 } 

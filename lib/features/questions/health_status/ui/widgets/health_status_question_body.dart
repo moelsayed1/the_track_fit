@@ -14,7 +14,7 @@ class HealthStatusQuestionBody extends StatefulWidget {
 }
 
 class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
-  List<String> _selectedHealthIssues = [];
+  final List<String> _selectedHealthIssues = [];
   bool _isLoading = false;
   final int _currentStep = 12; // This is question 12 of 14
   final int _totalSteps = 14;

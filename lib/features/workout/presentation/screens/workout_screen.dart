@@ -591,112 +591,112 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: responsiveHelper.w(8)),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: _showEquipmentSelection,
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: responsiveHelper.w(16),
-                                vertical: responsiveHelper.h(10),
-                              ),
-                              decoration: ShapeDecoration(
-                                color: selectedEquipment != null
-                                    ? const Color(
-                                        0xFFD8F1D8,
-                                      ) // Light green when selected
-                                    : const Color(
-                                        0x26848484,
-                                      ), // Semi-transparent gray when not selected
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  side: selectedEquipment != null
-                                      ? const BorderSide(
-                                          color: Color(
-                                            0xFF4CAF50,
-                                          ), // Green border when selected
-                                          width: 1,
-                                        )
-                                      : BorderSide.none,
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    width: responsiveHelper.w(20),
-                                    height: responsiveHelper.h(20),
-                                    child: SvgPicture.asset(
-                                      AppIcons.equipmentIcon,
-                                      width: responsiveHelper.w(20),
-                                      height: responsiveHelper.w(20),
-                                      colorFilter: const ColorFilter.mode(
-                                        Color(0xFF1E1E1E),
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: responsiveHelper.w(8)),
-                                  Flexible(
-                                    child: Text(
-                                      selectedEquipment == 'no_equipment'
-                                          ? 'No Equipment'
-                                          : selectedEquipment == 'mat_only'
-                                          ? 'Mat Only'
-                                          : selectedEquipment == 'machines'
-                                          ? 'Machines'
-                                          : 'Equipment',
-                                      style: TextStyle(
-                                        color: const Color(
-                                          0xFF1E1E1E,
-                                        ), // black
-                                        fontSize: responsiveHelper.sp(12),
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w500,
-                                        height: 1.60,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Clear button for equipment filter
-                            if (selectedEquipment != null)
-                              Positioned(
-                                right: -6,
-                                top: -6,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedEquipment = null;
-                                      _applyFilters();
-                                    });
-                                  },
-                                  child: Container(
-                                    width: responsiveHelper.w(20),
-                                    height: responsiveHelper.h(20),
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.primaryGreen,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                      size: 14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // SizedBox(width: responsiveHelper.w(8)),
+                    // Expanded(
+                    //   child: GestureDetector(
+                    //     onTap: _showEquipmentSelection,
+                    //     child: Stack(
+                    //       clipBehavior: Clip.none,
+                    //       children: [
+                    //         Container(
+                    //           padding: EdgeInsets.symmetric(
+                    //             horizontal: responsiveHelper.w(16),
+                    //             vertical: responsiveHelper.h(10),
+                    //           ),
+                    //           decoration: ShapeDecoration(
+                    //             color: selectedEquipment != null
+                    //                 ? const Color(
+                    //                     0xFFD8F1D8,
+                    //                   ) // Light green when selected
+                    //                 : const Color(
+                    //                     0x26848484,
+                    //                   ), // Semi-transparent gray when not selected
+                    //             shape: RoundedRectangleBorder(
+                    //               borderRadius: BorderRadius.circular(30),
+                    //               side: selectedEquipment != null
+                    //                   ? const BorderSide(
+                    //                       color: Color(
+                    //                         0xFF4CAF50,
+                    //                       ), // Green border when selected
+                    //                       width: 1,
+                    //                     )
+                    //                   : BorderSide.none,
+                    //             ),
+                    //           ),
+                    //           alignment: Alignment.center,
+                    //           child: Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             mainAxisSize: MainAxisSize.min,
+                    //             children: [
+                    //               SizedBox(
+                    //                 width: responsiveHelper.w(20),
+                    //                 height: responsiveHelper.h(20),
+                    //                 child: SvgPicture.asset(
+                    //                   AppIcons.equipmentIcon,
+                    //                   width: responsiveHelper.w(20),
+                    //                   height: responsiveHelper.w(20),
+                    //                   colorFilter: const ColorFilter.mode(
+                    //                     Color(0xFF1E1E1E),
+                    //                     BlendMode.srcIn,
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               SizedBox(width: responsiveHelper.w(8)),
+                    //               Flexible(
+                    //                 child: Text(
+                    //                   selectedEquipment == 'no_equipment'
+                    //                       ? 'No Equipment'
+                    //                       : selectedEquipment == 'mat_only'
+                    //                       ? 'Mat Only'
+                    //                       : selectedEquipment == 'machines'
+                    //                       ? 'Machines'
+                    //                       : 'Equipment',
+                    //                   style: TextStyle(
+                    //                     color: const Color(
+                    //                       0xFF1E1E1E,
+                    //                     ), // black
+                    //                     fontSize: responsiveHelper.sp(12),
+                    //                     fontFamily: 'Poppins',
+                    //                     fontWeight: FontWeight.w500,
+                    //                     height: 1.60,
+                    //                   ),
+                    //                   overflow: TextOverflow.ellipsis,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //         // Clear button for equipment filter
+                    //         if (selectedEquipment != null)
+                    //           Positioned(
+                    //             right: -6,
+                    //             top: -6,
+                    //             child: GestureDetector(
+                    //               onTap: () {
+                    //                 setState(() {
+                    //                   selectedEquipment = null;
+                    //                   _applyFilters();
+                    //                 });
+                    //               },
+                    //               child: Container(
+                    //                 width: responsiveHelper.w(20),
+                    //                 height: responsiveHelper.h(20),
+                    //                 decoration: const BoxDecoration(
+                    //                   color: AppColors.primaryGreen,
+                    //                   shape: BoxShape.circle,
+                    //                 ),
+                    //                 child: const Icon(
+                    //                   Icons.close,
+                    //                   color: Colors.white,
+                    //                   size: 14,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
