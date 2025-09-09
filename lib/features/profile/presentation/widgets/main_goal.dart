@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/api_service.dart';
+import '../../../../core/widgets/shimmer_loading.dart';
+import '../../../questions/main_goal/domain/models/main_goal_response.dart';
 
 class MainGoalProfile extends StatefulWidget {
   const MainGoalProfile({super.key});
@@ -12,6 +16,48 @@ class MainGoalProfile extends StatefulWidget {
 
 class _MainGoalProfileState extends State<MainGoalProfile> {
   int selectedGoalIndex = 1; // "Increase Muscle" is selected by default
+  List<String> _goalOptions = [];
+  bool _isLoading = true;
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMainGoalOptions();
+  }
+
+  Future<void> _loadMainGoalOptions() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final response = await _apiService.get(AppConstants.mainGoalOptionEndpoint);
+      
+      if (response.statusCode == 200) {
+        final mainGoalResponse = MainGoalResponse.fromJson(response.data);
+        setState(() {
+          _goalOptions = mainGoalResponse.data;
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load main goal options: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load main goal options: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   void _selectGoal(int index) {
     setState(() {
@@ -62,41 +108,55 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
 
             // Main Content
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 16.h),
-                    
-                    // Goal Options
-                    _buildGoalOption(
-                      index: 0,
-                      title: 'Weight Loss',
-                      isSelected: selectedGoalIndex == 0,
+              child: _isLoading
+                  ? _buildShimmerLoading()
+                  : SingleChildScrollView(
+                      padding: EdgeInsets.all(16.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 16.h),
+                          
+                          // Goal Options from API
+                          ..._goalOptions.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final title = entry.value;
+                            return Column(
+                              children: [
+                                _buildGoalOption(
+                                  index: index,
+                                  title: title,
+                                  isSelected: selectedGoalIndex == index,
+                                ),
+                                if (index < _goalOptions.length - 1)
+                                  SizedBox(height: 16.h),
+                              ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
-                    
-                    SizedBox(height: 16.h),
-                    
-                    _buildGoalOption(
-                      index: 1,
-                      title: 'Increase Muscle',
-                      isSelected: selectedGoalIndex == 1,
-                    ),
-                    
-                    SizedBox(height: 16.h),
-                    
-                    _buildGoalOption(
-                      index: 2,
-                      title: 'General Fitness',
-                      isSelected: selectedGoalIndex == 2,
-                    ),
-                  ],
-                ),
-              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildShimmerLoading() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 16.h),
+          
+          // Use the common shimmer list component
+          ShimmerList(
+            itemCount: 8,
+            itemBuilder: (index) => const ShimmerGoalOption(),
+          ),
+        ],
       ),
     );
   }

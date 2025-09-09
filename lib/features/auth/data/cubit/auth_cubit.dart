@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/features/auth/data/models/register_request.dart';
 import 'package:the_track_fit/features/auth/repositories/auth_repository.dart';
@@ -8,6 +9,30 @@ import 'auth_states.dart';
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
   String? _verifiedOtp; // Store the verified OTP
+  
+  // User profile data - will be populated from login/registration
+  String _userName = '';
+  String _userEmail = '';
+  String? _userImagePath;
+  String? _userPhone;
+  String? _userGender;
+  
+  // Ensure _userImagePath is always a String or null
+  String? get _safeUserImagePath {
+    log('_safeUserImagePath: _userImagePath = $_userImagePath, type: ${_userImagePath.runtimeType}');
+    if (_userImagePath == null) {
+      log('_safeUserImagePath: _userImagePath is null, returning null');
+      return null;
+    }
+    try {
+      final result = _userImagePath.toString();
+      log('_safeUserImagePath: Successfully converted to string: $result');
+      return result;
+    } catch (e) {
+      log('_safeUserImagePath: Error converting _userImagePath to string: $e');
+      return null;
+    }
+  }
 
   AuthCubit(this._authRepository) : super(const AuthInitial());
 
@@ -47,6 +72,26 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       final response = await _authRepository.register(request);
+      
+      // Store user data from registration response
+      if (response.data?.user != null) {
+        final user = response.data!.user;
+        _userName = user.name;
+        _userEmail = user.email;
+        _userPhone = user.phone;
+        _userGender = user.gender;
+        _userImagePath = user.image is String ? user.image : user.image?.toString();
+        
+        // Emit user profile data so listeners can get the updated data
+        emit(AuthUserProfileLoaded(
+          name: _userName,
+          email: _userEmail,
+          imagePath: _userImagePath,
+          phone: _userPhone,
+          gender: _userGender,
+        ));
+      }
+      
       emit(AuthRegisterSuccess(response));
     } catch (e) {
       log('AuthCubit Register Error: $e');
@@ -72,6 +117,26 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final response = await _authRepository.login(email, password);
+      
+      // Store user data from login response
+      if (response.data?.user != null) {
+        final user = response.data!.user;
+        _userName = user.name;
+        _userEmail = user.email;
+        _userPhone = user.phone;
+        _userGender = user.gender;
+        _userImagePath = user.image is String ? user.image : user.image?.toString();
+        
+        // Emit user profile data so listeners can get the updated data
+        emit(AuthUserProfileLoaded(
+          name: _userName,
+          email: _userEmail,
+          imagePath: _userImagePath,
+          phone: _userPhone,
+          gender: _userGender,
+        ));
+      }
+      
       emit(AuthLoginSuccess(response));
     } catch (e) {
       log('AuthCubit Login Error: $e');
@@ -188,6 +253,156 @@ class AuthCubit extends Cubit<AuthState> {
       log('AuthCubit Logout Error: $e');
       final errorMessage = _extractErrorMessage(e);
       emit(AuthError(errorMessage));
+    }
+  }
+
+  /// Change password using update profile endpoint
+  Future<void> changePassword({
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) async {
+    emit(const AuthLoading());
+    
+    try {
+      // Validate input
+      final validationErrors = _validateChangePasswordInput(
+        currentPassword: '', // Not needed for this endpoint
+        newPassword: newPassword,
+        newPasswordConfirmation: newPasswordConfirmation,
+      );
+      
+      if (validationErrors.isNotEmpty) {
+        emit(AuthValidationError(validationErrors));
+        return;
+      }
+
+      final response = await _authRepository.updateProfile(
+        password: newPassword,
+        passwordConfirmation: newPasswordConfirmation,
+      );
+      emit(AuthChangePasswordSuccess(response));
+    } catch (e) {
+      log('AuthCubit ChangePassword Error: $e');
+      final errorMessage = _extractErrorMessage(e);
+      emit(AuthChangePasswordError(errorMessage));
+    }
+  }
+
+  /// Update profile with all fields
+  Future<void> updateProfile({
+    String? name,
+    String? email,
+    String? phone,
+    String? password,
+    String? passwordConfirmation,
+    String? gender,
+    dynamic image, // Can be File or String
+  }) async {
+    emit(const AuthLoading());
+    
+    try {
+      // Validate input if password is provided
+      if (password != null && password.isNotEmpty) {
+        final validationErrors = _validateChangePasswordInput(
+          currentPassword: '',
+          newPassword: password,
+          newPasswordConfirmation: passwordConfirmation ?? '',
+        );
+        
+        if (validationErrors.isNotEmpty) {
+          emit(AuthValidationError(validationErrors));
+          return;
+        }
+      }
+
+      log('updateProfile: Calling _authRepository.updateProfile with image: $image');
+      final response = await _authRepository.updateProfile(
+        name: name,
+        email: email,
+        phone: phone,
+        password: password,
+        passwordConfirmation: passwordConfirmation,
+        gender: gender,
+        image: image,
+      );
+      log('updateProfile: _authRepository.updateProfile completed successfully');
+      
+      // Update local profile data only for non-null values
+      String? imagePathValue;
+      log('updateProfile: image parameter = $image, type: ${image.runtimeType}');
+      
+      try {
+        if (image != null) {
+          if (image is File) {
+            imagePathValue = image.path;
+            log('updateProfile: image is File, path = $imagePathValue');
+          } else if (image is String) {
+            imagePathValue = image;
+            log('updateProfile: image is String, value = $imagePathValue');
+          } else {
+            imagePathValue = image.toString();
+            log('updateProfile: image is other type, converted to string = $imagePathValue');
+          }
+        } else {
+          log('updateProfile: image is null');
+        }
+        
+        // Ensure imagePathValue is always a String or null
+        if (imagePathValue != null) {
+          imagePathValue = imagePathValue.toString();
+        }
+        
+        log('updateProfile: Final imagePathValue = $imagePathValue, type: ${imagePathValue.runtimeType}');
+      } catch (e) {
+        log('updateProfile: Error processing image parameter: $e');
+        imagePathValue = null;
+      }
+      
+      // Only update fields that are not null
+      log('updateProfile: Checking condition - name: $name, email: $email, phone: $phone, gender: $gender, imagePathValue: $imagePathValue');
+      if (name != null || email != null || phone != null || gender != null || imagePathValue != null) {
+        log('updateProfile: Calling updateUserProfileData with imagePath: $imagePathValue');
+        try {
+          updateUserProfileData(
+            name: name,
+            email: email,
+            phone: phone,
+            gender: gender,
+            imagePath: imagePathValue,
+          );
+          log('updateProfile: updateUserProfileData completed successfully');
+        } catch (e) {
+          log('updateProfile: Error in updateUserProfileData: $e');
+          // Continue execution even if updateUserProfileData fails
+        }
+      } else {
+        log('updateProfile: Not calling updateUserProfileData - all fields are null');
+      }
+      
+      // For image uploads, ensure we always update the local image path
+      // even if the API doesn't return the updated path
+      if (imagePathValue != null) {
+        log('updateProfile: Image upload detected, ensuring local image path is updated');
+        try {
+          updateUserProfileData(imagePath: imagePathValue);
+          log('updateProfile: Local image path updated successfully');
+        } catch (e) {
+          log('updateProfile: Error updating local image path: $e');
+        }
+      }
+      
+      log('updateProfile: About to emit AuthChangePasswordSuccess');
+      emit(AuthChangePasswordSuccess(response));
+      log('updateProfile: AuthChangePasswordSuccess emitted successfully');
+    } catch (e) {
+      log('AuthCubit UpdateProfile Error: $e');
+      log('AuthCubit UpdateProfile Error Type: ${e.runtimeType}');
+      if (e is Exception) {
+        log('AuthCubit UpdateProfile Exception: ${e.toString()}');
+      }
+      final errorMessage = _extractErrorMessage(e);
+      log('AuthCubit UpdateProfile Error Message: $errorMessage');
+      emit(AuthChangePasswordError(errorMessage));
     }
   }
 
@@ -316,6 +531,28 @@ class AuthCubit extends Cubit<AuthState> {
     return errors;
   }
 
+  Map<String, String> _validateChangePasswordInput({
+    required String currentPassword, // Not used but kept for compatibility
+    required String newPassword,
+    required String newPasswordConfirmation,
+  }) {
+    final errors = <String, String>{};
+    
+    if (newPassword.isEmpty) {
+      errors['newPassword'] = 'New password is required';
+    } else if (newPassword.length < 6) {
+      errors['newPassword'] = 'Password must be at least 6 characters';
+    }
+    
+    if (newPasswordConfirmation.isEmpty) {
+      errors['newPasswordConfirmation'] = 'Password confirmation is required';
+    } else if (newPassword != newPasswordConfirmation) {
+      errors['newPasswordConfirmation'] = 'Passwords do not match';
+    }
+    
+    return errors;
+  }
+
   /// Send OTP for password reset (forget password)
   Future<void> forgetPassword(String email) async {
     log('AuthCubit: forgetPassword called with email: $email');
@@ -368,5 +605,83 @@ class AuthCubit extends Cubit<AuthState> {
     }
     
     return errorMessage;
+  }
+
+  /// Get current user profile data
+  void loadUserProfile() {
+    log('loadUserProfile: _userImagePath type: ${_userImagePath.runtimeType}, value: $_userImagePath');
+    log('loadUserProfile: _safeUserImagePath type: ${_safeUserImagePath.runtimeType}, value: $_safeUserImagePath');
+    
+    try {
+      final imagePathToEmit = _safeUserImagePath;
+      log('loadUserProfile: About to emit AuthUserProfileLoaded with imagePath: $imagePathToEmit');
+      
+      emit(AuthUserProfileLoaded(
+        name: _userName,
+        email: _userEmail,
+        imagePath: imagePathToEmit,
+        phone: _userPhone,
+        gender: _userGender,
+      ));
+      log('loadUserProfile: Successfully emitted AuthUserProfileLoaded with imagePath: $imagePathToEmit');
+    } catch (e) {
+      log('loadUserProfile: Error emitting AuthUserProfileLoaded: $e');
+      // Fallback: emit with null imagePath
+      emit(AuthUserProfileLoaded(
+        name: _userName,
+        email: _userEmail,
+        imagePath: null,
+        phone: _userPhone,
+        gender: _userGender,
+      ));
+      log('loadUserProfile: Emitted fallback AuthUserProfileLoaded with null imagePath');
+    }
+  }
+
+  /// Update user profile data locally
+  void updateUserProfileData({
+    String? name,
+    String? email,
+    String? phone,
+    String? gender,
+    String? imagePath,
+  }) {
+    log('updateUserProfileData: Called with imagePath: $imagePath, type: ${imagePath.runtimeType}');
+    
+    if (name != null) {
+      _userName = name;
+      log('updateUserProfileData: Updated _userName to: $name');
+    }
+    if (email != null) {
+      _userEmail = email;
+      log('updateUserProfileData: Updated _userEmail to: $email');
+    }
+    if (phone != null) {
+      _userPhone = phone;
+      log('updateUserProfileData: Updated _userPhone to: $phone');
+    }
+    if (gender != null) {
+      _userGender = gender;
+      log('updateUserProfileData: Updated _userGender to: $gender');
+    }
+    if (imagePath != null) {
+      log('updateUserProfileData: Processing imagePath: $imagePath, type: ${imagePath.runtimeType}');
+      try {
+        // Ensure we always assign a string, not a File object
+        _userImagePath = imagePath.toString();
+        log('updateUserProfileData: Successfully assigned imagePath to _userImagePath');
+        log('updateUserProfileData: _userImagePath is now: $_userImagePath, type: ${_userImagePath.runtimeType}');
+      } catch (e) {
+        log('updateUserProfileData: Error assigning imagePath: $e');
+        _userImagePath = null;
+      }
+    } else {
+      log('updateUserProfileData: imagePath is null, not updating _userImagePath');
+    }
+    
+    log('updateUserProfileData: Final state - _userName: $_userName, _userEmail: $_userEmail, _userImagePath: $_userImagePath');
+    
+    // Emit updated profile data
+    loadUserProfile();
   }
 }

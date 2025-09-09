@@ -14,7 +14,7 @@ class DietSystemQuestionBody extends StatefulWidget {
 }
 
 class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
-  List<String> _selectedDietSystems = [];
+  final List<String> _selectedDietSystems = [];
   bool _isLoading = false;
   final int _currentStep = 11; // This is question 11 of 14
   final int _totalSteps = 14;

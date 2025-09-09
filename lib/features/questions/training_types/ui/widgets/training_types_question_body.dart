@@ -14,7 +14,7 @@ class TrainingTypesQuestionBody extends StatefulWidget {
 }
 
 class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
-  List<String> _selectedTrainingTypes = [];
+  final List<String> _selectedTrainingTypes = [];
   bool _isLoading = false;
   final int _currentStep = 9; // This is question 9 of 14
   final int _totalSteps = 14;

@@ -14,7 +14,7 @@ class EquipmentQuestionBody extends StatefulWidget {
 }
 
 class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
-  List<String> _selectedEquipment = [];
+  final List<String> _selectedEquipment = [];
   bool _isLoading = false;
   final int _currentStep = 10; // This is question 10 of 14
   final int _totalSteps = 14;
