@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
+import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
+import 'package:the_track_fit/core/services/api_service.dart';
 
 class FavouriteExerciseProfile extends StatelessWidget {
   const FavouriteExerciseProfile({super.key});
@@ -12,7 +14,7 @@ class FavouriteExerciseProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ExerciseCubit()..initializeFavourites(_getMockExercises()),
+      create: (context) => ExerciseCubit(exerciseRepository: ExerciseRepository(apiService: ApiService()))..initializeFavourites(_getMockExercises()),
       child: Scaffold(
         backgroundColor: const Color(0xFFF6FFF6),
         body: SafeArea(

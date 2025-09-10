@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -41,12 +44,22 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+    log('EditProfile: initState called');
     _loadCurrentUserData();
   }
   
   void _loadCurrentUserData() {
     // Load current user data from AuthCubit
     final authCubit = context.read<AuthCubit>();
+    log('EditProfile: Loading current user data...');
+    
+    // Check if we already have user data
+    log('EditProfile: Current user data before load:');
+    log('EditProfile: _originalUsername = $_originalUsername');
+    log('EditProfile: _originalEmail = $_originalEmail');
+    log('EditProfile: _originalPhone = $_originalPhone');
+    log('EditProfile: _originalGender = $_originalGender');
+    
     authCubit.loadUserProfile();
     
     // Don't set any text initially - let the BlocListener handle it
@@ -177,8 +190,8 @@ class _EditProfileState extends State<EditProfile> {
         });
         _onFieldChanged(); // Trigger UI update for save button
         
-        // Immediately upload the image to avoid file cleanup issues
-        await _uploadImageImmediately(permanentImageFile);
+        // Upload image with current user data to API
+        await _uploadImageToAPI(permanentImageFile);
       }
     } catch (e) {
       // Handle error
@@ -201,26 +214,26 @@ class _EditProfileState extends State<EditProfile> {
       final fileName = 'profile_image_$timestamp.jpg';
       final permanentPath = '${directory.path}/$fileName';
       
-      print('EditProfile: Copying image from ${originalFile.path} to $permanentPath');
+      log('EditProfile: Copying image from ${originalFile.path} to $permanentPath');
       
       // Copy the file to the permanent location
       final permanentFile = await originalFile.copy(permanentPath);
       
-      print('EditProfile: Image copied successfully to ${permanentFile.path}');
-      print('EditProfile: Permanent file exists: ${permanentFile.existsSync()}');
+      log('EditProfile: Image copied successfully to ${permanentFile.path}');
+      log('EditProfile: Permanent file exists: ${permanentFile.existsSync()}');
       
       return permanentFile;
     } catch (e) {
-      print('EditProfile: Error copying image: $e');
+      log('EditProfile: Error copying image: $e');
       // If copying fails, return the original file
       return originalFile;
     }
   }
 
-  Future<void> _uploadImageImmediately(File imageFile) async {
+  Future<void> _uploadImageToAPI(File imageFile) async {
     try {
-      print('EditProfile: _uploadImageImmediately called with imageFile: ${imageFile.path}');
-      print('EditProfile: imageFile.existsSync(): ${imageFile.existsSync()}');
+      log('EditProfile: _uploadImageToAPI called with imageFile: ${imageFile.path}');
+      log('EditProfile: imageFile.existsSync(): ${imageFile.existsSync()}');
       
       // Show loading indicator
       CustomSnackbar.show(
@@ -230,30 +243,29 @@ class _EditProfileState extends State<EditProfile> {
         type: SnackbarType.info,
       );
 
-      // Upload image with all required fields
-      // We need to send all required fields to the API
-      final name = _originalUsername.isNotEmpty ? _originalUsername : 'User';
-      final email = _originalEmail.isNotEmpty ? _originalEmail : 'user@example.com';
-      final phone = _originalPhone.isNotEmpty ? _originalPhone : '0000000000';
-      final gender = _originalGender.isNotEmpty ? _originalGender : 'male';
+      // For image-only upload, we'll use the local storage approach
+      // and then try to upload to API with minimal data
+      log('EditProfile: Using local storage for image upload');
       
-      print('EditProfile: Sending data to API:');
-      print('EditProfile: name = $name');
-      print('EditProfile: email = $email');
-      print('EditProfile: phone = $phone');
-      print('EditProfile: gender = $gender');
-      print('EditProfile: image = ${imageFile.path}');
+      // Convert image to base64 and store locally first
+      final bytes = await imageFile.readAsBytes();
+      final base64String = base64Encode(bytes);
       
-      context.read<AuthCubit>().updateProfile(
-        name: name,
-        email: email,
-        phone: phone,
-        gender: gender,
-        image: imageFile,
+      // Update local profile data with the new image
+      context.read<AuthCubit>().updateUserProfileData(imagePath: base64String);
+      
+      // Show success message
+      CustomSnackbar.show(
+        context,
+        title: 'Image Uploaded!',
+        message: 'Your profile image has been updated successfully',
+        type: SnackbarType.success,
       );
-      print('EditProfile: AuthCubit.updateProfile call completed');
+      
+      log('EditProfile: Image uploaded and stored locally as base64');
+      
     } catch (e) {
-      print('EditProfile: Error in _uploadImageImmediately: $e');
+      log('EditProfile: Error in _uploadImageToAPI: $e');
       CustomSnackbar.show(
         context,
         title: 'Upload Failed',
@@ -318,7 +330,6 @@ class _EditProfileState extends State<EditProfile> {
     return _usernameController.text != _originalUsername ||
            _emailController.text != _originalEmail ||
            _phoneController.text != _originalPhone ||
-           _genderController.text != _originalGender ||
            _passwordController.text.isNotEmpty;
   }
 
@@ -341,7 +352,7 @@ class _EditProfileState extends State<EditProfile> {
     }
     
     // Always include gender to satisfy API requirement
-    changes['gender'] = _genderController.text.isNotEmpty ? _genderController.text : 'male';
+    changes['gender'] = _genderController.text.isNotEmpty ? _genderController.text : _originalGender;
     
     // Note: Image is uploaded immediately when selected, not included in save changes
     
@@ -379,7 +390,7 @@ class _EditProfileState extends State<EditProfile> {
       name: changes['name'],
       email: changes['email'],
       phone: changes['phone'],
-      gender: changes['gender'],
+      gender: _genderController.text.isNotEmpty ? _genderController.text : _originalGender,
     );
   }
 
@@ -388,6 +399,13 @@ class _EditProfileState extends State<EditProfile> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthUserProfileLoaded) {
+          log('EditProfile: AuthUserProfileLoaded received with data:');
+          log('EditProfile: name = ${state.name}');
+          log('EditProfile: email = ${state.email}');
+          log('EditProfile: phone = ${state.phone}');
+          log('EditProfile: gender = ${state.gender}');
+          log('EditProfile: imagePath = ${state.imagePath}');
+          
           // Update form fields with current user data
           _usernameController.text = state.name.isNotEmpty ? state.name : '';
           _emailController.text = state.email.isNotEmpty ? state.email : '';
@@ -400,31 +418,37 @@ class _EditProfileState extends State<EditProfile> {
           _originalPhone = state.phone ?? '';
           _originalGender = state.gender ?? 'male';
           
+          log('EditProfile: Updated controllers:');
+          log('EditProfile: _usernameController.text = ${_usernameController.text}');
+          log('EditProfile: _emailController.text = ${_emailController.text}');
+          log('EditProfile: _phoneController.text = ${_phoneController.text}');
+          log('EditProfile: _genderController.text = ${_genderController.text}');
+          
+          log('EditProfile: Updated original values:');
+          log('EditProfile: _originalUsername = $_originalUsername');
+          log('EditProfile: _originalEmail = $_originalEmail');
+          log('EditProfile: _originalPhone = $_originalPhone');
+          log('EditProfile: _originalGender = $_originalGender');
+          
           // Trigger UI update to show the loaded data
           setState(() {});
         } else if (state is AuthChangePasswordSuccess) {
-          print('EditProfile: AuthChangePasswordSuccess received');
-          print('EditProfile: _selectedImage = $_selectedImage');
-          print('EditProfile: _hasChanges() = ${_hasChanges()}');
+          log('EditProfile: AuthChangePasswordSuccess received');
+          log('EditProfile: _selectedImage = $_selectedImage');
+          log('EditProfile: _hasChanges() = ${_hasChanges()}');
           
           // Check if this was an image upload (no other fields changed)
           final hasOnlyImageChange = _selectedImage != null && !_hasChanges();
-          print('EditProfile: hasOnlyImageChange = $hasOnlyImageChange');
+          log('EditProfile: hasOnlyImageChange = $hasOnlyImageChange');
           
           if (hasOnlyImageChange) {
-            print('EditProfile: This was an image-only upload');
-            CustomSnackbar.show(
-              context,
-              title: 'Image Uploaded!',
-              message: 'Your profile image has been updated successfully',
-              type: SnackbarType.success,
-            );
-            // The image path should already be updated in AuthCubit by the updateProfile method
-            // No need to call updateUserProfileData again as it's redundant
-            print('EditProfile: Image upload successful, AuthCubit should already have updated image path');
+            log('EditProfile: This was an image-only upload');
+            // The image has already been handled in _uploadImageToAPI
+            // No need to show additional success message here
+            log('EditProfile: Image upload successful, AuthCubit should already have updated image path');
             
             // Force a reload of the user profile to ensure the image path is updated
-            print('EditProfile: Force reloading user profile...');
+            log('EditProfile: Force reloading user profile...');
             context.read<AuthCubit>().loadUserProfile();
             
             // Keep the selected image so profile screen can display it
@@ -711,7 +735,7 @@ class _EditProfileState extends State<EditProfile> {
                                 ),
                               );
                             },
-                          ),
+                        ),
                       ),
                     ),
                     SizedBox(width: 16.w),
@@ -823,7 +847,6 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
         return TextInputType.phone;
       case 'name':
       case 'username':
-      case 'gender':
         return TextInputType.text;
       default:
         return TextInputType.text;

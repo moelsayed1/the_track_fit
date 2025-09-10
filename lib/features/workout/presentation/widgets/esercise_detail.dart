@@ -18,9 +18,12 @@ class ExerciseDetail extends StatelessWidget {
     
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
             SizedBox(height: 50.h),
             // Custom Header
             Container(
@@ -73,10 +76,28 @@ class ExerciseDetail extends StatelessWidget {
               child: Center(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    AppAssets.exerciseGif,
-                    fit: BoxFit.cover,
-                  ),
+                  child: exercise.imagePath.startsWith('http')
+                      ? Image.network(
+                          exercise.imagePath,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Fallback to asset image if network image fails
+                            return Image.asset(
+                              AppAssets.exerciseGif,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          exercise.imagePath,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
                 ),
               ),
             ),
@@ -114,7 +135,9 @@ class ExerciseDetail extends StatelessWidget {
                   
                   // Exercise Description
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                    exercise.description?.isNotEmpty == true 
+                        ? exercise.description! 
+                        : 'No description available for this exercise.',
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: responsiveHelper.sp(14),
@@ -124,7 +147,7 @@ class ExerciseDetail extends StatelessWidget {
                     ),
                   ),
                   
-                  SizedBox(height: responsiveHelper.h(50)),
+                  SizedBox(height: responsiveHelper.h(200)),
                   
                   // Start Exercise Button
                   SizedBox(
@@ -163,6 +186,9 @@ class ExerciseDetail extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      ),
+      ],
       ),
     );
   }

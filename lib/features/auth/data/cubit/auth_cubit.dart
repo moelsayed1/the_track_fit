@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -298,6 +299,7 @@ class AuthCubit extends Cubit<AuthState> {
     String? gender,
     dynamic image, // Can be File or String
   }) async {
+    log('updateProfile: Method called with image: $image, type: ${image.runtimeType}');
     emit(const AuthLoading());
     
     try {
@@ -334,11 +336,38 @@ class AuthCubit extends Cubit<AuthState> {
       try {
         if (image != null) {
           if (image is File) {
-            imagePathValue = image.path;
-            log('updateProfile: image is File, path = $imagePathValue');
+            // Convert File to base64 for persistent storage
+            try {
+              final bytes = await image.readAsBytes();
+              imagePathValue = base64Encode(bytes);
+              log('updateProfile: image is File, converted to base64 successfully');
+            } catch (e) {
+              log('updateProfile: Error converting File to base64: $e');
+              imagePathValue = image.path; // Fallback to path
+            }
           } else if (image is String) {
-            imagePathValue = image;
-            log('updateProfile: image is String, value = $imagePathValue');
+            // Check if it's already base64 or a file path
+            if (image.startsWith('data:image/') || image.startsWith('/data/')) {
+              // It's a file path, try to read and convert to base64
+              try {
+                final file = File(image);
+                if (file.existsSync()) {
+                  final bytes = await file.readAsBytes();
+                  imagePathValue = base64Encode(bytes);
+                  log('updateProfile: image is file path, converted to base64 successfully');
+                } else {
+                  log('updateProfile: image file does not exist, using as-is');
+                  imagePathValue = image;
+                }
+              } catch (e) {
+                log('updateProfile: Error reading file path: $e');
+                imagePathValue = image;
+              }
+            } else {
+              // Assume it's already base64 or some other string
+              imagePathValue = image;
+              log('updateProfile: image is String, using as-is');
+            }
           } else {
             imagePathValue = image.toString();
             log('updateProfile: image is other type, converted to string = $imagePathValue');
@@ -353,6 +382,9 @@ class AuthCubit extends Cubit<AuthState> {
         }
         
         log('updateProfile: Final imagePathValue = $imagePathValue, type: ${imagePathValue.runtimeType}');
+        log('updateProfile: imagePathValue length = ${imagePathValue?.length ?? 0}');
+        log('updateProfile: imagePathValue starts with data:image/ = ${imagePathValue?.startsWith('data:image/') ?? false}');
+        log('updateProfile: imagePathValue is long string = ${(imagePathValue?.length ?? 0) > 100}');
       } catch (e) {
         log('updateProfile: Error processing image parameter: $e');
         imagePathValue = null;
@@ -409,6 +441,57 @@ class AuthCubit extends Cubit<AuthState> {
   /// Reset state to initial
   void reset() {
     emit(const AuthInitial());
+  }
+
+  /// Test method to verify base64 conversion
+  Future<void> testBase64Conversion(File imageFile) async {
+    try {
+      log('testBase64Conversion: Testing with file: ${imageFile.path}');
+      log('testBase64Conversion: File exists: ${imageFile.existsSync()}');
+      
+      final bytes = await imageFile.readAsBytes();
+      final base64String = base64Encode(bytes);
+      
+      log('testBase64Conversion: Base64 string length: ${base64String.length}');
+      log('testBase64Conversion: Base64 string starts with: ${base64String.substring(0, 20)}...');
+      
+      // Test if we can decode it back
+      final decodedBytes = base64Decode(base64String);
+      log('testBase64Conversion: Decoded bytes length: ${decodedBytes.length}');
+      log('testBase64Conversion: Original bytes length: ${bytes.length}');
+      log('testBase64Conversion: Conversion successful: ${bytes.length == decodedBytes.length}');
+      
+      // Update the profile with this base64 string
+      updateUserProfileData(imagePath: base64String);
+      
+    } catch (e) {
+      log('testBase64Conversion: Error: $e');
+    }
+  }
+
+  /// Update only the profile image
+  Future<void> updateProfileImage(File imageFile) async {
+    log('updateProfileImage: Method called with imageFile: ${imageFile.path}');
+    emit(const AuthLoading());
+    
+    try {
+      // Convert image to base64 for local storage
+      final bytes = await imageFile.readAsBytes();
+      final base64String = base64Encode(bytes);
+      
+      log('updateProfileImage: Image converted to base64, length: ${base64String.length}');
+      
+      // Update local profile data with the new image
+      updateUserProfileData(imagePath: base64String);
+      
+      // Emit success state
+      emit(AuthChangePasswordSuccess('Image updated successfully'));
+      
+    } catch (e) {
+      log('updateProfileImage Error: $e');
+      final errorMessage = _extractErrorMessage(e);
+      emit(AuthChangePasswordError(errorMessage));
+    }
   }
 
   // Private validation methods
@@ -671,6 +754,9 @@ class AuthCubit extends Cubit<AuthState> {
         _userImagePath = imagePath.toString();
         log('updateUserProfileData: Successfully assigned imagePath to _userImagePath');
         log('updateUserProfileData: _userImagePath is now: $_userImagePath, type: ${_userImagePath.runtimeType}');
+        log('updateUserProfileData: _userImagePath length: ${_userImagePath?.length ?? 0}');
+        log('updateUserProfileData: _userImagePath starts with data:image/: ${_userImagePath?.startsWith('data:image/') ?? false}');
+        log('updateUserProfileData: _userImagePath is long string: ${(_userImagePath?.length ?? 0) > 100}');
       } catch (e) {
         log('updateUserProfileData: Error assigning imagePath: $e');
         _userImagePath = null;

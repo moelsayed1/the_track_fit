@@ -6,6 +6,7 @@ import 'core/constants/constants.dart';
 import 'core/router/app_router.dart';
 import 'core/services/api_service.dart';
 import 'features/workout/data/cubit/exercise_cubit.dart';
+import 'features/workout/data/repositories/exercise_repository.dart';
 import 'features/auth/data/cubit/auth_cubit.dart';
 import 'features/auth/repositories/auth_repository.dart';
 
@@ -32,7 +33,7 @@ class TrackFit extends StatelessWidget {
       builder: (context, child) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider(create: (context) => ExerciseCubit()),
+            BlocProvider(create: (context) => ExerciseCubit(exerciseRepository: ExerciseRepository(apiService: ApiService()))),
             BlocProvider(create: (context) => AuthCubit(AuthRepository())),
           ],
           child: MaterialApp.router(

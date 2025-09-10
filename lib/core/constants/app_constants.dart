@@ -40,7 +40,7 @@ class AppConstants {
   // Use AppAssets class for all asset paths
   
   // API Configuration
-  static const String baseUrl = 'https://thetrackfit.com'; // Replace with your actual API base URL
+  static const String baseUrl = 'https://thetrackfit.com'; 
   static const String registerEndpoint = '/api/register';
   static const String loginEndpoint = '/api/login';
   static const String logoutEndpoint = '/api/logout';
@@ -49,4 +49,6 @@ class AppConstants {
   static const String resetPasswordEndpoint = '/api/reset-password';
   static const String updateProfileEndpoint = '/api/update';
   static const String mainGoalOptionEndpoint = '/api/main-goal-option';
+  static const String getAllExercisesEndpoint = '/api/get-all-exercises';
+  static const String getExercisesCategoryEndpoint = '/api/get-exercises-category';
 } 

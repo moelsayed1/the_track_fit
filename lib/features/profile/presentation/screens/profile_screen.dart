@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String? selectedSection;
   String currentLanguage = 'Arabic'; // Default language
+  bool _isRefreshing = false;
 
   void _selectSection(String section) {
     setState(() {
@@ -114,10 +116,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        print('ProfileScreen: BlocListener received state: ${state.runtimeType}');
+        log('ProfileScreen: BlocListener received state: ${state.runtimeType}');
         if (state is AuthUserProfileLoaded) {
-          print('ProfileScreen: AuthUserProfileLoaded received in listener');
-          print('ProfileScreen: imagePath = ${state.imagePath}');
+          log('ProfileScreen: AuthUserProfileLoaded received in listener');
+          log('ProfileScreen: imagePath = ${state.imagePath}');
+          
+          // Show success message only when it's a refresh action
+          if (_isRefreshing) {
+            CustomSnackbar.show(
+              context,
+              title: 'Profile Updated!',
+              message: 'Your profile data has been refreshed successfully',
+              type: SnackbarType.success,
+            );
+          }
+        }
+        
+        if (state is AuthLoading) {
+          log('ProfileScreen: Loading state received - showing loading indicator');
         }
         
         if (state is AuthLogoutSuccess) {
@@ -143,35 +159,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: Scaffold(
         backgroundColor: const Color(0xFFF6FFF6),
-        body: SingleChildScrollView(
-          child: Stack(
-            children: [
-              // Green background container (Top Wave)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: ClipPath(
-                  clipper: TopWaveClipper(), // استخدام الـ Clipper المحدث
-                  child: Container(
-                    height: 220.h, // يمكنك ضبط الارتفاع حسب الحاجة
-                    color: const Color(0x4028A228), // اللون الجديد: #28A22840
+        body: RefreshIndicator(
+          onRefresh: () async {
+            log('ProfileScreen: Pull to refresh triggered');
+            setState(() {
+              _isRefreshing = true;
+            });
+            // Reload user profile data
+            context.read<AuthCubit>().loadUserProfile();
+            // Add a small delay to show the refresh indicator
+            await Future.delayed(const Duration(milliseconds: 500));
+            setState(() {
+              _isRefreshing = false;
+            });
+          },
+          color: const Color(0xFF28A228),
+          backgroundColor: const Color(0xFFE0E0E0),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Stack(
+              children: [
+                // Green background container (Top Wave)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: ClipPath(
+                    clipper: TopWaveClipper(), // استخدام الـ Clipper المحدث
+                    child: Container(
+                      height: 220.h, // يمكنك ضبط الارتفاع حسب الحاجة
+                      color: const Color(0x4028A228), // اللون الجديد: #28A22840
+                    ),
                   ),
                 ),
-              ),
 
-              SafeArea(
-                child: Column(
-                  children: [
-                    // Profile Header
-                    _buildProfileHeader(),
-
-                    // Profile Content
-                    _buildProfileContent(),
-                  ],
+                // Linear Progress Indicator
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return Positioned(
+                        top: 20.h,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: LinearProgressIndicator(
+                            backgroundColor: const Color(0xFFE0E0E0), // Light gray track
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              const Color(0xFF28A228), // App green color
+                            ),
+                            minHeight: 4.h,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
-              ),
-            ],
+
+                SafeArea(
+                  child: Column(
+                    children: [
+                      // Profile Header
+                      _buildProfileHeader(),
+
+                      // Profile Content
+                      _buildProfileContent(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -181,26 +239,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfileImage(String? imagePath) {
     log('ProfileScreen: imagePath = $imagePath, type: ${imagePath.runtimeType}');
     if (imagePath != null && imagePath.isNotEmpty) {
-      final imageFile = File(imagePath);
-      log('ProfileScreen: imageFile.existsSync() = ${imageFile.existsSync()}');
-      log('ProfileScreen: imageFile.path = ${imageFile.path}');
-      if (imageFile.existsSync()) {
-        log('ProfileScreen: Displaying image from file: ${imageFile.path}');
-        return Image.file(
-          imageFile,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            log('ProfileScreen: Error loading image: $error');
-            return _buildDefaultProfileImage();
-          },
-        );
+      // Check if it's a base64 image - improved detection
+      bool isBase64 = false;
+      
+      // Method 1: Check for data URL format
+      if (imagePath.startsWith('data:image/')) {
+        isBase64 = true;
+        log('ProfileScreen: Detected base64 via data URL format');
+      }
+      // Method 2: Check if it's a long string without file path indicators
+      else if (imagePath.length > 100 && 
+               !imagePath.startsWith('/') && 
+               !imagePath.startsWith('file://') &&
+               !imagePath.contains('\\') &&
+               !imagePath.contains('.')) {
+        isBase64 = true;
+        log('ProfileScreen: Detected base64 via length and format heuristic');
+      }
+      // Method 3: Try to decode as base64 to verify
+      else if (imagePath.length > 50) {
+        try {
+          base64Decode(imagePath);
+          isBase64 = true;
+          log('ProfileScreen: Detected base64 via successful decode test');
+        } catch (e) {
+          log('ProfileScreen: Not base64 - decode test failed: $e');
+        }
+      }
+      
+      if (isBase64) {
+        // It's a base64 image
+        try {
+          log('ProfileScreen: Displaying base64 image');
+          return Image.memory(
+            base64Decode(imagePath),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              log('ProfileScreen: Error loading base64 image: $error');
+              return _buildDefaultProfileImage();
+            },
+          );
+        } catch (e) {
+          log('ProfileScreen: Error decoding base64 image: $e');
+          return _buildDefaultProfileImage();
+        }
       } else {
-        log('ProfileScreen: Image file does not exist at path: $imagePath');
-        // Try to reload the profile data in case the image path has changed
-        log('ProfileScreen: Attempting to reload profile data...');
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.read<AuthCubit>().loadUserProfile();
-        });
+        // It's a file path
+        final imageFile = File(imagePath);
+        log('ProfileScreen: imageFile.existsSync() = ${imageFile.existsSync()}');
+        log('ProfileScreen: imageFile.path = ${imageFile.path}');
+        if (imageFile.existsSync()) {
+          log('ProfileScreen: Displaying image from file: ${imageFile.path}');
+          return Image.file(
+            imageFile,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              log('ProfileScreen: Error loading image: $error');
+              return _buildDefaultProfileImage();
+            },
+          );
+        } else {
+          log('ProfileScreen: Image file does not exist at path: $imagePath');
+          // Try to reload the profile data in case the image path has changed
+          log('ProfileScreen: Attempting to reload profile data...');
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.read<AuthCubit>().loadUserProfile();
+          });
+        }
       }
     } else {
       log('ProfileScreen: imagePath is null or empty');
@@ -239,6 +344,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           log('ProfileScreen: state.name = ${state.name}');
           log('ProfileScreen: state.imagePath = ${state.imagePath}');
           log('ProfileScreen: state.imagePath type = ${state.imagePath.runtimeType}');
+          log('ProfileScreen: state.imagePath length = ${state.imagePath?.length ?? 0}');
+          log('ProfileScreen: state.imagePath is not null = ${state.imagePath != null}');
+          log('ProfileScreen: state.imagePath is not empty = ${state.imagePath?.isNotEmpty ?? false}');
           displayName = state.name.isNotEmpty ? state.name : 'User';
           imagePath = state.imagePath;
         } else {
@@ -685,12 +793,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (state is AuthLoading) ...[
                   SizedBox(width: 8.w),
                   SizedBox(
-                    width: 16.w,
-                    height: 16.h,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
+                    width: 50.w,
+                    height: 4.h,
+                    child: LinearProgressIndicator(
+                      backgroundColor: const Color(0xFFE0E0E0),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFFFF4444),
+                        const Color(0xFF28A228),
                       ),
                     ),
                   ),

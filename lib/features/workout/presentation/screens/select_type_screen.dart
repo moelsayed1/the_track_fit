@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
+import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
+import 'package:the_track_fit/features/workout/presentation/widgets/shimmer_loader.dart';
 
 class SelectTypeScreen extends StatefulWidget {
   final String? selectedType;
-  final Function(String) onTypeSelected;
+  final Function(String, String) onTypeSelected;
 
   const SelectTypeScreen({
     super.key,
@@ -20,15 +23,42 @@ class SelectTypeScreen extends StatefulWidget {
 class _SelectTypeScreenState extends State<SelectTypeScreen> {
   late List<WorkoutType> workoutTypes;
   String? selectedTypeId;
+  bool isLoading = true;
+  String? error;
 
   @override
   void initState() {
     super.initState();
     selectedTypeId = widget.selectedType;
-    _initializeWorkoutTypes();
+    _loadWorkoutTypes();
   }
 
-  void _initializeWorkoutTypes() {
+  Future<void> _loadWorkoutTypes() async {
+    try {
+      setState(() {
+        isLoading = true;
+        error = null;
+      });
+      
+      final categories = await context.read<ExerciseCubit>().getExerciseCategories();
+      
+      setState(() {
+        workoutTypes = categories.map((category) {
+          return category.copyWith(isSelected: selectedTypeId == category.id);
+        }).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        isLoading = false;
+        // Fallback to mock data
+        _initializeMockWorkoutTypes();
+      });
+    }
+  }
+
+  void _initializeMockWorkoutTypes() {
     workoutTypes = [
       WorkoutType(
         id: 'cardio',
@@ -59,9 +89,15 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
       }).toList();
     });
     
+    // Find the selected type to get its name
+    final selectedType = workoutTypes.firstWhere(
+      (type) => type.id == typeId,
+      orElse: () => workoutTypes.first,
+    );
+    
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
-      widget.onTypeSelected(typeId);
+      widget.onTypeSelected(typeId, selectedType.name);
       Navigator.pop(context);
     });
   }
@@ -127,18 +163,75 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               
               // Type options list
               Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(4)),
-                  child: Column(
-                    children: [
-                      ...workoutTypes.map((type) => _buildTypeItem(type, responsiveHelper)),
-                    ],
-                  ),
-                ),
+                child: _buildContent(responsiveHelper),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildContent(ResponsiveHelper responsiveHelper) {
+    if (isLoading) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(4)),
+        child: Column(
+          children: [
+            // Show shimmer loaders for each category item
+            for (int i = 0; i < 3; i++) ...[
+              _buildShimmerItem(responsiveHelper),
+              if (i < 2) _buildShimmerDivider(responsiveHelper),
+            ],
+          ],
+        ),
+      );
+    }
+
+    if (error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: Colors.red[300],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading categories',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.red[700],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error!,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.red[600],
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadWorkoutTypes,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(4)),
+      child: Column(
+        children: [
+          ...workoutTypes.map((type) => _buildTypeItem(type, responsiveHelper)),
+        ],
       ),
     );
   }
@@ -161,22 +254,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: responsiveHelper.w(32),
-                  height: responsiveHelper.h(32),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(type.iconPath),
-                      fit: BoxFit.cover,
-                      colorFilter: type.isSelected 
-                          ? const ColorFilter.mode(
-                              Color(0xFF4CAF50), // Green color when selected
-                              BlendMode.srcIn,
-                            )
-                          : null, // No color filter when not selected
-                    ),
-                  ),
-                ),
+                _buildCategoryIcon(type, responsiveHelper),
                 SizedBox(width: responsiveHelper.w(8)),
                 Expanded(
                   child: Text(
@@ -214,6 +292,123 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCategoryIcon(WorkoutType type, ResponsiveHelper responsiveHelper) {
+    if (type.iconPath.startsWith('http')) {
+      // Network image with shimmer loading
+      return Container(
+        width: responsiveHelper.w(32),
+        height: responsiveHelper.h(32),
+        child: Image.network(
+          type.iconPath,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              // Image loaded successfully
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: ColorFiltered(
+                  colorFilter: type.isSelected 
+                      ? const ColorFilter.mode(
+                          Color(0xFF4CAF50), // Green color when selected
+                          BlendMode.srcIn,
+                        )
+                      : const ColorFilter.mode(
+                          Colors.transparent,
+                          BlendMode.multiply,
+                        ),
+                  child: child,
+                ),
+              );
+            }
+            // Show shimmer while loading
+            return ShimmerLoader(
+              width: responsiveHelper.w(32),
+              height: responsiveHelper.h(32),
+              borderRadius: 8.0,
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            // Fallback to default icon if network image fails
+            return Container(
+              width: responsiveHelper.w(32),
+              height: responsiveHelper.h(32),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE0E0E0),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Icon(
+                Icons.fitness_center,
+                size: responsiveHelper.sp(20),
+                color: const Color(0xFF28A228),
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      // Asset image
+      return Container(
+        width: responsiveHelper.w(32),
+        height: responsiveHelper.h(32),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(type.iconPath),
+            fit: BoxFit.cover,
+            colorFilter: type.isSelected 
+                ? const ColorFilter.mode(
+                    Color(0xFF4CAF50), // Green color when selected
+                    BlendMode.srcIn,
+                  )
+                : null, // No color filter when not selected
+          ),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      );
+    }
+  }
+
+  Widget _buildShimmerItem(ResponsiveHelper responsiveHelper) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(responsiveHelper.w(16)),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Row(
+        children: [
+          // Icon shimmer
+          ShimmerLoader(
+            width: responsiveHelper.w(32),
+            height: responsiveHelper.h(32),
+            borderRadius: 8.0,
+          ),
+          SizedBox(width: responsiveHelper.w(8)),
+          // Text shimmer
+          Expanded(
+            child: ShimmerLoader(
+              width: double.infinity,
+              height: responsiveHelper.h(16),
+              borderRadius: 4.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerDivider(ResponsiveHelper responsiveHelper) {
+    return SizedBox(
+      width: double.infinity,
+      child: Divider(
+        color: const Color(0x26848484),
+        height: responsiveHelper.h(1),
+        thickness: 1,
+        indent: 0,
+        endIndent: 0,
+      ),
     );
   }
 }
