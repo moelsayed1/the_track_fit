@@ -51,4 +51,7 @@ class AppConstants {
   static const String mainGoalOptionEndpoint = '/api/main-goal-option';
   static const String getAllExercisesEndpoint = '/api/get-all-exercises';
   static const String getExercisesCategoryEndpoint = '/api/get-exercises-category';
+  static const String getExercisesByLocationEndpoint = '/api/get-exercises-filter';
+  static const String getExercisesByEquipmentEndpoint = '/api/get-exercises-filter';
+  static const String getExercisesByDayEndpoint = '/api/get-exercises-by-day';
 } 

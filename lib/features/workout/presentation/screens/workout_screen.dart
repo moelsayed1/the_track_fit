@@ -371,11 +371,17 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 top: -6,
                                 child: GestureDetector(
                                   onTap: () {
+                                    // Clear local state first
                                     setState(() {
                                       selectedFilter = null;
                                     });
+                                    // Clear cubit state
                                     context.read<ExerciseCubit>().clearCategoryFilter();
                                     context.read<ExerciseCubit>().loadAllExercises();
+                                    // Focus on search field
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      _searchFocusNode.requestFocus();
+                                    });
                                   },
                                   child: Container(
                                     width: responsiveHelper.w(20),
@@ -478,6 +484,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                       selectedLocation = null;
                                     });
                                     context.read<ExerciseCubit>().loadAllExercises();
+                                    // Focus on search field when clearing filter
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      _searchFocusNode.requestFocus();
+                                    });
                                   },
                                   child: Container(
                                     width: responsiveHelper.w(20),
@@ -584,6 +594,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                       selectedEquipment = null;
                                     });
                                     context.read<ExerciseCubit>().loadAllExercises();
+                                    // Focus on search field when clearing filter
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      _searchFocusNode.requestFocus();
+                                    });
                                   },
                                   child: Container(
                                     width: responsiveHelper.w(20),

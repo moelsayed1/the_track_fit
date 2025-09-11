@@ -181,9 +181,9 @@ class AppRouter {
         path: newPassword,
         name: 'newPassword',
         builder: (context, state) {
-          final email = state.uri.queryParameters['email'] ?? 'user@example.com';
-          final otp = state.uri.queryParameters['otp'] ?? '123456';
-          return NewPasswordScreen(email: email, otp: otp);
+          final email = state.uri.queryParameters['email'];
+          final otp = state.uri.queryParameters['otp'];
+          return NewPasswordScreen( email: email!, otp: otp! );
         },
       ),
       GoRoute(
@@ -325,7 +325,6 @@ class AppRouter {
         name: 'exerciseDetail',
         builder: (context, state) {
           if (state.extra == null) {
-            // Return to workout screen if no exercise data
             return const ExerciseDetail(exercise: Exercise(id: 'default', title: 'Exercise name', subtitle: 'Exercise subtitle', imagePath: 'assets/images/exercise_image.png', type: 'Exercise type'));
           }
           return ExerciseDetail(exercise: state.extra as Exercise);

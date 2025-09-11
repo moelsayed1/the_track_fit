@@ -43,6 +43,7 @@ class ExerciseApiData {
   final String updatedAt;
   final int dayId;
   final String goal;
+  final Map<String, dynamic>? category;
 
   const ExerciseApiData({
     required this.id,
@@ -59,6 +60,7 @@ class ExerciseApiData {
     required this.updatedAt,
     required this.dayId,
     required this.goal,
+    this.category,
   });
 
   factory ExerciseApiData.fromJson(Map<String, dynamic> json) {
@@ -77,6 +79,7 @@ class ExerciseApiData {
       updatedAt: json['updated_at'] as String,
       dayId: json['day_id'] as int,
       goal: json['goal'] as String,
+      category: json['category'] as Map<String, dynamic>?,
     );
   }
 
@@ -96,6 +99,7 @@ class ExerciseApiData {
       'updated_at': updatedAt,
       'day_id': dayId,
       'goal': goal,
+      'category': category,
     };
   }
 }

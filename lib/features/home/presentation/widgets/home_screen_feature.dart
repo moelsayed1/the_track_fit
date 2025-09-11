@@ -1,12 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/workout_screen.dart';
+import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
+import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
+import 'package:the_track_fit/core/services/api_service.dart';
 
 class HomeScreenFeature extends StatefulWidget {
   const HomeScreenFeature({super.key});
@@ -25,10 +31,61 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     false,
   ); // Track favorite states for 4 products
   bool _showWarningDialog = false; // Control warning dialog visibility
-  final List<bool> _completedExercises = List.filled(
-    4,
-    false,
-  ); // Track completed exercises
+  List<bool> _completedExercises = []; // Track completed exercises
+  
+  // API integration
+  late final ExerciseRepository _exerciseRepository;
+  List<Exercise> _dayExercises = [];
+  bool _isLoadingExercises = false;
+  String? _exerciseError;
+
+  @override
+  void initState() {
+    super.initState();
+    _exerciseRepository = ExerciseRepository(apiService: ApiService());
+    // Initialize the API service
+    ApiService().init();
+    _loadExercisesForDay();
+  }
+
+  // Map day index to day_id (1-7 for Fri-Thu)
+  int _getDayId(int dayIndex) {
+    return dayIndex + 1; // 0->1, 1->2, 2->3, 3->4, 4->5, 5->6, 6->7
+  }
+
+  // Load exercises for the selected day
+  Future<void> _loadExercisesForDay() async {
+    log('Loading exercises for day index: $_selectedDateIndex');
+    setState(() {
+      _isLoadingExercises = true;
+      _exerciseError = null;
+    });
+
+    try {
+      final dayId = _getDayId(_selectedDateIndex);
+      log('Day ID: $dayId');
+      // Try without goal parameter first
+      final exercises = await _exerciseRepository.getExercisesByDay(dayId);
+      
+      log('Received ${exercises.length} exercises');
+      for (var exercise in exercises) {
+        log('Exercise: ${exercise.title}, Image: ${exercise.imagePath}');
+      }
+      
+      setState(() {
+        _dayExercises = exercises;
+        _isLoadingExercises = false;
+        // Reset completed exercises list based on new data
+        _completedExercises = List.filled(exercises.length, false);
+      });
+    } catch (e) {
+      log('Error loading exercises: $e');
+      setState(() {
+        _exerciseError = e.toString();
+        _isLoadingExercises = false;
+      });
+    }
+  }
 
   void _onTabTapped(int index) {
     setState(() {
@@ -63,13 +120,16 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     setState(() {
       _selectedDateIndex = index;
     });
+    _loadExercisesForDay(); // Load exercises for the selected day
   }
 
   void _onExerciseSelected(int index) {
     setState(() {
       _selectedExerciseIndex = index;
     });
-    context.push(AppRouter.exerciseDetail);
+    // Pass the exercise data to the Exercise Detail screen
+    final exercise = _dayExercises[index];
+    context.push(AppRouter.exerciseDetail, extra: exercise);
   }
 
   void _onFavoriteToggled(int index) {
@@ -206,7 +266,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     }
   }
 
-  Widget _buildDateItem(String day, String date, int index) {
+  Widget _buildDateItem(String day, int index) {
     bool isSelected = _selectedDateIndex == index;
     return GestureDetector(
       onTap: () => _onDateSelected(index),
@@ -230,15 +290,15 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               ),
             ),
             SizedBox(height: 1.h),
-            Text(
-              date,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF28A228) : Colors.white,
-                fontSize: 11.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            // Text(
+            //   date,
+            //   style: TextStyle(
+            //     color: isSelected ? const Color(0xFF28A228) : Colors.white,
+            //     fontSize: 11.sp,
+            //     fontFamily: 'Poppins',
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -304,7 +364,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       child: Container(
                         height: 7.h,
                         decoration: ShapeDecoration(
-                          color: _completedExercises[0]
+                          color: (_completedExercises.isNotEmpty && _completedExercises[0])
                               ? const Color(0xFFFFCC4D)
                               : Colors.white,
                           shape: RoundedRectangleBorder(
@@ -318,7 +378,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       child: Container(
                         height: 7.h,
                         decoration: ShapeDecoration(
-                          color: _completedExercises[1]
+                          color: (_completedExercises.length > 1 && _completedExercises[1])
                               ? const Color(0xFFFFB366)
                               : Colors.white,
                           shape: RoundedRectangleBorder(
@@ -332,7 +392,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       child: Container(
                         height: 7.h,
                         decoration: ShapeDecoration(
-                          color: _completedExercises[2]
+                          color: (_completedExercises.length > 2 && _completedExercises[2])
                               ? const Color(0xFFFFB366)
                               : Colors.white,
                           shape: RoundedRectangleBorder(
@@ -446,13 +506,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildDateItem('Fri', '5', 0),
-              _buildDateItem('Sat', '6', 1),
-              _buildDateItem('Sun', '11', 2),
-              _buildDateItem('Mon', '7', 3),
-              _buildDateItem('Tue', '8', 4),
-              _buildDateItem('Wed', '9', 5),
-              _buildDateItem('Thu', '10', 6),
+              _buildDateItem('Fri', 0),
+              _buildDateItem('Sat', 1),
+              _buildDateItem('Sun', 2),
+              _buildDateItem('Mon', 3),
+              _buildDateItem('Tue', 4),
+              _buildDateItem('Wed', 5),
+              _buildDateItem('Thu', 6),
             ],
           ),
         ),
@@ -462,30 +522,209 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         // Exercise Cards
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
-                child: GestureDetector(
-                  onTap: () => _onExerciseSelected(index),
-                  child: ExerciseCard(
-                    exerciseTitle: 'Exercise Title',
-                    setsAndReps: '4 Sets x 8 reps',
-                    isLocked: index > 0,
-                    isSelected: _selectedExerciseIndex == index,
-                    isCompleted: _completedExercises[index],
-                    onLockTapped: _onLockTapped,
-                    onCompleted: () => _onExerciseCompleted(index),
-                  ),
-                ),
-              );
-            },
-          ),
+          child: _buildExerciseList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildExerciseList() {
+    log('Building exercise list - Loading: $_isLoadingExercises, Error: $_exerciseError, Count: ${_dayExercises.length}');
+    
+    if (_isLoadingExercises) {
+      return _buildShimmerLoader();
+    }
+
+    if (_exerciseError != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.fitness_center_outlined,
+              color: Colors.grey[400],
+              size: 64.sp,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'No exercises available',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 18.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'There are no exercises scheduled for this day and goal.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 14.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            SizedBox(height: 24.h),
+            ElevatedButton(
+              onPressed: _loadExercisesForDay,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF28A228),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              child: Text(
+                'Try Again',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_dayExercises.isEmpty) {
+      return Center(
+        child: Column(
+          children: [
+            Icon(
+              Icons.fitness_center,
+              color: Colors.grey,
+              size: 48.sp,
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'No exercises for this day',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 16.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _dayExercises.length,
+      itemBuilder: (context, index) {
+        final exercise = _dayExercises[index];
+        log('Building exercise card $index: ${exercise.title}');
+        return Padding(
+          padding: EdgeInsets.only(bottom: 16.h),
+          child: GestureDetector(
+            onTap: () => _onExerciseSelected(index),
+            child: ExerciseCard(
+              exerciseTitle: exercise.title,
+              setsAndReps: '4 Sets x 8 reps', // You can customize this based on exercise data
+              isLocked: index > 0, // You can customize this logic
+              isSelected: _selectedExerciseIndex == index,
+              isCompleted: _completedExercises.length > index ? _completedExercises[index] : false,
+              imageUrl: exercise.imagePath, // Use the GIF from API
+              onLockTapped: _onLockTapped,
+              onCompleted: () => _onExerciseCompleted(index),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildShimmerLoader() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 3, // Show 3 shimmer cards
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16.h),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1, color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(15.r),
+                ),
+              ),
+              child: Row(
+                children: [
+                  // Exercise icon shimmer
+                  Container(
+                    width: 64.w,
+                    height: 64.h,
+                    padding: EdgeInsets.all(12.w),
+                    decoration: ShapeDecoration(
+                      color: Colors.grey[300],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.r),
+                      ),
+                    ),
+                    child: Container(
+                      width: 40.w,
+                      height: 40.h,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  // Exercise details shimmer
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 18.h,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Container(
+                          width: 120.w,
+                          height: 14.h,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Right side icon shimmer
+                  Container(
+                    width: 24.w,
+                    height: 24.h,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -802,6 +1041,7 @@ class ExerciseCard extends StatelessWidget {
   final bool isLocked;
   final bool isSelected;
   final bool isCompleted;
+  final String? imageUrl;
   final VoidCallback? onLockTapped;
   final VoidCallback? onCompleted;
 
@@ -812,6 +1052,7 @@ class ExerciseCard extends StatelessWidget {
     required this.isLocked,
     required this.isSelected,
     required this.isCompleted,
+    this.imageUrl,
     this.onLockTapped,
     this.onCompleted,
   });
@@ -843,12 +1084,27 @@ class ExerciseCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.r),
               ),
             ),
-            child: Image.asset(
-              'assets/images/exercise_image.png',
-              width: 40.w,
-              height: 40.h,
-              fit: BoxFit.contain,
-            ),
+            child: imageUrl != null
+                ? Image.network(
+                    imageUrl!,
+                    width: 64.w,
+                    height: 64.h,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/exercise_image.png',
+                        width: 64.w,
+                        height: 64.h,
+                        fit: BoxFit.contain,
+                      );
+                    },
+                  )
+                : Image.asset(
+                    'assets/images/exercise_image.png',
+                    width: 64.w,
+                    height: 64.h,
+                    fit: BoxFit.contain,
+                  ),
           ),
           SizedBox(width: 16.w),
           // Exercise details
