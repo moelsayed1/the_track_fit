@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
-import 'package:the_track_fit/features/auth/new_password/presentation/widgets/reset_password_done.dart';
-import 'package:the_track_fit/features/store/domain/models/product.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 import 'package:the_track_fit/features/cart/domain/models/cart_item.dart';
+import 'package:the_track_fit/features/cart/presentation/cubit/cart_cubit.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -64,18 +66,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     'Sohag',
   ];
   
-  // Sample cart items for checkout
-  List<CartItem> cartItems = [
-    CartItem(
-      product: Product(
-        id: '1',
-        name: 'Maxin Protein Powder',
-        price: 20.0,
-        imageUrl: 'assets/images/product_image.png',
-      ),
-      quantity: 1,
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Load cart items when checkout screen initializes
+    context.read<CartCubit>().loadCartItems();
+  }
 
   @override
   void dispose() {
@@ -88,167 +84,312 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
-      body: SafeArea(
+    return BlocBuilder<CartCubit, CartState>(
+      builder: (context, state) {
+        List<CartItem> cartItems = [];
+        
+        if (state is CartLoaded) {
+          cartItems = state.cartItems;
+        }
+        
+        return Scaffold(
+          backgroundColor: const Color(0xFFF6FFF6),
+          body: SafeArea(
+            child: Column(
+              children: [
+                // Header Section
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0x26848484),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Left side - Back button and title
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => context.pop(),
+                            icon: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: 24.w,
+                              height: 24.h,
+                            ),
+                          ),
+                          Text(
+                            'Checkout',
+                            style: TextStyle(
+                              color: Color(0xFF1E1E1E),
+                              fontSize: 18.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              height: 0.89,
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Right side - Cart and heart icons
+                      Row(
+                        children: [
+                          // Cart Button
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isCartActive = true;
+                                isHeartActive = false;
+                              });
+                            },
+                            child: Container(
+                              width: 32.w,
+                              height: 32.h,
+                              decoration: ShapeDecoration(
+                                color: isCartActive
+                                    ? const Color(0xFF28A228)
+                                    : const Color(0x3328A228),
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    width: 1,
+                                    color: Color(0xFF28A228),
+                                  ),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/logos/cart_icon.svg',
+                                  width: 20.w,
+                                  height: 20.h,
+                                  colorFilter: ColorFilter.mode(
+                                    isCartActive ? Colors.white : const Color(0xFF28A228),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          // Heart Button
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isHeartActive = true;
+                                isCartActive = false;
+                              });
+                            },
+                            child: Container(
+                              width: 32.w,
+                              height: 32.h,
+                              decoration: ShapeDecoration(
+                                color: isHeartActive
+                                    ? const Color(0xFF28A228)
+                                    : const Color(0x3328A228),
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    width: 1,
+                                    color: Color(0xFF28A228),
+                                  ),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  isHeartActive ? Icons.favorite : Icons.favorite_border,
+                                  color: isHeartActive ? Colors.white : const Color(0xFF28A228),
+                                  size: 18.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Content Section
+                Expanded(
+                  child: _buildContent(state, cartItems),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildContent(CartState state, List<CartItem> cartItems) {
+    if (state is CartLoading) {
+      return _buildCheckoutShimmerLoading();
+    } else if (state is CartError) {
+      return Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Header Section
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: const Color(0x26848484),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Left side - Back button and title
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => context.pop(),
-                        icon: SvgPicture.asset(
-                          'assets/logos/arrow_left.svg',
-                          width: 24.w,
-                          height: 24.h,
-                        ),
-                      ),
-                      Text(
-                        'Checkout',
-                        style: TextStyle(
-                          color: Color(0xFF1E1E1E),
-                          fontSize: 18.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          height: 0.89,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Right side - Cart and heart icons
-                  Row(
-                    children: [
-                      // Cart Button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isCartActive = true;
-                            isHeartActive = false;
-                          });
-                        },
-                        child: Container(
-                          width: 32.w,
-                          height: 32.h,
-                          decoration: ShapeDecoration(
-                            color: isCartActive
-                                ? const Color(0xFF28A228)
-                                : const Color(0x3328A228),
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                width: 1,
-                                color: Color(0xFF28A228),
-                              ),
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              'assets/logos/cart_icon.svg',
-                              width: 20.w,
-                              height: 20.h,
-                              colorFilter: ColorFilter.mode(
-                                isCartActive ? Colors.white : const Color(0xFF28A228),
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      // Heart Button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isHeartActive = true;
-                            isCartActive = false;
-                          });
-                        },
-                        child: Container(
-                          width: 32.w,
-                          height: 32.h,
-                          decoration: ShapeDecoration(
-                            color: isHeartActive
-                                ? const Color(0xFF28A228)
-                                : const Color(0x3328A228),
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                width: 1,
-                                color: Color(0xFF28A228),
-                              ),
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                          ),
-                          child: Center(
-                            child: Icon(
-                              isHeartActive ? Icons.favorite : Icons.favorite_border,
-                              color: isHeartActive ? Colors.white : const Color(0xFF28A228),
-                              size: 18.sp,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+            Icon(
+              Icons.error_outline,
+              size: 64.sp,
+              color: Colors.red,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Failed to load cart items',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 18.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
               ),
             ),
-            
-            // Content Section
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  children: [
-                    // Product Card
-                    _buildProductCard(cartItems[0]),
-                    
-                    SizedBox(height: 24.h),
-                    
-                    // Info Section
-                    _buildInfoSection(),
-                    
-                    SizedBox(height: 24.h),
-                    
-                    // Address Section
-                    _buildAddressSection(),
-                    
-                    SizedBox(height: 24.h),
-                    
-                    // Coupon Section
-                   // _buildCouponSection(),
-                    
-                    // SizedBox(height: 24.h),
-
-                    _buildPaymentMethods(),
-
-                    SizedBox(height: 24.h),
-                    
-                    // Payment Summary
-                    _buildPaymentSummary(),
-                    
-                    SizedBox(height: 24.h),
-                    
-                    // Confirm Order Button
-                    _buildConfirmOrderButton(),
-                  ],
-                ),
+            SizedBox(height: 8.h),
+            Text(
+              state.message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
               ),
+            ),
+            SizedBox(height: 16.h),
+            ElevatedButton(
+              onPressed: () => context.read<CartCubit>().loadCartItems(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF28A228),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Retry'),
             ),
           ],
         ),
-      ),
-    );
+      );
+    } else {
+      return SingleChildScrollView(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          children: [
+            // Product Cards - show all items if cart has items
+            if (cartItems.isNotEmpty) ...[
+              // Cart Items Header
+              Row(
+                children: [
+                  Text(
+                    'Cart Items (${cartItems.length})',
+                    style: TextStyle(
+                      color: Color(0xFF1E1E1E),
+                      fontSize: 16.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              
+              // Display all cart items
+              ...cartItems.asMap().entries.map((entry) {
+                int index = entry.key;
+                CartItem cartItem = entry.value;
+                return Column(
+                  children: [
+                    _buildProductCard(cartItem),
+                    if (index < cartItems.length - 1) SizedBox(height: 16.h),
+                  ],
+                );
+              }).toList().cast<Widget>(),
+              SizedBox(height: 24.h),
+            ] else ...[
+              // Empty cart state
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 100.h),
+                    Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 64.sp,
+                      color: Color(0xFF848484),
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Your cart is empty',
+                      style: TextStyle(
+                        color: Color(0xFF848484),
+                        fontSize: 18.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Add some products to continue',
+                      style: TextStyle(
+                        color: Color(0xFF848484),
+                        fontSize: 14.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+                    ElevatedButton(
+                      onPressed: () => context.push(AppRouter.store),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF28A228),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      child: Text(
+                        'Go to Store',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            
+            SizedBox(height: 24.h),
+            
+            // Info Section
+            _buildInfoSection(),
+            
+            SizedBox(height: 24.h),
+            
+            // Address Section
+            _buildAddressSection(),
+            
+            SizedBox(height: 24.h),
+            
+            // Coupon Section
+           // _buildCouponSection(),
+            
+            // SizedBox(height: 24.h),
+
+            _buildPaymentMethods(),
+
+            SizedBox(height: 24.h),
+            
+            // Payment Summary
+            _buildPaymentSummary(cartItems),
+            
+            SizedBox(height: 24.h),
+            
+            // Confirm Order Button
+            _buildConfirmOrderButton(),
+          ],
+        ),
+      );
+    }
   }
 
    Widget _buildCardDetailsForm() {
@@ -561,7 +702,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
-                  child: Image.asset(
+                  child: Image.network(
                     cartItem.product.imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
@@ -571,6 +712,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           Icons.image_not_supported,
                           color: Color(0xFF848484),
                           size: 24.sp,
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: Color(0xFFF0F0F0),
+                        child: ShimmerCard(
+                          height: 64.h,
+                          width: 54.w,
                         ),
                       );
                     },
@@ -584,7 +735,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Product name',
+                      cartItem.product.name, // Use actual product name
                       style: TextStyle(
                         color: Color(0xFF1E1E1E),
                         fontSize: 16.sp,
@@ -594,7 +745,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      '*${cartItem.quantity}',
+                      '*${cartItem.quantity}', // Show actual quantity
                       style: TextStyle(
                         color: Color(0xFF1E1E1E),
                         fontSize: 16.sp,
@@ -604,7 +755,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      '${cartItem.product.price.toStringAsFixed(0)}\$',
+                      '${cartItem.product.price} EGP', // Show actual price with EGP
                       style: TextStyle(
                         color: Color(0xFF28A228),
                         fontSize: 16.sp,
@@ -623,7 +774,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             right: -10,
             child: IconButton(
               onPressed: () {
-                // Handle remove product
+                // Handle remove product using CartCubit
+                context.read<CartCubit>().removeFromCart(cartItem.id);
               },
               icon: Container(
                 width: 20.w,
@@ -964,92 +1116,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildCouponSection() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15.r),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1E000000),
-            blurRadius: 4,
-            offset: Offset(0, 0),
-            spreadRadius: 0,
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Got a Coupon code ?',
-                style: TextStyle(
-                  color: Color(0xFF1E1E1E),
-                  fontSize: 14.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    showCouponInput = !showCouponInput;
-                  });
-                },
-                child: Text(
-                  'Apply Coupon',
-                  style: TextStyle(
-                    color: Color(0xFF28A228),
-                    fontSize: 14.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Color(0xFF28A228),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          
-          if (showCouponInput) ...[
-            SizedBox(height: 16.h),
-            Container(
-              width: double.infinity,
-              height: 45.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              decoration: BoxDecoration(
-                color: Color(0xFFEDEDED),
-                borderRadius: BorderRadius.circular(30.r),
-              ),
-                             child: TextField(
-                 controller: _couponController,
-                 textAlign: TextAlign.center,
-                 decoration: InputDecoration(
-                   hintText: 'Coupon',
-                   hintStyle: TextStyle(
-                     color: Color(0xFF848484),
-                     fontSize: 14.sp,
-                     fontFamily: 'Poppins',
-                     fontWeight: FontWeight.w400,
-                   ),
-                   border: InputBorder.none,
-                   contentPadding: EdgeInsets.zero,
-                   isDense: true,
-                 ),
-               ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 
-  Widget _buildPaymentSummary() {
+  Widget _buildPaymentSummary(List<CartItem> cartItems) {
+    // Don't show payment summary if cart is empty
+    if (cartItems.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
     // Calculate totals
     double orderTotal = cartItems.fold(0.0, (sum, cartItem) => sum + cartItem.totalPrice);
    // Fixed discount for demo
@@ -1083,7 +1156,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
             Text(
-              orderTotal.toStringAsFixed(2),
+              '${orderTotal.toStringAsFixed(2)} EGP',
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,
@@ -1171,7 +1244,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
             Text(
-              '${total.toStringAsFixed(0)} EGP',
+              '${total.toStringAsFixed(2)} EGP',
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 18.sp,
@@ -1186,68 +1259,162 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildConfirmOrderButton() {
-    return GestureDetector(
-      onTap: () async{
-          try {
-        // TODO: Implement password reset logic
-        await Future.delayed(const Duration(seconds: 1)); // Simulate API call
-        
-          if (mounted) {
-            // Show success dialog
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext context) {
-                return ResetPasswordDone(
-                  text: 'Your order has been confirmed successfully!',
-                  isFromCheckout: true,
+    return BlocBuilder<CartCubit, CartState>(
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () async {
+            if (state is! CartLoaded || state.cartItems.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('No items in cart to checkout'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  margin: EdgeInsets.only(
+                    bottom: 100.h,
+                    left: 16.w,
+                    right: 16.w,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                ),
+              );
+              return;
+            }
+
+            try {
+              // Send all cart items to the store-in-cart endpoint
+              final cartCubit = context.read<CartCubit>();
+              
+              // Add all items to cart using the new bulk method
+              await cartCubit.addMultipleToCart(state.cartItems);
+
+              if (mounted) {
+                // Navigate to cart screen to show the items
+                context.push(AppRouter.cart);
+                
+                // Show success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Order confirmed! Items added to cart.'),
+                    backgroundColor: const Color(0xFF28A228),
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                    margin: EdgeInsets.only(
+                      bottom: 100.h,
+                      left: 16.w,
+                      right: 16.w,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
                 );
-              },
-            );
-          }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${e.toString()}'),
-              backgroundColor: Colors.red,
+              }
+            } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${e.toString()}'),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    margin: EdgeInsets.only(
+                      bottom: 100.h,
+                      left: 16.w,
+                      right: 16.w,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                );
+              }
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(30.r),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x2628A228),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                  spreadRadius: 0,
+                )
+              ],
             ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-          });
-        }
-      }
-      },
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(30.r),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x2628A228),
-              blurRadius: 4,
-              offset: Offset(0, 2),
-              spreadRadius: 0,
-            )
-          ],
-        ),
-        child: Text(
-          'Confirm Order',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.sp,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w500,
-            height: 1.50,
-            letterSpacing: 0.50,
+            child: Text(
+              'Confirm Order',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+                height: 1.50,
+                letterSpacing: 0.50,
+              ),
+            ),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCheckoutShimmerLoading() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        children: [
+          // Shimmer for product card
+          ShimmerCard(
+            height: 100.h,
+            padding: EdgeInsets.all(16.w),
+          ),
+          
+          SizedBox(height: 24.h),
+          
+          // Shimmer for Info section
+          ShimmerCard(
+            height: 200.h,
+            padding: EdgeInsets.all(16.w),
+          ),
+          
+          SizedBox(height: 24.h),
+          
+          // Shimmer for Address section
+          ShimmerCard(
+            height: 150.h,
+            padding: EdgeInsets.all(16.w),
+          ),
+          
+          SizedBox(height: 24.h),
+          
+          // Shimmer for Payment methods
+          ShimmerCard(
+            height: 120.h,
+            padding: EdgeInsets.all(16.w),
+          ),
+          
+          SizedBox(height: 24.h),
+          
+          // Shimmer for Payment summary
+          ShimmerCard(
+            height: 200.h,
+            padding: EdgeInsets.all(16.w),
+          ),
+          
+          SizedBox(height: 24.h),
+          
+          // Shimmer for Confirm button
+          ShimmerCard(
+            height: 50.h,
+            padding: EdgeInsets.all(16.w),
+          ),
+        ],
       ),
     );
   }

@@ -251,3 +251,123 @@ class ShimmerProfileItem extends StatelessWidget {
     );
   }
 }
+
+// Shimmer loader for product detail screen
+class ShimmerProductDetail extends StatelessWidget {
+  const ShimmerProductDetail({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6FFF6),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product image shimmer
+            ShimmerLoading(
+              child: Container(
+                width: double.infinity,
+                height: 300.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            
+            // Product name shimmer
+            ShimmerText(width: 200.w, height: 24.h),
+            SizedBox(height: 8.h),
+            
+            // Product price shimmer
+            ShimmerText(width: 100.w, height: 20.h),
+            SizedBox(height: 16.h),
+            
+            // Product description shimmer
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShimmerText(width: double.infinity, height: 16.h),
+                SizedBox(height: 8.h),
+                ShimmerText(width: double.infinity, height: 16.h),
+                SizedBox(height: 8.h),
+                ShimmerText(width: 150.w, height: 16.h),
+              ],
+            ),
+            SizedBox(height: 24.h),
+            
+            // Add to cart button shimmer
+            ShimmerLoading(
+              child: Container(
+                width: double.infinity,
+                height: 56.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            
+            // Additional info shimmer
+            ShimmerCard(
+              height: 80.h,
+              padding: EdgeInsets.all(16.w),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Simple loading shimmer for general use
+class ShimmerLoadingScreen extends StatelessWidget {
+  final String? message;
+  
+  const ShimmerLoadingScreen({
+    super.key,
+    this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6FFF6),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Loading animation
+            ShimmerLoading(
+              child: Container(
+                width: 80.w,
+                height: 80.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            if (message != null) ...[
+              SizedBox(height: 24.h),
+              Text(
+                message!,
+                style: TextStyle(
+                  color: const Color(0xFF848484),
+                  fontSize: 16.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

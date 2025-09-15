@@ -131,7 +131,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 24.h),
       child: SizedBox(
         width: 343.w,
         child: Row(

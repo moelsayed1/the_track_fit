@@ -101,6 +101,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     final responsiveHelper = ResponsiveHelper(context);
 
     return Scaffold(
+      
       backgroundColor: const Color(0xFFF6FFF6),
       body: BlocBuilder<ExerciseCubit, ExerciseState>(
         builder: (context, state) {
@@ -159,7 +160,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             // App Bar
             SizedBox(
               width: double.infinity,
-              height: responsiveHelper.h(6),
+              height: responsiveHelper.h(24),
               child: Stack(
                 children: [
                   Positioned(
@@ -998,6 +999,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
+          SizedBox(height: 24.h),
           // Header shimmer
           ShimmerCard(
             height: 80.h,

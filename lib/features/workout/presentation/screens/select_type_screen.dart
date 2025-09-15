@@ -298,7 +298,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
   Widget _buildCategoryIcon(WorkoutType type, ResponsiveHelper responsiveHelper) {
     if (type.iconPath.startsWith('http')) {
       // Network image with shimmer loading
-      return Container(
+      return SizedBox(
         width: responsiveHelper.w(32),
         height: responsiveHelper.h(32),
         child: Image.network(

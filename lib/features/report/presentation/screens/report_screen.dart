@@ -35,7 +35,7 @@ class _ReportScreenState extends State<ReportScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: responsiveHelper.h(12)),
+            SizedBox(height: responsiveHelper.h(0)),
             Center(
               child: Text(
                 'Report',

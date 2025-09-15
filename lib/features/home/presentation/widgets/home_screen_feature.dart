@@ -13,6 +13,11 @@ import 'package:the_track_fit/features/workout/presentation/screens/workout_scre
 import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/features/store/domain/models/product.dart';
+import 'package:the_track_fit/features/store/domain/repositories/product_repository.dart';
+import 'package:the_track_fit/features/store/data/repositories/product_repository_impl.dart';
+import 'package:the_track_fit/features/store/data/datasources/product_remote_datasource.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 
 class HomeScreenFeature extends StatefulWidget {
   const HomeScreenFeature({super.key});
@@ -23,29 +28,72 @@ class HomeScreenFeature extends StatefulWidget {
 
 class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   int _currentIndex = 0; // 0: Home, 1: Workout, 2: Scan, 3: Report, 4: Plan
-  int _selectedDateIndex =
-      3; // 0: Fri, 1: Sat, 2: Sun, 3: Mon, 4: Tue, 5: Wed, 6: Thu
+  int _selectedDateIndex = 0; // Will be set to today's day in initState
   int _selectedExerciseIndex = 0; // Track which exercise is selected
-  final List<bool> _favoriteStates = List.filled(
-    4,
-    false,
-  ); // Track favorite states for 4 products
   bool _showWarningDialog = false; // Control warning dialog visibility
   List<bool> _completedExercises = []; // Track completed exercises
   
   // API integration
   late final ExerciseRepository _exerciseRepository;
+  late final ProductRepository _productRepository;
   List<Exercise> _dayExercises = [];
+  List<Product> _newProducts = [];
   bool _isLoadingExercises = false;
+  bool _isLoadingProducts = false;
   String? _exerciseError;
+  String? _productError;
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
     _exerciseRepository = ExerciseRepository(apiService: ApiService());
+    _productRepository = ProductRepositoryImpl(
+      remoteDataSource: ProductRemoteDataSourceImpl(apiService: ApiService()),
+    );
     // Initialize the API service
     ApiService().init();
+    
+    // Set selected date to today's day
+    _setTodayAsSelected();
+    
     _loadExercisesForDay();
+    _loadNewProducts();
+  }
+
+  // Set today as the selected day
+  void _setTodayAsSelected() {
+    final now = DateTime.now();
+    final today = now.weekday; // 1=Monday, 2=Tuesday, ..., 7=Sunday
+    
+    // Map weekday to our day index (0: Fri, 1: Sat, 2: Sun, 3: Mon, 4: Tue, 5: Wed, 6: Thu)
+    // Our array: [Fri, Sat, Sun, Mon, Tue, Wed, Thu]
+    // DateTime:  [5,   6,   7,   1,   2,   3,   4]
+    switch (today) {
+      case DateTime.friday:    // 5
+        _selectedDateIndex = 0;
+        break;
+      case DateTime.saturday:  // 6
+        _selectedDateIndex = 1;
+        break;
+      case DateTime.sunday:    // 7
+        _selectedDateIndex = 2;
+        break;
+      case DateTime.monday:    // 1
+        _selectedDateIndex = 3;
+        break;
+      case DateTime.tuesday:   // 2
+        _selectedDateIndex = 4;
+        break;
+      case DateTime.wednesday: // 3
+        _selectedDateIndex = 5;
+        break;
+      case DateTime.thursday:  // 4
+        _selectedDateIndex = 6;
+        break;
+      default:
+        _selectedDateIndex = 3; // Default to Monday if something goes wrong
+    }
   }
 
   // Map day index to day_id (1-7 for Fri-Thu)
@@ -53,8 +101,38 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     return dayIndex + 1; // 0->1, 1->2, 2->3, 3->4, 4->5, 5->6, 6->7
   }
 
+  // Load new products
+  Future<void> _loadNewProducts() async {
+    if (_isDisposed) return;
+    
+    setState(() {
+      _isLoadingProducts = true;
+      _productError = null;
+    });
+
+    try {
+      final response = await _productRepository.getNewProducts(perPage: 8);
+      if (!_isDisposed) {
+        setState(() {
+          _newProducts = response.products;
+          _isLoadingProducts = false;
+        });
+      }
+    } catch (e) {
+      if (!_isDisposed) {
+        setState(() {
+          _productError = e.toString();
+          _isLoadingProducts = false;
+        });
+      }
+      log('Error loading new products: $e');
+    }
+  }
+
   // Load exercises for the selected day
   Future<void> _loadExercisesForDay() async {
+    if (_isDisposed) return;
+    
     log('Loading exercises for day index: $_selectedDateIndex');
     setState(() {
       _isLoadingExercises = true;
@@ -72,18 +150,22 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         log('Exercise: ${exercise.title}, Image: ${exercise.imagePath}');
       }
       
-      setState(() {
-        _dayExercises = exercises;
-        _isLoadingExercises = false;
-        // Reset completed exercises list based on new data
-        _completedExercises = List.filled(exercises.length, false);
-      });
+      if (!_isDisposed) {
+        setState(() {
+          _dayExercises = exercises;
+          _isLoadingExercises = false;
+          // Reset completed exercises list based on new data
+          _completedExercises = List.filled(exercises.length, false);
+        });
+      }
     } catch (e) {
       log('Error loading exercises: $e');
-      setState(() {
-        _exerciseError = e.toString();
-        _isLoadingExercises = false;
-      });
+      if (!_isDisposed) {
+        setState(() {
+          _exerciseError = e.toString();
+          _isLoadingExercises = false;
+        });
+      }
     }
   }
 
@@ -132,10 +214,29 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     context.push(AppRouter.exerciseDetail, extra: exercise);
   }
 
-  void _onFavoriteToggled(int index) {
-    setState(() {
-      _favoriteStates[index] = !_favoriteStates[index];
-    });
+  Future<void> _onFavoriteToggled(int productId) async {
+    if (_isDisposed) return;
+    
+    try {
+      await _productRepository.toggleProductFavorite(productId);
+      if (!_isDisposed) {
+        setState(() {
+          // Update the local state
+          final productIndex = _newProducts.indexWhere((p) => p.id == productId);
+          if (productIndex != -1) {
+            _newProducts[productIndex].toggleFavorite();
+          }
+        });
+      }
+    } catch (e) {
+      log('Error toggling favorite: $e');
+      // Show error message to user
+      if (!_isDisposed && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update favorite: $e')),
+        );
+      }
+    }
   }
 
   void _onLockTapped() {
@@ -153,6 +254,80 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     });
   }
 
+  // Helper methods for product loading states
+  Widget _buildProductShimmer() {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: EdgeInsets.only(right: 8.w),
+          child: Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              width: 120.w,
+              height: 160.h,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProductError() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 32.w,
+            color: Colors.red,
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            'Failed to load products',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 12.sp,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 4.h),
+          TextButton(
+            onPressed: _loadNewProducts,
+            child: Text(
+              'Retry',
+              style: TextStyle(
+                color: const Color(0xFF28A228),
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoProducts() {
+    return Center(
+      child: Text(
+        'No products available',
+        style: TextStyle(
+          color: Colors.grey,
+          fontSize: 12.sp,
+          fontFamily: 'Poppins',
+        ),
+      ),
+    );
+  }
+
   void _onExerciseCompleted(int index) {
     setState(() {
       _completedExercises[index] = !_completedExercises[index];
@@ -164,15 +339,18 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   }
 
   @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-    final hasSystemNavBar = bottomInset > 0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        bottom: false,
+        bottom: true,
         child: Column(
           children: [
             // Warning Dialog
@@ -239,8 +417,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 currentIndex: _currentIndex,
                 onTabTapped: _onTabTapped,
                 getTabColor: _getTabColor,
-                hasSystemNavBar: hasSystemNavBar,
-                bottomInset: bottomInset,
               ),
             ],
           ],
@@ -460,23 +636,30 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           padding: EdgeInsets.only(left: 16.w),
           child: SizedBox(
             height: 140.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 4,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(right: 8.w),
-                  child: ProductCard(
-                    onTap: () => context.push(AppRouter.productDetail),
-                    productName: 'Product name',
-                    price: '20\$',
-                    exerciseIcon: 'assets/images/product_image.png',
-                    isFavorite: _favoriteStates[index],
-                    onFavoriteTapped: () => _onFavoriteToggled(index),
-                  ),
-                );
-              },
-            ),
+            child: _isLoadingProducts
+                ? _buildProductShimmer()
+                : _productError != null
+                    ? _buildProductError()
+                    : _newProducts.isEmpty
+                        ? _buildNoProducts()
+                        : ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _newProducts.length,
+                            itemBuilder: (context, index) {
+                              final product = _newProducts[index];
+                              return Padding(
+                                padding: EdgeInsets.only(right: 8.w),
+                                child: ProductCard(
+                                  onTap: () => context.push(AppRouter.productDetail, extra: {'product': product}),
+                                  productName: product.name,
+                                  price: '${product.price}\$',
+                                  exerciseIcon: product.imageUrl,
+                                  isFavorite: product.isFavorite,
+                                  onFavoriteTapped: () => _onFavoriteToggled(product.id),
+                                ),
+                              );
+                            },
+                          ),
           ),
         ),
 
@@ -735,33 +918,22 @@ class _BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final void Function(int) onTabTapped;
   final Color Function(int) getTabColor;
-  final bool hasSystemNavBar;
-  final double bottomInset;
+  
 
   const _BottomNavBar({
     required this.currentIndex,
     required this.onTabTapped,
     required this.getTabColor,
-    required this.hasSystemNavBar,
-    required this.bottomInset,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height:
-          85.h +
-          (hasSystemNavBar
-              ? bottomInset
-              : 0), // إضافة المساحة إذا كان هناك system nav bar
-      padding: EdgeInsets.only(
-        top: 12.h,
-        left: 12.w,
-        right: 12.w,
-        bottom: hasSystemNavBar
-            ? bottomInset
-            : 0, // إضافة padding من الأسفل إذا كان هناك system nav bar
+      height: 85.h,
+      padding: EdgeInsets.symmetric(
+        horizontal: 12.w,
+        vertical: 12.h,
       ),
       decoration: const ShapeDecoration(
         color: Colors.white,
@@ -972,27 +1144,61 @@ class ProductCard extends StatelessWidget {
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Heart icon
-            GestureDetector(
-              onTap: onFavoriteTapped,
-              child: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: const Color(0xFF28A228),
-                size: 20.w,
-              ),
+            // Heart icon positioned at top left
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: onFavoriteTapped,
+                  child: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: const Color(0xFF28A228),
+                    size: 20.w,
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: 8.h), // Add spacing between heart and image
             // Product image
             Expanded(
               child: Center(
-                child: Image.asset(
-                  exerciseIcon,
-                  width: 70.w,
-                  height: 70.h,
-                  fit: BoxFit.contain,
-                ),
+                child: exerciseIcon.startsWith('http')
+                    ? Image.network(
+                        exerciseIcon,
+                        width: 70.w,
+                        height: 70.h,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/product_image.png',
+                            width: 70.w,
+                            height: 70.h,
+                            fit: BoxFit.contain,
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return ShimmerLoading(
+                            child: Container(
+                              width: 70.w,
+                              height: 70.h,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        exerciseIcon,
+                        width: 70.w,
+                        height: 70.h,
+                        fit: BoxFit.contain,
+                      ),
               ),
             ),
             // Product details (اسم + سعر)

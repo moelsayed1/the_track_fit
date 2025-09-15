@@ -54,4 +54,13 @@ class AppConstants {
   static const String getExercisesByLocationEndpoint = '/api/get-exercises-filter';
   static const String getExercisesByEquipmentEndpoint = '/api/get-exercises-filter';
   static const String getExercisesByDayEndpoint = '/api/get-exercises-by-day';
+  static const String newProductsEndpoint = '/api/new-products';
+  static const String storeInCartEndpoint = '/api/store-in-cart';
+  static const String getCartItemsEndpoint = '/api/get-cart';
+  static const String removeFromCartEndpoint = '/api/remove-from-cart';
+  
+  // API Helper Methods
+  static String getNewProductsUrl({int perPage = 10, int page = 1}) {
+    return '$newProductsEndpoint?per_page=$perPage&page=$page';
+  }
 } 

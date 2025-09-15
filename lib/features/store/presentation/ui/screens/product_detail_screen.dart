@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
+import 'package:the_track_fit/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -19,6 +22,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int quantity = 1;
+  bool _isAddingToCart = false;
 
   void _decreaseQuantity() {
     if (quantity > 1) {
@@ -34,9 +38,71 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     });
   }
 
-  void _addToCart() {
-  
-    context.push(AppRouter.cart);
+  Future<void> _addToCart() async {
+    if (_isAddingToCart) return; // Prevent multiple calls
+    
+    setState(() {
+      _isAddingToCart = true;
+    });
+
+    try {
+      final cartCubit = context.read<CartCubit>();
+      await cartCubit.addToCart(
+        productId: widget.product.id,
+        quantity: quantity,
+        product: widget.product, // Pass product object for local storage
+        clearExisting: true, // Clear existing cart items before adding new one
+      );
+
+      if (mounted) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Product added to cart successfully'),
+            backgroundColor: const Color(0xFF28A228),
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: 100.h, // Position above the fixed button
+              left: 16.w,
+              right: 16.w,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        );
+
+        // Navigate to cart screen
+        context.push(AppRouter.cart);
+      }
+    } catch (e) {
+      if (mounted) {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add product to cart: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: 100.h, // Position above the fixed button
+              left: 16.w,
+              right: 16.w,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAddingToCart = false;
+        });
+      }
+    }
   }
 
   @override
@@ -46,10 +112,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            SizedBox(height: 0.h),
             // Header with back button and title
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: const BoxDecoration(
                 color: Color(0x26848484),
               ),
@@ -96,7 +163,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             // Product content
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 100.h), // Added bottom padding for fixed button
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -122,13 +189,49 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     Center(
                       child: Container(
                         width: 150.w,
-                        height: 177.h,
+                        height: 180.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
-                          image: DecorationImage(
-                            image: AssetImage(widget.product.imageUrl),
-                            fit: BoxFit.cover,
-                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: widget.product.imageUrl.startsWith('http')
+                              ? Image.network(
+                                  widget.product.imageUrl,
+                                  width: 150.w,
+                                  height: 180.h,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/images/product_image.png',
+                                      width: 150.w,
+                                      height: 177.h,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    // Handle loading state correctly with a centered shimmer
+                                    return Center(
+                                      child: ShimmerLoading(
+                                        child: Container(
+                                          width: 150.w,
+                                          height: 177.h,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(12.r),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  widget.product.imageUrl,
+                                  width: 150.w,
+                                  height: 180.h,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
                     ),
@@ -150,7 +253,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                         SizedBox(height: 8.h),
                         Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                          widget.product.enDescription,
                           style: TextStyle(
                             color: const Color(0xFF848484),
                             fontSize: 12.sp,
@@ -171,7 +274,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               ),
                             ),
                             Text(
-                              '\$${widget.product.price.toStringAsFixed(2)}',
+                              '\$${widget.product.price}',
                               style: TextStyle(
                                 color: const Color(0xFF28A228),
                                 fontSize: 20.sp,
@@ -251,55 +354,69 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 24.h),
-
-                    // Add to cart button
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
-                      decoration: ShapeDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment(0.00, 0.50),
-                          end: Alignment(1.00, 0.50),
-                          colors: [Color(0xFF28A228), Color(0xD85CD65C)],
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                        shadows: const [
-                          BoxShadow(
-                            color: Color(0x2628A228),
-                            blurRadius: 4,
-                            offset: Offset(4, 0),
-                            spreadRadius: 0,
-                          )
-                        ],
-                      ),
-                      child: GestureDetector(
-                        onTap: _addToCart,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Add To Cart',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                height: 1.50,
-                                letterSpacing: 0.50,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 20.h),
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      // Fixed Add To Cart Button at bottom
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 28.h),
+        child: _buildAddToCartButton(),
+      ),
+    );
+  }
+
+  Widget _buildAddToCartButton() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+      decoration: ShapeDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment(0.00, 0.50),
+          end: Alignment(1.00, 0.50),
+          colors: [Color(0xFF28A228), Color(0xD85CD65C)],
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.r),
+        ),
+        shadows: const [
+          BoxShadow(
+            color: Color(0x2628A228),
+            blurRadius: 4,
+            offset: Offset(4, 0),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: GestureDetector(
+        onTap: _isAddingToCart ? null : _addToCart,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (_isAddingToCart) ...[
+              SizedBox(
+                width: 20.w,
+                height: 20.h,
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              ),
+              SizedBox(width: 8.w),
+            ],
+            Text(
+              _isAddingToCart ? 'Adding...' : 'Add To Cart',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+                height: 1.50,
+                letterSpacing: 0.50,
               ),
             ),
           ],

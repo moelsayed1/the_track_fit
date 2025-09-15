@@ -23,7 +23,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
         children: [
           // Close button at the top
           Padding(
-            padding: EdgeInsets.only(top: 10.h, right: 15.w),
+            padding: EdgeInsets.only(top: 24.h, right: 15.w),
             child: Align(
               alignment: Alignment.topRight,
               child: GestureDetector(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 import '../../domain/models/product.dart';
 
 class ProductCard extends StatelessWidget {
@@ -45,10 +46,43 @@ class ProductCard extends StatelessWidget {
                   height: 64.h,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: AssetImage(product.imageUrl),
-                      fit: BoxFit.cover,
-                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: product.imageUrl.startsWith('http')
+                        ? Image.network(
+                            product.imageUrl,
+                            width: 54.w,
+                            height: 64.h,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/product_image.png',
+                                width: 54.w,
+                                height: 64.h,
+                                fit: BoxFit.cover,
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return ShimmerLoading(
+                                child: Container(
+                                  width: 54.w,
+                                  height: 64.h,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            product.imageUrl,
+                            width: 54.w,
+                            height: 64.h,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 
@@ -83,7 +117,7 @@ class ProductCard extends StatelessWidget {
                        SizedBox(
                          width: 115.w,
                          child: Text(
-                           '\$${product.price.toStringAsFixed(2)}',
+                           '\$${product.price}',
                            style: TextStyle(
                              color: Color(0xFF28A228),
                              fontSize: 16.sp,

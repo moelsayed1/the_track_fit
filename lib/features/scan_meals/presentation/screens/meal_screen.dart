@@ -72,7 +72,7 @@ class _MealScreenState extends State<MealScreen> {
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
       child: Text(
         'Meals',
         style: AppTextStyles.heading1.copyWith(

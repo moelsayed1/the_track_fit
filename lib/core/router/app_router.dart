@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 import 'package:the_track_fit/features/cart/presentation/screens/cart_screen.dart';
 import 'package:the_track_fit/features/home/presentation/widgets/home_screen_feature.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding2_screen.dart';
@@ -47,7 +49,6 @@ import '../../features/questions/additional_goals/ui/additional_goals_screen.dar
 import '../../features/plans/presentation/screens/promotional_offer_screen.dart';
 import '../../features/store/presentation/ui/screens/store_screen.dart';
 import '../../features/store/presentation/ui/screens/product_detail_screen.dart';
-import '../../features/store/domain/models/product.dart';
 import '../../features/workout/presentation/screens/workout_screen.dart';
 import '../../features/cart/presentation/screens/checkout_screen.dart';
 import '../../features/plan/presentation/widgets/checkout_plan_screen.dart';
@@ -411,15 +412,13 @@ class AppRouter {
         builder: (context, state) {
           // Check if we have valid product data
           if (state.extra == null) {
-            // Return ProductDetailScreen with default product if no data
-            final defaultProduct = Product(
-              id: 'default',
-              name: 'Product name',
-              price: 20.0,
-              imageUrl: 'assets/images/product_image.png',
-              isFavorite: false,
+            // Redirect to store if no product data
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.replace(AppRouter.store);
+            });
+            return const ShimmerLoadingScreen(
+              message: 'Loading product...',
             );
-            return ProductDetailScreen(product: defaultProduct);
           }
           
           try {
@@ -427,28 +426,29 @@ class AppRouter {
             final product = productData['product'];
             
             if (product == null) {
-              // Return to store if product is null
-              final defaultProduct = Product(
-                id: 'default',
-                name: 'Product name',
-                price: 20.0,
-                imageUrl: 'assets/images/product_image.png',
-                isFavorite: false,
+              // Redirect to store if product is null
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                context.replace(AppRouter.store);
+              });
+              return const Scaffold(
+                body: Center(
+                  child: ShimmerCard(
+                    height: 50,
+                    width: 50,
+                  ),
+                ),
               );
-              return ProductDetailScreen(product: defaultProduct);
             }
             
             return ProductDetailScreen(product: product);
           } catch (e) {
-            // Return to store on any error
-            final defaultProduct = Product(
-              id: 'default',
-              name: 'Product name',
-              price: 20.0,
-              imageUrl: 'assets/images/product_image.png',
-              isFavorite: false,
+            // Redirect to store on any error
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.replace(AppRouter.store);
+            });
+            return const ShimmerLoadingScreen(
+              message: 'Loading product...',
             );
-            return ProductDetailScreen(product: defaultProduct);
           }
         },
       ),

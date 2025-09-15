@@ -1,8 +1,10 @@
 import '../models/product.dart';
+import '../models/product_response.dart';
 
 abstract class ProductRepository {
-  List<Product> getAllProducts();
-  List<Product> searchProducts(String query);
-  List<Product> getFavoriteProducts();
-  void toggleProductFavorite(String productId);
+  Future<ProductResponse> getNewProducts({int perPage = 10, int page = 1});
+  Future<List<Product>> getAllProducts();
+  Future<List<Product>> searchProducts(String query);
+  Future<List<Product>> getFavoriteProducts();
+  Future<void> toggleProductFavorite(int productId);
 }
