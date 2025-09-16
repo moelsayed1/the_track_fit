@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/features/auth/data/cubit/auth_cubit.dart';
+import 'package:the_track_fit/features/auth/data/cubit/auth_states.dart';
 import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
@@ -242,14 +245,26 @@ class _GreetingSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                Text(
-                  'Hi Disha!',
-                  style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
-                    fontSize: 16.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    String userName = 'User'; // Default fallback
+                    
+                    if (state is AuthUserProfileLoaded) {
+                      userName = state.name;
+                    } else if (state is AuthUserAlreadyLoggedIn) {
+                      userName = state.name;
+                    }
+                    
+                    return Text(
+                      'Hi $userName!',
+                      style: TextStyle(
+                        color: const Color(0xFF1E1E1E),
+                        fontSize: 16.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(width: 8.w),
                 SizedBox(
