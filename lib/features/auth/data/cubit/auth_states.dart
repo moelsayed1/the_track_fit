@@ -272,3 +272,37 @@ class AuthUserProfileLoaded extends AuthState {
   @override
   int get hashCode => Object.hash(name, email, imagePath, phone, gender);
 }
+
+/// User already logged in state (from storage)
+class AuthUserAlreadyLoggedIn extends AuthState {
+  final String token;
+  final String name;
+  final String email;
+  final String? imagePath;
+  final String? phone;
+  final String? gender;
+  
+  const AuthUserAlreadyLoggedIn({
+    required this.token,
+    required this.name,
+    required this.email,
+    this.imagePath,
+    this.phone,
+    this.gender,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthUserAlreadyLoggedIn &&
+        other.token == token &&
+        other.name == name &&
+        other.email == email &&
+        other.imagePath == imagePath &&
+        other.phone == phone &&
+        other.gender == gender;
+  }
+
+  @override
+  int get hashCode => Object.hash(token, name, email, imagePath, phone, gender);
+}

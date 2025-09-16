@@ -1,11 +1,14 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/features/auth/data/cubit/auth_cubit.dart';
+import 'package:the_track_fit/features/auth/data/cubit/auth_states.dart';
 import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dart';
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
@@ -13,6 +16,7 @@ import 'package:the_track_fit/features/workout/presentation/screens/workout_scre
 import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/widgets/app_scaffold.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
 import 'package:the_track_fit/features/store/domain/repositories/product_repository.dart';
 import 'package:the_track_fit/features/store/data/repositories/product_repository_impl.dart';
@@ -347,11 +351,10 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return AppScaffoldWithCustomSafeArea(
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        bottom: true,
-        child: Column(
+      bottom: true,
+      body: Column(
           children: [
             // Warning Dialog
             if (_showWarningDialog)
@@ -401,7 +404,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: const Color(0xFF1E1E1E),
-                        fontSize: 13.sp,
+                        fontSize: 12.sp,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
                       ),
@@ -421,7 +424,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             ],
           ],
         ),
-      ),
+      
     );
   }
 
@@ -492,14 +495,26 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           padding: EdgeInsets.only(top: 20.h, bottom: 16.h, left: 16.w),
           child: Row(
             children: [
-              Text(
-                'Hi Disha! 👋',
-                style: TextStyle(
-                  color: const Color(0xFF1E1E1E),
-                  fontSize: 16.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
-                ),
+              BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  String userName = 'User'; // Default fallback
+                  
+                  if (state is AuthUserProfileLoaded) {
+                    userName = state.name;
+                  } else if (state is AuthUserAlreadyLoggedIn) {
+                    userName = state.name;
+                  }
+                  
+                  return Text(
+                    'Hi $userName! 👋',
+                    style: TextStyle(
+                      color: const Color(0xFF1E1E1E),
+                      fontSize: 16.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -1400,7 +1415,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 8.h),
       child: SizedBox(
         width: 343.w,
         child: Row(

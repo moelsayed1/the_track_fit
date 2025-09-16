@@ -13,6 +13,7 @@ import '../../../data/datasources/product_remote_datasource.dart';
 import '../../../domain/models/product.dart';
 import '../../../domain/repositories/product_repository.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/widgets/app_scaffold.dart';
 
 class StoreScreen extends StatefulWidget {
   const StoreScreen({super.key});
@@ -220,10 +221,9 @@ class _StoreScreenState extends State<StoreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppScaffold(
       backgroundColor: const Color(0xFFF6FFF6),
-      body: SafeArea(
-        child: Column(
+      body: Column(
           children: [ // Custom AppBar matching Figma design
              Container(
                width: double.infinity,
@@ -373,8 +373,8 @@ class _StoreScreenState extends State<StoreScreen> {
               Container(
                 width: 343.w,
                 height: 43.h,
-                margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: ShapeDecoration(
                   color: const Color(0x26848484),
                   shape: RoundedRectangleBorder(
@@ -386,7 +386,7 @@ class _StoreScreenState extends State<StoreScreen> {
                  mainAxisAlignment: MainAxisAlignment.start,
                  crossAxisAlignment: CrossAxisAlignment.center,
                  children: [
-                                       Container(
+                   Container(
                       width: 24.w,
                       height: 24.h,
                       clipBehavior: Clip.antiAlias,
@@ -506,9 +506,9 @@ class _StoreScreenState extends State<StoreScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
+    }
+  
 
   @override
   void dispose() {
@@ -517,4 +517,5 @@ class _StoreScreenState extends State<StoreScreen> {
     _searchController.dispose();
     super.dispose();
   }
+
 }

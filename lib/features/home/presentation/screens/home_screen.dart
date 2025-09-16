@@ -7,6 +7,8 @@ import 'package:the_track_fit/features/plan/presentation/screens/plan_screen.dar
 import 'package:the_track_fit/features/report/presentation/screens/report_screen.dart';
 import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_screen.dart';
 import 'package:the_track_fit/features/workout/presentation/index.dart';
+import 'package:the_track_fit/core/services/storage_service.dart';
+import 'package:the_track_fit/core/widgets/app_scaffold.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,32 +36,31 @@ class _HomeScreenState extends State<HomeScreen> {
     return (index >= 0 && index < titles.length) ? titles[index] : 'Plan';
   }
 
+
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final hasSystemNavBar = bottomInset > 0;
     
-    return Scaffold(
+    return AppScaffoldWithCustomSafeArea(
       backgroundColor: const Color(0xFFF6FFF6),
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            // Main content
-            Expanded(child: _buildContentForTab(_currentIndex)),
-            // Hide bottom navigation bar when showing Plan tab
-            if (_currentIndex != 4) ...[
-              _BottomNavBar(
-                currentIndex: _currentIndex,
-                onTabTapped: _onTabTapped,
-                getTabColor: _getTabColor,
-                hasSystemNavBar: hasSystemNavBar,
-                bottomInset: bottomInset,
-              ),
-            ],
+      bottom: false,
+      body: Column(
+        children: [
+          // Main content
+          Expanded(child: _buildContentForTab(_currentIndex)),
+          // Hide bottom navigation bar when showing Plan tab
+          if (_currentIndex != 4) ...[
+            _BottomNavBar(
+              currentIndex: _currentIndex,
+              onTabTapped: _onTabTapped,
+              getTabColor: _getTabColor,
+              hasSystemNavBar: hasSystemNavBar,
+              bottomInset: bottomInset,
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -131,7 +132,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 24.h),
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 12.h),
       child: SizedBox(
         width: 343.w,
         child: Row(
@@ -362,7 +363,19 @@ class _MainCTASection extends StatelessWidget {
                     width: 238.w,
                     height: 50.h,
                     child: ElevatedButton(
-                      onPressed: () => context.push(AppRouter.homeFeature),
+                      onPressed: () async {
+                        try {
+                          // Mark user as no longer first-time
+                          final storageService = await StorageService.getInstance();
+                          await storageService.markUserAsReturning();
+                          
+                          // Navigate to home_feature
+                          context.go(AppRouter.homeFeature);
+                        } catch (e) {
+                          // If there's an error, still navigate to home_feature
+                          context.go(AppRouter.homeFeature);
+                        }
+                      },
                       style:
                           ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,

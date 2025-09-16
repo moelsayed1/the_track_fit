@@ -160,15 +160,14 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             // App Bar
             SizedBox(
               width: double.infinity,
-              height: responsiveHelper.h(24),
               child: Stack(
                 children: [
                   Positioned(
                     left: responsiveHelper.w(16),
-                    top: responsiveHelper.h(14),
+                    top: responsiveHelper.h(10),
                     child: Container(
                       width: responsiveHelper.w(54),
-                      height: responsiveHelper.h(21),
+                      height: responsiveHelper.h(10),
                       decoration: ShapeDecoration(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
@@ -193,7 +192,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               ),
             ),
       
-            SizedBox(height: responsiveHelper.h(4)),
+            SizedBox(height: responsiveHelper.h(8)),
       
             // Search Bar
             Padding(
@@ -999,7 +998,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: [
-          SizedBox(height: 24.h),
+          SizedBox(height: 12.h),
           // Header shimmer
           ShimmerCard(
             height: 80.h,

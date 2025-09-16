@@ -33,7 +33,9 @@ class CartService {
       );
 
       if (response.statusCode == 200) {
-        // API call successful - don't add to local storage to avoid duplicates
+        // API call successful - clear local storage to avoid conflicts
+        _localCart.clearCart();
+        log('CartService: Cleared local storage after successful API add');
         return response.data;
       } else {
         throw Exception('Failed to add product to cart: ${response.statusCode}');
@@ -56,36 +58,38 @@ class CartService {
     }
   }
 
-  // Get cart items - Uses local storage as fallback
+  // Get cart items - Always try API first, use local storage as fallback
   Future<List<Map<String, dynamic>>> getCartItems() async {
-    // Check if local storage has items first (prioritize local storage)
-    final localItems = _localCart.getCartItems();
-    if (localItems.isNotEmpty) {
-      log('Using local cart items (${localItems.length} items)');
-      return _getLocalCartItems();
-    }
-
     try {
-      // Try the cart items endpoint only if local storage is empty
+      // Always try the API first
       final response = await _apiService.get(AppConstants.getCartItemsEndpoint);
       
       if (response.statusCode == 200) {
-        // Handle the correct API response structure: data.items[]
+        // Handle the API response structure: data.items[]
         final data = response.data['data'];
+        log('CartService: API response data: $data');
         if (data != null && data['items'] != null) {
-          return List<Map<String, dynamic>>.from(data['items']);
+          final items = List<Map<String, dynamic>>.from(data['items']);
+          log('CartService: Parsed ${items.length} cart items from API');
+          // Clear local storage since we're using API data
+          _localCart.clearCart();
+          return items;
         }
+        log('CartService: No items found in API response');
         return [];
       } else {
         throw Exception('Failed to get cart items: ${response.statusCode}');
       }
     } catch (e) {
-      // If the endpoint doesn't exist (404), use local storage
-      if (e.toString().contains('404')) {
-        log('Cart items endpoint not available, using local storage');
+      // If API fails, use local storage as fallback
+      log('CartService: API failed, using local storage: $e');
+      final localItems = _localCart.getCartItems();
+      if (localItems.isNotEmpty) {
+        log('CartService: Using local cart items (${localItems.length} items)');
         return _getLocalCartItems();
       }
-      throw Exception('Failed to get cart items: $e');
+      log('CartService: No local items found either');
+      return [];
     }
   }
 

@@ -3,12 +3,16 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/features/auth/data/models/register_request.dart';
+import 'package:the_track_fit/features/auth/data/models/register_response.dart';
 import 'package:the_track_fit/features/auth/repositories/auth_repository.dart';
+import 'package:the_track_fit/core/services/storage_service.dart';
+import 'package:the_track_fit/core/services/api_service.dart';
 import 'auth_states.dart';
 
 // Cubit
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
+  final StorageService _storageService;
   String? _verifiedOtp; // Store the verified OTP
   
   // User profile data - will be populated from login/registration
@@ -35,7 +39,80 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  AuthCubit(this._authRepository) : super(const AuthInitial());
+  AuthCubit(this._authRepository, this._storageService) : super(const AuthInitial());
+
+  /// Check if user is already logged in from storage
+  Future<void> checkExistingLogin() async {
+    try {
+      log('AuthCubit: Checking for existing login...');
+      
+      if (_storageService.hasValidSession()) {
+        final authData = _storageService.getAuthData();
+        if (authData != null) {
+          log('AuthCubit: Found existing login data');
+          
+          // Set the bearer token in ApiService for authenticated requests
+          ApiService().setBearerToken(authData.token);
+          log('AuthCubit: Bearer token set in ApiService');
+          
+          // Update local profile data
+          _userName = authData.user.name;
+          _userEmail = authData.user.email;
+          _userPhone = authData.user.phone;
+          _userGender = authData.user.gender;
+          _userImagePath = authData.user.image;
+          
+          // Load saved profile image from SharedPreferences
+          final savedImagePath = _storageService.getProfileImage();
+          if (savedImagePath != null) {
+            _userImagePath = savedImagePath;
+            log('AuthCubit: Loaded saved profile image from SharedPreferences');
+          }
+          
+          // Emit already logged in state
+          emit(AuthUserAlreadyLoggedIn(
+            token: authData.token,
+            name: _userName,
+            email: _userEmail,
+            imagePath: _userImagePath,
+            phone: _userPhone,
+            gender: _userGender,
+          ));
+          
+          log('AuthCubit: User already logged in - ${_userName}');
+        } else {
+          log('AuthCubit: No valid auth data found');
+          emit(const AuthInitial());
+        }
+      } else {
+        log('AuthCubit: No valid session found');
+        emit(const AuthInitial());
+      }
+    } catch (e) {
+      log('AuthCubit: Error checking existing login: $e');
+      emit(const AuthInitial());
+    }
+  }
+
+  /// Save authentication data to storage
+  Future<void> _saveAuthData(AuthData authData) async {
+    try {
+      await _storageService.saveAuthData(authData);
+      log('AuthCubit: Auth data saved to storage');
+    } catch (e) {
+      log('AuthCubit: Error saving auth data: $e');
+    }
+  }
+
+  /// Clear all authentication data from storage
+  Future<void> _clearAuthData() async {
+    try {
+      await _storageService.clearAllAuthData();
+      log('AuthCubit: Auth data cleared from storage');
+    } catch (e) {
+      log('AuthCubit: Error clearing auth data: $e');
+    }
+  }
 
   /// Register a new user
   Future<void> register({
@@ -75,13 +152,21 @@ class AuthCubit extends Cubit<AuthState> {
       final response = await _authRepository.register(request);
       
       // Store user data from registration response
-      if (response.data?.user != null) {
-        final user = response.data!.user;
+      if (response.data != null) {
+        final authData = response.data!;
+        final user = authData.user;
+        
         _userName = user.name;
         _userEmail = user.email;
         _userPhone = user.phone;
         _userGender = user.gender;
         _userImagePath = user.image is String ? user.image : user.image?.toString();
+        
+        // Save auth data to storage
+        await _saveAuthData(authData);
+        
+        // Set user as first-time user for new registration
+        await _storageService.setFirstTimeUser(true);
         
         // Emit user profile data so listeners can get the updated data
         emit(AuthUserProfileLoaded(
@@ -120,13 +205,21 @@ class AuthCubit extends Cubit<AuthState> {
       final response = await _authRepository.login(email, password);
       
       // Store user data from login response
-      if (response.data?.user != null) {
-        final user = response.data!.user;
+      if (response.data != null) {
+        final authData = response.data!;
+        final user = authData.user;
+        
         _userName = user.name;
         _userEmail = user.email;
         _userPhone = user.phone;
         _userGender = user.gender;
         _userImagePath = user.image is String ? user.image : user.image?.toString();
+        
+        // Save auth data to storage
+        await _saveAuthData(authData);
+        
+        // Set user as returning user for login
+        await _storageService.setFirstTimeUser(false);
         
         // Emit user profile data so listeners can get the updated data
         emit(AuthUserProfileLoaded(
@@ -249,6 +342,25 @@ class AuthCubit extends Cubit<AuthState> {
     
     try {
       await _authRepository.logout();
+      
+      // Clear all auth data from storage
+      await _clearAuthData();
+      
+      // Clear profile image from SharedPreferences
+      await _storageService.clearProfileImage();
+      log('AuthCubit: Profile image cleared from SharedPreferences');
+      
+      // Clear bearer token from ApiService
+      ApiService().clearBearerToken();
+      log('AuthCubit: Bearer token cleared from ApiService');
+      
+      // Reset local profile data
+      _userName = '';
+      _userEmail = '';
+      _userPhone = null;
+      _userGender = null;
+      _userImagePath = null;
+      
       emit(const AuthLogoutSuccess('Logged out successfully'));
     } catch (e) {
       log('AuthCubit Logout Error: $e');
@@ -757,6 +869,9 @@ class AuthCubit extends Cubit<AuthState> {
         log('updateUserProfileData: _userImagePath length: ${_userImagePath?.length ?? 0}');
         log('updateUserProfileData: _userImagePath starts with data:image/: ${_userImagePath?.startsWith('data:image/') ?? false}');
         log('updateUserProfileData: _userImagePath is long string: ${(_userImagePath?.length ?? 0) > 100}');
+        
+        // Save profile image to SharedPreferences for persistence
+        _saveProfileImageToStorage(imagePath);
       } catch (e) {
         log('updateUserProfileData: Error assigning imagePath: $e');
         _userImagePath = null;
@@ -769,5 +884,15 @@ class AuthCubit extends Cubit<AuthState> {
     
     // Emit updated profile data
     loadUserProfile();
+  }
+
+  /// Save profile image to SharedPreferences
+  Future<void> _saveProfileImageToStorage(String imagePath) async {
+    try {
+      await _storageService.saveProfileImage(imagePath);
+      log('updateUserProfileData: Profile image saved to SharedPreferences');
+    } catch (e) {
+      log('updateUserProfileData: Error saving profile image to SharedPreferences: $e');
+    }
   }
 }

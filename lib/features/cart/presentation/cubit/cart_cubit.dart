@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/features/cart/data/services/cart_service.dart';
 import 'package:the_track_fit/features/cart/domain/models/cart_item.dart';
@@ -61,32 +63,46 @@ class CartCubit extends Cubit<CartState> {
     
     try {
       final cartData = await _cartService.getCartItems();
+      log('CartCubit: Loaded cart data: $cartData');
+      
+      // Check if cart is empty
+      if (cartData.isEmpty) {
+        log('CartCubit: Cart is empty');
+        emit(CartLoaded(cartItems: []));
+        return;
+      }
       
       // Convert API response to CartItem objects
       final items = cartData.map((item) {
+        log('CartCubit: Processing item: $item');
         // Create a Product object from the cart item data
         final product = Product(
-          id: item['product_id'] as int,
+          id: int.parse(item['product_id'].toString()),
           enName: item['product']?['en_name'] ?? 'Unknown Product',
           arName: item['product']?['ar_name'] ?? 'منتج غير معروف',
           enDescription: item['product']?['en_description'] ?? '',
           arDescription: item['product']?['ar_description'] ?? '',
           price: item['product']?['price'] ?? '0.00',
           image: item['product']?['image'] ?? '',
-          stock: item['product']?['stock'] ?? 0,
+          stock: int.parse((item['product']?['stock'] ?? 0).toString()),
           createdAt: item['created_at'] ?? '',
           updatedAt: item['updated_at'] ?? '',
         );
 
-        return CartItem(
-          id: item['id'] as int,
+        final cartItem = CartItem(
+          id: int.parse(item['id'].toString()),
           product: product,
-          quantity: item['quantity'] as int,
+          quantity: int.parse(item['quantity'].toString()),
         );
+        
+        log('CartCubit: Created cart item: ${cartItem.product.enName}, quantity: ${cartItem.quantity}');
+        return cartItem;
       }).toList();
 
+      log('CartCubit: Total items created: ${items.length}');
       emit(CartLoaded(cartItems: items));
     } catch (e) {
+      log('CartCubit: Error loading cart items: $e');
       emit(CartError(message: e.toString()));
     }
   }

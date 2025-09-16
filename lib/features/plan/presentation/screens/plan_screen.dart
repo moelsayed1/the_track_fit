@@ -23,7 +23,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
         children: [
           // Close button at the top
           Padding(
-            padding: EdgeInsets.only(top: 24.h, right: 15.w),
+            padding: EdgeInsets.only( right: 15.w),
             child: Align(
               alignment: Alignment.topRight,
               child: GestureDetector(
@@ -54,7 +54,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 12.h),
                   _buildHeader(),
                   SizedBox(height: 30.h),
                   _buildPlanCard(

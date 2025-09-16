@@ -161,7 +161,7 @@ class ApiService {
   }
 
   // POST request with multipart form data (for file uploads)
-  Future<Response> postMultipart(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> postMultipart(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters, dynamic cartData}) async {
     try {
       log('ApiService: postMultipart called with path: $path');
       log('ApiService: data: $data');
@@ -184,6 +184,20 @@ class ApiService {
             // Handle regular form fields
             log('ApiService: Processing text field: ${entry.key} = ${entry.value}');
             formData.fields.add(MapEntry(entry.key, entry.value.toString()));
+          }
+        }
+      }
+      
+      // Handle cart data separately to maintain array structure
+      if (cartData != null) {
+        if (cartData is List) {
+          for (int i = 0; i < cartData.length; i++) {
+            final item = cartData[i];
+            if (item is Map<String, dynamic>) {
+              for (var entry in item.entries) {
+                formData.fields.add(MapEntry('cart[$i][${entry.key}]', entry.value.toString()));
+              }
+            }
           }
         }
       }

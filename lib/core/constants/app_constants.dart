@@ -58,6 +58,8 @@ class AppConstants {
   static const String storeInCartEndpoint = '/api/store-in-cart';
   static const String getCartItemsEndpoint = '/api/get-cart';
   static const String removeFromCartEndpoint = '/api/remove-from-cart';
+  static const String storeSaleEndpoint = '/api/store-sale';
+  static const String getShippingGovernmentsEndpoint = '/api/get-shipping-governments';
   
   // API Helper Methods
   static String getNewProductsUrl({int perPage = 10, int page = 1}) {
