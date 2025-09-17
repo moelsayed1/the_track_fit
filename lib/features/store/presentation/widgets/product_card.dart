@@ -21,7 +21,7 @@ class ProductCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-                 padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16.w),
         decoration: ShapeDecoration(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -30,7 +30,7 @@ class ProductCard extends StatelessWidget {
               strokeAlign: BorderSide.strokeAlignOutside,
               color: Color(0xFF28A228),
             ),
-                         borderRadius: BorderRadius.circular(15.r),
+            borderRadius: BorderRadius.circular(15.r),
           ),
         ),
         child: Row(
@@ -85,68 +85,64 @@ class ProductCard extends StatelessWidget {
                           ),
                   ),
                 ),
-                
-                                 SizedBox(width: 8.w),
-                
-                                 // Product Information - 115 width as per Figma
-                                   SizedBox(
-                    width: 115.w,
-                   child: Column(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       // Product Name
-                       SizedBox(
-                         width: 115.w,
-                         child: Text(
-                           product.name,
-                           style: TextStyle(
-                             color: const Color(0xFF1E1E1E),
-                             fontSize: 16.sp,
-                             fontFamily: 'Poppins',
-                             fontWeight: FontWeight.w500,
-                           ),
-                           maxLines: 1,
-                           overflow: TextOverflow.ellipsis,
-                         ),
-                       ),
-                       
-                        SizedBox(height: 8.h),
-                       
-                       // Price
-                       SizedBox(
-                         width: 115.w,
-                         child: Text(
-                           '\$${product.price}',
-                           style: TextStyle(
-                             color: Color(0xFF28A228),
-                             fontSize: 16.sp,
-                             fontFamily: 'Poppins',
-                             fontWeight: FontWeight.w500,
-                           ),
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
+
+                SizedBox(width: 8.w),
+                SizedBox(
+                  width: 115.w,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Product Name
+                      SizedBox(
+                        width: 115.w,
+                        child: Text(
+                          product.name,
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 16.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+
+                      SizedBox(height: 8.h),
+
+                      // Price
+                      SizedBox(
+                        width: 115.w,
+                        child: Text(
+                          '\$${product.price}',
+                          style: TextStyle(
+                            color: Color(0xFF28A228),
+                            fontSize: 16.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            
+
             // Right side - Favorite icon
             GestureDetector(
               onTap: onFavoriteToggle,
               child: SizedBox(
                 width: 24.w,
                 height: 24.h,
-                                         child: Icon(
-                   product.isFavorite
-                       ? Icons.favorite
-                       : Icons.favorite_border,
-                   color: product.isFavorite
-                       ? const Color(0xFF28A228)
-                       : const Color(0xFF1E1E1E),
-                   size: 24.sp,
-                 ),
+                child: Icon(
+                  product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: product.isFavorite
+                      ? const Color(0xFF28A228)
+                      : const Color(0xFF1E1E1E),
+                  size: 24.sp,
+                ),
               ),
             ),
           ],

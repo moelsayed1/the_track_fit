@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
 import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
+import 'package:the_track_fit/features/store/data/services/favorites_service.dart';
+import 'package:the_track_fit/core/services/api_service.dart';
 
 // State class to hold exercises data
 class ExerciseState {
@@ -43,9 +45,11 @@ class ExerciseState {
 // Cubit to manage exercises state
 class ExerciseCubit extends Cubit<ExerciseState> {
   final ExerciseRepository _exerciseRepository;
+  final FavoritesService _favoritesService;
 
   ExerciseCubit({required ExerciseRepository exerciseRepository})
       : _exerciseRepository = exerciseRepository,
+        _favoritesService = FavoritesService(apiService: ApiService()),
         super(const ExerciseState(
           allExercises: [],
           favouriteExercises: [],
@@ -142,11 +146,20 @@ class ExerciseCubit extends Cubit<ExerciseState> {
   }
 
   // Toggle favourite status
-  void toggleFavourite(Exercise exercise) {
-    if (state.favouriteExercises.any((e) => e.id == exercise.id)) {
-      removeFromFavourites(exercise.id);
-    } else {
-      addToFavourites(exercise);
+  Future<void> toggleFavourite(Exercise exercise) async {
+    try {
+      // Call the API to toggle favorite
+      final wasAdded = await _favoritesService.toggleExerciseFavorite(int.parse(exercise.id));
+      
+      // Update local state based on API response
+      if (wasAdded) {
+        addToFavourites(exercise);
+      } else {
+        removeFromFavourites(exercise.id);
+      }
+    } catch (e) {
+      // If API call fails, show error but don't update local state
+      emit(state.copyWith(error: 'Failed to update favorite: $e'));
     }
   }
 

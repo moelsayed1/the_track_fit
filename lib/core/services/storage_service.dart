@@ -9,6 +9,7 @@ class StorageService {
   static const String _isLoggedInKey = 'is_logged_in';
   static const String _rememberMeKey = 'remember_me';
   static const String _isFirstTimeKey = 'is_first_time';
+  static const String _mainGoalKey = 'main_goal';
 
   static StorageService? _instance;
   static SharedPreferences? _prefs;
@@ -257,6 +258,36 @@ class StorageService {
     } catch (e) {
       log('StorageService: Error getting profile image: $e');
       return null;
+    }
+  }
+
+  // Main Goal Management
+  Future<void> saveMainGoal(String goal) async {
+    try {
+      await _prefs!.setString(_mainGoalKey, goal);
+      log('StorageService: Main goal saved successfully: $goal');
+    } catch (e) {
+      log('StorageService: Error saving main goal: $e');
+    }
+  }
+
+  String? getMainGoal() {
+    try {
+      final goal = _prefs!.getString(_mainGoalKey);
+      log('StorageService: Main goal retrieved: ${goal != null ? goal : 'Not found'}');
+      return goal;
+    } catch (e) {
+      log('StorageService: Error getting main goal: $e');
+      return null;
+    }
+  }
+
+  Future<void> clearMainGoal() async {
+    try {
+      await _prefs!.remove(_mainGoalKey);
+      log('StorageService: Main goal cleared');
+    } catch (e) {
+      log('StorageService: Error clearing main goal: $e');
     }
   }
 

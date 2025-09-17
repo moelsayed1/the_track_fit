@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/api_service.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../core/widgets/shimmer_loading.dart';
 import '../../../questions/main_goal/domain/models/main_goal_response.dart';
 
@@ -19,11 +22,41 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
   List<String> _goalOptions = [];
   bool _isLoading = true;
   final ApiService _apiService = ApiService();
+  late final StorageService _storageService;
 
   @override
   void initState() {
     super.initState();
+    _initializeStorage();
     _loadMainGoalOptions();
+  }
+
+  Future<void> _initializeStorage() async {
+    _storageService = await StorageService.getInstance();
+    _loadSelectedGoal();
+  }
+
+  Future<void> _loadSelectedGoal() async {
+    try {
+      final storedGoal = _storageService.getMainGoal();
+      if (storedGoal != null && _goalOptions.isNotEmpty) {
+        final goalIndex = _goalOptions.indexOf(storedGoal);
+        if (goalIndex != -1) {
+          setState(() {
+            selectedGoalIndex = goalIndex;
+          });
+          log('Loaded stored goal: $storedGoal at index: $goalIndex');
+        } else {
+          log('Stored goal "$storedGoal" not found in available options');
+        }
+      } else if (storedGoal == null) {
+        log('No stored goal found, using default selection');
+      } else {
+        log('Goal options not loaded yet, will retry after loading');
+      }
+    } catch (e) {
+      log('Error loading selected goal: $e');
+    }
   }
 
   Future<void> _loadMainGoalOptions() async {
@@ -40,6 +73,9 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
           _goalOptions = mainGoalResponse.data;
           _isLoading = false;
         });
+        
+        // Load the selected goal after options are loaded
+        _loadSelectedGoal();
       } else {
         throw Exception('Failed to load main goal options: ${response.statusCode}');
       }
@@ -59,10 +95,55 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
     }
   }
 
-  void _selectGoal(int index) {
+  void _selectGoal(int index) async {
     setState(() {
       selectedGoalIndex = index;
     });
+    
+    // Send the selected goal to the server
+    await _updateMainGoal(_goalOptions[index]);
+  }
+
+  Future<void> _updateMainGoal(String goal) async {
+    try {
+      log('Updating main goal to: $goal');
+      
+      // Use 'main_goal' parameter name and form data
+      final response = await _apiService.postForm(
+        AppConstants.updateMainGoalEndpoint,
+        data: {'main_goal': goal},
+      );
+      
+      log('API Response Status: ${response.statusCode}');
+      log('API Response Data: ${response.data}');
+      
+      if (response.statusCode == 200) {
+        // Save the goal to local storage
+        await _storageService.saveMainGoal(goal);
+        log('Goal saved to storage: $goal');
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Main goal updated successfully!'),
+              backgroundColor: const Color(0xFF28A228),
+            ),
+          );
+        }
+      } else {
+        throw Exception('Failed to update main goal: ${response.statusCode}');
+      }
+    } catch (e) {
+      log('Error updating main goal: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update main goal: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override

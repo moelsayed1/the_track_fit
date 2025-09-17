@@ -96,11 +96,11 @@ class _ProfileImagePersistenceExampleState extends State<ProfileImagePersistence
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Type: ${imagePath!.startsWith('data:image/') ? 'Base64' : 'File Path'}',
+                    'Type: ${imagePath.startsWith('data:image/') ? 'Base64' : 'File Path'}',
                     style: const TextStyle(fontSize: 12),
                   ),
                   Text(
-                    'Length: ${imagePath!.length} characters',
+                    'Length: ${imagePath.length} characters',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ] else ...[

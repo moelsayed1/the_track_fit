@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,22 +26,73 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     
-    // Check for existing login after splash animation completes
-    Timer(AppConstants.splashDuration, () {
-      if (mounted) {
-        context.read<AuthCubit>().checkExistingLogin();
+    // Check authentication immediately and set up navigation
+    _initializeAuth();
+  }
+
+  Future<void> _initializeAuth() async {
+    try {
+      log('SplashScreen: Initializing authentication...');
+      
+      // Check authentication directly first
+      final storageService = await StorageService.getInstance();
+      
+      // Add a small delay to ensure SharedPreferences is fully initialized
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // Check authentication status
+      final hasValidSession = storageService.hasValidSession();
+      
+      if (hasValidSession) {
+        // User is logged in, set up the auth state
+        final authData = storageService.getAuthData();
+        
+        if (authData != null) {
+          _pendingState = AuthUserAlreadyLoggedIn(
+            token: authData.token,
+            name: authData.user.name,
+            email: authData.user.email,
+            imagePath: authData.user.image,
+            phone: authData.user.phone,
+            gender: authData.user.gender,
+          );
+        } else {
+          _pendingState = const AuthInitial();
+        }
+      } else {
+        _pendingState = const AuthInitial();
       }
-    });
-    
-    // Allow navigation after minimum splash duration
-    Timer(const Duration(milliseconds: 4000), () {
-      if (mounted) {
-        setState(() {
-          _canNavigate = true;
-        });
-        _handlePendingNavigation();
-      }
-    });
+      
+      // Also trigger the AuthCubit check for consistency
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<AuthCubit>().checkExistingLogin();
+        }
+      });
+      
+      // Allow navigation after minimum splash duration
+      Timer(const Duration(milliseconds: 4000), () {
+        if (mounted) {
+          setState(() {
+            _canNavigate = true;
+          });
+          _handlePendingNavigation();
+        }
+      });
+      
+    } catch (e) {
+      log('SplashScreen: Error initializing auth: $e');
+      _pendingState = const AuthInitial();
+      
+      Timer(const Duration(milliseconds: 4000), () {
+        if (mounted) {
+          setState(() {
+            _canNavigate = true;
+          });
+          _handlePendingNavigation();
+        }
+      });
+    }
   }
   
   void _handlePendingNavigation() async {
@@ -59,8 +112,12 @@ class _SplashScreenState extends State<SplashScreen> {
       } else if (_pendingState is AuthInitial) {
         context.go(AppRouter.onboarding);
       }
+    } else if (_canNavigate && _pendingState == null) {
+      // This should not happen with the new initialization logic
+      context.go(AppRouter.onboarding);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

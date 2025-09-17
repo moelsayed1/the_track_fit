@@ -1,10 +1,15 @@
+import 'dart:developer';
+
 import '../../domain/models/product.dart';
 import '../../domain/models/product_response.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_remote_datasource.dart';
+import '../services/favorites_service.dart';
+import 'package:the_track_fit/core/services/api_service.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource _remoteDataSource;
+  final FavoritesService _favoritesService;
   final List<Product> _cachedProducts = [];
   final List<Product> _favoriteProducts = [];
   
@@ -12,7 +17,8 @@ class ProductRepositoryImpl implements ProductRepository {
   final Map<String, Future<ProductResponse>> _activeRequests = {};
   
   ProductRepositoryImpl({required ProductRemoteDataSource remoteDataSource})
-      : _remoteDataSource = remoteDataSource;
+      : _remoteDataSource = remoteDataSource,
+        _favoritesService = FavoritesService(apiService: ApiService());
 
   @override
   Future<ProductResponse> getNewProducts({int perPage = 10, int page = 1}) async {
@@ -96,17 +102,62 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<void> toggleProductFavorite(int productId) async {
-    final productIndex = _cachedProducts.indexWhere((p) => p.id == productId);
-    if (productIndex != -1) {
-      _cachedProducts[productIndex].toggleFavorite();
+  Future<List<Product>> getFavoriteProductsFromAPI() async {
+    try {
+      log('ProductRepositoryImpl: Fetching favorite products from API...');
       
-      // Update favorite products list
-      if (_cachedProducts[productIndex].isFavorite) {
-        _favoriteProducts.add(_cachedProducts[productIndex]);
-      } else {
-        _favoriteProducts.removeWhere((p) => p.id == productId);
+      final favoriteProductsData = await _favoritesService.getFavoriteProducts();
+      final favoriteProducts = favoriteProductsData.map((productData) {
+        return Product.fromJson(productData);
+      }).toList();
+      
+      // Update the local favorite products list
+      _favoriteProducts.clear();
+      _favoriteProducts.addAll(favoriteProducts);
+      
+      log('ProductRepositoryImpl: Retrieved ${favoriteProducts.length} favorite products from API');
+      return favoriteProducts;
+    } catch (e) {
+      log('ProductRepositoryImpl: Error fetching favorite products from API: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  List<Product> getCachedProducts() {
+    return List.from(_cachedProducts);
+  }
+
+  @override
+  Future<void> toggleProductFavorite(int productId) async {
+    try {
+      // Call the API to toggle favorite
+      final wasAdded = await _favoritesService.toggleProductFavorite(productId);
+      
+      // Update local state based on API response
+      final productIndex = _cachedProducts.indexWhere((p) => p.id == productId);
+      if (productIndex != -1) {
+        // Update the product's favorite status based on API response
+        _cachedProducts[productIndex].isFavorite = wasAdded;
+        
+        // Update favorite products list
+        if (wasAdded) {
+          // Add to favorites if not already there
+          if (!_favoriteProducts.any((p) => p.id == productId)) {
+            _favoriteProducts.add(_cachedProducts[productIndex]);
+          }
+        } else {
+          // Remove from favorites
+          _favoriteProducts.removeWhere((p) => p.id == productId);
+        }
       }
+    } catch (e) {
+      // If API call fails, revert the local change
+      final productIndex = _cachedProducts.indexWhere((p) => p.id == productId);
+      if (productIndex != -1) {
+        _cachedProducts[productIndex].toggleFavorite();
+      }
+      rethrow;
     }
   }
 }

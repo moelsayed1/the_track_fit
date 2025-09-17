@@ -38,6 +38,7 @@ class Product {
       stock: json['stock'] as int,
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
+      isFavorite: json['is_favorite'] as bool? ?? false, // Default to false if not provided
     );
   }
 

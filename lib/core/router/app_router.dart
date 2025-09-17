@@ -54,6 +54,7 @@ import '../../features/cart/presentation/screens/checkout_screen.dart';
 import '../../features/plan/presentation/widgets/checkout_plan_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/widgets/favourite_exercise.dart';
+import '../../features/store/presentation/screens/favorite_products_screen.dart';
 
 
 class AppRouter {
@@ -111,6 +112,7 @@ class AppRouter {
   static const String notification = '/notification';
   static const String mainGoal = '/main-goal';
   static const String favouriteExercise = '/favourite-exercise';
+  static const String favoriteProducts = '/favorite-products';
   
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -405,6 +407,11 @@ class AppRouter {
         path: favouriteExercise,
         name: 'favouriteExercise',
         builder: (context, state) => const FavouriteExerciseProfile(),
+      ),
+      GoRoute(
+        path: favoriteProducts,
+        name: 'favoriteProducts',
+        builder: (context, state) => const FavoriteProductsScreen(),
       ),
       GoRoute(
         path: productDetail,

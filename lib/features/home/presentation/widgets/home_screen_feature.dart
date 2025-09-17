@@ -22,6 +22,7 @@ import 'package:the_track_fit/features/store/domain/repositories/product_reposit
 import 'package:the_track_fit/features/store/data/repositories/product_repository_impl.dart';
 import 'package:the_track_fit/features/store/data/datasources/product_remote_datasource.dart';
 import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
+import 'package:the_track_fit/core/services/storage_service.dart';
 
 class HomeScreenFeature extends StatefulWidget {
   const HomeScreenFeature({super.key});
@@ -36,14 +37,16 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   int _selectedExerciseIndex = 0; // Track which exercise is selected
   bool _showWarningDialog = false; // Control warning dialog visibility
   List<bool> _completedExercises = []; // Track completed exercises
-  
+
   // API integration
   late final ExerciseRepository _exerciseRepository;
   late final ProductRepository _productRepository;
+  StorageService? _storageService;
   List<Exercise> _dayExercises = [];
   List<Product> _newProducts = [];
   bool _isLoadingExercises = false;
   bool _isLoadingProducts = false;
+  bool _isInitializing = true; // Add initialization state
   String? _exerciseError;
   String? _productError;
   bool _isDisposed = false;
@@ -61,42 +64,69 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     // Set selected date to today's day
     _setTodayAsSelected();
     
+    // Initialize storage and then load data
+    _initializeAndLoadData();
+  }
+
+  Future<void> _initializeAndLoadData() async {
+    await _initializeStorage();
+    if (!_isDisposed) {
+      setState(() {
+        _isInitializing = false;
+      });
+    }
     _loadExercisesForDay();
     _loadNewProducts();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only refresh exercises if we're not still initializing
+    if (!_isInitializing) {
+      _loadExercisesForDay();
+    }
+  }
+
+  Future<void> _initializeStorage() async {
+    if (_storageService == null) {
+      _storageService = await StorageService.getInstance();
+    }
   }
 
   // Set today as the selected day
   void _setTodayAsSelected() {
     final now = DateTime.now();
     final today = now.weekday; // 1=Monday, 2=Tuesday, ..., 7=Sunday
-    
-    // Map weekday to our day index (0: Fri, 1: Sat, 2: Sun, 3: Mon, 4: Tue, 5: Wed, 6: Thu)
-    // Our array: [Fri, Sat, Sun, Mon, Tue, Wed, Thu]
-    // DateTime:  [5,   6,   7,   1,   2,   3,   4]
+
+    // Map weekday to our day index (0: Sat, 1: Sun, 2: Mon, 3: Tue, 4: Wed, 5: Thu, 6: Fri)
+    // Our array: [Sat, Sun, Mon, Tue, Wed, Thu, Fri]
+    // DateTime:  [6,   7,   1,   2,   3,   4,   5]
+    // Day IDs:   [1,   2,   3,   4,   5,   6,   7]
     switch (today) {
-      case DateTime.friday:    // 5
+      case DateTime.saturday: // 6
         _selectedDateIndex = 0;
         break;
-      case DateTime.saturday:  // 6
+      case DateTime.sunday: // 7
         _selectedDateIndex = 1;
         break;
-      case DateTime.sunday:    // 7
+      case DateTime.monday: // 1
         _selectedDateIndex = 2;
         break;
-      case DateTime.monday:    // 1
+      case DateTime.tuesday: // 2
         _selectedDateIndex = 3;
         break;
-      case DateTime.tuesday:   // 2
+      case DateTime.wednesday: // 3
         _selectedDateIndex = 4;
         break;
-      case DateTime.wednesday: // 3
+      case DateTime.thursday: // 4
         _selectedDateIndex = 5;
         break;
-      case DateTime.thursday:  // 4
+      case DateTime.friday: // 5
         _selectedDateIndex = 6;
         break;
       default:
-        _selectedDateIndex = 3; // Default to Monday if something goes wrong
+        _selectedDateIndex = 0; // Default to Saturday if something goes wrong
     }
   }
 
@@ -108,7 +138,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   // Load new products
   Future<void> _loadNewProducts() async {
     if (_isDisposed) return;
-    
+
     setState(() {
       _isLoadingProducts = true;
       _productError = null;
@@ -136,7 +166,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   // Load exercises for the selected day
   Future<void> _loadExercisesForDay() async {
     if (_isDisposed) return;
-    
+
     log('Loading exercises for day index: $_selectedDateIndex');
     setState(() {
       _isLoadingExercises = true;
@@ -146,14 +176,29 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     try {
       final dayId = _getDayId(_selectedDateIndex);
       log('Day ID: $dayId');
-      // Try without goal parameter first
-      final exercises = await _exerciseRepository.getExercisesByDay(dayId);
+
+      // Ensure storage is initialized
+      if (_storageService == null) {
+        log('Storage not initialized, initializing now...');
+        await _initializeStorage();
+      }
       
+      // Get the user's selected main goal from storage
+      final mainGoal = _storageService?.getMainGoal();
+      log('User main goal: $mainGoal');
+      log('Loading exercises for day $dayId with goal: $mainGoal');
+
+      // Load exercises with the goal parameter
+      final exercises = await _exerciseRepository.getExercisesByDay(
+        dayId,
+        goal: mainGoal,
+      );
+
       log('Received ${exercises.length} exercises');
       for (var exercise in exercises) {
         log('Exercise: ${exercise.title}, Image: ${exercise.imagePath}');
       }
-      
+
       if (!_isDisposed) {
         setState(() {
           _dayExercises = exercises;
@@ -220,15 +265,19 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
 
   Future<void> _onFavoriteToggled(int productId) async {
     if (_isDisposed) return;
-    
+
     try {
       await _productRepository.toggleProductFavorite(productId);
       if (!_isDisposed) {
         setState(() {
-          // Update the local state
+          // The repository already updates the local state, so we just need to refresh
+          // Find the product and update its favorite status based on the repository state
           final productIndex = _newProducts.indexWhere((p) => p.id == productId);
           if (productIndex != -1) {
-            _newProducts[productIndex].toggleFavorite();
+            // Get the updated product from the repository's cached products
+            final updatedProduct = _productRepository.getCachedProducts()
+                .firstWhere((p) => p.id == productId, orElse: () => _newProducts[productIndex]);
+            _newProducts[productIndex] = updatedProduct;
           }
         });
       }
@@ -288,11 +337,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 32.w,
-            color: Colors.red,
-          ),
+          Icon(Icons.error_outline, size: 32.w, color: Colors.red),
           SizedBox(height: 8.h),
           Text(
             'Failed to load products',
@@ -350,81 +395,80 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
 
   @override
   Widget build(BuildContext context) {
-
+     
     return AppScaffoldWithCustomSafeArea(
       resizeToAvoidBottomInset: true,
       bottom: true,
       body: Column(
-          children: [
-            // Warning Dialog
-            if (_showWarningDialog)
-              Container(
-                width: 375.w,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0x19000000),
-                      blurRadius: 4,
-                      offset: const Offset(4, 0),
-                      spreadRadius: 0,
+        children: [
+          // Warning Dialog
+          if (_showWarningDialog)
+            Container(
+              width: 375.w,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0x19000000),
+                    blurRadius: 4,
+                    offset: const Offset(4, 0),
+                    spreadRadius: 0,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Warning icon
+                  Container(
+                    width: 18.w,
+                    height: 18.w,
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Warning icon
-                    Container(
-                      width: 18.w,
-                      height: 18.w,
-                      decoration: const BoxDecoration(
-                        color: Colors.black,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    child: const Center(
+                      child: Text(
+                        '!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    // Reduced spacing from 8.w to 4.w
-                    // Warning text
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Please Finish The previous challenge first.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 12.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ),
+                  // Reduced spacing from 8.w to 4.w
+                  // Warning text
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Please Finish The previous challenge first.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color(0xFF1E1E1E),
+                      fontSize: 12.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            // Main content
-            Expanded(child: _buildContentForTab(_currentIndex)),
-            // Hide bottom navigation bar when showing Plan tab
-            if (_currentIndex != 4) ...[
-              _BottomNavBar(
-                currentIndex: _currentIndex,
-                onTabTapped: _onTabTapped,
-                getTabColor: _getTabColor,
-              ),
-            ],
+            ),
+          // Main content
+          Expanded(child: _buildContentForTab(_currentIndex)),
+          // Hide bottom navigation bar when showing Plan tab
+          if (_currentIndex != 4) ...[
+            _BottomNavBar(
+              currentIndex: _currentIndex,
+              onTabTapped: _onTabTapped,
+              getTabColor: _getTabColor,
+            ),
           ],
-        ),
-      
+        ],
+      ),
     );
   }
 
@@ -485,6 +529,30 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   }
 
   Widget _buildHomeUI() {
+    // Show loading indicator while initializing
+    if (_isInitializing) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              color: const Color(0xFF28A228),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Loading...',
+              style: TextStyle(
+                color: const Color(0xFF1E1E1E),
+                fontSize: 16.sp,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView(
       padding: EdgeInsets.zero,
       children: [
@@ -498,13 +566,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
                   String userName = 'User'; // Default fallback
-                  
+
                   if (state is AuthUserProfileLoaded) {
                     userName = state.name;
                   } else if (state is AuthUserAlreadyLoggedIn) {
                     userName = state.name;
                   }
-                  
+
                   return Text(
                     'Hi $userName! 👋',
                     style: TextStyle(
@@ -555,7 +623,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       child: Container(
                         height: 7.h,
                         decoration: ShapeDecoration(
-                          color: (_completedExercises.isNotEmpty && _completedExercises[0])
+                          color:
+                              (_completedExercises.isNotEmpty &&
+                                  _completedExercises[0])
                               ? const Color(0xFFFFCC4D)
                               : Colors.white,
                           shape: RoundedRectangleBorder(
@@ -569,7 +639,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       child: Container(
                         height: 7.h,
                         decoration: ShapeDecoration(
-                          color: (_completedExercises.length > 1 && _completedExercises[1])
+                          color:
+                              (_completedExercises.length > 1 &&
+                                  _completedExercises[1])
                               ? const Color(0xFFFFB366)
                               : Colors.white,
                           shape: RoundedRectangleBorder(
@@ -583,7 +655,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                       child: Container(
                         height: 7.h,
                         decoration: ShapeDecoration(
-                          color: (_completedExercises.length > 2 && _completedExercises[2])
+                          color:
+                              (_completedExercises.length > 2 &&
+                                  _completedExercises[2])
                               ? const Color(0xFFFFB366)
                               : Colors.white,
                           shape: RoundedRectangleBorder(
@@ -654,27 +728,31 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             child: _isLoadingProducts
                 ? _buildProductShimmer()
                 : _productError != null
-                    ? _buildProductError()
-                    : _newProducts.isEmpty
-                        ? _buildNoProducts()
-                        : ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _newProducts.length,
-                            itemBuilder: (context, index) {
-                              final product = _newProducts[index];
-                              return Padding(
-                                padding: EdgeInsets.only(right: 8.w),
-                                child: ProductCard(
-                                  onTap: () => context.push(AppRouter.productDetail, extra: {'product': product}),
-                                  productName: product.name,
-                                  price: '${product.price}\$',
-                                  exerciseIcon: product.imageUrl,
-                                  isFavorite: product.isFavorite,
-                                  onFavoriteTapped: () => _onFavoriteToggled(product.id),
-                                ),
-                              );
-                            },
+                ? _buildProductError()
+                : _newProducts.isEmpty
+                ? _buildNoProducts()
+                : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _newProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = _newProducts[index];
+                      return Padding(
+                        padding: EdgeInsets.only(right: 8.w),
+                        child: ProductCard(
+                          onTap: () => context.push(
+                            AppRouter.productDetail,
+                            extra: {'product': product},
                           ),
+                          productName: product.name,
+                          price: '${product.price}\$',
+                          exerciseIcon: product.imageUrl,
+                          isFavorite: product.isFavorite,
+                          onFavoriteTapped: () =>
+                              _onFavoriteToggled(product.id),
+                        ),
+                      );
+                    },
+                  ),
           ),
         ),
 
@@ -704,13 +782,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildDateItem('Fri', 0),
-              _buildDateItem('Sat', 1),
-              _buildDateItem('Sun', 2),
-              _buildDateItem('Mon', 3),
-              _buildDateItem('Tue', 4),
-              _buildDateItem('Wed', 5),
-              _buildDateItem('Thu', 6),
+              _buildDateItem('Sat', 0),
+              _buildDateItem('Sun', 1),
+              _buildDateItem('Mon', 2),
+              _buildDateItem('Tue', 3),
+              _buildDateItem('Wed', 4),
+              _buildDateItem('Thu', 5),
+              _buildDateItem('Fri', 6),
             ],
           ),
         ),
@@ -727,8 +805,10 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   }
 
   Widget _buildExerciseList() {
-    log('Building exercise list - Loading: $_isLoadingExercises, Error: $_exerciseError, Count: ${_dayExercises.length}');
-    
+    log(
+      'Building exercise list - Loading: $_isLoadingExercises, Error: $_exerciseError, Count: ${_dayExercises.length}',
+    );
+
     if (_isLoadingExercises) {
       return _buildShimmerLoader();
     }
@@ -793,11 +873,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       return Center(
         child: Column(
           children: [
-            Icon(
-              Icons.fitness_center,
-              color: Colors.grey,
-              size: 48.sp,
-            ),
+            Icon(Icons.fitness_center, color: Colors.grey, size: 48.sp),
             SizedBox(height: 8.h),
             Text(
               'No exercises for this day',
@@ -825,10 +901,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             onTap: () => _onExerciseSelected(index),
             child: ExerciseCard(
               exerciseTitle: exercise.title,
-              setsAndReps: '4 Sets x 8 reps', // You can customize this based on exercise data
+              setsAndReps:
+                  '4 Sets x 8 reps', // You can customize this based on exercise data
               isLocked: index > 0, // You can customize this logic
               isSelected: _selectedExerciseIndex == index,
-              isCompleted: _completedExercises.length > index ? _completedExercises[index] : false,
+              isCompleted: _completedExercises.length > index
+                  ? _completedExercises[index]
+                  : false,
               imageUrl: exercise.imagePath, // Use the GIF from API
               onLockTapped: _onLockTapped,
               onCompleted: () => _onExerciseCompleted(index),
@@ -933,7 +1012,6 @@ class _BottomNavBar extends StatelessWidget {
   final int currentIndex;
   final void Function(int) onTabTapped;
   final Color Function(int) getTabColor;
-  
 
   const _BottomNavBar({
     required this.currentIndex,
@@ -946,10 +1024,7 @@ class _BottomNavBar extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 85.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 12.w,
-        vertical: 12.h,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       decoration: const ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -1186,14 +1261,6 @@ class ProductCard extends StatelessWidget {
                         width: 70.w,
                         height: 70.h,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/images/product_image.png',
-                            width: 70.w,
-                            height: 70.h,
-                            fit: BoxFit.contain,
-                          );
-                        },
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return ShimmerLoading(
@@ -1205,6 +1272,14 @@ class ProductCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
                             ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/images/product_image.png',
+                            width: 70.w,
+                            height: 70.h,
+                            fit: BoxFit.contain,
                           );
                         },
                       )
@@ -1310,13 +1385,26 @@ class ExerciseCard extends StatelessWidget {
                     imageUrl!,
                     width: 64.w,
                     height: 64.h,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.fill,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return ShimmerLoading(
+                        child: Container(
+                          width: 64.w,
+                          height: 64.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                      );
+                    },
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
                         'assets/images/exercise_image.png',
                         width: 64.w,
                         height: 64.h,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.fill,
                       );
                     },
                   )
@@ -1382,14 +1470,14 @@ class ExerciseCard extends StatelessWidget {
           else if (!isCompleted)
             GestureDetector(
               onTap: onCompleted,
-              child: Container(
+              child: SizedBox(
                 width: 24.w,
-                height: 24.w,
-                decoration: BoxDecoration(
+                height: 24.h,
+                child: Icon(
+                  Icons.check_circle,
                   color: const Color(0xFF28A228),
-                  shape: BoxShape.circle,
+                  size: 20.w,
                 ),
-                child: const Icon(Icons.check, color: Colors.white, size: 16),
               ),
             )
           else

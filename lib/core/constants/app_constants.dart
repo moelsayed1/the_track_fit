@@ -49,6 +49,7 @@ class AppConstants {
   static const String resetPasswordEndpoint = '/api/reset-password';
   static const String updateProfileEndpoint = '/api/update';
   static const String mainGoalOptionEndpoint = '/api/main-goal-option';
+  static const String updateMainGoalEndpoint = '/api/update-main-goal';
   static const String getAllExercisesEndpoint = '/api/get-all-exercises';
   static const String getExercisesCategoryEndpoint = '/api/get-exercises-category';
   static const String getExercisesByLocationEndpoint = '/api/get-exercises-filter';
@@ -60,6 +61,8 @@ class AppConstants {
   static const String removeFromCartEndpoint = '/api/remove-from-cart';
   static const String storeSaleEndpoint = '/api/store-sale';
   static const String getShippingGovernmentsEndpoint = '/api/get-shipping-governments';
+  static const String favoritesToggleEndpoint = '/api/favorites/toggle';
+  static const String favoritesProductsEndpoint = '/api/favorites/products';
   
   // API Helper Methods
   static String getNewProductsUrl({int perPage = 10, int page = 1}) {

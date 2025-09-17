@@ -87,13 +87,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     }
   }
 
-  void _toggleFavorite(String exerciseId) {
+  Future<void> _toggleFavorite(String exerciseId) async {
     final exerciseCubit = context.read<ExerciseCubit>();
     final exercise = exerciseCubit.allExercises.firstWhere(
       (e) => e.id == exerciseId,
       orElse: () => throw Exception('Exercise not found'),
     );
-    exerciseCubit.toggleFavourite(exercise);
+    await exerciseCubit.toggleFavourite(exercise);
   }
 
   @override
@@ -160,6 +160,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             // App Bar
             SizedBox(
               width: double.infinity,
+              height: responsiveHelper.h(12), // Add explicit height
               child: Stack(
                 children: [
                   Positioned(

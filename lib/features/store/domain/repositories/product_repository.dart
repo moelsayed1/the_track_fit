@@ -6,5 +6,7 @@ abstract class ProductRepository {
   Future<List<Product>> getAllProducts();
   Future<List<Product>> searchProducts(String query);
   Future<List<Product>> getFavoriteProducts();
+  Future<List<Product>> getFavoriteProductsFromAPI();
   Future<void> toggleProductFavorite(int productId);
+  List<Product> getCachedProducts();
 }

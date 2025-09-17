@@ -6,7 +6,6 @@ class AppScaffold extends StatelessWidget {
   final Widget body;
   final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
-  final bool extendBodyBehindAppBar;
   final PreferredSizeWidget? appBar;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
@@ -21,7 +20,6 @@ class AppScaffold extends StatelessWidget {
     required this.body,
     this.backgroundColor,
     this.resizeToAvoidBottomInset = true,
-    this.extendBodyBehindAppBar = false,
     this.appBar,
     this.bottomNavigationBar,
     this.floatingActionButton,
@@ -37,7 +35,6 @@ class AppScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,
@@ -64,7 +61,6 @@ class AppScaffoldWithCustomSafeArea extends StatelessWidget {
   final Widget body;
   final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
-  final bool extendBodyBehindAppBar;
   final PreferredSizeWidget? appBar;
   final Widget? bottomNavigationBar;
   final Widget? floatingActionButton;
@@ -83,7 +79,6 @@ class AppScaffoldWithCustomSafeArea extends StatelessWidget {
     required this.body,
     this.backgroundColor,
     this.resizeToAvoidBottomInset = true,
-    this.extendBodyBehindAppBar = false,
     this.appBar,
     this.bottomNavigationBar,
     this.floatingActionButton,
@@ -103,7 +98,6 @@ class AppScaffoldWithCustomSafeArea extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,

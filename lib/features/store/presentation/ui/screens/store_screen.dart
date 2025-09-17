@@ -55,7 +55,7 @@ class _StoreScreenState extends State<StoreScreen> {
     try {
       List<Product> products;
       if (_showOnlyFavorites) {
-        products = await _productRepository.getFavoriteProducts();
+        products = await _productRepository.getFavoriteProductsFromAPI();
       } else if (_searchQuery.isNotEmpty) {
         products = await _productRepository.searchProducts(_searchQuery);
       } else {
@@ -122,12 +122,24 @@ class _StoreScreenState extends State<StoreScreen> {
     try {
       await _productRepository.toggleProductFavorite(productId);
       if (!_isDisposed) {
+        // Update the local product's favorite status immediately for better UX
+        setState(() {
+          final productIndex = _displayedProducts.indexWhere((p) => p.id == productId);
+          if (productIndex != -1) {
+            _displayedProducts[productIndex].toggleFavorite();
+          }
+        });
+        
+        // Also reload products to ensure consistency with server
         _loadProducts();
       }
     } catch (e) {
       if (!_isDisposed && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update favorite: $e')),
+          SnackBar(
+            content: Text('Failed to update favorite: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }

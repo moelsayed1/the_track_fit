@@ -6,6 +6,7 @@ import 'core/constants/constants.dart';
 import 'core/router/app_router.dart';
 import 'core/services/api_service.dart';
 import 'core/services/storage_service.dart';
+import 'core/widgets/shimmer_loading.dart';
 import 'features/workout/data/cubit/exercise_cubit.dart';
 import 'features/workout/data/repositories/exercise_repository.dart';
 import 'features/auth/data/cubit/auth_cubit.dart';
@@ -18,7 +19,14 @@ import 'features/cart/data/services/checkout_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+//   SystemChrome.setSystemUIOverlayStyle(
+//   const SystemUiOverlayStyle(
+//     statusBarColor: Colors.transparent, // ✅ شفاف
+//     statusBarIconBrightness: Brightness.dark, // حسب خلفيتك
+//   ),
+// );
   
   // Initialize API service
   ApiService().init();
@@ -61,10 +69,8 @@ class TrackFit extends StatelessWidget {
               );
             } else {
               return const MaterialApp(
-                home: Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                home: ShimmerLoadingScreen(
+                  message: 'Initializing app...',
                 ),
               );
             }

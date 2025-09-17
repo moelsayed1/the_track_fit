@@ -79,7 +79,7 @@ class AuthCubit extends Cubit<AuthState> {
             gender: _userGender,
           ));
           
-          log('AuthCubit: User already logged in - ${_userName}');
+          log('AuthCubit: User already logged in - $_userName');
         } else {
           log('AuthCubit: No valid auth data found');
           emit(const AuthInitial());

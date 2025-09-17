@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
           
           // Navigate to next screen
-          context.push(AppRouter.promotionalOffer);
+          context.push(AppRouter.home);
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
