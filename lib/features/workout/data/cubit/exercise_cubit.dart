@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
@@ -140,7 +141,8 @@ class ExerciseCubit extends Cubit<ExerciseState> {
   // Add exercise to favourites
   void addToFavourites(Exercise exercise) {
     if (!state.favouriteExercises.any((e) => e.id == exercise.id)) {
-      final updatedFavourites = [...state.favouriteExercises, exercise];
+      // Add new favorite at the beginning of the list (most recent first)
+      final updatedFavourites = [exercise, ...state.favouriteExercises];
       emit(state.copyWith(favouriteExercises: updatedFavourites));
     }
   }
@@ -148,16 +150,23 @@ class ExerciseCubit extends Cubit<ExerciseState> {
   // Toggle favourite status
   Future<void> toggleFavourite(Exercise exercise) async {
     try {
+      log('ExerciseCubit: Toggling favorite for exercise ${exercise.id}');
+      
       // Call the API to toggle favorite
       final wasAdded = await _favoritesService.toggleExerciseFavorite(int.parse(exercise.id));
+      
+      log('ExerciseCubit: API returned wasAdded: $wasAdded');
       
       // Update local state based on API response
       if (wasAdded) {
         addToFavourites(exercise);
+        log('ExerciseCubit: Added exercise to favorites');
       } else {
         removeFromFavourites(exercise.id);
+        log('ExerciseCubit: Removed exercise from favorites');
       }
     } catch (e) {
+      log('ExerciseCubit: Error toggling favorite: $e');
       // If API call fails, show error but don't update local state
       emit(state.copyWith(error: 'Failed to update favorite: $e'));
     }
@@ -216,5 +225,28 @@ class ExerciseCubit extends Cubit<ExerciseState> {
       selectedCategoryId: null,
       selectedCategoryName: null,
     ));
+  }
+
+  // Load favorite exercises from API
+  Future<void> loadFavoriteExercisesFromAPI() async {
+    emit(state.copyWith(isLoading: true, error: null));
+    
+    try {
+      final favoriteExercises = await _exerciseRepository.getFavoriteExercisesFromAPI();
+      
+      // Reverse the list so most recently added favorites appear first
+      final reversedFavorites = favoriteExercises.reversed.toList();
+      
+      emit(state.copyWith(
+        favouriteExercises: reversedFavorites,
+        isLoading: false,
+        error: null,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      ));
+    }
   }
 }

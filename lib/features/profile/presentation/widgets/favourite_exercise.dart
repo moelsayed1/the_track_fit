@@ -7,6 +7,7 @@ import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
 import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 
 class FavouriteExerciseProfile extends StatelessWidget {
   const FavouriteExerciseProfile({super.key});
@@ -14,8 +15,30 @@ class FavouriteExerciseProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ExerciseCubit(exerciseRepository: ExerciseRepository(apiService: ApiService()))..initializeFavourites(_getMockExercises()),
-      child: Scaffold(
+      create: (context) => ExerciseCubit(exerciseRepository: ExerciseRepository(apiService: ApiService()))..loadFavoriteExercisesFromAPI(),
+      child: _FavoriteExerciseContent(),
+    );
+  }
+}
+
+class _FavoriteExerciseContent extends StatefulWidget {
+  @override
+  _FavoriteExerciseContentState createState() => _FavoriteExerciseContentState();
+}
+
+class _FavoriteExerciseContentState extends State<_FavoriteExerciseContent> {
+  @override
+  void initState() {
+    super.initState();
+    // Refresh favorite exercises when screen is displayed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ExerciseCubit>().loadFavoriteExercisesFromAPI();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
         backgroundColor: const Color(0xFFF6FFF6),
         body: SafeArea(
           child: Column(
@@ -58,6 +81,14 @@ class FavouriteExerciseProfile extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<ExerciseCubit, ExerciseState>(
                   builder: (context, state) {
+                    if (state.isLoading) {
+                      return _buildLoadingState();
+                    }
+
+                    if (state.error != null) {
+                      return _buildErrorState(context, state.error!);
+                    }
+
                     if (state.favouriteExercises.isEmpty) {
                       return _buildEmptyState();
                     }
@@ -86,6 +117,75 @@ class FavouriteExerciseProfile extends StatelessWidget {
             ],
           ),
         ),
+      );
+  }
+
+  Widget _buildLoadingState() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.w),
+      child: SizedBox(
+        width: 343.w,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Shimmer exercise items with dividers
+            for (int i = 0; i < 4; i++) ...[
+              _buildShimmerExerciseItem(),
+              if (i < 3) _buildDivider(),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(BuildContext context, String error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(height: 100.h),
+          Icon(
+            Icons.error_outline,
+            size: 64.sp,
+            color: const Color(0xFF848484),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'Failed to Load Favourites',
+            style: TextStyle(
+              color: const Color(0xFF848484),
+              fontSize: 18.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            error,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color(0xFF848484),
+              fontSize: 14.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          ElevatedButton(
+            onPressed: () {
+              // Refresh the data
+              context.read<ExerciseCubit>().loadFavoriteExercisesFromAPI();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF28A228),
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Retry'),
+          ),
+        ],
       ),
     );
   }
@@ -160,23 +260,46 @@ class FavouriteExerciseProfile extends StatelessWidget {
                       width: 48.w,
                       height: 48.h,
                       decoration: ShapeDecoration(
-                        image: exercise.imagePath.isNotEmpty
-                            ? DecorationImage(
-                                image: AssetImage(exercise.imagePath),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.r),
                         ),
                       ),
-                      child: exercise.imagePath.isEmpty
-                          ? Icon(
-                              Icons.fitness_center,
-                              size: 24.sp,
-                              color: const Color(0xFF28A228),
-                            )
-                          : null,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.r),
+                        child: exercise.imagePath.isNotEmpty
+                            ? (exercise.imagePath.startsWith('http')
+                                ? Image.network(
+                                    exercise.imagePath,
+                                    width: 48.w,
+                                    height: 48.h,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.fitness_center,
+                                        size: 24.sp,
+                                        color: const Color(0xFF28A228),
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    exercise.imagePath,
+                                    width: 48.w,
+                                    height: 48.h,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.fitness_center,
+                                        size: 24.sp,
+                                        color: const Color(0xFF28A228),
+                                      );
+                                    },
+                                  ))
+                            : Icon(
+                                Icons.fitness_center,
+                                size: 24.sp,
+                                color: const Color(0xFF28A228),
+                              ),
+                      ),
                     ),
                   ],
                 ),
@@ -205,7 +328,7 @@ class FavouriteExerciseProfile extends StatelessWidget {
                     SizedBox(
                       width: 115.w,
                       child: Text(
-                        exercise.subtitle,
+                        exercise.setsAndRepsDisplay,
                         style: TextStyle(
                           color: const Color(0xFF848484),
                           fontSize: 14.sp,
@@ -220,7 +343,7 @@ class FavouriteExerciseProfile extends StatelessWidget {
             ],
           ),
           GestureDetector(
-            onTap: () => context.read<ExerciseCubit>().removeFromFavourites(exercise.id),
+            onTap: () => context.read<ExerciseCubit>().toggleFavourite(exercise),
             child: SizedBox(
               width: 24.w,
               height: 24.h,
@@ -232,6 +355,92 @@ class FavouriteExerciseProfile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerExerciseItem() {
+    return ShimmerLoading(
+      child: SizedBox(
+        width: double.infinity,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        width: 1.w,
+                        color: const Color(0x26848484),
+                      ),
+                      borderRadius: BorderRadius.circular(15.r),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 48.w,
+                        height: 48.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                SizedBox(
+                  width: 115.w,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 115.w,
+                        height: 16.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Container(
+                        width: 80.w,
+                        height: 14.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              width: 24.w,
+              height: 24.h,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -258,41 +467,4 @@ class FavouriteExerciseProfile extends StatelessWidget {
     );
   }
 
-  // Mock data for demonstration
-  List<Exercise> _getMockExercises() {
-    return [
-      const Exercise(
-        id: '1',
-        title: 'Push-ups',
-        subtitle: 'Bodyweight exercise for chest and arms',
-        imagePath: 'assets/images/exercise_image.jpg',
-        type: 'Strength',
-        isFavorite: true,
-      ),
-      const Exercise(
-        id: '2',
-        title: 'Squats',
-        subtitle: 'Lower body strength exercise',
-        imagePath: 'assets/images/exercise_image.jpg',
-        type: 'Strength',
-        isFavorite: true,
-      ),
-      const Exercise(
-        id: '3',
-        title: 'Plank',
-        subtitle: 'Core stability exercise',
-        imagePath: 'assets/images/exercise_image.jpg',
-        type: 'Core',
-        isFavorite: true,
-      ),
-      const Exercise(
-        id: '4',
-        title: 'Burpees',
-        subtitle: 'Full body cardio exercise',
-        imagePath: 'assets/images/exercise_image.jpg',
-        type: 'Cardio',
-        isFavorite: true,
-      ),
-    ];
-  }
 }

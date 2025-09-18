@@ -788,21 +788,66 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                                     height: responsiveHelper
                                                         .h(48),
                                                     decoration: ShapeDecoration(
-                                                      image: DecorationImage(
-                                                        image: exercise.imagePath.startsWith('http')
-                                                            ? NetworkImage(exercise.imagePath)
-                                                            : AssetImage(exercise.imagePath) as ImageProvider,
-                                                        fit: BoxFit.cover,
-                                                        onError: (exception, stackTrace) {
-                                                          // Fallback to default image if network image fails
-                                                        },
-                                                      ),
                                                       shape: RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius.circular(
                                                               10,
                                                             ),
                                                       ),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(10),
+                                                      child: exercise.imagePath.startsWith('http')
+                                                          ? Image.network(
+                                                              exercise.imagePath,
+                                                              width: responsiveHelper.w(60),
+                                                              height: responsiveHelper.h(60),
+                                                              fit: BoxFit.cover,
+                                                              loadingBuilder: (context, child, loadingProgress) {
+                                                                if (loadingProgress == null) return child;
+                                                                return ShimmerLoading(
+                                                                  child: Container(
+                                                                    width: responsiveHelper.w(60),
+                                                                    height: responsiveHelper.h(60),
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors.white,
+                                                                      borderRadius: BorderRadius.circular(10),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              errorBuilder: (context, error, stackTrace) {
+                                                                return Container(
+                                                                  width: responsiveHelper.w(60),
+                                                                  height: responsiveHelper.h(60),
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.grey[300],
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                  ),
+                                                                  child: Icon(
+                                                                    Icons.fitness_center,
+                                                                    color: Colors.grey[600],
+                                                                    size: 24,
+                                                                  ),
+                                                                );
+                                                              },
+                                                            )
+                                                          : Image.asset(
+                                                              exercise.imagePath,
+                                                              width: responsiveHelper.w(48),
+                                                              height: responsiveHelper.h(48),
+                                                              fit: BoxFit.cover,
+                                                              errorBuilder: (context, error, stackTrace) {
+                                                                return Container(
+                                                                  width: responsiveHelper.w(48),
+                                                                  height: responsiveHelper.h(48),
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.grey[300],
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
                                                     ),
                                                   ),
                                                 ],
@@ -849,7 +894,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                                       115,
                                                     ),
                                                     child: Text(
-                                                      '4 Sets x 8 reps', // Static subtitle for workout screen
+                                                      exercise.setsAndRepsDisplay, // Dynamic sets and reps from API
                                                       style: TextStyle(
                                                         color: const Color(
                                                           0xFF848484,
@@ -1080,7 +1125,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 children: [
                   ShimmerText(width: 150.w, height: 16.h),
                   SizedBox(height: 8.h),
-                  ShimmerText(width: 100.w, height: 14.h), // "4 Sets x 8 reps" width
+                  ShimmerText(width: 100.w, height: 14.h), // Sets and reps text width
                   SizedBox(height: 8.h),
                   ShimmerText(width: 80.w, height: 12.h),
                 ],

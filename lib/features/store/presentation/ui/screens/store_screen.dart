@@ -119,22 +119,47 @@ class _StoreScreenState extends State<StoreScreen> {
 
   Future<void> _onFavoriteToggle(int productId) async {
     if (_isDisposed) return;
+    
+    // Store the current favorite status before toggling
+    final productIndex = _displayedProducts.indexWhere((p) => p.id == productId);
+    if (productIndex == -1) return;
+    
+    final wasFavorite = _displayedProducts[productIndex].isFavorite;
+    
+    // Update the local product's favorite status immediately for better UX
+    setState(() {
+      _displayedProducts[productIndex].toggleFavorite();
+      
+      // If we're in favorites mode and the product is being unfavorited, remove it from the list
+      if (_showOnlyFavorites && !_displayedProducts[productIndex].isFavorite) {
+        _displayedProducts.removeAt(productIndex);
+      }
+    });
+    
     try {
+      // Call the API to toggle favorite status
       await _productRepository.toggleProductFavorite(productId);
-      if (!_isDisposed) {
-        // Update the local product's favorite status immediately for better UX
-        setState(() {
-          final productIndex = _displayedProducts.indexWhere((p) => p.id == productId);
-          if (productIndex != -1) {
-            _displayedProducts[productIndex].toggleFavorite();
-          }
-        });
-        
-        // Also reload products to ensure consistency with server
+      
+      // If we're not in favorites mode, reload to ensure consistency
+      if (!_showOnlyFavorites) {
         _loadProducts();
       }
     } catch (e) {
       if (!_isDisposed && mounted) {
+        // Revert the local change if the API call failed
+        setState(() {
+          if (_showOnlyFavorites && !wasFavorite) {
+            // If we removed the item from favorites list, add it back
+            _loadProducts();
+          } else {
+            // Just toggle the favorite status back
+            final currentProductIndex = _displayedProducts.indexWhere((p) => p.id == productId);
+            if (currentProductIndex != -1) {
+              _displayedProducts[currentProductIndex].toggleFavorite();
+            }
+          }
+        });
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to update favorite: $e'),

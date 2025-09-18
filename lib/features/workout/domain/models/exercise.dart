@@ -11,6 +11,8 @@ class Exercise {
   final String? equipment;
   final String? goal;
   final String? categoryId;
+  final int? sets;
+  final int? reps;
 
   const Exercise({
     required this.id,
@@ -25,6 +27,8 @@ class Exercise {
     this.equipment,
     this.goal,
     this.categoryId,
+    this.sets,
+    this.reps,
   });
 
   Exercise copyWith({
@@ -40,6 +44,8 @@ class Exercise {
     String? equipment,
     String? goal,
     String? categoryId,
+    int? sets,
+    int? reps,
   }) {
     return Exercise(
       id: id ?? this.id,
@@ -54,6 +60,8 @@ class Exercise {
       equipment: equipment ?? this.equipment,
       goal: goal ?? this.goal,
       categoryId: categoryId ?? this.categoryId,
+      sets: sets ?? this.sets,
+      reps: reps ?? this.reps,
     );
   }
 
@@ -77,6 +85,8 @@ class Exercise {
       equipment: apiData['equipment'] as String,
       goal: apiData['goal'] as String,
       categoryId: apiData['exercise_category_id'].toString(),
+      sets: apiData['sets'] as int?,
+      reps: apiData['reps'] as int?,
     );
   }
 
@@ -91,6 +101,19 @@ class Exercise {
         return 'gym';
       default:
         return 'cardio';
+    }
+  }
+
+  // Helper method to format sets and reps as a display string
+  String get setsAndRepsDisplay {
+    if (sets != null && reps != null) {
+      return '$sets Sets x $reps reps';
+    } else if (sets != null) {
+      return '$sets Sets';
+    } else if (reps != null) {
+      return '$reps reps';
+    } else {
+      return 'No sets/reps specified';
     }
   }
 }

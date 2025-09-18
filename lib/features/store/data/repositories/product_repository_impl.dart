@@ -108,7 +108,10 @@ class ProductRepositoryImpl implements ProductRepository {
       
       final favoriteProductsData = await _favoritesService.getFavoriteProducts();
       final favoriteProducts = favoriteProductsData.map((productData) {
-        return Product.fromJson(productData);
+        // Create product from JSON and ensure isFavorite is set to true
+        final product = Product.fromJson(productData);
+        product.isFavorite = true; // All products from favorites API should be marked as favorite
+        return product;
       }).toList();
       
       // Update the local favorite products list

@@ -89,9 +89,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   }
 
   Future<void> _initializeStorage() async {
-    if (_storageService == null) {
-      _storageService = await StorageService.getInstance();
-    }
+    _storageService ??= await StorageService.getInstance();
   }
 
   // Set today as the selected day
@@ -901,8 +899,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             onTap: () => _onExerciseSelected(index),
             child: ExerciseCard(
               exerciseTitle: exercise.title,
-              setsAndReps:
-                  '4 Sets x 8 reps', // You can customize this based on exercise data
+              setsAndReps: exercise.setsAndRepsDisplay, // Use the formatted sets and reps from API
               isLocked: index > 0, // You can customize this logic
               isSelected: _selectedExerciseIndex == index,
               isCompleted: _completedExercises.length > index

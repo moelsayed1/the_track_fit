@@ -33,6 +33,8 @@ class ExerciseRepository {
             'gender': apiData.gender,
             'location': apiData.location,
             'goal': apiData.goal,
+            'sets': apiData.sets,
+            'reps': apiData.reps,
           });
         }).toList();
 
@@ -75,6 +77,8 @@ class ExerciseRepository {
             'gender': apiData.gender,
             'location': apiData.location,
             'goal': apiData.goal,
+            'sets': apiData.sets,
+            'reps': apiData.reps,
           });
         }).toList();
 
@@ -113,6 +117,8 @@ class ExerciseRepository {
             'gender': apiData.gender,
             'location': apiData.location,
             'goal': apiData.goal,
+            'sets': apiData.sets,
+            'reps': apiData.reps,
           });
         }).toList();
 
@@ -189,6 +195,8 @@ class ExerciseRepository {
             'location': apiData.location,
             'goal': apiData.goal,
             'exercise_category_id': apiData.exerciseCategoryId,
+            'sets': apiData.sets,
+            'reps': apiData.reps,
           });
         }).toList();
 
@@ -233,6 +241,8 @@ class ExerciseRepository {
               'location': exerciseData.location,
               'goal': exerciseData.goal,
               'exercise_category_id': exerciseData.exerciseCategoryId,
+              'sets': exerciseData.sets,
+              'reps': exerciseData.reps,
             }).toList(),
           });
         }).toList();
@@ -243,6 +253,45 @@ class ExerciseRepository {
       }
     } catch (e) {
       throw Exception('Error fetching exercise categories: $e');
+    }
+  }
+
+  /// Get favorite exercises from API
+  Future<List<Exercise>> getFavoriteExercisesFromAPI() async {
+    try {
+      log('ExerciseRepository: Fetching favorite exercises from API...');
+      
+      final response = await _apiService.get(AppConstants.favoritesExercisesEndpoint);
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        final exercises = responseData['data'] as List<dynamic>? ?? [];
+        
+        log('ExerciseRepository: Retrieved ${exercises.length} favorite exercises from API');
+        
+        // Convert API data to Exercise domain models
+        final favoriteExercises = exercises.map((exerciseData) {
+          return Exercise.fromApiData({
+            'id': exerciseData['id'],
+            'en_name': exerciseData['en_name'],
+            'en_description': exerciseData['en_description'],
+            'gif': exerciseData['gif'],
+            'equipment': exerciseData['equipment'],
+            'gender': exerciseData['gender'],
+            'location': exerciseData['location'],
+            'goal': exerciseData['goal'],
+            'exercise_category_id': exerciseData['exercise_category_id'],
+            'sets': exerciseData['sets'],
+            'reps': exerciseData['reps'],
+          });
+        }).toList();
+
+        return favoriteExercises;
+      } else {
+        throw Exception('Failed to load favorite exercises: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching favorite exercises: $e');
     }
   }
 }

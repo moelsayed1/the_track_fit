@@ -274,7 +274,7 @@ class StorageService {
   String? getMainGoal() {
     try {
       final goal = _prefs!.getString(_mainGoalKey);
-      log('StorageService: Main goal retrieved: ${goal != null ? goal : 'Not found'}');
+      log('StorageService: Main goal retrieved: ${goal ?? 'Not found'}');
       return goal;
     } catch (e) {
       log('StorageService: Error getting main goal: $e');

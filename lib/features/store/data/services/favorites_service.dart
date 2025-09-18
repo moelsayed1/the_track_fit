@@ -77,4 +77,27 @@ class FavoritesService {
       rethrow;
     }
   }
+
+  /// Get all favorite exercises
+  Future<List<Map<String, dynamic>>> getFavoriteExercises() async {
+    try {
+      log('FavoritesService: Fetching favorite exercises...');
+      
+      final response = await _apiService.get(AppConstants.favoritesExercisesEndpoint);
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        final exercises = responseData['data'] as List<dynamic>? ?? [];
+        
+        log('FavoritesService: Retrieved ${exercises.length} favorite exercises');
+        return exercises.cast<Map<String, dynamic>>();
+      } else {
+        log('FavoritesService: API Error - Status: ${response.statusCode}');
+        throw Exception('Failed to fetch favorite exercises: ${response.statusCode}');
+      }
+    } catch (e) {
+      log('FavoritesService: Error fetching favorite exercises: $e');
+      rethrow;
+    }
+  }
 }
