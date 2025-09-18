@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -64,7 +65,8 @@ class _StoreScreenState extends State<StoreScreen> {
       
       if (!_isDisposed) {
         setState(() {
-          _displayedProducts = products;
+          // Sort products by creation date (most recent first) as a fallback
+          _displayedProducts = _sortProductsByDate(products);
           _isLoading = false;
         });
       }
@@ -133,6 +135,9 @@ class _StoreScreenState extends State<StoreScreen> {
       // If we're in favorites mode and the product is being unfavorited, remove it from the list
       if (_showOnlyFavorites && !_displayedProducts[productIndex].isFavorite) {
         _displayedProducts.removeAt(productIndex);
+      } else if (_showOnlyFavorites && _displayedProducts[productIndex].isFavorite) {
+        // If we're in favorites mode and the product is being favorited, sort the list
+        _displayedProducts = _sortProductsByDate(_displayedProducts);
       }
     });
     
@@ -173,6 +178,31 @@ class _StoreScreenState extends State<StoreScreen> {
   void _onProductTap(Product product) {
     // Navigate to product detail screen using app router
     context.push(AppRouter.productDetail, extra: {'product': product});
+  }
+
+  // Helper method to sort products by update date (oldest first)
+  List<Product> _sortProductsByDate(List<Product> products) {
+    final sortedProducts = List<Product>.from(products);
+    sortedProducts.sort((a, b) {
+      try {
+        final dateA = DateTime.parse(a.updatedAt);
+        final dateB = DateTime.parse(b.updatedAt);
+        final comparison = dateA.compareTo(dateB); // Oldest first
+        log('StoreScreen Sorting: ${a.name} (${a.updatedAt}) vs ${b.name} (${b.updatedAt}) -> $comparison');
+        return comparison;
+      } catch (e) {
+        log('StoreScreen Error parsing dates: $e');
+        return 0; // Keep original order if parsing fails
+      }
+    });
+    
+    // Log the final sorted order
+    log('StoreScreen Final sorted order:');
+    for (int i = 0; i < sortedProducts.length; i++) {
+      log('$i: ${sortedProducts[i].name} (${sortedProducts[i].updatedAt})');
+    }
+    
+    return sortedProducts;
   }
 
   Widget _buildShimmerLoader() {

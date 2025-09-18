@@ -133,6 +133,31 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     return dayIndex + 1; // 0->1, 1->2, 2->3, 3->4, 4->5, 5->6, 6->7
   }
 
+  // Helper method to sort products by update date (oldest first)
+  List<Product> _sortProductsByDate(List<Product> products) {
+    final sortedProducts = List<Product>.from(products);
+    sortedProducts.sort((a, b) {
+      try {
+        final dateA = DateTime.parse(a.updatedAt);
+        final dateB = DateTime.parse(b.updatedAt);
+        final comparison = dateA.compareTo(dateB); // Oldest first
+        log('HomeScreen Sorting: ${a.name} (${a.updatedAt}) vs ${b.name} (${b.updatedAt}) -> $comparison');
+        return comparison;
+      } catch (e) {
+        log('HomeScreen Error parsing dates: $e');
+        return 0; // Keep original order if parsing fails
+      }
+    });
+    
+    // Log the final sorted order
+    log('HomeScreen Final sorted order:');
+    for (int i = 0; i < sortedProducts.length; i++) {
+      log('$i: ${sortedProducts[i].name} (${sortedProducts[i].updatedAt})');
+    }
+    
+    return sortedProducts;
+  }
+
   // Load new products
   Future<void> _loadNewProducts() async {
     if (_isDisposed) return;
@@ -146,7 +171,8 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       final response = await _productRepository.getNewProducts(perPage: 8);
       if (!_isDisposed) {
         setState(() {
-          _newProducts = response.products;
+          // Sort products by update date (oldest first) for consistency
+          _newProducts = _sortProductsByDate(response.products);
           _isLoadingProducts = false;
         });
       }
@@ -276,6 +302,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             final updatedProduct = _productRepository.getCachedProducts()
                 .firstWhere((p) => p.id == productId, orElse: () => _newProducts[productIndex]);
             _newProducts[productIndex] = updatedProduct;
+            
+            // Re-sort the products to maintain consistent order
+            _newProducts = _sortProductsByDate(_newProducts);
           }
         });
       }

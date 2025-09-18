@@ -214,6 +214,7 @@ class ExerciseCubit extends Cubit<ExerciseState> {
     } catch (e) {
       emit(state.copyWith(
         error: e.toString(),
+        
         isLoading: false,
       ));
     }

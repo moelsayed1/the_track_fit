@@ -56,6 +56,17 @@ class ProductRepositoryImpl implements ProductRepository {
       }
       _cachedProducts.addAll(response.products);
       
+      // Sort cached products to maintain oldest first order
+      _cachedProducts.sort((a, b) {
+        try {
+          final dateA = DateTime.parse(a.updatedAt);
+          final dateB = DateTime.parse(b.updatedAt);
+          return dateA.compareTo(dateB); // Oldest first
+        } catch (e) {
+          return 0;
+        }
+      });
+      
       return response;
     } catch (e) {
       // Return cached products if API fails
@@ -81,19 +92,20 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<List<Product>> getAllProducts() async {
     if (_cachedProducts.isEmpty) {
       final response = await getNewProducts(perPage: 100);
-      return response.products;
+      return _sortProductsByDate(response.products);
     }
-    return List.from(_cachedProducts);
+    return _sortProductsByDate(List.from(_cachedProducts));
   }
 
   @override
   Future<List<Product>> searchProducts(String query) async {
     final products = await getAllProducts();
     if (query.isEmpty) return products;
-    return products
+    final filteredProducts = products
         .where((product) =>
             product.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
+    return _sortProductsByDate(filteredProducts);
   }
 
   @override
@@ -114,12 +126,15 @@ class ProductRepositoryImpl implements ProductRepository {
         return product;
       }).toList();
       
+      // Sort favorite products by creation date (most recent first)
+      final sortedFavoriteProducts = _sortProductsByDate(favoriteProducts);
+      
       // Update the local favorite products list
       _favoriteProducts.clear();
-      _favoriteProducts.addAll(favoriteProducts);
+      _favoriteProducts.addAll(sortedFavoriteProducts);
       
-      log('ProductRepositoryImpl: Retrieved ${favoriteProducts.length} favorite products from API');
-      return favoriteProducts;
+      log('ProductRepositoryImpl: Retrieved ${sortedFavoriteProducts.length} favorite products from API');
+      return sortedFavoriteProducts;
     } catch (e) {
       log('ProductRepositoryImpl: Error fetching favorite products from API: $e');
       rethrow;
@@ -148,6 +163,16 @@ class ProductRepositoryImpl implements ProductRepository {
           // Add to favorites if not already there
           if (!_favoriteProducts.any((p) => p.id == productId)) {
             _favoriteProducts.add(_cachedProducts[productIndex]);
+            // Sort favorites to maintain oldest first order
+            _favoriteProducts.sort((a, b) {
+              try {
+                final dateA = DateTime.parse(a.updatedAt);
+                final dateB = DateTime.parse(b.updatedAt);
+                return dateA.compareTo(dateB); // Oldest first
+              } catch (e) {
+                return 0;
+              }
+            });
           }
         } else {
           // Remove from favorites
@@ -162,5 +187,30 @@ class ProductRepositoryImpl implements ProductRepository {
       }
       rethrow;
     }
+  }
+
+  // Helper method to sort products by update date (oldest first)
+  List<Product> _sortProductsByDate(List<Product> products) {
+    final sortedProducts = List<Product>.from(products);
+    sortedProducts.sort((a, b) {
+      try {
+        final dateA = DateTime.parse(a.updatedAt);
+        final dateB = DateTime.parse(b.updatedAt);
+        final comparison = dateA.compareTo(dateB); // Oldest first
+        log('Sorting: ${a.name} (${a.updatedAt}) vs ${b.name} (${b.updatedAt}) -> $comparison');
+        return comparison;
+      } catch (e) {
+        log('Error parsing dates: $e');
+        return 0; // Keep original order if parsing fails
+      }
+    });
+    
+    // Log the final sorted order
+    log('Final sorted order:');
+    for (int i = 0; i < sortedProducts.length; i++) {
+      log('$i: ${sortedProducts[i].name} (${sortedProducts[i].updatedAt})');
+    }
+    
+    return sortedProducts;
   }
 }

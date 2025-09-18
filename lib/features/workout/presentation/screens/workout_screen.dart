@@ -675,22 +675,23 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 },
                 color: const Color(0xFF28A228), // App green color
                 backgroundColor: const Color(0xFFE0E0E0), // Light gray background
+                strokeWidth: 2.5, // Slightly thicker stroke for better visibility
+                displacement: 40, // Move the indicator down a bit
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: responsiveHelper.w(16),
                   ),
                   child: SizedBox(
                     width: responsiveHelper.w(343),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(), // Always allow scrolling for pull-to-refresh
+                      padding: EdgeInsets.only(bottom: responsiveHelper.h(20)), // Add bottom padding for better pull-to-refresh experience
+                      children: [
                         if (state.allExercises.isEmpty)
                           // No results found message
                           Container(
                             width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.6, // Ensure minimum height for pull-to-refresh
                             padding: EdgeInsets.symmetric(
                               vertical: responsiveHelper.h(40),
                               horizontal: responsiveHelper.w(20),
@@ -957,7 +958,6 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       ],
                     ),
                   ),
-                ),
                 ),
               ),
             ),
