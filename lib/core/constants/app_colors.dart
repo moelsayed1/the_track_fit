@@ -51,4 +51,8 @@ class AppColors {
     ],
     stops: [0.0, 0.5, 1.0],
   );
+
+  static var lightGreen;
+
+  
 } 

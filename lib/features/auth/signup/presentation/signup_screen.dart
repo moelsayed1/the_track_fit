@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/responsive_helper.dart';
@@ -8,6 +10,9 @@ import '../../../../core/widgets/auth_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
+import '../../../../core/widgets/custom_snackbar.dart';
+import '../../data/cubit/auth_cubit.dart';
+import '../../data/cubit/auth_states.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -23,6 +28,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String? _selectedGender;
+  bool _showGenderValidation = false;
 
   @override
   void dispose() {
@@ -34,12 +41,10 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
+  // Simplified validation - the cubit handles detailed validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
-    }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Enter a valid email';
     }
     return null;
   }
@@ -48,18 +53,12 @@ class _SignupScreenState extends State<SignupScreen> {
     if (value == null || value.isEmpty) {
       return 'Password is required';
     }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Confirm password is required';
-    }
-    if (value != _passwordController.text) {
-      return 'Passwords do not match';
     }
     return null;
   }
@@ -71,14 +70,31 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
+
   void _handleSignup() {
-    if (_formKey.currentState!.validate()) {
-      // TODO: Implement signup logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created successfully!')),
-      );
-      context.push('/home');
+    // Validate form first
+    if (!_formKey.currentState!.validate()) {
+      return;
     }
+    
+    // Validate gender selection
+    if (_selectedGender == null) {
+      setState(() {
+        _showGenderValidation = true;
+      });
+      return;
+    }
+    
+    // Call the register method from AuthCubit
+    // The cubit will handle validation internally
+    context.read<AuthCubit>().register(
+      name: _usernameController.text.trim(),
+      email: _emailController.text.trim(),
+      phone: _phoneController.text.trim(),
+      password: _passwordController.text,
+      passwordConfirmation: _confirmPasswordController.text,
+      gender: _selectedGender!,
+    );
   }
 
   void _handleGoogleSignup() {
@@ -92,11 +108,48 @@ class _SignupScreenState extends State<SignupScreen> {
     context.push('/login');
   }
 
+  void _showValidationErrors(Map<String, String> errors) {
+    // Show the first validation error
+    final firstError = errors.values.first;
+    CustomSnackbar.show(
+      context,
+      title: 'Validation Error',
+      message: firstError,
+      type: SnackbarType.warning,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Scaffold(
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthRegisterSuccess) {
+          // Show success message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Registration Successful!',
+            message: state.response.message,
+            type: SnackbarType.success,
+          );
+          
+          // Navigate to next screen
+          context.push(AppRouter.ageQuestion);
+        } else if (state is AuthValidationError) {
+          // Show validation errors
+          _showValidationErrors(state.fieldErrors);
+        } else if (state is AuthError) {
+          // Show error message with Custom Snackbar
+          CustomSnackbar.show(
+            context,
+            title: 'Registration Failed',
+            message: state.message,
+            type: SnackbarType.error,
+          );
+        }
+      },
+      child: Scaffold(
       backgroundColor: const Color(0xFFF6FFF6), // Light green background
       body: SingleChildScrollView(
         child: Padding(
@@ -149,6 +202,200 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     SizedBox(height: responsive.hp(2)),
       
+                    // Gender Selection with Custom Toggle
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, top: 12, bottom: 8),
+                          child: Text(
+                            'Gender',
+                            style: TextStyle(
+                              color: AppColors.grayMedium,
+                              fontSize: responsive.sp(12),
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            // Male Option
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedGender = 'male';
+                                    _showGenderValidation = false;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: _selectedGender == 'male' 
+                                        ? AppColors.primaryGreen
+                                        : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _selectedGender == 'male' 
+                                          ? AppColors.primaryGreen
+                                          : Colors.grey.shade300,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _selectedGender == 'male' 
+                                              ? Colors.white
+                                              : Colors.transparent,
+                                          border: Border.all(
+                                            color: _selectedGender == 'male' 
+                                                ? Colors.white
+                                                : Colors.grey.shade500,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: _selectedGender == 'male'
+                                            ? Center(
+                                                child: Container(
+                                                  width: 8,
+                                                  height: 8,
+                                                  decoration: const BoxDecoration(
+                                                    color: AppColors.primaryGreen,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Male',
+                                              style: TextStyle(
+                                                color: _selectedGender == 'male' 
+                                                    ? Colors.white
+                                                    : Colors.grey.shade700,
+                                                fontSize: responsive.sp(14),
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Female Option
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedGender = 'female';
+                                    _showGenderValidation = false;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(left: 8),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: _selectedGender == 'female' 
+                                        ? AppColors.primaryGreen
+                                        : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _selectedGender == 'female' 
+                                          ? AppColors.primaryGreen
+                                          : Colors.grey.shade300,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _selectedGender == 'female' 
+                                              ? Colors.white
+                                              : Colors.transparent,
+                                          border: Border.all(
+                                            color: _selectedGender == 'female' 
+                                                ? Colors.white
+                                                : Colors.grey.shade500,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: _selectedGender == 'female'
+                                            ? Center(
+                                                child: Container(
+                                                  width: 8,
+                                                  height: 8,
+                                                  decoration: const BoxDecoration(
+                                                    color: AppColors.primaryGreen,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Female',
+                                              style: TextStyle(
+                                                color: _selectedGender == 'female' 
+                                                    ? Colors.white
+                                                    : Colors.grey.shade700,
+                                                fontSize: responsive.sp(14),
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_showGenderValidation && _selectedGender == null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16, top: 8),
+                            child: Text(
+                              'Gender is required',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: responsive.sp(12),
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: responsive.hp(2)),
+      
                     CustomTextField(
                       hintText: 'Password',
                       prefixIconAsset: AppIcons.lock,
@@ -171,10 +418,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 SizedBox(height: responsive.hp(4)),
       
                 // Create Account button
-                PrimaryButton(
-                  text: 'Create Account',
-                  onPressed: _handleSignup,
-                  height: responsive.hp(7),
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    return PrimaryButton(
+                      text: 'Create Account',
+                      onPressed: _handleSignup,
+                      height: responsive.hp(7),
+                      isLoading: state is AuthLoading,
+                    );
+                  },
                 ),
       
                 SizedBox(height: responsive.hp(1)),
@@ -221,6 +473,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }

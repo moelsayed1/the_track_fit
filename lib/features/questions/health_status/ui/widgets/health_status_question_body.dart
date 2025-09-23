@@ -1,0 +1,288 @@
+import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_text_styles.dart';
+import '../../../../../core/utils/responsive_helper.dart';
+import '../../../../../core/widgets/question_header.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../../core/router/app_router.dart';
+
+class HealthStatusQuestionBody extends StatefulWidget {
+  const HealthStatusQuestionBody({super.key});
+
+  @override
+  State<HealthStatusQuestionBody> createState() => _HealthStatusQuestionBodyState();
+}
+
+class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
+  final List<String> _selectedHealthIssues = [];
+  bool _isLoading = false;
+  final int _currentStep = 12; // This is question 12 of 14
+  final int _totalSteps = 14;
+
+  // Health status options from the API response
+  final List<Map<String, String>> _healthStatusOptions = [
+    {'value': 'no_health_issues', 'label': 'No Health Issues'},
+    {'value': 'diabetes', 'label': 'Diabetes'},
+    {'value': 'high_blood_pressure', 'label': 'High Blood Pressure'},
+    {'value': 'heart_problems', 'label': 'Heart Problems'},
+    {'value': 'joint_back_problems', 'label': 'Problems in the joints or back'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Common Header
+        QuestionHeader(
+          currentStep: _currentStep,
+          totalSteps: _totalSteps,
+          title: 'Let\'s Set Up Your Plan',
+        ),
+        
+        SizedBox(height: responsive.hp(4)),
+        
+        // Question
+        Container(
+          width: double.infinity,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'What\'s your Health Status?',
+            style: AppTextStyles.heading2.copyWith(
+              fontSize: responsive.sp(24),
+              fontWeight: FontWeight.w600,
+              color: AppColors.black,
+            ),
+            textAlign: TextAlign.start,
+          ),
+        ),
+        
+        SizedBox(height: responsive.hp(2)),
+        
+        // Health Status Options - Make scrollable
+        Expanded(
+          child: SingleChildScrollView(
+            child: _buildHealthStatusOptions(responsive),
+          ),
+        ),
+        
+        // Continue Button
+        _buildContinueButton(responsive),
+        
+        SizedBox(height: responsive.hp(4)),
+      ],
+    );
+  }
+
+  Widget _buildHealthStatusOptions(ResponsiveHelper responsive) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
+      child: Column(
+        children: _healthStatusOptions.map((option) {
+          final isSelected = _selectedHealthIssues.contains(option['value']);
+          return Column(
+            children: [
+              _buildHealthStatusOption(
+                responsive,
+                value: option['value']!,
+                label: option['label']!,
+                isSelected: isSelected,
+                onTap: () => _toggleHealthIssue(option['value']!),
+              ),
+              if (option != _healthStatusOptions.last)
+                SizedBox(height: responsive.h(16)),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildHealthStatusOption(
+    ResponsiveHelper responsive, {
+    required String value,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(responsive.w(16)),
+        decoration: ShapeDecoration(
+          color: isSelected 
+              ? const Color(0x3328A228) // Light green when selected
+              : const Color(0x26848484), // Light gray when not selected
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              width: 1,
+              color: isSelected 
+                  ? AppColors.primaryGreen 
+                  : const Color(0xFF848484),
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Row(
+          children: [
+            // Checkbox
+            Container(
+              width: responsive.w(22),
+              height: responsive.h(22),
+              padding: EdgeInsets.all(responsive.w(4)),
+              decoration: ShapeDecoration(
+                color: isSelected ? AppColors.primaryGreen : Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    width: 1,
+                    color: isSelected 
+                        ? AppColors.primaryGreen 
+                        : const Color(0xFF848484),
+                  ),
+                  borderRadius: BorderRadius.circular(4), // Square checkbox
+                ),
+              ),
+              child: isSelected
+                  ? Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: responsive.w(14),
+                    )
+                  : null,
+            ),
+            
+            SizedBox(width: responsive.w(16)),
+            
+            // Text Content
+            Expanded(
+              child: Text(
+                label,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  fontSize: responsive.sp(16),
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContinueButton(ResponsiveHelper responsive) {
+    final isEnabled = _selectedHealthIssues.isNotEmpty;
+    
+    return SizedBox(
+      width: double.infinity,
+      height: responsive.h(50),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: isEnabled 
+              ? const LinearGradient(
+                  begin: Alignment(0.00, 0.50),
+                  end: Alignment(1.00, 0.50),
+                  colors: [Color(0xFF28A228), Color(0xD85CD65C)],
+                )
+              : null,
+          color: isEnabled ? null : const Color(0xFFBDBDBD),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: isEnabled ? [
+            BoxShadow(
+              color: const Color(0x1928A228),
+              blurRadius: 25,
+              offset: const Offset(0, 10),
+              spreadRadius: -25,
+            ),
+          ] : null,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(30),
+            onTap: isEnabled ? _handleContinue : null,
+            child: Container(
+              width: double.infinity,
+              height: responsive.h(56),
+              alignment: Alignment.center,
+              child: _isLoading
+                  ? SizedBox(
+                      width: responsive.w(24),
+                      height: responsive.h(24),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isEnabled ? Colors.white : Colors.grey[600]!,
+                        ),
+                      ),
+                    )
+                  : Text(
+                      'Continue',
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        fontSize: responsive.sp(16),
+                        fontWeight: FontWeight.w500,
+                        color: isEnabled ? Colors.white : Colors.grey[600]!,
+                        height: 1.50,
+                        letterSpacing: 0.50,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _toggleHealthIssue(String healthIssue) {
+    setState(() {
+      if (_selectedHealthIssues.contains(healthIssue)) {
+        _selectedHealthIssues.remove(healthIssue);
+      } else {
+        _selectedHealthIssues.add(healthIssue);
+      }
+    });
+  }
+
+  void _handleContinue() async {
+    if (_selectedHealthIssues.isEmpty) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // TODO: Implement health status selection logic
+      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Health issues selected: ${_selectedHealthIssues.length}'),
+            backgroundColor: AppColors.primaryGreen,
+          ),
+        );
+        
+        // Navigate to next question screen
+        context.push(AppRouter.specialDietQuestion);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+}

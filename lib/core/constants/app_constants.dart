@@ -38,4 +38,36 @@ class AppConstants {
   
   // Asset paths (imported from app_assets.dart)
   // Use AppAssets class for all asset paths
+  
+  // API Configuration
+  static const String baseUrl = 'https://thetrackfit.com'; 
+  static const String registerEndpoint = '/api/register';
+  static const String loginEndpoint = '/api/login';
+  static const String logoutEndpoint = '/api/logout';
+  static const String sendOtpEndpoint = '/api/send-otp';
+  static const String verifyOtpEndpoint = '/api/verify-otp';
+  static const String resetPasswordEndpoint = '/api/reset-password';
+  static const String updateProfileEndpoint = '/api/update';
+  static const String mainGoalOptionEndpoint = '/api/main-goal-option';
+  static const String updateMainGoalEndpoint = '/api/update-main-goal';
+  static const String getAllExercisesEndpoint = '/api/get-all-exercises';
+  static const String getExercisesCategoryEndpoint = '/api/get-exercises-category';
+  static const String getExercisesByLocationEndpoint = '/api/get-exercises-filter';
+  static const String getExercisesByEquipmentEndpoint = '/api/get-exercises-filter';
+  static const String getExercisesByDayEndpoint = '/api/get-exercises-by-day';
+  static const String newProductsEndpoint = '/api/new-products';
+  static const String storeInCartEndpoint = '/api/store-in-cart';
+  static const String getCartItemsEndpoint = '/api/get-cart';
+  static const String removeFromCartEndpoint = '/api/remove-from-cart';
+  static const String storeSaleEndpoint = '/api/store-sale';
+  static const String getShippingGovernmentsEndpoint = '/api/get-shipping-governments';
+  static const String favoritesToggleEndpoint = '/api/favorites/toggle';
+  static const String favoritesProductsEndpoint = '/api/favorites/products';
+  static const String favoritesExercisesEndpoint = '/api/favorites/exercises';
+  static const String getMealsByDayEndpoint = '/api/get-meals-by-day';
+  
+  // API Helper Methods
+  static String getNewProductsUrl({int perPage = 10, int page = 1}) {
+    return '$newProductsEndpoint?per_page=$perPage&page=$page';
+  }
 } 
