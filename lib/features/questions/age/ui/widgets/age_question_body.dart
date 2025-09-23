@@ -67,7 +67,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
         const Spacer(),
         
         // Continue Button
-        _buildContinueButton(responsive),
+        GestureDetector(onTap: () => _handleContinue(), child: _buildContinueButton(responsive)),
         
         SizedBox(height: responsive.hp(4)),
       ],

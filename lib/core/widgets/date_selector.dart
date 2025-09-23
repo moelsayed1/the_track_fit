@@ -4,13 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class DateSelector extends StatefulWidget {
   final Function(int) onDateSelected;
   final int initialSelectedIndex;
-  final List<Map<String, String>> dates;
+  final List<String> dayNames;
 
   const DateSelector({
     super.key,
     required this.onDateSelected,
     this.initialSelectedIndex = 0,
-    required this.dates,
+    required this.dayNames,
   });
 
   @override
@@ -35,36 +35,28 @@ class _DateSelectorState extends State<DateSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-                 width: double.infinity,
-                 padding: EdgeInsets.symmetric(vertical: 8.h),
-                 decoration: BoxDecoration(
-                   color: const Color(0xFF28A228),
-                 ),
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                   children: [
-                     _buildDateItem('Fri', '5', 0),
-                     _buildDateItem('Sat', '6', 1),
-                     _buildDateItem('Sun', '11', 2),
-                     _buildDateItem('Mon', '7', 3),
-                     _buildDateItem('Tue', '8', 4),
-                     _buildDateItem('Wed', '9', 5),
-                     _buildDateItem('Thu', '10', 6),
-                   ],
-                 ),
-               );
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF28A228),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: widget.dayNames.asMap().entries.map((entry) {
+          return _buildDateItem(entry.value, entry.key);
+        }).toList(),
+      ),
+    );
+  }
 
-            }
-
-  Widget _buildDateItem(String day, String date, int index) {
+  Widget _buildDateItem(String dayName, int index) {
     bool isSelected = _selectedDateIndex == index;
     return GestureDetector(
       onTap: () => _onDateSelected(index),
       child: Container(
         width: 35.w,
         height: 60.h,
-
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(30.r),
@@ -73,7 +65,7 @@ class _DateSelectorState extends State<DateSelector> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              day,
+              dayName,
               style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : Colors.white,
                 fontSize: 11.sp,
@@ -82,15 +74,15 @@ class _DateSelectorState extends State<DateSelector> {
               ),
             ),
             SizedBox(height: 1.h),
-            Text(
-              date,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF28A228) : Colors.white,
-                fontSize: 11.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            // Text(
+            //   dayName,
+            //   style: TextStyle(
+            //     color: isSelected ? const Color(0xFF28A228) : Colors.white,
+            //     fontSize: 11.sp,
+            //     fontFamily: 'Poppins',
+            //     fontWeight: FontWeight.w500,
+            //   ),
+            // ),
           ],
         ),
       ),

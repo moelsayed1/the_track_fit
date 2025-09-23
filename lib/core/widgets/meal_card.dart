@@ -43,7 +43,9 @@ class MealCard extends StatelessWidget {
                 ),
               ),
               image: DecorationImage(
-                image: AssetImage(imagePath),
+                image: imagePath.startsWith('http') 
+                    ? NetworkImage(imagePath) 
+                    : AssetImage(imagePath) as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),
