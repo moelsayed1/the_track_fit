@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,8 +18,50 @@ class InjuryQuestionBody extends StatefulWidget {
 class _InjuryQuestionBodyState extends State<InjuryQuestionBody> {
   final TextEditingController _injuryController = TextEditingController();
   bool _isLoading = false;
+  bool _isLoadingQuestion = true;
+  String? _error;
   final int _currentStep = 14; // This is question 14 of 14 (final question)
   final int _totalSteps = 14;
+
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
+  String _questionText = 'Current or Previous Injury? (Describe)';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInjuryQuestion();
+  }
+
+  Future<void> _loadInjuryQuestion() async {
+    try {
+      setState(() {
+        _isLoadingQuestion = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getCurrentOrPreviousInjuryQuestion();
+      
+      if (question != null) {
+        setState(() {
+          _questionText = question.enText;
+          _isLoadingQuestion = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No injury question available';
+          _isLoadingQuestion = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load injury question: ${e.toString()}';
+        _isLoadingQuestion = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -46,7 +90,7 @@ class _InjuryQuestionBodyState extends State<InjuryQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'Current or Previous Injury? (Describe)',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -172,8 +216,15 @@ class _InjuryQuestionBodyState extends State<InjuryQuestionBody> {
     });
 
     try {
-      // TODO: Implement injury description submission logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getCurrentOrPreviousInjuryQuestion();
+      if (question != null) {
+        // Add the answer to the answers service (as single string for textarea)
+        _answersService.addAnswer(question.id, _injuryController.text);
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +241,7 @@ class _InjuryQuestionBodyState extends State<InjuryQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

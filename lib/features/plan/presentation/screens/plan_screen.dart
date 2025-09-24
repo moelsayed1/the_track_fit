@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import '../../data/services/packages_service.dart';
+import '../../domain/models/package.dart';
 
 class PlanSubscriptionScreen extends StatefulWidget {
   const PlanSubscriptionScreen({super.key});
@@ -14,6 +18,42 @@ class PlanSubscriptionScreen extends StatefulWidget {
 
 class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
   int? _selectedPlanIndex;
+  List<Package> _packages = [];
+  bool _isLoading = true;
+  String? _error;
+  
+  // Services
+  final PackagesService _packagesService = PackagesService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPackages();
+  }
+
+  Future<void> _loadPackages() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      final packagesResponse = await _packagesService.getActivePackages();
+      
+      setState(() {
+        _packages = packagesResponse.data.packages;
+        _isLoading = false;
+      });
+      
+      log('Loaded ${_packages.length} packages');
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load packages: ${e.toString()}';
+        _isLoading = false;
+      });
+      log('Error loading packages: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,34 +91,94 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           
           // Scrollable content
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 12.h),
-                  _buildHeader(),
-                  SizedBox(height: 30.h),
-                  _buildPlanCard(
-                    index: 0,
-                    title: 'Pro Plan',
-                    price: '30 \$',
-                    isMostPopular: true,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildPlanCard(
-                    index: 1,
-                    title: 'Pro Plan',
-                    price: '30 \$',
-                    isMostPopular: false,
-                  ),
-                  SizedBox(height: 20.h), 
-                ],
-              ),
-            ),
+            child: _isLoading
+                ? _buildLoadingState()
+                : _error != null
+                    ? _buildErrorState()
+                    : _buildPackagesList(),
           ),
           
           // Buy Now button at the bottom
           if (_selectedPlanIndex != null)
             _buildBuyNowButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'Loading packages...',
+            style: TextStyle(
+              color: Color(0xFF848484),
+              fontSize: 16.sp,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64.sp,
+            color: Colors.red,
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            _error!,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 16.sp,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: 16.h),
+          ElevatedButton(
+            onPressed: _loadPackages,
+            child: Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPackagesList() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 12.h),
+          _buildHeader(),
+          SizedBox(height: 30.h),
+          ..._packages.asMap().entries.map((entry) {
+            final index = entry.key;
+            final package = entry.value;
+            return Column(
+              children: [
+                _buildPlanCard(
+                  index: index,
+                  package: package,
+                ),
+                if (index < _packages.length - 1) SizedBox(height: 16.h),
+              ],
+            );
+          }),
+          SizedBox(height: 20.h),
         ],
       ),
     );
@@ -119,9 +219,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
 
   Widget _buildPlanCard({
     required int index,
-    required String title,
-    required String price,
-    required bool isMostPopular,
+    required Package package,
   }) {
     bool isSelected = _selectedPlanIndex != null && _selectedPlanIndex == index;
 
@@ -154,21 +252,25 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     Row(
                       children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
+                        Flexible(
+                          child: Text(
+                            package.enName,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (isMostPopular)
+                        if (package.mostPopular)
                           Container(
                             margin: EdgeInsets.only(left: 8.w),
                             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
@@ -177,6 +279,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
                               borderRadius: BorderRadius.circular(15.r),
                             ),
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(Icons.star, color: Color(0xFFFBBC05), size: 10.sp),
                                 const SizedBox(width: 4),
@@ -197,7 +300,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
                     Row(
                       children: [
                         Text(
-                          price,
+                          package.formattedPrice,
                           style: TextStyle(
                             color: Color(0xFF1E1E1E),
                             fontSize: 18.sp,
@@ -207,7 +310,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '/month',
+                          '/${package.durationInMonths}',
                           style: TextStyle(
                             color: Color(0xBF1E1E1E),
                             fontSize: 10.sp,
@@ -219,17 +322,20 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
                     ),
                   ],
                 ),
+                ),
                 _buildSelectButton(isSelected),
               ],
             ),
             const SizedBox(height: 16),
             const Divider(color: Color(0x26848484), thickness: 1),
             const SizedBox(height: 16),
-            _buildFeatureRow(text: 'AI feedback'),
-            const SizedBox(height: 13),
-            _buildFeatureRow(text: 'Advanced analytics'),
-            const SizedBox(height: 13),
-            _buildFeatureRow(text: 'Save progress'),
+            // Display features from the package description
+            ...package.features.map((feature) => Column(
+              children: [
+                _buildFeatureRow(text: feature),
+                const SizedBox(height: 13),
+              ],
+            )),
           ],
         ),
       ),
@@ -286,16 +392,21 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
 
   Widget _buildFeatureRow({required String text}) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Icon(Icons.check_circle, color: Color(0xFF5CB85C), size: 20),
         const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w400,
+            ),
+            softWrap: true,
+            overflow: TextOverflow.visible,
           ),
         ),
       ],
@@ -355,19 +466,16 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
   }
 
   Map<String, dynamic> _getSelectedPlan() {
-    if (_selectedPlanIndex == 0) {
+    if (_selectedPlanIndex != null && _selectedPlanIndex! < _packages.length) {
+      final package = _packages[_selectedPlanIndex!];
       return {
-        'title': 'Pro Plan',
-        'price': '30\$',
-        'isMostPopular': true,
-        'features': ['AI feedback', 'Advanced analytics', 'Save progress'],
-      };
-    } else if (_selectedPlanIndex == 1) {
-      return {
-        'title': 'Pro Plan',
-        'price': '30\$',
-        'isMostPopular': false,
-        'features': ['AI feedback', 'Advanced analytics', 'Save progress'],
+        'id': package.id,
+        'title': package.enName,
+        'price': package.formattedPrice,
+        'isMostPopular': package.mostPopular,
+        'features': package.features,
+        'duration': package.durationInMonths,
+        'image': package.fullImageUrl,
       };
     }
     return {};

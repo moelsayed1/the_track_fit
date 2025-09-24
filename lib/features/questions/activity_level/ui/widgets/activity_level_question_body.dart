@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -14,19 +16,58 @@ class ActivityLevelQuestionBody extends StatefulWidget {
 }
 
 class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
-  final List<String> _selectedActivities = [];
+  String? _selectedActivity; // Changed to single selection
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 8; // This is question 8 of 14
   final int _totalSteps = 14;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Activity level options from the API response
-  final List<Map<String, String>> _activityOptions = [
-    {'value': 'no_activity', 'label': 'No Activity'},
-    {'value': 'light_activity', 'label': 'Light Activity (Twice a Week)'},
-    {'value': 'moderate_activity', 'label': 'Moderate Activity (3-4 Times a Week)'},
-    {'value': 'high_activity', 'label': 'High Activity (5 Times a Week)'},
-    {'value': 'professional_athlete', 'label': 'Professional or Semi-Professional Athlete'},
-  ];
+  List<Map<String, String>> _activityOptions = [];
+  String _questionText = 'What\'s your Current Activity Level?';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadActivityLevelQuestion();
+  }
+
+  Future<void> _loadActivityLevelQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getCurrentActivityLevelQuestion();
+      
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _activityOptions = question.options!.map((option) => {
+            'value': option.en,
+            'label': option.en,
+          }).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No activity level options available';
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load activity level options: ${e.toString()}';
+        _isLoadingOptions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +90,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Current Activity Level?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -63,9 +104,42 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
         
         // Activity Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildActivityOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadActivityLevelQuestion,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildActivityOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -81,7 +155,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
       padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
       child: Column(
         children: _activityOptions.map((option) {
-          final isSelected = _selectedActivities.contains(option['value']);
+          final isSelected = _selectedActivity == option['value'];
           return Column(
             children: [
               _buildActivityOption(
@@ -89,7 +163,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
                 value: option['value']!,
                 label: option['label']!,
                 isSelected: isSelected,
-                onTap: () => _toggleActivity(option['value']!),
+                onTap: () => _selectActivity(option['value']!),
               ),
               if (option != _activityOptions.last)
                 SizedBox(height: responsive.h(16)),
@@ -128,7 +202,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
         ),
         child: Row(
           children: [
-            // Checkbox
+            // Radio Button
             Container(
               width: responsive.w(22),
               height: responsive.h(22),
@@ -142,14 +216,17 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
                         ? AppColors.primaryGreen 
                         : const Color(0xFF848484),
                   ),
-                  borderRadius: BorderRadius.circular(4), // Square checkbox
+                  borderRadius: BorderRadius.circular(16), // Circular radio button
                 ),
               ),
               child: isSelected
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: responsive.w(14),
+                  ? Container(
+                      width: responsive.w(9),
+                      height: responsive.h(9),
+                      decoration: const ShapeDecoration(
+                        color: Colors.white,
+                        shape: OvalBorder(),
+                      ),
                     )
                   : null,
             ),
@@ -174,7 +251,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    final isEnabled = _selectedActivities.isNotEmpty;
+    final isEnabled = _selectedActivity != null;
     
     return SizedBox(
       width: double.infinity,
@@ -236,31 +313,34 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
     );
   }
 
-  void _toggleActivity(String activity) {
+  void _selectActivity(String activity) {
     setState(() {
-      if (_selectedActivities.contains(activity)) {
-        _selectedActivities.remove(activity);
-      } else {
-        _selectedActivities.add(activity);
-      }
+      _selectedActivity = activity;
     });
   }
 
   void _handleContinue() async {
-    if (_selectedActivities.isEmpty) return;
+    if (_selectedActivity == null) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // TODO: Implement activity level selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getCurrentActivityLevelQuestion();
+      if (question != null) {
+        // Add the answer to the answers service (as single value for radio button)
+        _answersService.addAnswer(question.id, _selectedActivity!);
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Activity levels selected: ${_selectedActivities.length}'),
+            content: Text('Activity level selected: $_selectedActivity'),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
@@ -272,7 +352,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

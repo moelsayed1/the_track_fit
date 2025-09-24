@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,17 +20,56 @@ class HealthStatusQuestionBody extends StatefulWidget {
 class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
   final List<String> _selectedHealthIssues = [];
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 12; // This is question 12 of 14
   final int _totalSteps = 14;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Health status options from the API response
-  final List<Map<String, String>> _healthStatusOptions = [
-    {'value': 'no_health_issues', 'label': 'No Health Issues'},
-    {'value': 'diabetes', 'label': 'Diabetes'},
-    {'value': 'high_blood_pressure', 'label': 'High Blood Pressure'},
-    {'value': 'heart_problems', 'label': 'Heart Problems'},
-    {'value': 'joint_back_problems', 'label': 'Problems in the joints or back'},
-  ];
+  List<Map<String, String>> _healthStatusOptions = [];
+  String _questionText = 'What\'s your Health Status?';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHealthStatusQuestion();
+  }
+
+  Future<void> _loadHealthStatusQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getHealthStatusQuestion();
+      
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _healthStatusOptions = question.options!.map((option) => {
+            'value': option.en,
+            'label': option.en,
+          }).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No health status options available';
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load health status options: ${e.toString()}';
+        _isLoadingOptions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +92,7 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Health Status?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -63,9 +106,42 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
         
         // Health Status Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildHealthStatusOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadHealthStatusQuestion,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildHealthStatusOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -240,8 +316,10 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
     setState(() {
       if (_selectedHealthIssues.contains(healthIssue)) {
         _selectedHealthIssues.remove(healthIssue);
+        log('Removed: $healthIssue. Current selections: $_selectedHealthIssues');
       } else {
         _selectedHealthIssues.add(healthIssue);
+        log('Added: $healthIssue. Current selections: $_selectedHealthIssues');
       }
     });
   }
@@ -254,8 +332,22 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
     });
 
     try {
-      // TODO: Implement health status selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getHealthStatusQuestion();
+      if (question != null) {
+        // Debug: Log what we're about to submit
+        log('Health Status - Selected: $_selectedHealthIssues');
+        log('Health Status - Count: ${_selectedHealthIssues.length}');
+        
+        // Add the answer to the answers service (as array for multi-select)
+        _answersService.addAnswer(question.id, _selectedHealthIssues);
+        
+        // Debug: Log what's in the answers service
+        log('Answers Service - All answers: ${_answersService.answers}');
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -272,7 +364,7 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

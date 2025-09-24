@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,18 +20,56 @@ class DietSystemQuestionBody extends StatefulWidget {
 class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
   final List<String> _selectedDietSystems = [];
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 11; // This is question 11 of 14
   final int _totalSteps = 14;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Diet system options from the API response
-  final List<Map<String, String>> _dietSystemOptions = [
-    {'value': 'unstructured', 'label': 'Unstructured'},
-    {'value': 'three_meals', 'label': '3 Meals a Day'},
-    {'value': 'one_two_meals', 'label': 'One or Two Meals Only'},
-    {'value': 'intermittent_fasting', 'label': 'Intermittent Fasting'},
-    {'value': 'vegetarian', 'label': 'Vegetarian'},
-    {'value': 'gluten_free', 'label': 'Gluten-free'},
-  ];
+  List<Map<String, String>> _dietSystemOptions = [];
+  String _questionText = 'What\'s your Current Diet System?';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDietSystemQuestion();
+  }
+
+  Future<void> _loadDietSystemQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getCurrentDietSystemQuestion();
+      
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _dietSystemOptions = question.options!.map((option) => {
+            'value': option.en,
+            'label': option.en,
+          }).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No diet system options available';
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load diet system options: ${e.toString()}';
+        _isLoadingOptions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +92,7 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Current Diet System?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -64,9 +106,42 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
         
         // Diet System Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildDietSystemOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadDietSystemQuestion,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildDietSystemOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -241,8 +316,10 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
     setState(() {
       if (_selectedDietSystems.contains(dietSystem)) {
         _selectedDietSystems.remove(dietSystem);
+        log('Removed: $dietSystem. Current selections: $_selectedDietSystems');
       } else {
         _selectedDietSystems.add(dietSystem);
+        log('Added: $dietSystem. Current selections: $_selectedDietSystems');
       }
     });
   }
@@ -255,8 +332,22 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
     });
 
     try {
-      // TODO: Implement diet system selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getCurrentDietSystemQuestion();
+      if (question != null) {
+        // Debug: Log what we're about to submit
+        log('Diet System - Selected: $_selectedDietSystems');
+        log('Diet System - Count: ${_selectedDietSystems.length}');
+        
+        // Add the answer to the answers service (as array for multi-select)
+        _answersService.addAnswer(question.id, _selectedDietSystems);
+        
+        // Debug: Log what's in the answers service
+        log('Answers Service - All answers: ${_answersService.answers}');
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -273,7 +364,7 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

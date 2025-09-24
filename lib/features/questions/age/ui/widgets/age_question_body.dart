@@ -5,6 +5,9 @@ import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
+import '../../../../questions/data/services/questions_service.dart';
+import '../../../../questions/data/services/answers_service.dart';
+import '../../../../questions/domain/models/question.dart';
 
 class AgeQuestionBody extends StatefulWidget {
   const AgeQuestionBody({super.key});
@@ -16,17 +19,45 @@ class AgeQuestionBody extends StatefulWidget {
 class _AgeQuestionBodyState extends State<AgeQuestionBody> {
   String? _selectedAge;
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
+  Question? _ageQuestion;
   final int _currentStep = 1; // This is question 1 of 14
   final int _totalSteps = 14;
 
-  // Age options from the API response
-  final List<Map<String, String>> _ageOptions = [
-    {'value': 'under_18', 'label': 'Under 18'},
-    {'value': '18_25', 'label': '18-25'},
-    {'value': '26_35', 'label': '26-35'},
-    {'value': '36_45', 'label': '36-45'},
-    {'value': 'over_45', 'label': 'Over 45'},
-  ];
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAgeQuestion();
+  }
+
+  Future<void> _loadAgeQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getAgeQuestion();
+      
+      if (mounted) {
+        setState(() {
+          _ageQuestion = question;
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoadingOptions = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +80,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Age?',
+            _ageQuestion?.enText ?? 'What\'s your Age?',
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -75,19 +106,67 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
   }
 
   Widget _buildAgeOptions(ResponsiveHelper responsive) {
+    if (_isLoadingOptions) {
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          children: [
+            Text(
+              'Error loading age options',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: Colors.red,
+                fontSize: responsive.sp(16),
+              ),
+            ),
+            SizedBox(height: responsive.h(16)),
+            ElevatedButton(
+              onPressed: _loadAgeQuestion,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_ageQuestion?.options == null || _ageQuestion!.options!.isEmpty) {
+      return Center(
+        child: Text(
+          'No age options available',
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.black,
+            fontSize: responsive.sp(16),
+          ),
+        ),
+      );
+    }
+
     return Column(
-      children: _ageOptions.map((option) {
-        final isSelected = _selectedAge == option['value'];
+      children: _ageQuestion!.options!.asMap().entries.map((entry) {
+        final index = entry.key;
+        final option = entry.value;
+        final isSelected = _selectedAge == option.en;
+        
         return Column(
           children: [
             _buildAgeOption(
               responsive,
-              value: option['value']!,
-              label: option['label']!,
+              value: option.en,
+              label: option.en,
               isSelected: isSelected,
-              onTap: () => _selectAge(option['value']!),
+              onTap: () => _selectAge(option.en),
             ),
-            if (option != _ageOptions.last)
+            if (index != _ageQuestion!.options!.length - 1)
               SizedBox(height: responsive.h(16)),
           ],
         );
@@ -241,32 +320,35 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
   }
 
   void _handleContinue() async {
-    if (_selectedAge == null) return;
+    if (_selectedAge == null || _ageQuestion == null) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // TODO: Implement age selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Add the answer to the answers service
+      _answersService.addAnswer(_ageQuestion!.id, _selectedAge!);
+      
+      // Submit answers to API
+      await _answersService.submitAnswers();
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Age selected: ${_ageOptions.firstWhere((option) => option['value'] == _selectedAge)['label']}'),
+            content: Text('Age submitted successfully: $_selectedAge'),
             backgroundColor: AppColors.primaryGreen,
           ),
         );
         
-        // Navigate to next question screen (Gender Question)
+        // Navigate to next question screen (Height Question)
         context.push(AppRouter.heightQuestion);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

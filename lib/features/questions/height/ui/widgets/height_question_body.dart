@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,12 +18,53 @@ class HeightQuestionBody extends StatefulWidget {
 class _HeightQuestionBodyState extends State<HeightQuestionBody> {
   int _selectedHeight = 0; // Default height in cm - now mutable
   bool _isLoading = false;
+  bool _isLoadingQuestion = true;
+  String? _error;
   final int _currentStep = 4; // This is question 4 of 14
   final int _totalSteps = 14;
   
-      final int _minHeight = 140; // Minimum height in cm
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+  
+  String _questionText = 'What\'s your Height ?';
+  final int _minHeight = 140; // Minimum height in cm
   final int _maxHeight = 220; // Maximum height in cm
   
+  @override
+  void initState() {
+    super.initState();
+    _loadHeightQuestion();
+  }
+
+  Future<void> _loadHeightQuestion() async {
+    try {
+      setState(() {
+        _isLoadingQuestion = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getHeightQuestion();
+      
+      if (question != null) {
+        setState(() {
+          _questionText = question.enText;
+          _isLoadingQuestion = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No height question available';
+          _isLoadingQuestion = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load height question: ${e.toString()}';
+        _isLoadingQuestion = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
@@ -43,7 +86,7 @@ class _HeightQuestionBodyState extends State<HeightQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Height ?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -271,8 +314,15 @@ class _HeightQuestionBodyState extends State<HeightQuestionBody> {
     });
 
     try {
-      // TODO: Implement height selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getHeightQuestion();
+      if (question != null) {
+        // Add the answer to the answers service (as single value)
+        _answersService.addAnswer(question.id, _selectedHeight.toString());
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -289,7 +339,7 @@ class _HeightQuestionBodyState extends State<HeightQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,16 +18,56 @@ class AdditionalGoalsQuestionBody extends StatefulWidget {
 class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBody> {
   final List<String> _selectedAdditionalGoals = [];
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 15; // This is question 15 of 15 (final question)
   final int _totalSteps = 15;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Additional goals options from the API response
-  final List<Map<String, String>> _additionalGoalsOptions = [
-    {'value': 'better_sleep', 'label': 'Better Sleep'},
-    {'value': 'better_focus_energy', 'label': 'Better Focus and Energy'},
-    {'value': 'better_meal_planning', 'label': 'Better Meal Planning'},
-    {'value': 'build_sports_routine', 'label': 'Build a Sports Routine'},
-  ];
+  List<Map<String, String>> _additionalGoalsOptions = [];
+  String _questionText = 'Additional Goals (Optional)';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAdditionalGoalsQuestion();
+  }
+
+  Future<void> _loadAdditionalGoalsQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getAdditionalGoalsQuestion();
+      
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _additionalGoalsOptions = question.options!.map((option) => {
+            'value': option.en,
+            'label': option.en,
+          }).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No additional goals options available';
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load additional goals options: ${e.toString()}';
+        _isLoadingOptions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +90,7 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'Additional Goals (Optional)',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -62,9 +104,42 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
         
         // Additional Goals Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildAdditionalGoalsOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadAdditionalGoalsQuestion,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildAdditionalGoalsOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -245,8 +320,15 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
     });
 
     try {
-      // TODO: Implement additional goals selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getAdditionalGoalsQuestion();
+      if (question != null) {
+        // Add the answer to the answers service (as array for multi-select)
+        _answersService.addAnswer(question.id, _selectedAdditionalGoals);
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -263,7 +345,7 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

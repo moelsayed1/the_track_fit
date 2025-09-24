@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,18 +20,56 @@ class TrainingTypesQuestionBody extends StatefulWidget {
 class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
   final List<String> _selectedTrainingTypes = [];
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 9; // This is question 9 of 14
   final int _totalSteps = 14;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Training types options from the API response
-  final List<Map<String, String>> _trainingTypeOptions = [
-    {'value': 'cardio', 'label': 'Cardio (Running, Cycling, Jumping Ropes)'},
-    {'value': 'resistance_training', 'label': 'Resistance Training (Iron or Bodyweight)'},
-    {'value': 'hiit', 'label': 'HIIT (High Intensity Interval Training)'},
-    {'value': 'home_training', 'label': 'Home Training'},
-    {'value': 'yoga_pilates', 'label': 'Yoga or Pilates'},
-    {'value': 'rehabilitation', 'label': 'Muscle/Sports Rehabilitation Exercises'},
-  ];
+  List<Map<String, String>> _trainingTypeOptions = [];
+  String _questionText = 'What\'s your Preferred Training Types?';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTrainingTypesQuestion();
+  }
+
+  Future<void> _loadTrainingTypesQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getPreferredTrainingTypesQuestion();
+      
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _trainingTypeOptions = question.options!.map((option) => {
+            'value': option.en,
+            'label': option.en,
+          }).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No training types options available';
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load training types options: ${e.toString()}';
+        _isLoadingOptions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +92,7 @@ class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Preferred Training Types?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -64,9 +106,42 @@ class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
         
         // Training Types Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildTrainingTypeOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadTrainingTypesQuestion,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildTrainingTypeOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -241,8 +316,10 @@ class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
     setState(() {
       if (_selectedTrainingTypes.contains(trainingType)) {
         _selectedTrainingTypes.remove(trainingType);
+        log('Removed: $trainingType. Current selections: $_selectedTrainingTypes');
       } else {
         _selectedTrainingTypes.add(trainingType);
+        log('Added: $trainingType. Current selections: $_selectedTrainingTypes');
       }
     });
   }
@@ -255,8 +332,22 @@ class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
     });
 
     try {
-      // TODO: Implement training types selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getPreferredTrainingTypesQuestion();
+      if (question != null) {
+        // Debug: Log what we're about to submit
+        log('Training Types - Selected: $_selectedTrainingTypes');
+        log('Training Types - Count: ${_selectedTrainingTypes.length}');
+        
+        // Add the answer to the answers service (as array for multi-select)
+        _answersService.addAnswer(question.id, _selectedTrainingTypes);
+        
+        // Debug: Log what's in the answers service
+        log('Answers Service - All answers: ${_answersService.answers}');
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -273,7 +364,7 @@ class _TrainingTypesQuestionBodyState extends State<TrainingTypesQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

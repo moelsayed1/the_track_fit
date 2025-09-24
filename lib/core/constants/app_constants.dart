@@ -65,6 +65,9 @@ class AppConstants {
   static const String favoritesProductsEndpoint = '/api/favorites/products';
   static const String favoritesExercisesEndpoint = '/api/favorites/exercises';
   static const String getMealsByDayEndpoint = '/api/get-meals-by-day';
+  static const String getQuestionsEndpoint = '/api/get-questions';
+  static const String submitAnswersEndpoint = '/api/submit-answers';
+  static const String getActivePackagesEndpoint = '/api/get-active-packages';
   
   // API Helper Methods
   static String getNewProductsUrl({int perPage = 10, int page = 1}) {
