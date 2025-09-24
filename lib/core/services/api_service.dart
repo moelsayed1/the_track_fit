@@ -19,9 +19,9 @@ class ApiService {
       receiveTimeout: const Duration(seconds: 30),
       sendTimeout: const Duration(seconds: 30),
       validateStatus: (status) {
-        // Accept 200-299, 422 (validation errors), and 419 (CSRF token mismatch) as valid responses
+        // Accept 200-299, 404 (not found), 422 (validation errors), and 419 (CSRF token mismatch) as valid responses
         log('validateStatus called with status: $status');
-        final isValid = status != null && (status < 300 || status == 422 || status == 419);
+        final isValid = status != null && (status < 300 || status == 404 || status == 422 || status == 419);
         log('validateStatus returning: $isValid');
         return isValid;
       },

@@ -559,7 +559,7 @@ class _BottomNavBar extends StatelessWidget {
                     fit: BoxFit.contain,
                     color: getTabColor(4),
                   ),
-                  label: 'Plan',
+                  label: 'Packages',
                   selected: currentIndex == 4,
                   onTap: () => onTabTapped(4),
                   color: getTabColor(4),
