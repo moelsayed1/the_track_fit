@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,17 +20,56 @@ class EquipmentQuestionBody extends StatefulWidget {
 class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
   final List<String> _selectedEquipment = [];
   bool _isLoading = false;
+  bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 10; // This is question 10 of 14
   final int _totalSteps = 14;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Equipment options from the API response
-  final List<Map<String, String>> _equipmentOptions = [
-    {'value': 'no_equipment', 'label': 'No Equipment'},
-    {'value': 'dumbbells', 'label': 'Dumbbells'},
-    {'value': 'sports_mat', 'label': 'Sports Mat'},
-    {'value': 'full_gym', 'label': 'Full Sports Equipment (Gym)'},
-    {'value': 'special_training', 'label': 'Special Training Equipment'},
-  ];
+  List<Map<String, String>> _equipmentOptions = [];
+  String _questionText = 'What\'s your Available Equipment?';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEquipmentQuestion();
+  }
+
+  Future<void> _loadEquipmentQuestion() async {
+    try {
+      setState(() {
+        _isLoadingOptions = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getAvailableEquipmentQuestion();
+      
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _equipmentOptions = question.options!.map((option) => {
+            'value': option.en,
+            'label': option.en,
+          }).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No equipment options available';
+          _isLoadingOptions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load equipment options: ${e.toString()}';
+        _isLoadingOptions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +92,7 @@ class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Available Equipment?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -63,9 +106,42 @@ class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
         
         // Equipment Options - Make scrollable
         Expanded(
-          child: SingleChildScrollView(
-            child: _buildEquipmentOptions(responsive),
-          ),
+          child: _isLoadingOptions
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
+                  ),
+                )
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadEquipmentQuestion,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildEquipmentOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -240,8 +316,10 @@ class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
     setState(() {
       if (_selectedEquipment.contains(equipment)) {
         _selectedEquipment.remove(equipment);
+        log('Removed: $equipment. Current selections: $_selectedEquipment');
       } else {
         _selectedEquipment.add(equipment);
+        log('Added: $equipment. Current selections: $_selectedEquipment');
       }
     });
   }
@@ -254,8 +332,22 @@ class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
     });
 
     try {
-      // TODO: Implement equipment selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getAvailableEquipmentQuestion();
+      if (question != null) {
+        // Debug: Log what we're about to submit
+        log('Equipment - Selected: $_selectedEquipment');
+        log('Equipment - Count: ${_selectedEquipment.length}');
+        
+        // Add the answer to the answers service (as array for multi-select)
+        _answersService.addAnswer(question.id, _selectedEquipment);
+        
+        // Debug: Log what's in the answers service
+        log('Answers Service - All answers: ${_answersService.answers}');
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -272,7 +364,7 @@ class _EquipmentQuestionBodyState extends State<EquipmentQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

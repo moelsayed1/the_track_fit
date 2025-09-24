@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -16,8 +18,50 @@ class SpecialDietQuestionBody extends StatefulWidget {
 class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
   final TextEditingController _specialDietController = TextEditingController();
   bool _isLoading = false;
+  bool _isLoadingQuestion = true;
+  String? _error;
   final int _currentStep = 13; // This is question 13 of 14
   final int _totalSteps = 14;
+
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
+  String _questionText = 'Special Diet? (Describe)';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpecialDietQuestion();
+  }
+
+  Future<void> _loadSpecialDietQuestion() async {
+    try {
+      setState(() {
+        _isLoadingQuestion = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getSpecialDietQuestion();
+      
+      if (question != null) {
+        setState(() {
+          _questionText = question.enText;
+          _isLoadingQuestion = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No special diet question available';
+          _isLoadingQuestion = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load special diet question: ${e.toString()}';
+        _isLoadingQuestion = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -46,7 +90,7 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'Special Diet? (Describe)',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -172,8 +216,15 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
     });
 
     try {
-      // TODO: Implement special diet submission logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getSpecialDietQuestion();
+      if (question != null) {
+        // Add the answer to the answers service (as single string for textarea)
+        _answersService.addAnswer(question.id, _specialDietController.text);
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +241,7 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );

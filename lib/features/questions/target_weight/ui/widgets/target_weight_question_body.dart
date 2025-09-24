@@ -6,6 +6,8 @@ import 'package:the_track_fit/core/constants/app_text_styles.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/widgets/question_header.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 
 class TargetWeightQuestionBody extends StatefulWidget {
   const TargetWeightQuestionBody({super.key});
@@ -18,14 +20,51 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
   final TextEditingController _targetWeightController = TextEditingController();
   final FocusNode _targetWeightFocusNode = FocusNode();
   bool _isInputFilled = false;
+  bool _isLoadingQuestion = true;
+  String? _error;
   final int _currentStep = 6; // This is question 6 of 14
   final int _totalSteps = 14;
+  
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+  
+  String _questionText = 'What\'s your Target Weight?';
 
   @override
   void initState() {
     super.initState();
     _targetWeightController.addListener(_onTargetWeightChanged);
     _targetWeightFocusNode.addListener(_onFocusChanged);
+    _loadTargetWeightQuestion();
+  }
+
+  Future<void> _loadTargetWeightQuestion() async {
+    try {
+      setState(() {
+        _isLoadingQuestion = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getTargetWeightQuestion();
+      
+      if (question != null) {
+        setState(() {
+          _questionText = question.enText;
+          _isLoadingQuestion = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No target weight question available';
+          _isLoadingQuestion = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load target weight question: ${e.toString()}';
+        _isLoadingQuestion = false;
+      });
+    }
   }
 
   @override
@@ -47,10 +86,40 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
     });
   }
 
-  void _onContinuePressed() {
+  void _onContinuePressed() async {
     if (_targetWeightController.text.isNotEmpty) {
-      // Navigate to main goal question after target weight selection
-      context.push(AppRouter.mainGoalQuestion);
+      try {
+        // Get the question ID from the service
+        final question = await _questionsService.getTargetWeightQuestion();
+        if (question != null) {
+          // Add the answer to the answers service (as single value)
+          _answersService.addAnswer(question.id, _targetWeightController.text);
+          
+          // Submit answers to API
+          await _answersService.submitAnswers();
+        }
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Target weight submitted: ${_targetWeightController.text} kg'),
+              backgroundColor: AppColors.primaryGreen,
+            ),
+          );
+          
+          // Navigate to main goal question after target weight selection
+          context.push(AppRouter.mainGoalQuestion);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error submitting answer: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -99,7 +168,7 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
       width: double.infinity,
       alignment: Alignment.centerLeft,
       child: Text(
-        "What's your Target\n Weight?",
+        _questionText,
         style: AppTextStyles.heading2.copyWith(
           fontSize: responsive.sp(24),
           fontWeight: FontWeight.w600,

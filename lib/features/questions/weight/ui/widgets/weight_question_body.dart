@@ -6,6 +6,8 @@ import 'package:the_track_fit/core/constants/app_text_styles.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/widgets/question_header.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 
 class WeightQuestionBody extends StatefulWidget {
   const WeightQuestionBody({super.key});
@@ -18,12 +20,49 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   final TextEditingController _weightController = TextEditingController();
   final FocusNode _weightFocusNode = FocusNode();
   bool _isInputFilled = false;
+  bool _isLoadingQuestion = true;
+  String? _error;
+  
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+  
+  String _questionText = 'What\'s your Current Weight?';
 
   @override
   void initState() {
     super.initState();
     _weightController.addListener(_onWeightChanged);
     _weightFocusNode.addListener(_onFocusChanged);
+    _loadWeightQuestion();
+  }
+
+  Future<void> _loadWeightQuestion() async {
+    try {
+      setState(() {
+        _isLoadingQuestion = true;
+        _error = null;
+      });
+
+      final question = await _questionsService.getCurrentWeightQuestion();
+      
+      if (question != null) {
+        setState(() {
+          _questionText = question.enText;
+          _isLoadingQuestion = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No weight question available';
+          _isLoadingQuestion = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load weight question: ${e.toString()}';
+        _isLoadingQuestion = false;
+      });
+    }
   }
 
   @override
@@ -47,10 +86,40 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
 
 
 
-  void _onContinuePressed() {
+  void _onContinuePressed() async {
     if (_weightController.text.isNotEmpty) {
-      // Navigate to target weight question after current weight selection
-      context.push(AppRouter.targetWeightQuestion);
+      try {
+        // Get the question ID from the service
+        final question = await _questionsService.getCurrentWeightQuestion();
+        if (question != null) {
+          // Add the answer to the answers service (as single value)
+          _answersService.addAnswer(question.id, _weightController.text);
+          
+          // Submit answers to API
+          await _answersService.submitAnswers();
+        }
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Weight submitted: ${_weightController.text} kg'),
+              backgroundColor: AppColors.primaryGreen,
+            ),
+          );
+          
+          // Navigate to target weight question after current weight selection
+          context.push(AppRouter.targetWeightQuestion);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error submitting answer: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -99,7 +168,7 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
       width: double.infinity,
       alignment: Alignment.centerLeft,
       child: Text(
-        "What's your Current\n Weight?",
+        _questionText,
         style: AppTextStyles.heading2.copyWith(
           fontSize: responsive.sp(24),
           fontWeight: FontWeight.w600,

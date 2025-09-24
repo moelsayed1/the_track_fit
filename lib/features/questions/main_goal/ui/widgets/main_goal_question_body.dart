@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
+import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
-import '../../data/repositories/main_goal_repository.dart';
 
 class MainGoalQuestionBody extends StatefulWidget {
   const MainGoalQuestionBody({super.key});
@@ -18,12 +19,17 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
   String? _selectedGoal;
   bool _isLoading = false;
   bool _isLoadingOptions = true;
+  String? _error;
   final int _currentStep = 7; // This is question 7 of 14
   final int _totalSteps = 14;
 
+  // Services
+  final QuestionsService _questionsService = QuestionsService.instance;
+  final AnswersService _answersService = AnswersService.instance;
+
   // Main goal options from the API response
   List<String> _goalOptions = [];
-  final MainGoalRepository _mainGoalRepository = MainGoalRepository();
+  String _questionText = 'What\'s your Main Goal?';
 
   @override
   void initState() {
@@ -35,27 +41,28 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
     try {
       setState(() {
         _isLoadingOptions = true;
+        _error = null;
       });
 
-      final response = await _mainGoalRepository.getMainGoalOptions();
+      final question = await _questionsService.getMainGoalQuestion();
       
-      setState(() {
-        _goalOptions = response.data;
-        _isLoadingOptions = false;
-      });
+      if (question != null && question.options != null) {
+        setState(() {
+          _questionText = question.enText;
+          _goalOptions = question.options!.map((option) => option.en).toList();
+          _isLoadingOptions = false;
+        });
+      } else {
+        setState(() {
+          _error = 'No main goal options available';
+          _isLoadingOptions = false;
+        });
+      }
     } catch (e) {
       setState(() {
+        _error = 'Failed to load main goal options: ${e.toString()}';
         _isLoadingOptions = false;
       });
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to load main goal options: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
   }
 
@@ -80,7 +87,7 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            'What\'s your Main Goal?',
+            _questionText,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -100,9 +107,36 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
                     valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
                   ),
                 )
-              : SingleChildScrollView(
-                  child: _buildGoalOptions(responsive),
-                ),
+              : _error != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            _error!,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.red,
+                              fontSize: responsive.sp(16),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadMainGoalOptions,
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: _buildGoalOptions(responsive),
+                    ),
         ),
         
         // Continue Button
@@ -302,8 +336,15 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
     });
 
     try {
-      // TODO: Implement main goal selection logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Get the question ID from the service
+      final question = await _questionsService.getMainGoalQuestion();
+      if (question != null) {
+        // Add the answer to the answers service (as single value for radio button)
+        _answersService.addAnswer(question.id, _selectedGoal!);
+        
+        // Submit answers to API
+        await _answersService.submitAnswers();
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -320,7 +361,7 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error submitting answer: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
