@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import '../../data/services/packages_service.dart';
@@ -59,71 +60,91 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
-      body: Column(
-        children: [
-          // Close button at the top
-          Padding(
-            padding: EdgeInsets.only( right: 15.w),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () {
-                  context.push(AppRouter.homeFeature);
-                },
-                child: Container(
-                  width: 24.w,
-                  height: 24.h,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 20.sp,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Close button at the top
+            Padding(
+              padding: EdgeInsets.only( right: 15.w),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () {
+                    context.push(AppRouter.homeFeature);
+                  },
+                  child: Container(
+                    width: 24.w,
+                    height: 24.h,
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          
-          // Scrollable content
-          Expanded(
-            child: _isLoading
-                ? _buildLoadingState()
-                : _error != null
-                    ? _buildErrorState()
-                    : _buildPackagesList(),
-          ),
-          
-          // Buy Now button at the bottom
-          if (_selectedPlanIndex != null)
-            _buildBuyNowButton(),
-        ],
+            
+            // Scrollable content
+            Expanded(
+              child: _isLoading
+                  ? _buildLoadingState()
+                  : _error != null
+                      ? _buildErrorState()
+                      : _buildPackagesList(),
+            ),
+            
+            // Buy Now button at the bottom
+            if (_selectedPlanIndex != null)
+              _buildBuyNowButton(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildLoadingState() {
-    return Center(
+    return SingleChildScrollView(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGreen),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'Loading packages...',
-            style: TextStyle(
-              color: Color(0xFF848484),
-              fontSize: 16.sp,
-              fontFamily: 'Poppins',
-            ),
-          ),
+          SizedBox(height: 12.h),
+          _buildHeader(),
+          SizedBox(height: 30.h),
+          
+          // Shimmer for plan cards
+          ...List.generate(3, (index) => Column(
+            children: [
+              _buildShimmerPlanCard(),
+              if (index < 2) SizedBox(height: 16.h),
+            ],
+          )),
+          
+          SizedBox(height: 20.h),
         ],
+      ),
+    );
+  }
+
+  Widget _buildShimmerPlanCard() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        child: Container(
+          width: double.infinity,
+          height: 200.h,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+        ),
       ),
     );
   }

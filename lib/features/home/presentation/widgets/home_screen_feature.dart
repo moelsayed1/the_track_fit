@@ -265,7 +265,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
       case 3:
         return 'Report';
       case 4:
-        return 'Plan';
+        return 'Packages';
       default:
         return 'Home';
     }
@@ -1119,7 +1119,7 @@ class _BottomNavBar extends StatelessWidget {
               fit: BoxFit.contain,
               color: getTabColor(4),
             ),
-            label: 'Plan',
+            label: 'Package',
             selected: currentIndex == 4,
             onTap: () => onTabTapped(4),
             color: getTabColor(4),
