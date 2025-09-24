@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import '../../data/services/coupon_service.dart';
+import '../../domain/models/coupon_response.dart';
 
 class CheckoutPlanScreen extends StatefulWidget {
   const CheckoutPlanScreen({super.key});
@@ -20,6 +22,14 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   
   // Plan data received from previous screen
   late Map<String, dynamic> _planData;
+  
+  // Coupon-related state
+  CouponData? _appliedCoupon;
+  bool _isApplyingCoupon = false;
+  String? _couponError;
+  
+  // Services
+  final CouponService _couponService = CouponService.instance;
 
   @override
   void initState() {
@@ -47,6 +57,67 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   void dispose() {
     _couponController.dispose();
     super.dispose();
+  }
+
+  Future<void> _applyCoupon() async {
+    final couponCode = _couponController.text.trim();
+    if (couponCode.isEmpty) return;
+
+    setState(() {
+      _isApplyingCoupon = true;
+      _couponError = null;
+    });
+
+    try {
+      final response = await _couponService.applyCoupon(
+        code: couponCode,
+        packageId: _planData['id'] ?? 1, // Use plan ID from the data
+      );
+
+      if (response.isSuccess) {
+        setState(() {
+          _appliedCoupon = response.data;
+          _couponError = null;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Coupon applied successfully!'),
+            backgroundColor: const Color(0xFF28A228),
+          ),
+        );
+      } else if (response.isInvalidOrExpired) {
+        setState(() {
+          _couponError = 'This coupon is invalid or expired';
+          _appliedCoupon = null;
+        });
+      } else if (response.isUsageLimitReached) {
+        setState(() {
+          _couponError = 'Coupon usage limit reached';
+          _appliedCoupon = null;
+        });
+      } else if (response.isValidationError) {
+        setState(() {
+          _couponError = 'Please enter a valid coupon code';
+          _appliedCoupon = null;
+        });
+      } else {
+        setState(() {
+          _couponError = response.message;
+          _appliedCoupon = null;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _couponError = 'Failed to apply coupon. Please try again.';
+        _appliedCoupon = null;
+      });
+      log('Error applying coupon: $e');
+    } finally {
+      setState(() {
+        _isApplyingCoupon = false;
+      });
+    }
   }
 
   @override
@@ -327,6 +398,8 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                     _showCouponInput = !_showCouponInput;
                     if (!_showCouponInput) {
                       _couponController.clear();
+                      _appliedCoupon = null;
+                      _couponError = null;
                     }
                   });
                 },
@@ -343,6 +416,110 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               ),
             ],
           ),
+          
+          // Show applied coupon info
+          if (_appliedCoupon != null) ...[
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F8F0),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: const Color(0xFF28A228),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: const Color(0xFF28A228),
+                    size: 20.sp,
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Coupon Applied Successfully!',
+                          style: TextStyle(
+                            color: const Color(0xFF28A228),
+                            fontSize: 14.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Text(
+                          'Discount: ${_appliedCoupon!.formattedDiscountAmount}',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 12.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _appliedCoupon = null;
+                        _couponController.clear();
+                      });
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: const Color(0xFF848484),
+                      size: 18.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          
+          // Show coupon error
+          if (_couponError != null) ...[
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF0F0),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: const Color(0xFFEA4335),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: const Color(0xFFEA4335),
+                    size: 20.sp,
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      _couponError!,
+                      style: TextStyle(
+                        color: const Color(0xFFEA4335),
+                        fontSize: 14.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          
           if (_showCouponInput) ...[
             SizedBox(height: 16.h),
             Container(
@@ -385,29 +562,11 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                 return SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: hasText
-                        ? () {
-                            // Handle coupon application
-                            final couponCode = _couponController.text.trim();
-                            // Add your coupon validation logic here
-                            log('Applying coupon: $couponCode');
-                            
-                            // You can add validation and show success/error messages
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Coupon applied: $couponCode'),
-                                backgroundColor: const Color(0xFF28A228),
-                              ),
-                            );
-                            
-                            // Hide the input after successful application
-                            setState(() {
-                              _showCouponInput = false;
-                            });
-                          }
+                    onPressed: hasText && !_isApplyingCoupon
+                        ? _applyCoupon
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: hasText 
+                      backgroundColor: hasText && !_isApplyingCoupon
                           ? const Color(0xFF28A228)
                           : const Color(0xFFCCCCCC),
                       foregroundColor: Colors.white,
@@ -417,15 +576,24 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      'Apply',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: _isApplyingCoupon
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            'Apply',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                   ),
                 );
               },
@@ -437,6 +605,11 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   }
 
   Widget _buildPriceBreakdown() {
+    // Calculate prices
+    final originalPrice = _planData['price'] ?? '30\$';
+    final discountAmount = _appliedCoupon?.formattedDiscountAmount ?? '0 EGP';
+    final finalPrice = _appliedCoupon?.formattedFinalPrice ?? originalPrice;
+    
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.h),
@@ -457,17 +630,19 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       ),
       child: Column(
         children: [
-          _buildPriceRow('Plan Price', _planData['price'] ?? '30\$'),
+          _buildPriceRow('Plan Price', originalPrice),
           _buildDivider(),
-          _buildPriceRow('Coupon', '30\$'),
-          _buildDivider(),
-          _buildPriceRow('Total', '30\$'),
+          if (_appliedCoupon != null) ...[
+            _buildPriceRow('Coupon Discount', '-$discountAmount', isDiscount: true),
+            _buildDivider(),
+          ],
+          _buildPriceRow('Total', finalPrice, isTotal: true),
         ],
       ),
     );
   }
 
-  Widget _buildPriceRow(String label, String amount) {
+  Widget _buildPriceRow(String label, String amount, {bool isDiscount = false, bool isTotal = false}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
@@ -476,19 +651,23 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
           Text(
             label,
             style: TextStyle(
-              color: const Color(0xFF1E1E1E),
-              fontSize: 16.sp,
+              color: isTotal ? const Color(0xFF1E1E1E) : const Color(0xFF1E1E1E),
+              fontSize: isTotal ? 16.sp : 16.sp,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
+              fontWeight: isTotal ? FontWeight.w500 : FontWeight.w400,
             ),
           ),
           Text(
             amount,
             style: TextStyle(
-              color: const Color(0xFF1E1E1E),
-              fontSize: 18.sp,
+              color: isDiscount 
+                  ? const Color(0xFF28A228) 
+                  : isTotal 
+                      ? const Color(0xFF1E1E1E)
+                      : const Color(0xFF1E1E1E),
+              fontSize: isTotal ? 18.sp : 18.sp,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
+              fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
         ],
@@ -835,7 +1014,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                 ),
               ),
                              Text(
-                 ' ${_planData['price'] ?? '30\$'}',
+                 ' ${_appliedCoupon?.formattedFinalPrice ?? _planData['price'] ?? '30\$'}',
                  style: TextStyle(
                    color: Colors.white,
                    fontSize: 16.sp,
