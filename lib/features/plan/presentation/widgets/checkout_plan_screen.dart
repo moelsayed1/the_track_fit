@@ -1,11 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import '../../data/services/coupon_service.dart';
+import '../../data/services/subscription_service.dart';
+import '../../data/services/user_data_service.dart';
 import '../../domain/models/coupon_response.dart';
 
 class CheckoutPlanScreen extends StatefulWidget {
@@ -28,8 +32,21 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   bool _isApplyingCoupon = false;
   String? _couponError;
   
+  // Payment proof
+  String? paymentProofPath;
+  
+  // Form fields for subscription
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  
+  // Loading state
+  bool _isSubmitting = false;
+  
   // Services
   final CouponService _couponService = CouponService.instance;
+  final SubscriptionService _subscriptionService = SubscriptionService.instance;
+  final UserDataService _userDataService = UserDataService.instance;
 
   @override
   void initState() {
@@ -51,12 +68,39 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     if (args != null && args is Map<String, dynamic>) {
       _planData = args;
     }
+    
+    // Populate form fields with user data
+    _populateUserData();
   }
 
   @override
   void dispose() {
     _couponController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
     super.dispose();
+  }
+
+  void _populateUserData() {
+    try {
+      final userData = _userDataService.getSubscriptionUserData(context);
+      
+      // Populate form fields with user data
+      if (userData['name']?.isNotEmpty == true) {
+        _nameController.text = userData['name'];
+      }
+      if (userData['email']?.isNotEmpty == true) {
+        _emailController.text = userData['email'];
+      }
+      if (userData['phone']?.isNotEmpty == true) {
+        _phoneController.text = userData['phone'];
+      }
+      
+      log('CheckoutPlanScreen: Populated form fields with user data');
+    } catch (e) {
+      log('CheckoutPlanScreen: Error populating user data: $e');
+    }
   }
 
   Future<void> _applyCoupon() async {
@@ -143,6 +187,10 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                     _buildYourPlanSection(),
                     SizedBox(height: 24.h),
                     
+                    // User information section
+                    _buildUserInfoSection(),
+                    SizedBox(height: 24.h),
+                    
                     // Coupon section
                     _buildCouponSection(),
                     SizedBox(height: 24.h),
@@ -153,7 +201,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                     
                     // Payment methods
                     _buildPaymentMethods(),
-                    SizedBox(height: 100.h), // Space for bottom button
+                    // SizedBox(height: 100.h), // Space for bottom button
                   ],
                 ),
               ),
@@ -353,6 +401,162 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   Icons.check,
                   color: Colors.white,
                   size: 14.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserInfoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Your Information',
+          style: TextStyle(
+            color: const Color(0xFF1E1E1E),
+            fontSize: 16.sp,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 16.h),
+        
+        // Name Field
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30.r),
+            border: Border.all(color: Color(0xFFE0E0E0)),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/images/person_card.svg',
+                width: 20.w,
+                height: 20.h,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    hintText: 'Full Name',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF848484),
+                      fontSize: 14.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                  ),
+                  style: TextStyle(
+                    color: Color(0xFF1E1E1E),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        SizedBox(height: 12.h),
+        
+        // Email Field
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30.r),
+            border: Border.all(color: Color(0xFFE0E0E0)),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/images/email_icon.svg',
+                width: 20.w,
+                height: 20.h,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    hintText: 'Email Address',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF848484),
+                      fontSize: 14.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                  ),
+                  style: TextStyle(
+                    color: Color(0xFF1E1E1E),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        SizedBox(height: 12.h),
+        
+        // Phone Field
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30.r),
+            border: Border.all(color: Color(0xFFE0E0E0)),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/images/phone_icon.svg',
+                width: 20.w,
+                height: 20.h,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: TextField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    hintText: 'Phone Number',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF848484),
+                      fontSize: 14.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                  ),
+                  style: TextStyle(
+                    color: Color(0xFF1E1E1E),
+                    fontSize: 14.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ],
@@ -715,20 +919,20 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
             children: [
               Expanded(
                 child: _buildPaymentOption(
-                  'PayPal',
-                  'assets/images/paypal.png',
-                  'paypal',
+                  'Vodafon Cash',
+                  'assets/images/vodafon_cash.png',
+                  'vodafone_cash',
                 ),
               ),
               SizedBox(width: 8.w),
-              Expanded(
-                child: _buildPaymentOption(
-                  'Card',
-                  'assets/images/card.png',
-                  'card',
-                ),
-              ),
-              SizedBox(width: 8.w),
+              // Expanded(
+              //   child: _buildPaymentOption(
+              //     'Card',
+              //     'assets/images/card.png',
+              //     'card',
+              //   ),
+              // ),
+              // SizedBox(width: 8.w),
               Expanded(
                 child: _buildPaymentOption(
                   'Instapay',
@@ -744,6 +948,12 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         if (_selectedPaymentMethod == 'card') ...[
           SizedBox(height: 16.h),
           _buildCardDetailsForm(),
+        ],
+        
+        // Payment proof upload when Vodafone Cash or Instapay is selected
+        if (_selectedPaymentMethod == 'vodafone_cash' || _selectedPaymentMethod == 'instapay') ...[
+          SizedBox(height: 16.h),
+          _buildPaymentProofSection(),
         ],
       ],
     );
@@ -919,8 +1129,8 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               children: [
                 Image.asset(
                   iconPath,
-                  width: 32.w,
-                  height: 32.h,
+                  width: 45.w,
+                  height: 45.h,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       width: 32.w,
@@ -955,24 +1165,181 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     );
   }
 
+  Widget _buildPaymentProofSection() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.r),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0x1E000000),
+            blurRadius: 4,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Payment Proof',
+            style: TextStyle(
+              color: const Color(0xFF1E1E1E),
+              fontSize: 16.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            _selectedPaymentMethod == 'vodafone_cash' 
+                ? 'Please upload a screenshot of your Vodafone Cash payment'
+                : 'Please upload a screenshot of your Instapay payment',
+            style: TextStyle(
+              color: const Color(0xFF848484),
+              fontSize: 12.sp,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          SizedBox(height: 16.h),
+          
+          GestureDetector(
+            onTap: _pickPaymentProofImage,
+            child: Container(
+              width: double.infinity,
+              height: 120.h,
+              decoration: BoxDecoration(
+                color: paymentProofPath != null ? Color(0xFFF0F8F0) : Color(0xFFF8F8F8),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: paymentProofPath != null ? Color(0xFF28A228) : Color(0xFFE0E0E0),
+                  width: 2,
+                ),
+              ),
+              child: paymentProofPath != null
+                  ? Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.r),
+                          child: Image.file(
+                            File(paymentProofPath!),
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          top: 8.h,
+                          right: 8.w,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                paymentProofPath = null;
+                              });
+                            },
+                            child: Container(
+                              width: 24.w,
+                              height: 24.h,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 16.sp,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.cloud_upload_outlined,
+                          color: Color(0xFF848484),
+                          size: 32.sp,
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'Tap to upload payment proof',
+                          style: TextStyle(
+                            color: Color(0xFF848484),
+                            fontSize: 14.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickPaymentProofImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+      
+      if (image != null) {
+        setState(() {
+          paymentProofPath = image.path;
+        });
+      }
+    } catch (e) {
+      _showErrorSnackBar('Failed to pick image: ${e.toString()}');
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(
+          bottom: 100.h,
+          left: 16.w,
+          right: 16.w,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+      ),
+    );
+  }
+
   Widget _buildPayButton() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x1E000000),
-            blurRadius: 4,
-            offset: Offset(4, 0),
-          ),
-        ],
-      ),
+      // decoration: const BoxDecoration(
+      //   color: Colors.white,
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Color(0x1E000000),
+      //       blurRadius: 4,
+      //       offset: Offset(4, 0),
+      //     ),
+      //   ],
+      // ),
       child: ElevatedButton(
-        onPressed: _selectedPaymentMethod != null
-            ? () {
-                context.push(AppRouter.subscribtionDone);
+        onPressed: _selectedPaymentMethod != null && !_isSubmitting
+            ? () async {
+                await _submitSubscription();
               }
             : null,
         style: ElevatedButton.styleFrom(
@@ -1001,31 +1368,166 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               ),
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Pay',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
+          child: _isSubmitting
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Text(
+                      'Processing...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Pay',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      ' ${_appliedCoupon?.formattedFinalPrice ?? _planData['price'] ?? '30\$'}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-                             Text(
-                 ' ${_appliedCoupon?.formattedFinalPrice ?? _planData['price'] ?? '30\$'}',
-                 style: TextStyle(
-                   color: Colors.white,
-                   fontSize: 16.sp,
-                   fontFamily: 'Poppins',
-                   fontWeight: FontWeight.w600,
-                 ),
-               ),
-            ],
-          ),
         ),
       ),
     );
+  }
+
+  Future<void> _submitSubscription() async {
+    // Validate form fields
+    if (_nameController.text.trim().isEmpty) {
+      _showErrorSnackBar('Please enter your name');
+      return;
+    }
+    if (_emailController.text.trim().isEmpty) {
+      _showErrorSnackBar('Please enter your email');
+      return;
+    }
+    if (_phoneController.text.trim().isEmpty) {
+      _showErrorSnackBar('Please enter your phone number');
+      return;
+    }
+    if (_selectedPaymentMethod == null) {
+      _showErrorSnackBar('Please select a payment method');
+      return;
+    }
+    if ((_selectedPaymentMethod == 'vodafone_cash' || _selectedPaymentMethod == 'instapay') && paymentProofPath == null) {
+      _showErrorSnackBar('Please upload payment proof to continue');
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      // Calculate total price
+      double total = 0.0;
+      if (_appliedCoupon != null) {
+        // Use final price from coupon
+        total = _appliedCoupon!.finalPrice.toDouble();
+      } else {
+        // Parse price from plan data
+        String priceStr = _planData['price'] ?? '30\$';
+        priceStr = priceStr.replaceAll('\$', '').replaceAll('EGP', '').trim();
+        total = double.tryParse(priceStr) ?? 30.0;
+      }
+
+      // Get package ID
+      int packageId = _planData['id'] ?? 1;
+
+      // Get complete user data including all profile and answers
+      final completeUserData = _userDataService.getCompleteUserData(context);
+
+      // Submit subscription
+      final result = await _subscriptionService.submitSubscription(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        packageId: packageId,
+        paymentType: _selectedPaymentMethod!,
+        total: total,
+        paymentProofPath: paymentProofPath,
+        couponCode: _couponController.text.trim().isNotEmpty ? _couponController.text.trim() : null,
+        userData: completeUserData,
+      );
+
+      if (result['success']) {
+        // Show success message with subscription details
+        final subscriptionData = result['data'];
+        final message = result['message'] ?? 'Subscription created successfully';
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: const Color(0xFF28A228),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.only(
+              bottom: 100.h,
+              left: 16.w,
+              right: 16.w,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+        );
+        
+        // Log subscription details
+        if (subscriptionData != null) {
+          log('Subscription created:');
+          log('ID: ${subscriptionData['id']}');
+          log('Status: ${subscriptionData['status']}');
+          log('Amount: ${subscriptionData['amount']}');
+          log('Payment Type: ${subscriptionData['payment_type']}');
+          log('Starts At: ${subscriptionData['starts_at']}');
+          log('Ends At: ${subscriptionData['ends_at']}');
+        }
+        
+        // Navigate to success screen
+        if (mounted) {
+          context.push(AppRouter.subscribtionDone);
+        }
+      } else {
+        // Show error message
+        _showErrorSnackBar(result['message'] ?? 'Failed to submit subscription');
+      }
+    } catch (e) {
+      log('Error submitting subscription: $e');
+      _showErrorSnackBar('Error: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 }

@@ -18,8 +18,6 @@ class SpecialDietQuestionBody extends StatefulWidget {
 class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
   final TextEditingController _specialDietController = TextEditingController();
   bool _isLoading = false;
-  bool _isLoadingQuestion = true;
-  String? _error;
   final int _currentStep = 13; // This is question 13 of 14
   final int _totalSteps = 14;
 
@@ -38,8 +36,6 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
   Future<void> _loadSpecialDietQuestion() async {
     try {
       setState(() {
-        _isLoadingQuestion = true;
-        _error = null;
       });
 
       final question = await _questionsService.getSpecialDietQuestion();
@@ -47,18 +43,13 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
       if (question != null) {
         setState(() {
           _questionText = question.enText;
-          _isLoadingQuestion = false;
         });
       } else {
         setState(() {
-          _error = 'No special diet question available';
-          _isLoadingQuestion = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Failed to load special diet question: ${e.toString()}';
-        _isLoadingQuestion = false;
       });
     }
   }
