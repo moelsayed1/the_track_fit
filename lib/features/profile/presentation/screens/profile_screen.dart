@@ -194,28 +194,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 // Linear Progress Indicator
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    if (state is AuthLoading) {
-                      return Positioned(
-                        top: 20.h,
-                        left: 0,
-                        right: 0,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: LinearProgressIndicator(
-                            backgroundColor: const Color(0xFFE0E0E0), // Light gray track
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              const Color(0xFF28A228), // App green color
-                            ),
-                            minHeight: 4.h,
-                          ),
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
+                // BlocBuilder<AuthCubit, AuthState>(
+                //   builder: (context, state) {
+                //     if (state is AuthLoading) {
+                //       return Positioned(
+                //         top: 200.h,
+                //         left: 0,
+                //         right: 0,
+                //         child: Padding(
+                //           padding: EdgeInsets.symmetric(horizontal: 16.w),
+                //           child: LinearProgressIndicator(
+                //             backgroundColor: const Color(0xFFE0E0E0), // Light gray track
+                //             valueColor: AlwaysStoppedAnimation<Color>(
+                //               const Color(0xFF28A228), // App green color
+                //             ),
+                //             minHeight: 4.h,
+                //           ),
+                //         ),
+                //       );
+                //     }
+                //     return const SizedBox.shrink();
+                //   },
+                // ),
 
                 SafeArea(
                   child: Column(
@@ -793,12 +793,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (state is AuthLoading) ...[
                   SizedBox(width: 8.w),
                   SizedBox(
-                    width: 50.w,
-                    height: 4.h,
-                    child: LinearProgressIndicator(
-                      backgroundColor: const Color(0xFFE0E0E0),
+                    width: 20.w,
+                    height: 20.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFF28A228),
+                       Color(0xFFFF4444),
                       ),
                     ),
                   ),

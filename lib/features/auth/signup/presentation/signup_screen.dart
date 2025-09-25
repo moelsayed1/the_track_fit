@@ -11,6 +11,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../data/cubit/auth_cubit.dart';
 import '../../data/cubit/auth_states.dart';
 
@@ -125,17 +126,17 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthRegisterSuccess) {
+        if (state is AuthRegisterSuccess || state is AuthRegisterSuccessWithProfile) {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
             context,
             title: 'Registration Successful!',
-            message: state.response.message,
+            message: state is AuthRegisterSuccess ? state.response.message : 'Welcome to TrackFit!',
             type: SnackbarType.success,
           );
           
-          // Navigate to next screen
-          context.push(AppRouter.ageQuestion);
+          // Check if user is first time or returning user
+          _navigateBasedOnUserType(context);
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -475,5 +476,24 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     ),
     );
+  }
+
+  /// Navigate based on user type (first time vs returning user)
+  Future<void> _navigateBasedOnUserType(BuildContext context) async {
+    try {
+      final storageService = await StorageService.getInstance();
+      final isFirstTime = storageService.isFirstTimeUser();
+      
+      if (isFirstTime) {
+        // First time user - go to age question (onboarding flow)
+        context.push(AppRouter.ageQuestion);
+      } else {
+        // Returning user - go to home_feature (main app)
+        context.push(AppRouter.homeFeature);
+      }
+    } catch (e) {
+      // Fallback to age question if error
+      context.push(AppRouter.ageQuestion);
+    }
   }
 }

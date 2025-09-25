@@ -167,18 +167,18 @@ class AuthCubit extends Cubit<AuthState> {
         
         // Set user as first-time user for new registration
         await _storageService.setFirstTimeUser(true);
-        
-        // Emit user profile data so listeners can get the updated data
-        emit(AuthUserProfileLoaded(
-          name: _userName,
-          email: _userEmail,
-          imagePath: _userImagePath,
-          phone: _userPhone,
-          gender: _userGender,
-        ));
       }
       
-      emit(AuthRegisterSuccess(response));
+      // Emit register success with profile data in one state
+      // This ensures the UI gets both the response and user data
+      emit(AuthRegisterSuccessWithProfile(
+        response: response,
+        name: _userName,
+        email: _userEmail,
+        imagePath: _userImagePath,
+        phone: _userPhone,
+        gender: _userGender,
+      ));
     } catch (e) {
       log('AuthCubit Register Error: $e');
       final errorMessage = _extractErrorMessage(e);
@@ -220,18 +220,18 @@ class AuthCubit extends Cubit<AuthState> {
         
         // Set user as returning user for login
         await _storageService.setFirstTimeUser(false);
-        
-        // Emit user profile data so listeners can get the updated data
-        emit(AuthUserProfileLoaded(
-          name: _userName,
-          email: _userEmail,
-          imagePath: _userImagePath,
-          phone: _userPhone,
-          gender: _userGender,
-        ));
       }
       
-      emit(AuthLoginSuccess(response));
+      // Emit login success with profile data in one state
+      // This ensures the UI gets both the response and user data
+      emit(AuthLoginSuccessWithProfile(
+        response: response,
+        name: _userName,
+        email: _userEmail,
+        imagePath: _userImagePath,
+        phone: _userPhone,
+        gender: _userGender,
+      ));
     } catch (e) {
       log('AuthCubit Login Error: $e');
       final errorMessage = _extractErrorMessage(e);

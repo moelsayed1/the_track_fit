@@ -47,18 +47,18 @@ class QuestionsResponse {
   }
 
   // Get specific question types
-  Question? get ageQuestion => getQuestionByEnText('Age');
-  Question? get heightQuestion => getQuestionByEnText('Height');
-  Question? get currentWeightQuestion => getQuestionByEnText('Current Weight');
-  Question? get targetWeightQuestion => getQuestionByEnText('Target Weight');
-  Question? get mainGoalQuestion => getQuestionByEnText('Main Goal');
-  Question? get currentActivityLevelQuestion => getQuestionByEnText('Current Activity Level');
-  Question? get preferredTrainingTypesQuestion => getQuestionByEnText('Preferred Training Types');
-  Question? get availableEquipmentQuestion => getQuestionByEnText('Available Equipment');
-  Question? get currentDietSystemQuestion => getQuestionByEnText('Current Diet System');
-  Question? get healthStatusQuestion => getQuestionByEnText('Health Status');
-  Question? get specialDietQuestion => getQuestionByEnText('Special Diet? (Describe)');
-  Question? get currentOrPreviousInjuryQuestion => getQuestionByEnText('Current or Previous Injury? (Describe)');
-  Question? get additionalGoalsQuestion => getQuestionByEnText('Additional Goals (Optional)');
+  Question? get ageQuestion => getQuestionByEnText('What\'s your Age?');
+  Question? get heightQuestion => getQuestionByEnText('What\'s your Height?');
+  Question? get currentWeightQuestion => getQuestionByEnText('What\'s your Current Weight?');
+  Question? get targetWeightQuestion => getQuestionByEnText('What\'s your Target Weight?');
+  Question? get mainGoalQuestion => getQuestionByEnText('What\'s your Main Goal?');
+  Question? get currentActivityLevelQuestion => getQuestionByEnText('What\'s your Current Activity Level?');
+  Question? get preferredTrainingTypesQuestion => getQuestionByEnText('What\'s your Preferred Training Types?');
+  Question? get availableEquipmentQuestion => getQuestionByEnText('What\'s your Available Equipment?');
+  Question? get currentDietSystemQuestion => getQuestionByEnText('What\'s your Current Diet System?');
+  Question? get healthStatusQuestion => getQuestionByEnText('What\'s your Health Status?');
+  Question? get specialDietQuestion => getQuestionByEnText('What\'s your Special Diet? (Describe)');
+  Question? get currentOrPreviousInjuryQuestion => getQuestionByEnText('What\'s your Current or Previous Injury? (Describe)');
+  Question? get additionalGoalsQuestion => getQuestionByEnText('What\'s your Additional Goals (Optional)?');
 }
 

@@ -46,7 +46,7 @@ class _QuestionDoneState extends State<QuestionDone>
         // Navigate to promotional offer when progress reaches 100%
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
-            context.push(AppRouter.promotionalOffer);
+            context.push(AppRouter.home);
           }
         });
       }

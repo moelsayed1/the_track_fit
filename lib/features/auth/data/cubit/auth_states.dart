@@ -31,6 +31,40 @@ class AuthRegisterSuccess extends AuthState {
   int get hashCode => response.hashCode;
 }
 
+/// Success state for registration with user profile data
+class AuthRegisterSuccessWithProfile extends AuthState {
+  final RegisterResponse response;
+  final String name;
+  final String email;
+  final String? imagePath;
+  final String? phone;
+  final String? gender;
+  
+  const AuthRegisterSuccessWithProfile({
+    required this.response,
+    required this.name,
+    required this.email,
+    this.imagePath,
+    this.phone,
+    this.gender,
+  });
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthRegisterSuccessWithProfile &&
+        other.response == response &&
+        other.name == name &&
+        other.email == email &&
+        other.imagePath == imagePath &&
+        other.phone == phone &&
+        other.gender == gender;
+  }
+  
+  @override
+  int get hashCode => Object.hash(response, name, email, imagePath, phone, gender);
+}
+
 /// Success state for login
 class AuthLoginSuccess extends AuthState {
   final RegisterResponse response;
@@ -45,6 +79,40 @@ class AuthLoginSuccess extends AuthState {
   
   @override
   int get hashCode => response.hashCode;
+}
+
+/// Success state for login with user profile data
+class AuthLoginSuccessWithProfile extends AuthState {
+  final RegisterResponse response;
+  final String name;
+  final String email;
+  final String? imagePath;
+  final String? phone;
+  final String? gender;
+  
+  const AuthLoginSuccessWithProfile({
+    required this.response,
+    required this.name,
+    required this.email,
+    this.imagePath,
+    this.phone,
+    this.gender,
+  });
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthLoginSuccessWithProfile &&
+        other.response == response &&
+        other.name == name &&
+        other.email == email &&
+        other.imagePath == imagePath &&
+        other.phone == phone &&
+        other.gender == gender;
+  }
+  
+  @override
+  int get hashCode => Object.hash(response, name, email, imagePath, phone, gender);
 }
 
 /// Success state for OTP sending

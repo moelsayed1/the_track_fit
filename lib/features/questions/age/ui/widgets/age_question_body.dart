@@ -3,6 +3,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
+import '../../../../../core/widgets/question_continue_button.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../questions/data/services/questions_service.dart';
@@ -251,65 +252,10 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    final isEnabled = _selectedAge != null;
-    
-    return SizedBox(
-      width: double.infinity,
-      height: responsive.h(50),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: isEnabled 
-              ? const LinearGradient(
-                  begin: Alignment(0.00, 0.50),
-                  end: Alignment(1.00, 0.50),
-                  colors: [Color(0xFF28A228), Color(0xD85CD65C)],
-                )
-              : null,
-          color: isEnabled ? null : const Color(0xFFBDBDBD),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: isEnabled ? [
-            BoxShadow(
-              color: const Color(0x1928A228),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
-              spreadRadius: -25,
-            ),
-          ] : null,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(30),
-            onTap: isEnabled ? _handleContinue : null,
-            child: Container(
-              width: double.infinity,
-              height: responsive.h(56),
-              alignment: Alignment.center,
-              child: _isLoading
-                  ? SizedBox(
-                      width: responsive.w(24),
-                      height: responsive.h(24),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          isEnabled ? Colors.white : Colors.grey[600]!,
-                        ),
-                      ),
-                    )
-                  : Text(
-                      'Continue',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontSize: responsive.sp(16),
-                        fontWeight: FontWeight.w500,
-                        color: isEnabled ? Colors.white : Colors.grey[600]!,
-                        height: 1.50,
-                        letterSpacing: 0.50,
-                      ),
-                    ),
-            ),
-          ),
-        ),
-      ),
+    return QuestionContinueButton(
+      isEnabled: _selectedAge != null,
+      isLoading: _isLoading,
+      onPressed: _handleContinue,
     );
   }
 
