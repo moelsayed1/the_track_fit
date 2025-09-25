@@ -18,8 +18,6 @@ class HeightQuestionBody extends StatefulWidget {
 class _HeightQuestionBodyState extends State<HeightQuestionBody> {
   int _selectedHeight = 0; // Default height in cm - now mutable
   bool _isLoading = false;
-  bool _isLoadingQuestion = true;
-  String? _error;
   final int _currentStep = 4; // This is question 4 of 14
   final int _totalSteps = 14;
   
@@ -40,8 +38,6 @@ class _HeightQuestionBodyState extends State<HeightQuestionBody> {
   Future<void> _loadHeightQuestion() async {
     try {
       setState(() {
-        _isLoadingQuestion = true;
-        _error = null;
       });
 
       final question = await _questionsService.getHeightQuestion();
@@ -49,18 +45,13 @@ class _HeightQuestionBodyState extends State<HeightQuestionBody> {
       if (question != null) {
         setState(() {
           _questionText = question.enText;
-          _isLoadingQuestion = false;
         });
       } else {
         setState(() {
-          _error = 'No height question available';
-          _isLoadingQuestion = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Failed to load height question: ${e.toString()}';
-        _isLoadingQuestion = false;
       });
     }
   }

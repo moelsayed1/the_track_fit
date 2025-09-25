@@ -28,7 +28,7 @@ class _MealScreenState extends State<MealScreen> {
   MealsResponse? _mealsResponse;
   
   // Track which meal is currently selected for each category
-  Map<String, int> _selectedMealIndices = {};
+  final Map<String, int> _selectedMealIndices = {};
 
   // Day names mapping: day_id 1 = Sat, 2 = Sun, 3 = Mon, 4 = Tue, 5 = Wed, 6 = Thu, 7 = Fri
   final List<String> _dayNames = [

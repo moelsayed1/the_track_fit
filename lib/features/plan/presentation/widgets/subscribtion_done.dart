@@ -105,7 +105,7 @@ class SubscribtionDone extends StatelessWidget {
                     // Explore My Plan button
                     GestureDetector(
                       onTap: () {
-                        context.push(AppRouter.premiumPlan);
+                        context.push(AppRouter.subscription);
                       },
                       child: Container(
                         width: double.infinity,
