@@ -12,7 +12,8 @@ class MainGoalQuestionScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6), // Light green background
       body: SafeArea(
-        child: Padding(
+        child: 
+        Padding(
           padding: EdgeInsets.symmetric(
             horizontal: responsive.wp(4.3), // 16px equivalent
           ),

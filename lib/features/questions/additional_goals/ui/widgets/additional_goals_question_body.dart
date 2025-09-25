@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
+import '../../../../../core/widgets/question_continue_button.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
@@ -248,59 +249,11 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    // This is optional, so button is always enabled
-    return SizedBox(
-      width: double.infinity,
-      height: responsive.h(50),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment(0.00, 0.50),
-            end: Alignment(1.00, 0.50),
-            colors: [Color(0xFF28A228), Color(0xD85CD65C)],
-          ),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0x1928A228),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
-              spreadRadius: -25,
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(30),
-            onTap: _handleContinue,
-            child: Container(
-              width: double.infinity,
-              height: responsive.h(56),
-              alignment: Alignment.center,
-              child: _isLoading
-                  ? SizedBox(
-                      width: responsive.w(24),
-                      height: responsive.h(24),
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Text(
-                      'Complete Setup',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontSize: responsive.sp(16),
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                        height: 1.50,
-                        letterSpacing: 0.50,
-                      ),
-                    ),
-            ),
-          ),
-        ),
-      ),
+    return QuestionContinueButton(
+      isEnabled: true, // Always enabled for optional question
+      isLoading: _isLoading,
+      onPressed: _handleContinue,
+      text: 'Complete Setup',
     );
   }
 
@@ -324,7 +277,7 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
       final question = await _questionsService.getAdditionalGoalsQuestion();
       if (question != null) {
         // Add the answer to the answers service (as array for multi-select)
-        _answersService.addAnswer(question.id, _selectedAdditionalGoals);
+        _answersService.addMultiSelectAnswer(question.id, _selectedAdditionalGoals);
         
         // Submit answers to API
         await _answersService.submitAnswers();

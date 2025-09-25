@@ -592,11 +592,30 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             children: [
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
+                  // Show shimmer loading while user data is being fetched
+                  if (state is AuthLoading || state is AuthInitial) {
+                    return ShimmerLoading(
+                      child: Container(
+                        width: 120.w,
+                        height: 20.h,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Show actual user name when loaded
                   String userName = 'User'; // Default fallback
 
                   if (state is AuthUserProfileLoaded) {
                     userName = state.name;
                   } else if (state is AuthUserAlreadyLoggedIn) {
+                    userName = state.name;
+                  } else if (state is AuthRegisterSuccessWithProfile) {
+                    userName = state.name;
+                  } else if (state is AuthLoginSuccessWithProfile) {
                     userName = state.name;
                   }
 

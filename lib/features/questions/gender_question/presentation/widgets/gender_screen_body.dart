@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
+import '../../../../../core/widgets/question_continue_button.dart';
 import '../../../../../core/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 
@@ -148,55 +149,10 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    final isEnabled = _selectedGender != null;
-    
-    return SizedBox(
-      width: double.infinity,
-      height: responsive.h(50),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isEnabled ? AppColors.primaryGreen : const Color(0xFFBDBDBD), // Grey when disabled
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: isEnabled ? [
-            BoxShadow(
-              color: AppColors.primaryGreen.withValues(alpha: 0.25),
-              offset: const Offset(0, 10),
-              blurRadius: 25,
-            ),
-          ] : null, // No shadow when disabled
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(30),
-            onTap: isEnabled ? _handleContinue : null,
-            child: Container(
-              width: double.infinity,
-              height: responsive.h(56),
-              alignment: Alignment.center,
-              child: _isLoading
-                  ? SizedBox(
-                      width: responsive.w(24),
-                      height: responsive.h(24),
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          isEnabled ? Colors.white : Colors.grey[600]!,
-                        ),
-                      ),
-                    )
-                  : Text(
-                      'Continue',
-                      style: AppTextStyles.bodyLarge.copyWith(
-                        fontSize: responsive.sp(16),
-                        fontWeight: FontWeight.w600,
-                        color: isEnabled ? Colors.white : Colors.grey[600]!,
-                      ),
-                    ),
-            ),
-          ),
-        ),
-      ),
+    return QuestionContinueButton(
+      isEnabled: _selectedGender != null,
+      isLoading: _isLoading,
+      onPressed: _handleContinue,
     );
   }
 

@@ -3,10 +3,18 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 import 'package:the_track_fit/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:the_track_fit/features/cart/domain/models/cart_item.dart';
+import 'package:the_track_fit/features/store/domain/models/product.dart';
+import 'package:the_track_fit/features/store/domain/repositories/product_repository.dart';
+import 'package:the_track_fit/features/store/data/repositories/product_repository_impl.dart';
+import 'package:the_track_fit/features/store/data/datasources/product_remote_datasource.dart';
+import 'package:the_track_fit/features/store/presentation/widgets/product_card.dart';
+import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 
 class CartScreenBody extends StatefulWidget {
   const CartScreenBody({super.key});
@@ -18,10 +26,21 @@ class CartScreenBody extends StatefulWidget {
 class _CartScreenBodyState extends State<CartScreenBody> {
   bool isCartActive = true;
   bool isHeartActive = false;
+  
+  // Favorite products state
+  late final ProductRepository _productRepository;
+  List<Product> _favoriteProducts = [];
+  bool _isLoadingFavorites = false;
+  String? _favoriteError;
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
+    // Initialize product repository
+    _productRepository = ProductRepositoryImpl(
+      remoteDataSource: ProductRemoteDataSourceImpl(apiService: ApiService()),
+    );
     // Load cart items when screen initializes
     context.read<CartCubit>().loadCartItems();
   }
@@ -115,6 +134,8 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                                 isHeartActive = true;
                                 isCartActive = false;
                               });
+                              // Load favorite products when heart is tapped
+                              _loadFavoriteProducts();
                             },
                             child: Container(
                               width: 32.w,
@@ -161,6 +182,11 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   }
 
   Widget _buildCartContent(CartState state) {
+    // Show favorite products if heart is active
+    if (isHeartActive) {
+      return _buildFavoriteProductsContent();
+    }
+    
     if (state is CartLoading) {
       return _buildCartShimmerLoading();
     } else if (state is CartError) {
@@ -267,6 +293,23 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     }
     
     return const SizedBox.shrink();
+  }
+
+  /// Build favorite products content
+  Widget _buildFavoriteProductsContent() {
+    if (_isLoadingFavorites) {
+      return _buildFavoriteShimmerLoading();
+    }
+
+    if (_favoriteError != null) {
+      return _buildFavoriteErrorState();
+    }
+
+    if (_favoriteProducts.isEmpty) {
+      return _buildFavoriteEmptyState();
+    }
+
+    return _buildFavoriteProductsList();
   }
 
   Widget? _buildBottomNavigationBar(CartState state) {
@@ -656,5 +699,255 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         ],
       ),
     );
+  }
+
+  /// Load favorite products from API
+  Future<void> _loadFavoriteProducts() async {
+    if (_isDisposed) return;
+    
+    setState(() {
+      _isLoadingFavorites = true;
+      _favoriteError = null;
+    });
+
+    try {
+      final favoriteProducts = await _productRepository.getFavoriteProductsFromAPI();
+      
+      if (!_isDisposed) {
+        setState(() {
+          _favoriteProducts = favoriteProducts;
+          _isLoadingFavorites = false;
+        });
+      }
+    } catch (e) {
+      if (!_isDisposed) {
+        setState(() {
+          _favoriteError = e.toString();
+          _isLoadingFavorites = false;
+        });
+      }
+    }
+  }
+
+  /// Toggle product favorite status
+  Future<void> _onFavoriteToggle(int productId) async {
+    if (_isDisposed) return;
+    
+    try {
+      await _productRepository.toggleProductFavorite(productId);
+      if (!_isDisposed) {
+        // Reload the favorite products list
+        _loadFavoriteProducts();
+      }
+    } catch (e) {
+      if (!_isDisposed && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update favorite: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Navigate to product detail
+  void _onProductTap(Product product) {
+    context.push(AppRouter.productDetail, extra: {'product': product});
+  }
+
+  /// Build favorite products shimmer loading
+  Widget _buildFavoriteShimmerLoading() {
+    return Padding(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        children: [
+          _buildShimmerCard(),
+          SizedBox(height: 16.h),
+          _buildShimmerCard(),
+          SizedBox(height: 16.h),
+          _buildShimmerCard(),
+        ],
+      ),
+    );
+  }
+
+  /// Build shimmer card for favorites
+  Widget _buildShimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        height: 96.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.r),
+          border: Border.all(color: Colors.grey[300]!),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            children: [
+              Container(
+                width: 54.w,
+                height: 64.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 16.h,
+                      width: 100.w,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 8.h),
+                    Container(
+                      height: 16.h,
+                      width: 80.w,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 24.w,
+                height: 24.h,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build favorite products error state
+  Widget _buildFavoriteErrorState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 64.sp,
+              color: Colors.red,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Failed to load favorite products',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.red,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              _favoriteError ?? 'Unknown error occurred',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 24.h),
+            ElevatedButton(
+              onPressed: _loadFavoriteProducts,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build favorite products empty state
+  Widget _buildFavoriteEmptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.favorite_border,
+              size: 64.sp,
+              color: Colors.grey[400],
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'No Favorite Products',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'Products you mark as favorite will appear here',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey[500],
+              ),
+            ),
+            SizedBox(height: 24.h),
+            ElevatedButton(
+              onPressed: () => context.go(AppRouter.store),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Browse Products'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Build favorite products list
+  Widget _buildFavoriteProductsList() {
+    return RefreshIndicator(
+      onRefresh: _loadFavoriteProducts,
+      child: ListView.builder(
+        padding: EdgeInsets.all(16.w),
+        itemCount: _favoriteProducts.length,
+        itemBuilder: (context, index) {
+          final product = _favoriteProducts[index];
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16.h),
+            child: ProductCard(
+              product: product,
+              onFavoriteToggle: () => _onFavoriteToggle(product.id),
+              onTap: () => _onProductTap(product),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 }

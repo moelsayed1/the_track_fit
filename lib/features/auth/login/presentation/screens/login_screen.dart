@@ -12,6 +12,7 @@ import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/social_login_button.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
 import '../../../../../core/router/app_router.dart';
+import '../../../../../core/services/storage_service.dart';
 import '../../../data/cubit/auth_cubit.dart';
 import '../../../data/cubit/auth_states.dart';
 
@@ -95,17 +96,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthLoginSuccess) {
+        if (state is AuthLoginSuccess || state is AuthLoginSuccessWithProfile) {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
             context,
             title: 'Login Successful!',
-            message: state.response.message,
+            message: state is AuthLoginSuccess ? state.response.message : 'Welcome back!',
             type: SnackbarType.success,
           );
           
-          // Navigate to next screen
-          context.push(AppRouter.home);
+          // Check if user is first time or returning user
+          _navigateBasedOnUserType(context);
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -249,5 +250,24 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     ),
     );
+  }
+
+  /// Navigate based on user type (first time vs returning user)
+  Future<void> _navigateBasedOnUserType(BuildContext context) async {
+    try {
+      final storageService = await StorageService.getInstance();
+      final isFirstTime = storageService.isFirstTimeUser();
+      
+      if (isFirstTime) {
+        // First time user - go to home_screen (onboarding flow)
+        context.push(AppRouter.home);
+      } else {
+        // Returning user - go to home_feature (main app)
+        context.push(AppRouter.homeFeature);
+      }
+    } catch (e) {
+      // Fallback to home_screen if error
+      context.push(AppRouter.home);
+    }
   }
 }

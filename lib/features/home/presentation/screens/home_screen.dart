@@ -12,6 +12,7 @@ import 'package:the_track_fit/features/scan_meals/presentation/screens/meal_scre
 import 'package:the_track_fit/features/workout/presentation/index.dart';
 import 'package:the_track_fit/core/services/storage_service.dart';
 import 'package:the_track_fit/core/widgets/app_scaffold.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -247,11 +248,30 @@ class _GreetingSection extends StatelessWidget {
               children: [
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
-                    String userName = 'User'; // Default fallback
+                    // Show shimmer loading while user data is being fetched
+                    if (state is AuthLoading || state is AuthInitial) {
+                      return ShimmerLoading(
+                        child: Container(
+                          width: 120.w,
+                          height: 20.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                        ),
+                      );
+                    } 
+                    
+                    // Show actual user name when loaded
+                    String userName = '';
                     
                     if (state is AuthUserProfileLoaded) {
                       userName = state.name;
                     } else if (state is AuthUserAlreadyLoggedIn) {
+                      userName = state.name;
+                    } else if (state is AuthRegisterSuccessWithProfile) {
+                      userName = state.name;
+                    } else if (state is AuthLoginSuccessWithProfile) {
                       userName = state.name;
                     }
                     

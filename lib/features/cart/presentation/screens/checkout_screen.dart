@@ -617,20 +617,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               Expanded(
                 child: _buildPaymentOption(
-                  'PayPal',
-                  'assets/images/paypal.png',
-                  'paypal',
+                  'Vodafon Cash',
+                  'assets/images/vodafon_cash.png',
+                  'vodafone_cash',
                 ),
               ),
               SizedBox(width: 8.w),
-              Expanded(
-                child: _buildPaymentOption(
-                  'Card',
-                  'assets/images/card.png',
-                  'card',
-                ),
-              ),
-              SizedBox(width: 8.w),
+              // Expanded(
+              //   child: _buildPaymentOption(
+              //     'Card',
+              //     'assets/images/card.png',
+              //     'card',
+              //   ),
+              // ),
+              // SizedBox(width: 8.w),
               Expanded(
                 child: _buildPaymentOption(
                   'Instapay',
@@ -643,9 +643,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         
         // Card details form when Card is selected
-        if (_selectedPaymentMethod == 'card') ...[
+        if (_selectedPaymentMethod == 'vodafone_cash') ...[
           SizedBox(height: 16.h),
-          _buildCardDetailsForm(),
+          _buildPaymentProofSection(),
         ],
         
         // Payment proof upload when Instapay is selected
@@ -718,8 +718,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               children: [
                 Image.asset(
                   iconPath,
-                  width: 32.w,
-                  height: 32.h,
+                  width: 45.w,
+                  height: 45.h,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       width: 32.w,

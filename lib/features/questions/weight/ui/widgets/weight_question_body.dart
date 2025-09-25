@@ -6,6 +6,7 @@ import 'package:the_track_fit/core/constants/app_text_styles.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/widgets/question_header.dart';
+import 'package:the_track_fit/core/widgets/question_continue_button.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 
@@ -20,8 +21,6 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   final TextEditingController _weightController = TextEditingController();
   final FocusNode _weightFocusNode = FocusNode();
   bool _isInputFilled = false;
-  bool _isLoadingQuestion = true;
-  String? _error;
   
   // Services
   final QuestionsService _questionsService = QuestionsService.instance;
@@ -40,8 +39,6 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   Future<void> _loadWeightQuestion() async {
     try {
       setState(() {
-        _isLoadingQuestion = true;
-        _error = null;
       });
 
       final question = await _questionsService.getCurrentWeightQuestion();
@@ -49,18 +46,13 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
       if (question != null) {
         setState(() {
           _questionText = question.enText;
-          _isLoadingQuestion = false;
         });
       } else {
         setState(() {
-          _error = 'No weight question available';
-          _isLoadingQuestion = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Failed to load weight question: ${e.toString()}';
-        _isLoadingQuestion = false;
       });
     }
   }
@@ -219,47 +211,9 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   }
 
   Widget _buildContinueButton(ResponsiveHelper responsive) {
-    return Container(
-      width: double.infinity,
-      height: responsive.h(50),
-      decoration: BoxDecoration(
-        color: _isInputFilled ? null : const Color(0xFFBDBDBD), // Grey when disabled
-        gradient: _isInputFilled ? const LinearGradient(
-          begin: Alignment(0.00, 0.50),
-          end: Alignment(1.00, 0.50),
-          colors: [Color(0xFF28A228), Color(0xD85CD65C)],
-        ) : null,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: _isInputFilled ? [
-          BoxShadow(
-            color: const Color(0x1928A228),
-            blurRadius: 25,
-            offset: const Offset(0, 10),
-            spreadRadius: -25,
-          ),
-        ] : null,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _isInputFilled ? _onContinuePressed : null,
-          borderRadius: BorderRadius.circular(30),
-          child: Center(
-            child: Text(
-              "Continue",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: responsive.sp(16),
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-                height: 1.50,
-                letterSpacing: 0.50,
-              ),
-            ),
-          ),
-        ),
-      ),
+    return QuestionContinueButton(
+      isEnabled: _isInputFilled,
+      onPressed: _onContinuePressed,
     );
   }
 
