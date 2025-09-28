@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/constants/app_assets.dart';
@@ -94,12 +95,12 @@ class Onboarding3Screen extends StatelessWidget {
             
             // Skip button
             Positioned(
-              right: responsive.wp(6.4),
-              top: responsive.hp(8),
+              right: responsive.wp(4.3),
+              top: responsive.hp(6),
               child: GestureDetector(
                 onTap: () {
                   // Navigate to home screen
-                  context.push('/home');
+                  context.push(AppRouter.signup);
                 },
                 child: Text(
                   'Skip',

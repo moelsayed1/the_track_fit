@@ -343,6 +343,14 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await _authRepository.logout();
       
+      // Sign out from Google if user was signed in with Google
+      try {
+        await _authRepository.signOutFromGoogle();
+      } catch (e) {
+        log('AuthCubit: Error signing out from Google: $e');
+        // Continue with logout even if Google sign out fails
+      }
+      
       // Clear all auth data from storage
       await _clearAuthData();
       
@@ -547,6 +555,54 @@ class AuthCubit extends Cubit<AuthState> {
       final errorMessage = _extractErrorMessage(e);
       log('AuthCubit UpdateProfile Error Message: $errorMessage');
       emit(AuthChangePasswordError(errorMessage));
+    }
+  }
+
+  /// Sign in with Google
+  Future<void> signInWithGoogle() async {
+    emit(const AuthLoading());
+    
+    try {
+      log('AuthCubit: Starting Google sign in...');
+      
+      final result = await _authRepository.signInWithGoogle();
+      
+      if (result.isSuccess) {
+        log('AuthCubit: Google sign in successful');
+        
+        // Update local profile data with Google account info
+        _userName = result.name ?? '';
+        _userEmail = result.email ?? '';
+        _userImagePath = result.profileImageUrl;
+        _userPhone = null; // Google doesn't provide phone
+        _userGender = null; // Google doesn't provide gender
+        
+        // Save Google sign-in data to storage
+        // Note: You might want to create a specific method for Google auth data
+        // For now, we'll use a simple approach
+        await _storageService.setFirstTimeUser(true); // Assume new user for Google sign-in
+        
+        // Emit success state
+        emit(AuthGoogleSignInSuccess(
+          email: result.email ?? '',
+          name: result.name ?? '',
+          profileImageUrl: result.profileImageUrl,
+          idToken: result.idToken ?? '',
+          accessToken: result.accessToken ?? '',
+        ));
+        
+        log('AuthCubit: Google sign in completed successfully');
+      } else if (result.isCancelled) {
+        log('AuthCubit: Google sign in cancelled by user');
+        emit(const AuthGoogleSignInCancelled());
+      } else {
+        log('AuthCubit: Google sign in failed: ${result.error}');
+        emit(AuthGoogleSignInError(result.error ?? 'Google sign in failed'));
+      }
+    } catch (e) {
+      log('AuthCubit Google Sign In Error: $e');
+      final errorMessage = _extractErrorMessage(e);
+      emit(AuthGoogleSignInError(errorMessage));
     }
   }
 

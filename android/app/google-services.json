@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1039938398263",
+    "project_id": "the-track-fit-57be9",
+    "storage_bucket": "the-track-fit-57be9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039938398263:android:2f877768e63be49e6cf7b2",
+        "android_client_info": {
+          "package_name": "com.example.the_track_fit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039938398263-uo16tbt42qcdgkp0tv1sejj9j524e8dn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.the_track_fit",
+            "certificate_hash": "392deead667ccdcc3e10fbc44a9a264dfef12282"
+          }
+        },
+        {
+          "client_id": "1039938398263-npmftijoj273247molqh8mjj8ekkarn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrrCiVbm9jRG6N4noWoc5V_hNygrYdGNI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039938398263-npmftijoj273247molqh8mjj8ekkarn1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

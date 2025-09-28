@@ -46,7 +46,20 @@ class ApiService {
         }
         // Add Bearer token to requests if available
         if (_bearerToken != null) {
-          options.headers['Authorization'] = 'Bearer $_bearerToken';
+          // Check if it's a Firebase ID token (JWT format)
+          if (_bearerToken!.contains('.')) {
+            // Firebase ID token - use custom header for now
+            // TODO: Backend needs to be configured to accept Firebase tokens
+            options.headers['X-Firebase-Token'] = _bearerToken;
+            options.headers['Authorization'] = 'Bearer $_bearerToken';
+            log('API Service: Using Firebase ID token for authentication');
+          } else {
+            // Regular Bearer token
+            options.headers['Authorization'] = 'Bearer $_bearerToken';
+            log('API Service: Using regular Bearer token for authentication');
+          }
+        } else {
+          log('API Service: No Bearer token available');
         }
         handler.next(options);
       },

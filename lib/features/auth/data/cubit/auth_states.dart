@@ -374,3 +374,64 @@ class AuthUserAlreadyLoggedIn extends AuthState {
   @override
   int get hashCode => Object.hash(token, name, email, imagePath, phone, gender);
 }
+
+/// Success state for Google Sign-In
+class AuthGoogleSignInSuccess extends AuthState {
+  final String email;
+  final String name;
+  final String? profileImageUrl;
+  final String idToken;
+  final String accessToken;
+  
+  const AuthGoogleSignInSuccess({
+    required this.email,
+    required this.name,
+    this.profileImageUrl,
+    required this.idToken,
+    required this.accessToken,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthGoogleSignInSuccess &&
+        other.email == email &&
+        other.name == name &&
+        other.profileImageUrl == profileImageUrl &&
+        other.idToken == idToken &&
+        other.accessToken == accessToken;
+  }
+
+  @override
+  int get hashCode => Object.hash(email, name, profileImageUrl, idToken, accessToken);
+}
+
+/// Error state for Google Sign-In
+class AuthGoogleSignInError extends AuthState {
+  final String message;
+  
+  const AuthGoogleSignInError(this.message);
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthGoogleSignInError && other.message == message;
+  }
+  
+  @override
+  int get hashCode => message.hashCode;
+}
+
+/// Google Sign-In cancelled state
+class AuthGoogleSignInCancelled extends AuthState {
+  const AuthGoogleSignInCancelled();
+  
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is AuthGoogleSignInCancelled;
+  }
+  
+  @override
+  int get hashCode => 0;
+}

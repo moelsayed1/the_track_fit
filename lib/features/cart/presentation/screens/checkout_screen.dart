@@ -473,114 +473,114 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-   Widget _buildCardDetailsForm() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15.r),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x1E000000),
-            blurRadius: 4,
-            offset: const Offset(0, 0),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Card Details',
-            style: TextStyle(
-              color: const Color(0xFF1E1E1E),
-              fontSize: 16.sp,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(height: 16.h),
+  //  Widget _buildCardDetailsForm() {
+  //   return Container(
+  //     width: double.infinity,
+  //     padding: EdgeInsets.all(16.h),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(15.r),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: const Color(0x1E000000),
+  //           blurRadius: 4,
+  //           offset: const Offset(0, 0),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           'Card Details',
+  //           style: TextStyle(
+  //             color: const Color(0xFF1E1E1E),
+  //             fontSize: 16.sp,
+  //             fontFamily: 'Poppins',
+  //             fontWeight: FontWeight.w500,
+  //           ),
+  //         ),
+  //         SizedBox(height: 16.h),
           
-          // Card Number field
-          _buildCardInputField(
-            hint: 'Card Number',
-            icon: 'assets/images/person_card.svg',
-          ),
-          SizedBox(height: 16.h),
+  //         // Card Number field
+  //         _buildCardInputField(
+  //           hint: 'Card Number',
+  //           icon: 'assets/images/person_card.svg',
+  //         ),
+  //         SizedBox(height: 16.h),
           
-          // Expiration and CVV row
-          Row(
-            children: [
-              Expanded(
-                child: _buildCardInputField(
-                  hint: 'Expiration',
-                  icon: 'assets/images/person_card.svg',
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: _buildCardInputField(
-                  hint: 'CVV',
-                  icon: 'assets/images/person_card.svg',
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  //         // Expiration and CVV row
+  //         Row(
+  //           children: [
+  //             Expanded(
+  //               child: _buildCardInputField(
+  //                 hint: 'Expiration',
+  //                 icon: 'assets/images/person_card.svg',
+  //               ),
+  //             ),
+  //             SizedBox(width: 16.w),
+  //             Expanded(
+  //               child: _buildCardInputField(
+  //                 hint: 'CVV',
+  //                 icon: 'assets/images/person_card.svg',
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-   Widget _buildCardInputField({
-    required String hint,
-    required String icon,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(
-          color: const Color(0xFFE0E0E0),
-          width: 1,
-        ),
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: TextStyle(
-            color: const Color(0xFF848484),
-            fontSize: 14.sp,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
-          ),
-          prefixIcon: Padding(
-            padding: EdgeInsets.all(12.w),
-            child: SvgPicture.asset(
-              icon,
-              width: 20.w,
-              height: 20.h,
-              colorFilter: const ColorFilter.mode(
-                Color(0xFF28A228),
-                BlendMode.srcIn,
-              ),
-            ),
-          ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: 12.h,
-          ),
-        ),
-        style: TextStyle(
-          color: const Color(0xFF1E1E1E),
-          fontSize: 14.sp,
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-    );
-  }
+  //  Widget _buildCardInputField({
+  //   required String hint,
+  //   required String icon,
+  // }) {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: const Color(0xFFFFFFFF),
+  //       borderRadius: BorderRadius.circular(30.r),
+  //       border: Border.all(
+  //         color: const Color(0xFFE0E0E0),
+  //         width: 1,
+  //       ),
+  //     ),
+  //     child: TextField(
+  //       decoration: InputDecoration(
+  //         hintText: hint,
+  //         hintStyle: TextStyle(
+  //           color: const Color(0xFF848484),
+  //           fontSize: 14.sp,
+  //           fontFamily: 'Poppins',
+  //           fontWeight: FontWeight.w400,
+  //         ),
+  //         prefixIcon: Padding(
+  //           padding: EdgeInsets.all(12.w),
+  //           child: SvgPicture.asset(
+  //             icon,
+  //             width: 20.w,
+  //             height: 20.h,
+  //             colorFilter: const ColorFilter.mode(
+  //               Color(0xFF28A228),
+  //               BlendMode.srcIn,
+  //             ),
+  //           ),
+  //         ),
+  //         border: InputBorder.none,
+  //         contentPadding: EdgeInsets.symmetric(
+  //           horizontal: 16.w,
+  //           vertical: 12.h,
+  //         ),
+  //       ),
+  //       style: TextStyle(
+  //         color: const Color(0xFF1E1E1E),
+  //         fontSize: 14.sp,
+  //         fontFamily: 'Poppins',
+  //         fontWeight: FontWeight.w400,
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
 

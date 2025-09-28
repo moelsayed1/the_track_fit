@@ -13,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final EdgeInsetsGeometry? margin;
   final bool isLoading;
+  final TextStyle? style;
 
   const CustomButton({
     super.key,
@@ -22,99 +23,67 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height,
     this.margin,
-    this.isLoading = false, TextStyle? style,
+    this.isLoading = false,
+    this.style,
   });
 
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    
-    final buttonWidth = width ?? responsive.screenWidth - (responsive.wp(5) * 2);
-    final buttonHeight = height ?? responsive.hp(7);
 
-    return SizedBox(
+    final buttonWidth =
+        width ?? responsive.screenWidth - (responsive.wp(5) * 2);
+    final buttonHeight = height ?? responsive.hp(6);
+
+    return Container(
+      margin: margin,
       width: buttonWidth.isFinite ? buttonWidth : null,
       height: buttonHeight,
-      child: Container(
-        margin: margin,
-        child: Stack(
-          children: [
-            Positioned(
-              left: 0,
-              top: type == ButtonType.primary ? 2 : 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: responsive.wp(4),
-                  vertical: responsive.hp(1.7),
-                ),
-                decoration: _getButtonDecoration(responsive),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (isLoading)
-                      SizedBox(
-                        width: responsive.wp(4),
-                        height: responsive.wp(4),
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            type == ButtonType.primary
-                                ? AppColors.white
-                                : AppColors.primaryGreen,
-                          ),
-                        ),
-                      )
-                    else
-                      Expanded(
-                        child: Text(
-                          text,
-                          textAlign: TextAlign.center,
-                          style: type == ButtonType.primary
-                              ? AppTextStyles.buttonPrimary
-                              : AppTextStyles.buttonSecondary,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+      child: ElevatedButton(
+        style: ButtonStyle(
+          fixedSize: WidgetStateProperty.all(Size(buttonWidth, buttonHeight)),
+          padding: WidgetStateProperty.all(EdgeInsets.zero),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
+              side: type == ButtonType.outline
+                  ? const BorderSide(color: AppColors.primaryGreen, width: 1.5)
+                  : BorderSide.none,
             ),
-          ],
+          ),
+          backgroundColor: type == ButtonType.primary
+              ? WidgetStateProperty.all(AppColors.primaryGreen)
+              : WidgetStateProperty.all(Colors.transparent),
+          elevation: WidgetStateProperty.all(
+            type == ButtonType.primary ? 3 : 0,
+          ),
         ),
+        onPressed: isLoading ? null : onPressed,
+        child: isLoading
+            ? SizedBox(
+                width: responsive.wp(4),
+                height: responsive.wp(4),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    type == ButtonType.primary
+                        ? AppColors.white
+                        : AppColors.primaryGreen,
+                  ),
+                ),
+              )
+            : Text(
+                text,
+                textAlign: TextAlign.center,
+                style:
+                    style ??
+                    (type == ButtonType.primary
+                        ? AppTextStyles.buttonPrimary
+                        : AppTextStyles.buttonSecondary),
+              ),
       ),
     );
-  }
-
-  ShapeDecoration _getButtonDecoration(ResponsiveHelper responsive) {
-    if (type == ButtonType.primary) {
-      return ShapeDecoration(
-        gradient: AppColors.primaryGradient,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        shadows: const [
-          BoxShadow(
-            color: AppColors.shadowGreen,
-            blurRadius: 25,
-            offset: Offset(0, 10),
-            spreadRadius: -25,
-          ),
-        ],
-      );
-    } else {
-      return ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            width: 1.50,
-            strokeAlign: BorderSide.strokeAlignOutside,
-            color: AppColors.primaryGreen,
-          ),
-          borderRadius: BorderRadius.circular(30),
-        ),
-      );
-    }
   }
 }
 
@@ -133,7 +102,8 @@ class PrimaryButton extends StatelessWidget {
     this.width,
     this.height,
     this.margin,
-    this.isLoading = false, this.style,
+    this.isLoading = false,
+    this.style,
   });
 
   @override

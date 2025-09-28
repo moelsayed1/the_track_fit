@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/services/google_signin_service.dart';
+import 'package:the_track_fit/core/services/storage_service.dart';
 import 'package:the_track_fit/core/constants/app_constants.dart';
 import '../data/models/register_request.dart';
 import '../data/models/register_response.dart';
@@ -10,6 +12,8 @@ import '../data/models/api_error_response.dart';
 
 class AuthRepository {
   final ApiService _apiService = ApiService();
+  final GoogleSignInService _googleSignInService = GoogleSignInService();
+  late final StorageService _storageService;
 
   /// Register a new user
   Future<RegisterResponse> register(RegisterRequest request) async {
@@ -290,6 +294,86 @@ class AuthRepository {
         }
         throw Exception(e.message ?? 'Profile update failed');
       }
+      throw Exception(e.toString());
+    }
+  }
+
+  /// Sign in with Google using Firebase Auth
+  Future<GoogleSignInResult> signInWithGoogle() async {
+    try {
+      log('AuthRepository: Starting Google sign in with Firebase...');
+      
+      // Use Google Sign-In service which handles Firebase Auth internally
+      final result = await _googleSignInService.signInWithGoogle();
+      
+      if (result.isSuccess) {
+        log('AuthRepository: Google sign in successful with Firebase, email: ${result.email}');
+        
+        // For Google Sign-In, we'll use Firebase authentication only
+        // The backend will need to be modified to accept Firebase ID tokens
+        // For now, we'll skip backend registration and use Firebase auth
+        log('AuthRepository: Using Firebase authentication for Google user');
+        
+        // Store Firebase user data locally
+        await _storeGoogleUserLocally(result);
+        
+        log('AuthRepository: Firebase authentication completed successfully');
+      }
+      
+      return result;
+    } catch (e) {
+      log('AuthRepository: Google sign in error: $e');
+      return GoogleSignInResult.error(e.toString());
+    }
+  }
+
+  /// Store Google user data locally and set up Firebase authentication
+  Future<void> _storeGoogleUserLocally(GoogleSignInResult result) async {
+    try {
+      log('AuthRepository: Storing Google user data locally...');
+      
+      // Initialize StorageService
+      _storageService = await StorageService.getInstance();
+      
+      // Store Firebase ID token as Bearer token for API calls
+      if (result.idToken != null) {
+        _apiService.setBearerToken(result.idToken!);
+        log('AuthRepository: Firebase ID token set as Bearer token');
+      }
+      
+      // Store user data in local storage
+      await _storageService.saveToken(result.idToken ?? '');
+      
+      // Create user data object
+      // Use phone from Google account if available, otherwise use placeholder
+      final userData = UserData(
+        id: 0, // Google users don't have backend ID yet
+        name: result.name ?? '',
+        email: result.email ?? '',
+        phone: result.phone ?? '00000000000', // Use Google phone or placeholder
+        gender: 'male', // Default gender
+        image: result.profileImageUrl,
+        type: 'customer',
+        createdAt: DateTime.now().toIso8601String(),
+        updatedAt: DateTime.now().toIso8601String(),
+      );
+      await _storageService.saveUserData(userData);
+      
+      log('AuthRepository: Google user data stored locally');
+    } catch (e) {
+      log('AuthRepository: Error storing Google user data locally: $e');
+    }
+  }
+
+
+  /// Sign out from Google
+  Future<void> signOutFromGoogle() async {
+    try {
+      log('AuthRepository: Signing out from Google...');
+      await _googleSignInService.signOut();
+      log('AuthRepository: Google sign out successful');
+    } catch (e) {
+      log('AuthRepository: Google sign out error: $e');
       throw Exception(e.toString());
     }
   }
