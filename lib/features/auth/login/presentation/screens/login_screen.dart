@@ -1,4 +1,5 @@
 
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -73,13 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   void _handleGoogleLogin() {
-    // TODO: Implement Google login
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Google login not implemented yet'),
-        backgroundColor: AppColors.grayMedium,
-      ),
-    );
+    // Call the Google sign-in method from AuthCubit
+    context.read<AuthCubit>().signInWithGoogle();
   }
 
   void _handleForgotPassword() {
@@ -107,6 +103,28 @@ class _LoginScreenState extends State<LoginScreen> {
           
           // Check if user is first time or returning user
           _navigateBasedOnUserType(context);
+        } else if (state is AuthGoogleSignInSuccess) {
+          // Show success message for Google sign-in
+          CustomSnackbar.show(
+            context,
+            title: 'Google Sign-In Successful!',
+            message: 'Welcome ${state.name}!',
+            type: SnackbarType.success,
+          );
+          
+          // Navigate based on user type
+          _navigateBasedOnUserType(context);
+        } else if (state is AuthGoogleSignInError) {
+          // Show error message for Google sign-in
+          CustomSnackbar.show(
+            context,
+            title: 'Google Sign-In Failed',
+            message: state.message,
+            type: SnackbarType.error,
+          );
+        } else if (state is AuthGoogleSignInCancelled) {
+          // User cancelled Google sign-in, no need to show error
+          log('Google sign-in cancelled by user');
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -199,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: 'Login',
                       onPressed: _handleLogin,
                       height: responsive.hp(7),
-                      isLoading: state is AuthLoading,
+                      isLoading: state is AuthLoading && state is! AuthGoogleSignInSuccess && state is! AuthGoogleSignInError && state is! AuthGoogleSignInCancelled,
                     );
                   },
                 ),
@@ -237,10 +255,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: responsive.hp(10)),
       
                 // Google login button
-                SocialLoginButton(
-                  text: 'Continue with Google',
-                  iconPath: AppIcons.google,
-                  onPressed: _handleGoogleLogin,
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    return SocialLoginButton(
+                      text: 'Continue with Google',
+                      iconPath: AppIcons.google,
+                      onPressed: _handleGoogleLogin,
+                      isLoading: state is AuthLoading && (state is! AuthLoginSuccess && state is! AuthValidationError && state is! AuthError),
+                    );
+                  },
                 ),
                 SizedBox(height: responsive.hp(1.5)),
               ],

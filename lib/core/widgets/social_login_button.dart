@@ -11,6 +11,7 @@ class SocialLoginButton extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final Widget? icon;
   final VoidCallback onPressed;
+  final bool isLoading;
 
   const SocialLoginButton({
     super.key,
@@ -20,7 +21,8 @@ class SocialLoginButton extends StatelessWidget {
     this.width,
     this.height,
     required this.onPressed,
-     this.margin,
+    this.margin,
+    this.isLoading = false,
   });
 
   @override
@@ -43,28 +45,38 @@ class SocialLoginButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onPressed,
+          onTap: isLoading ? null : onPressed,
           borderRadius: BorderRadius.circular(30),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-                if (icon != null || iconPath != null) ...[
-                 if (icon != null)
-                   icon!
-                 else if (iconPath != null)
-                   iconPath!.endsWith('.svg')
-                       ? SvgPicture.asset(
-                           iconPath!,
-                           width: responsive.sp(20),
-                           height: responsive.sp(20),
-                         )
-                       : Image.asset(
-                           iconPath!,
-                           width: responsive.sp(20),
-                           height: responsive.sp(20),
-                         ),
-                 SizedBox(width: responsive.wp(2)),
-               ],
+              if (isLoading) ...[
+                SizedBox(
+                  width: responsive.sp(20),
+                  height: responsive.sp(20),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.darkGray),
+                  ),
+                ),
+                SizedBox(width: responsive.wp(2)),
+              ] else if (icon != null || iconPath != null) ...[
+                if (icon != null)
+                  icon!
+                else if (iconPath != null)
+                  iconPath!.endsWith('.svg')
+                      ? SvgPicture.asset(
+                          iconPath!,
+                          width: responsive.sp(20),
+                          height: responsive.sp(20),
+                        )
+                      : Image.asset(
+                          iconPath!,
+                          width: responsive.sp(20),
+                          height: responsive.sp(20),
+                        ),
+                SizedBox(width: responsive.wp(2)),
+              ],
               Text(
                 text,
                 style: TextStyle(

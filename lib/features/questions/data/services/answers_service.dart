@@ -208,7 +208,7 @@ class AnswersService {
         if (value is List) {
           // Add each item as separate parameter with array notation
           for (int i = 0; i < value.length; i++) {
-            formData['${key}[$i]'] = value[i];
+            formData['$key[$i]'] = value[i];
           }
           log('AnswersService: Converted $key to array notation: ${value.length} items');
         } else {

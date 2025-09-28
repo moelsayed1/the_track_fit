@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -99,10 +100,8 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _handleGoogleSignup() {
-    // TODO: Implement Google signup
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Google signup not implemented yet')),
-    );
+    // Call the Google sign-in method from AuthCubit
+    context.read<AuthCubit>().signInWithGoogle();
   }
 
   void _navigateToLogin() {
@@ -137,6 +136,28 @@ class _SignupScreenState extends State<SignupScreen> {
           
           // Check if user is first time or returning user
           _navigateBasedOnUserType(context);
+        } else if (state is AuthGoogleSignInSuccess) {
+          // Show success message for Google sign-in
+          CustomSnackbar.show(
+            context,
+            title: 'Google Sign-In Successful!',
+            message: 'Welcome ${state.name}!',
+            type: SnackbarType.success,
+          );
+          
+          // Navigate based on user type
+          _navigateBasedOnUserType(context);
+        } else if (state is AuthGoogleSignInError) {
+          // Show error message for Google sign-in
+          CustomSnackbar.show(
+            context,
+            title: 'Google Sign-In Failed',
+            message: state.message,
+            type: SnackbarType.error,
+          );
+        } else if (state is AuthGoogleSignInCancelled) {
+          // User cancelled Google sign-in, no need to show error
+          log('Google sign-in cancelled by user');
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -425,7 +446,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       text: 'Create Account',
                       onPressed: _handleSignup,
                       height: responsive.hp(7),
-                      isLoading: state is AuthLoading,
+                      isLoading: state is AuthLoading && state is! AuthGoogleSignInSuccess && state is! AuthGoogleSignInError && state is! AuthGoogleSignInCancelled,
                     );
                   },
                 ),
@@ -463,10 +484,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 SizedBox(height: responsive.hp(4)),
       
                 // Google signup button
-                SocialLoginButton(
-                  text: 'Continue with Google',
-                  iconPath: AppIcons.google,
-                  onPressed: _handleGoogleSignup,
+                BlocBuilder<AuthCubit, AuthState>(
+                  builder: (context, state) {
+                    return SocialLoginButton(
+                      text: 'Continue with Google',
+                      iconPath: AppIcons.google,
+                      onPressed: _handleGoogleSignup,
+                      isLoading: state is AuthLoading && (state is! AuthRegisterSuccess && state is! AuthRegisterSuccessWithProfile && state is! AuthValidationError && state is! AuthError),
+                    );
+                  },
                 ),
                 SizedBox(height: responsive.hp(4)),
               ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding3_screen.dart';
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
 import '../../../../core/widgets/page_indicator.dart';
@@ -119,23 +120,44 @@ class OnboardingScreenWrapper extends StatelessWidget {
       children: [
         // Original screen content
         screen,
-        Positioned(
+                Positioned(
           left: ResponsiveHelper(context).wp(4.3),
           bottom: ResponsiveHelper(context).hp(8),
           right: ResponsiveHelper(context).wp(4.3),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Handle Get Started button differently
               if (showGetStarted) ...[
-                // Custom Get Started button with custom size
                 PrimaryButton(
                   text: 'Get Started',
                   onPressed: onNextPressed,
-                  height: ResponsiveHelper(context).hp(16), // Custom height for Get Started
+                  height: ResponsiveHelper(context).hp(6.9), 
+                ),
+                SizedBox(height: ResponsiveHelper(context).hp(2)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: TextStyle(
+                        color: AppColors.grayMedium,
+                        fontSize: ResponsiveHelper(context).sp(14),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => context.push(AppRouter.signup),
+                      child: Text(
+                        "Register",
+                        style: TextStyle(
+                          color: AppColors.primaryGreen,
+                          fontSize: ResponsiveHelper(context).sp(14),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ] else ...[
-                // Regular Next button (unchanged)
                 PrimaryButton(
                   text: 'Next',
                   onPressed: onNextPressed,
@@ -145,8 +167,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 OutlineButton(
                   text: 'Create Account',
                   onPressed: () {
-                    // Navigate to signup screen
-                    context.push('/signup');
+                    context.push(AppRouter.signup);
                   },
                   height: ResponsiveHelper(context).hp(6.9),
                 ),
@@ -156,38 +177,38 @@ class OnboardingScreenWrapper extends StatelessWidget {
         ),
 
         // Separate positioned "Don't have an account" text for last screen
-        if (showGetStarted)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: ResponsiveHelper(context).hp(13.5), // CONTROL POSITION HERE
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Don't have an account? ",
-                  style: TextStyle(
-                    color: AppColors.grayMedium,
-                    fontSize: ResponsiveHelper(context).sp(14),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // Navigate to register screen
-                    context.push('/signup');
-                  },
-                  child: Text(
-                    "Register",
-                    style: TextStyle(
-                      color: AppColors.primaryGreen,
-                      fontSize: ResponsiveHelper(context).sp(14),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        // if (showGetStarted)
+        //   Positioned(
+        //     left: 0,
+        //     right: 0,
+        //     bottom: ResponsiveHelper(context).hp(13.5), // CONTROL POSITION HERE
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Text(
+        //           "Don't have an account? ",
+        //           style: TextStyle(
+        //             color: AppColors.grayMedium,
+        //             fontSize: ResponsiveHelper(context).sp(14),
+        //           ),
+        //         ),
+        //         GestureDetector(
+        //           onTap: () {
+        //             // Navigate to register screen
+        //             context.push('/signup');
+        //           },
+        //           child: Text(
+        //             "Register",
+        //             style: TextStyle(
+        //               color: AppColors.primaryGreen,
+        //               fontSize: ResponsiveHelper(context).sp(14),
+        //               fontWeight: FontWeight.w600,
+        //             ),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
       ],
     );
   }

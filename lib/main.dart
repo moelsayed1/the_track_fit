@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'core/constants/constants.dart';
 import 'core/router/app_router.dart';
 import 'core/services/api_service.dart';
@@ -16,8 +17,11 @@ import 'features/cart/data/services/cart_service.dart';
 import 'features/cart/presentation/cubit/checkout_cubit.dart';
 import 'features/cart/data/services/checkout_service.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
