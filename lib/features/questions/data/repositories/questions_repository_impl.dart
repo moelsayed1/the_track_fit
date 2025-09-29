@@ -24,7 +24,11 @@ class QuestionsRepositoryImpl implements QuestionsRepository {
         final questionsResponse = QuestionsResponse.fromJson(response.data);
         log('QuestionsRepository: Successfully loaded ${questionsResponse.data.length} questions');
         return questionsResponse;
+      } else if (response.statusCode == 404) {
+        log('QuestionsRepository: Questions endpoint not found (404)');
+        throw Exception('Questions endpoint not found. Please check if the endpoint exists.');
       } else {
+        log('QuestionsRepository: Failed to load questions with status: ${response.statusCode}');
         throw Exception('Failed to load questions: ${response.statusCode}');
       }
     } catch (e) {

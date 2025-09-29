@@ -13,7 +13,7 @@ import '../data/models/api_error_response.dart';
 class AuthRepository {
   final ApiService _apiService = ApiService();
   final GoogleSignInService _googleSignInService = GoogleSignInService();
-  late final StorageService _storageService;
+  StorageService? _storageService;
 
   /// Register a new user
   Future<RegisterResponse> register(RegisterRequest request) async {
@@ -309,15 +309,10 @@ class AuthRepository {
       if (result.isSuccess) {
         log('AuthRepository: Google sign in successful with Firebase, email: ${result.email}');
         
-        // For Google Sign-In, we'll use Firebase authentication only
-        // The backend will need to be modified to accept Firebase ID tokens
-        // For now, we'll skip backend registration and use Firebase auth
-        log('AuthRepository: Using Firebase authentication for Google user');
+        // Authenticate with backend using Firebase ID token
+        await _authenticateGoogleUserWithBackend(result);
         
-        // Store Firebase user data locally
-        await _storeGoogleUserLocally(result);
-        
-        log('AuthRepository: Firebase authentication completed successfully');
+        log('AuthRepository: Google authentication completed successfully');
       }
       
       return result;
@@ -327,44 +322,113 @@ class AuthRepository {
     }
   }
 
-  /// Store Google user data locally and set up Firebase authentication
-  Future<void> _storeGoogleUserLocally(GoogleSignInResult result) async {
+  /// Authenticate Google user with backend using Firebase ID token
+  Future<void> _authenticateGoogleUserWithBackend(GoogleSignInResult result) async {
     try {
-      log('AuthRepository: Storing Google user data locally...');
+      log('AuthRepository: Authenticating Google user with backend...');
       
-      // Initialize StorageService
-      _storageService = await StorageService.getInstance();
-      
-      // Store Firebase ID token as Bearer token for API calls
-      if (result.idToken != null) {
-        _apiService.setBearerToken(result.idToken!);
-        log('AuthRepository: Firebase ID token set as Bearer token');
+      if (result.idToken == null) {
+        throw Exception('Firebase ID token is required for backend authentication');
       }
       
-      // Store user data in local storage
-      await _storageService.saveToken(result.idToken ?? '');
+      // Initialize CSRF token before Google auth
+      await _apiService.initializeCsrfToken();
       
-      // Create user data object
-      // Use phone from Google account if available, otherwise use placeholder
-      final userData = UserData(
-        id: 0, // Google users don't have backend ID yet
-        name: result.name ?? '',
-        email: result.email ?? '',
-        phone: result.phone ?? '00000000000', // Use Google phone or placeholder
-        gender: 'male', // Default gender
-        image: result.profileImageUrl,
-        type: 'customer',
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
+      // Send Firebase ID token to backend for authentication
+      final response = await _apiService.postForm(
+        AppConstants.googleAuthEndpoint,
+        data: {
+          'idToken': result.idToken!,
+        },
       );
-      await _storageService.saveUserData(userData);
       
-      log('AuthRepository: Google user data stored locally');
+      log('AuthRepository: Google auth response status: ${response.statusCode}');
+      log('AuthRepository: Google auth response data: ${response.data}');
+      
+      if (response.statusCode == 200) {
+        // Parse the response to get user data and backend token
+        final responseData = response.data;
+        if (responseData != null && responseData is Map<String, dynamic>) {
+          final userData = responseData['data']?['user'];
+          final backendToken = responseData['data']?['token'];
+          
+          log('AuthRepository: Parsed userData: $userData');
+          log('AuthRepository: Parsed backendToken: $backendToken');
+          
+          if (userData != null && backendToken != null) {
+            // Initialize StorageService if not already initialized
+            _storageService ??= await StorageService.getInstance();
+            
+            // Set backend token as Bearer token for future API calls
+            _apiService.setBearerToken(backendToken);
+            log('AuthRepository: Backend token set as Bearer token');
+            
+            // Store backend token in local storage
+            await _storageService!.saveToken(backendToken);
+            
+            // Create user data object from backend response
+            final user = UserData(
+              id: userData['id'] ?? 0,
+              name: userData['name'] ?? result.name ?? '',
+              email: userData['email'] ?? result.email ?? '',
+              phone: userData['phone'] ?? result.phone ?? '',
+              gender: userData['gender'] ?? '',
+              image: userData['image'] ?? result.profileImageUrl,
+              type: userData['type'] ?? 'customer',
+              createdAt: userData['created_at'] ?? DateTime.now().toIso8601String(),
+              updatedAt: userData['updated_at'] ?? DateTime.now().toIso8601String(),
+            );
+            await _storageService!.saveUserData(user);
+            
+            log('AuthRepository: Google user authenticated with backend successfully');
+          } else {
+            log('AuthRepository: userData is null: ${userData == null}');
+            log('AuthRepository: backendToken is null: ${backendToken == null}');
+            log('AuthRepository: userData value: $userData');
+            log('AuthRepository: backendToken value: $backendToken');
+            throw Exception('Invalid response format from backend - userData or backendToken is null');
+          }
+        } else {
+          throw Exception('Invalid response data from backend');
+        }
+      } else if (response.statusCode == 422) {
+        // Handle validation errors
+        log('422 Error Response: ${response.data}');
+        final errorResponse = ApiErrorResponse.fromJson(response.data);
+        final errorMessage = errorResponse.getFirstValidationError();
+        throw Exception(errorMessage);
+      } else {
+        throw Exception('Google authentication failed with status: ${response.statusCode}');
+      }
     } catch (e) {
-      log('AuthRepository: Error storing Google user data locally: $e');
+      log('AuthRepository: Error authenticating Google user with backend: $e');
+      throw Exception('Failed to authenticate with backend: $e');
     }
   }
 
+
+  /// Check if user has completed the questions flow
+  Future<bool> hasUserCompletedQuestions() async {
+    try {
+      log('AuthRepository: Checking if user has completed questions...');
+      
+      // Try to get the user's main goal
+      final response = await _apiService.get('/api/get-main-goal');
+      
+      if (response.statusCode == 200 && response.data != null) {
+        final hasMainGoal = response.data['data'] != null;
+        log('AuthRepository: User has main goal: $hasMainGoal');
+        return hasMainGoal;
+      } else {
+        log('AuthRepository: No main goal found - user needs to complete questions');
+        return false;
+      }
+    } catch (e) {
+      log('AuthRepository: Error checking main goal: $e');
+      // If there's an error (like 400 "User has not set a main goal"), assume user needs questions
+      return false;
+    }
+  }
 
   /// Sign out from Google
   Future<void> signOutFromGoogle() async {

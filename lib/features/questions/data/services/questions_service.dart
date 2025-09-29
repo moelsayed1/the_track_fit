@@ -83,7 +83,19 @@ class QuestionsService {
   
   /// Get age question specifically
   Future<Question?> getAgeQuestion() async {
-    return await getQuestionByEnText('Age');
+    try {
+      log('QuestionsService: Getting age question...');
+      final question = await getQuestionByEnText('Age');
+      if (question != null) {
+        log('QuestionsService: Age question found - ID: ${question.id}, Options: ${question.options?.length ?? 0}');
+      } else {
+        log('QuestionsService: Age question not found');
+      }
+      return question;
+    } catch (e) {
+      log('QuestionsService: Error getting age question: $e');
+      return null;
+    }
   }
   
   /// Get height question specifically

@@ -570,28 +570,60 @@ class AuthCubit extends Cubit<AuthState> {
       if (result.isSuccess) {
         log('AuthCubit: Google sign in successful');
         
-        // Update local profile data with Google account info
-        _userName = result.name ?? '';
-        _userEmail = result.email ?? '';
-        _userImagePath = result.profileImageUrl;
-        _userPhone = null; // Google doesn't provide phone
-        _userGender = null; // Google doesn't provide gender
+        // Get user data from storage (set by backend authentication)
+        final authData = _storageService.getAuthData();
         
-        // Save Google sign-in data to storage
-        // Note: You might want to create a specific method for Google auth data
-        // For now, we'll use a simple approach
-        await _storageService.setFirstTimeUser(true); // Assume new user for Google sign-in
-        
-        // Emit success state
-        emit(AuthGoogleSignInSuccess(
-          email: result.email ?? '',
-          name: result.name ?? '',
-          profileImageUrl: result.profileImageUrl,
-          idToken: result.idToken ?? '',
-          accessToken: result.accessToken ?? '',
-        ));
-        
-        log('AuthCubit: Google sign in completed successfully');
+        if (authData != null) {
+          // Update local profile data with backend user info
+          _userName = authData.user.name;
+          _userEmail = authData.user.email;
+          _userImagePath = authData.user.image;
+          _userPhone = authData.user.phone;
+          _userGender = authData.user.gender;
+          
+          // Check if user has completed the questions flow by checking if they have a main goal
+          final hasCompletedQuestions = await _authRepository.hasUserCompletedQuestions();
+          
+          if (hasCompletedQuestions) {
+            // User has completed questions flow: set as returning user
+            await _storageService.setFirstTimeUser(false);
+            log('AuthCubit: Google user has completed questions - will go to home');
+          } else {
+            // User hasn't completed questions flow: set as first-time user
+            await _storageService.setFirstTimeUser(true);
+            log('AuthCubit: Google user needs to complete questions - will go to questions');
+          }
+          
+          // Emit success state with backend user data
+          emit(AuthGoogleSignInSuccess(
+            email: authData.user.email,
+            name: authData.user.name,
+            profileImageUrl: authData.user.image,
+            idToken: authData.token, // Backend token
+            accessToken: result.accessToken ?? '',
+          ));
+          
+          log('AuthCubit: Google sign in completed successfully with backend authentication');
+        } else {
+          // Fallback to Google account info if backend data not available
+          _userName = result.name ?? '';
+          _userEmail = result.email ?? '';
+          _userImagePath = result.profileImageUrl;
+          _userPhone = null;
+          _userGender = null;
+          
+          await _storageService.setFirstTimeUser(true);
+          
+          emit(AuthGoogleSignInSuccess(
+            email: result.email ?? '',
+            name: result.name ?? '',
+            profileImageUrl: result.profileImageUrl,
+            idToken: result.idToken ?? '',
+            accessToken: result.accessToken ?? '',
+          ));
+          
+          log('AuthCubit: Google sign in completed with Firebase only');
+        }
       } else if (result.isCancelled) {
         log('AuthCubit: Google sign in cancelled by user');
         emit(const AuthGoogleSignInCancelled());

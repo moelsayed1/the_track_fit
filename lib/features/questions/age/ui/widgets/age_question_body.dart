@@ -42,6 +42,8 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
         _error = null;
       });
 
+      // Clear cache and force refresh questions for first-time users
+      _questionsService.clearCache();
       final question = await _questionsService.getAgeQuestion();
       
       if (mounted) {
@@ -81,7 +83,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            _ageQuestion?.enText ?? 'What\'s your Age?',
+            _ageQuestion?.enText ?? 'Age',
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,

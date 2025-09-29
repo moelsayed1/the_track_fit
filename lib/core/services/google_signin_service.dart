@@ -59,6 +59,10 @@ class GoogleSignInService {
       }
 
       log('GoogleSignInService: Google sign in successful');
+      log('GoogleSignInService: Firebase ID Token generated successfully');
+      log('GoogleSignInService: Token (first 50 chars): ${idToken.substring(0, idToken.length > 50 ? 50 : idToken.length)}...');
+      log('GoogleSignInService: Token (full): $idToken');
+      log('GoogleSignInService: Token length: ${idToken.length}');
 
       // Try to get phone number from Google account
       String? phoneNumber;

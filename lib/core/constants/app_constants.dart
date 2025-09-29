@@ -43,6 +43,7 @@ class AppConstants {
   static const String baseUrl = 'https://thetrackfit.com'; 
   static const String registerEndpoint = '/api/register';
   static const String loginEndpoint = '/api/login';
+  static const String googleAuthEndpoint = '/api/auth/google';
   static const String logoutEndpoint = '/api/logout';
   static const String sendOtpEndpoint = '/api/send-otp';
   static const String verifyOtpEndpoint = '/api/verify-otp';
