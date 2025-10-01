@@ -145,7 +145,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
                           ? ListView(
                               physics: const AlwaysScrollableScrollPhysics(),
                               children: [
-                                SizedBox(height: 64.h),
+                                SizedBox(height: 250.h),
                                 Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,

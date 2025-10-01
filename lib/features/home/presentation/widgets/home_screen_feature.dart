@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/auth/data/cubit/auth_cubit.dart';
 import 'package:the_track_fit/features/auth/data/cubit/auth_states.dart';
@@ -398,7 +400,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         style: TextStyle(
           color: Colors.grey,
           fontSize: 12.sp,
-          fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
         ),
       ),
     );
@@ -477,7 +479,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: 12.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -545,7 +547,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             //   style: TextStyle(
             //     color: isSelected ? const Color(0xFF28A228) : Colors.white,
             //     fontSize: 11.sp,
-            //     fontFamily: 'Poppins',
+            //     fontFamily: context.fontFamily,
             //     fontWeight: FontWeight.w500,
             //   ),
             // ),
@@ -622,11 +624,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                   }
 
                   return Text(
-                    'Hi $userName! 👋',
+                    '${AppLocalizations.of(context)!.hi} $userName! 👋',
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: 16.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w400,
                     ),
                   );
@@ -656,11 +658,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Daily goal',
+                  AppLocalizations.of(context)!.dailyGoal,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -718,11 +720,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 ),
                 SizedBox(height: 6.h),
                 Text(
-                  '$_completedWorkoutsCount/3 workouts',
+                  '$_completedWorkoutsCount/3 ${AppLocalizations.of(context)!.workouts}',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -740,11 +742,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'New Products',
+                AppLocalizations.of(context)!.newProducts,
                 style: TextStyle(
                   color: const Color(0xFF1E1E1E),
                   fontSize: 18.sp,
-                  fontFamily: 'Poppins',
+                  fontFamily: context.fontFamily,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -753,11 +755,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                   context.push(AppRouter.store);
                 },
                 child: Text(
-                  'Show all Products',
+                  AppLocalizations.of(context)!.showAllProducts,
                   style: TextStyle(
                     color: const Color(0xFF28A228),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -810,11 +812,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
-            'Your Activity',
+            AppLocalizations.of(context)!.yourActivity,
             style: TextStyle(
               color: const Color(0xFF1E1E1E),
               fontSize: 18.sp,
-              fontFamily: 'Poppins',
+              fontFamily: context.fontFamily,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -877,7 +879,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 18.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -907,7 +909,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 'Try Again',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  fontFamily: 'Poppins',
+                  fontFamily: context.fontFamily,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -928,7 +930,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
               ),
             ),
           ],
@@ -1100,7 +1102,7 @@ class _BottomNavBar extends StatelessWidget {
               fit: BoxFit.contain,
               colorFilter: ColorFilter.mode(getTabColor(0), BlendMode.srcIn),
             ),
-            label: 'Home',
+            label: AppLocalizations.of(context)!.home,
             selected: currentIndex == 0,
             onTap: () => onTabTapped(0),
             color: getTabColor(0),
@@ -1113,7 +1115,7 @@ class _BottomNavBar extends StatelessWidget {
               fit: BoxFit.contain,
               colorFilter: ColorFilter.mode(getTabColor(1), BlendMode.srcIn),
             ),
-            label: 'Workout',
+            label: AppLocalizations.of(context)!.workout,
             selected: currentIndex == 1,
             onTap: () => onTabTapped(1),
             color: getTabColor(1),
@@ -1127,7 +1129,7 @@ class _BottomNavBar extends StatelessWidget {
               fit: BoxFit.contain,
               colorFilter: ColorFilter.mode(getTabColor(3), BlendMode.srcIn),
             ),
-            label: 'Report',
+            label: AppLocalizations.of(context)!.report,
             selected: currentIndex == 3,
             onTap: () => onTabTapped(3),
             color: getTabColor(3),
@@ -1140,7 +1142,7 @@ class _BottomNavBar extends StatelessWidget {
               fit: BoxFit.contain,
               color: getTabColor(4),
             ),
-            label: 'Package',
+            label: AppLocalizations.of(context)!.packages,
             selected: currentIndex == 4,
             onTap: () => onTabTapped(4),
             color: getTabColor(4),
@@ -1183,7 +1185,7 @@ class _NavBarItem extends StatelessWidget {
               style: TextStyle(
                 color: color,
                 fontSize: 12.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
                 height: 1.33,
               ),
@@ -1350,7 +1352,7 @@ class ProductCard extends StatelessWidget {
                   style: TextStyle(
                     color: const Color(0xFF1E1E1E),
                     fontSize: 12.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
@@ -1363,7 +1365,7 @@ class ProductCard extends StatelessWidget {
                   style: TextStyle(
                     color: const Color(0xFF28A228),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: alignCenter ? TextAlign.center : TextAlign.start,
@@ -1473,7 +1475,7 @@ class ExerciseCard extends StatelessWidget {
                   style: TextStyle(
                     color: const Color(0xFF1E1E1E),
                     fontSize: 18.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1483,7 +1485,7 @@ class ExerciseCard extends StatelessWidget {
                   style: TextStyle(
                     color: const Color(0xFF848484),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -1562,7 +1564,7 @@ class _Header extends StatelessWidget {
               style: TextStyle(
                 color: const Color(0xFF1E1E1E),
                 fontSize: 24.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1612,7 +1614,7 @@ class _PointsContainer extends StatelessWidget {
             style: TextStyle(
               color: const Color(0xFF28A228),
               fontSize: 11.sp,
-              fontFamily: 'Poppins',
+              fontFamily: context.fontFamily,
               fontWeight: FontWeight.w400,
             ),
           ),

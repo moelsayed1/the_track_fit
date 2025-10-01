@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class SelectLocationScreen extends StatefulWidget {
   final String? selectedLocation;
@@ -31,13 +32,13 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     locationOptions = [
       LocationOption(
         id: 'home',
-        name: 'At Home',
+        name: AppLocalizations.of(context)!.atHome,
         iconPath: 'assets/images/home_icon.png',
         isSelected: selectedLocationId == 'home',
       ),
       LocationOption(
         id: 'gym',
-        name: 'At Gym',
+        name: AppLocalizations.of(context)!.atGym,
         iconPath: 'assets/images/gym_icon.png',
         isSelected: selectedLocationId == 'gym',
       ),
@@ -55,8 +56,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
       widget.onLocationSelected(locationId);
-      // ignore: use_build_context_synchronously
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     });
   }
 

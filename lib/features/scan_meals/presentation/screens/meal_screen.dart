@@ -13,6 +13,8 @@ import '../../../../core/widgets/date_selector.dart';
 import '../../../../core/widgets/meal_card.dart';
 import '../../data/repositories/meals_repository_impl.dart';
 import '../../domain/models/meals_response.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 
 class MealScreen extends StatefulWidget {
   const MealScreen({super.key});
@@ -177,11 +179,12 @@ class _MealScreenState extends State<MealScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
       child: Text(
-        'Meals',
+        AppLocalizations.of(context)!.meals,
         style: AppTextStyles.heading1.copyWith(
           fontSize: 24.sp,
           fontWeight: FontWeight.w600,
           color: AppColors.black,
+          fontFamily: context.fontFamily,
         ),
         textAlign: TextAlign.center,
       ),
@@ -200,11 +203,11 @@ class _MealScreenState extends State<MealScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Scan Your Meal',
+            AppLocalizations.of(context)!.scanYourMeal,
             style: TextStyle(
               color: const Color(0xFF28A228),
               fontSize: 16.sp,
-              fontFamily: 'Poppins',
+              fontFamily: context.fontFamily,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -228,11 +231,11 @@ class _MealScreenState extends State<MealScreen> {
                   ),
                   SizedBox(width: 12.w),
                   Text(
-                    'Tap to Scan your food',
+                    AppLocalizations.of(context)!.tapToScanYourFood,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -252,11 +255,11 @@ class _MealScreenState extends State<MealScreen> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.h),
           child: Text(
-            'Your Meals',
+            AppLocalizations.of(context)!.yourMeals,
             style: TextStyle(
               color: AppColors.black,
               fontSize: 16.sp,
-              fontFamily: 'Inter',
+              fontFamily: context.fontFamily,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -319,11 +322,11 @@ class _MealScreenState extends State<MealScreen> {
                 ),
                 SizedBox(height: 24.h),
                 Text(
-                  'No meal categories found',
+                  AppLocalizations.of(context)!.noMealCategoriesFound,
                   style: TextStyle(
                     color: AppColors.black,
                     fontSize: 18.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
@@ -332,11 +335,11 @@ class _MealScreenState extends State<MealScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32.w),
                   child: Text(
-                    'There are no meal categories available for this day. Please try another day.',
+                    AppLocalizations.of(context)!.thereAreNoMealCategoriesAvailableForThisDayPleaseTryAnotherDay,
                     style: TextStyle(
                       color: const Color(0xFF6C757D),
                       fontSize: 14.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w400,
                     ),
                     textAlign: TextAlign.center,
@@ -356,11 +359,11 @@ class _MealScreenState extends State<MealScreen> {
           height: MediaQuery.of(context).size.height * 0.4,
           child: Center(
             child: Text(
-              'No meals available for this day',
+              AppLocalizations.of(context)!.noMealsAvailableForThisDay,
               style: TextStyle(
                 color: const Color(0xFF6C757D),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
               ),
             ),

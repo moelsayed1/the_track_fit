@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -30,7 +31,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
 
   // Activity level options from the API response
   List<Map<String, String>> _activityOptions = [];
-  String _questionText = 'What\'s your Current Activity Level?';
+  String _questionText = '';
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
       
       if (question != null && question.options != null) {
         setState(() {
-          _questionText = question.enText;
+          _questionText = question.enText ?? AppLocalizations.of(context)!.currentActivityLevel;
           _activityOptions = question.options!.map((option) => {
             'value': option.en,
             'label': option.en,
@@ -58,15 +59,15 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
         });
       } else {
         setState(() {
-          _error = 'No activity level options available';
+          _error = AppLocalizations.of(context)!.noActivityLevelOptionsAvailable;
           _isLoadingOptions = false;
         });
       }
     } catch (e) {
-      setState(() {
-        _error = 'Failed to load activity level options: ${e.toString()}';
-        _isLoadingOptions = false;
-      });
+        setState(() {
+          _error = '${AppLocalizations.of(context)!.failedToLoadActivityLevelOptions}: ${e.toString()}';
+          _isLoadingOptions = false;
+        });
     }
   }
 
@@ -81,7 +82,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -133,7 +134,7 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _loadActivityLevelQuestion,
-                            child: Text('Retry'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),

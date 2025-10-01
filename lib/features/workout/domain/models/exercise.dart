@@ -1,3 +1,6 @@
+import 'package:the_track_fit/core/helpers/api_localization_helper.dart';
+import 'package:the_track_fit/core/services/language_service.dart';
+
 class Exercise {
   final String id;
   final String title;
@@ -13,6 +16,12 @@ class Exercise {
   final String? categoryId;
   final int? sets;
   final int? reps;
+  
+  // Arabic and English fields for localization
+  final String? arName;
+  final String? enName;
+  final String? arDescription;
+  final String? enDescription;
 
   const Exercise({
     required this.id,
@@ -29,6 +38,10 @@ class Exercise {
     this.categoryId,
     this.sets,
     this.reps,
+    this.arName,
+    this.enName,
+    this.arDescription,
+    this.enDescription,
   });
 
   Exercise copyWith({
@@ -46,6 +59,10 @@ class Exercise {
     String? categoryId,
     int? sets,
     int? reps,
+    String? arName,
+    String? enName,
+    String? arDescription,
+    String? enDescription,
   }) {
     return Exercise(
       id: id ?? this.id,
@@ -62,6 +79,10 @@ class Exercise {
       categoryId: categoryId ?? this.categoryId,
       sets: sets ?? this.sets,
       reps: reps ?? this.reps,
+      arName: arName ?? this.arName,
+      enName: enName ?? this.enName,
+      arDescription: arDescription ?? this.arDescription,
+      enDescription: enDescription ?? this.enDescription,
     );
   }
 
@@ -72,21 +93,38 @@ class Exercise {
         ? gifPath 
         : 'https://thetrackfit.com/storage/$gifPath';
     
+    // Get localized values
+    final currentLang = LanguageService.instance.currentLanguage;
+    final localizedName = ApiLocalizationHelper.getLocalizedValueSync(
+      apiData['ar_name'] as String?,
+      apiData['en_name'] as String?,
+      currentLang,
+    );
+    final localizedDescription = ApiLocalizationHelper.getLocalizedValueSync(
+      apiData['ar_description'] as String?,
+      apiData['en_description'] as String?,
+      currentLang,
+    );
+    
     return Exercise(
       id: apiData['id'].toString(),
-      title: apiData['en_name'] as String,
-      subtitle: apiData['en_description'] as String? ?? 'No description available',
+      title: localizedName.isNotEmpty ? localizedName : (apiData['en_name'] as String? ?? 'Exercise'),
+      subtitle: localizedDescription.isNotEmpty ? localizedDescription : 'No description available',
       imagePath: fullImagePath,
-      type: _mapEquipmentToType(apiData['equipment'] as String),
+      type: _mapEquipmentToType(apiData['equipment'] as String? ?? 'no_equipment'),
       isFavorite: false,
-      description: apiData['en_description'] as String?,
-      gender: apiData['gender'] as String,
-      location: apiData['location'] as String,
-      equipment: apiData['equipment'] as String,
-      goal: apiData['goal'] as String,
+      description: localizedDescription.isNotEmpty ? localizedDescription : apiData['en_description'] as String?,
+      gender: apiData['gender'] as String?,
+      location: apiData['location'] as String?,
+      equipment: apiData['equipment'] as String?,
+      goal: apiData['goal'] as String?,
       categoryId: apiData['exercise_category_id'].toString(),
       sets: apiData['sets'] as int?,
       reps: apiData['reps'] as int?,
+      arName: apiData['ar_name'] as String?,
+      enName: apiData['en_name'] as String?,
+      arDescription: apiData['ar_description'] as String?,
+      enDescription: apiData['en_description'] as String?,
     );
   }
 
@@ -102,6 +140,30 @@ class Exercise {
       default:
         return 'cardio';
     }
+  }
+
+  // Getter for localized name
+  String get localizedName {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return ApiLocalizationHelper.getLocalizedValueSync(arName, enName, currentLang);
+  }
+
+  // Getter for localized description
+  String get localizedDescription {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return ApiLocalizationHelper.getLocalizedValueSync(arDescription, enDescription, currentLang);
+  }
+
+  // Async getter for localized name with translation
+  Future<String> get localizedNameAsync async {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return await ApiLocalizationHelper.getLocalizedValue(arName, enName, currentLang);
+  }
+
+  // Async getter for localized description with translation
+  Future<String> get localizedDescriptionAsync async {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return await ApiLocalizationHelper.getLocalizedValue(arDescription, enDescription, currentLang);
   }
 
   // Helper method to format sets and reps as a display string

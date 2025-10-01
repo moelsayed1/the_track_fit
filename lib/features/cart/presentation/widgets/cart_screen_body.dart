@@ -15,6 +15,7 @@ import 'package:the_track_fit/features/store/data/datasources/product_remote_dat
 import 'package:the_track_fit/features/store/presentation/widgets/product_card.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class CartScreenBody extends StatefulWidget {
   const CartScreenBody({super.key});
@@ -76,7 +77,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                             ),
                           ),
                           Text(
-                            'Cart',
+                            AppLocalizations.of(context)!.cart,
                             style: TextStyle(
                               color: Color(0xFF1E1E1E),
                               fontSize: 18.sp,
@@ -201,7 +202,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Failed to load cart items',
+              AppLocalizations.of(context)!.failedToLoadCartItems,
               style: TextStyle(
                 color: Colors.red,
                 fontSize: 18.sp,
@@ -227,7 +228,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 backgroundColor: const Color(0xFF28A228),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -253,7 +254,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Your cart is empty',
+                      AppLocalizations.of(context)!.yourCartIsEmpty,
                       style: TextStyle(
                         color: Color(0xFF848484),
                         fontSize: 18.sp,
@@ -263,7 +264,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'Add some products to get started',
+                      AppLocalizations.of(context)!.addSomeProductsToGetStarted,
                       style: TextStyle(
                         color: Color(0xFF848484),
                         fontSize: 14.sp,
@@ -471,7 +472,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Product removed from cart'),
+              content: Text(AppLocalizations.of(context)!.productRemovedFromCart),
               backgroundColor: const Color(0xFF28A228),
               duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
@@ -490,7 +491,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to remove product: $e'),
+              content: Text('${AppLocalizations.of(context)!.failedToRemoveProduct}: $e'),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
               behavior: SnackBarBehavior.floating,
@@ -518,7 +519,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Payment Summary',
+          AppLocalizations.of(context)!.paymentSummary,
           style: TextStyle(
             color: Color(0xFF1E1E1E),
             fontSize: 16.sp,
@@ -533,7 +534,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Order Total',
+              AppLocalizations.of(context)!.orderTotal,
               style: TextStyle(
                 color: Color(0xFF848484),
                 fontSize: 14.sp,
@@ -563,7 +564,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Shipping',
+              AppLocalizations.of(context)!.shipping,
               style: TextStyle(
                 color: Color(0xFF848484),
                 fontSize: 14.sp,
@@ -573,7 +574,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               ),
             ),
             Text(
-              'Free',
+              AppLocalizations.of(context)!.free,
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
@@ -602,7 +603,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Total',
+              AppLocalizations.of(context)!.total,
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 16.sp,
@@ -656,7 +657,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           ],
         ),
         child: Text(
-          'Checkout',
+          AppLocalizations.of(context)!.checkout,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.white,
@@ -846,7 +847,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Failed to load favorite products',
+              AppLocalizations.of(context)!.failedToLoadFavoriteProducts,
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w500,
@@ -855,7 +856,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 8.h),
             Text(
-              _favoriteError ?? 'Unknown error occurred',
+              _favoriteError ?? AppLocalizations.of(context)!.unknownErrorOccurred,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -869,7 +870,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Try Again'),
+              child: Text(AppLocalizations.of(context)!.tryAgain),
             ),
           ],
         ),
@@ -892,7 +893,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No Favorite Products',
+              AppLocalizations.of(context)!.noFavoriteProducts,
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w500,
@@ -901,7 +902,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Products you mark as favorite will appear here',
+              AppLocalizations.of(context)!.productsYouMarkAsFavoriteWillAppearHere,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -915,7 +916,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Browse Products'),
+              child: Text(AppLocalizations.of(context)!.browseProducts),
             ),
           ],
         ),

@@ -12,6 +12,7 @@ import 'package:the_track_fit/features/store/data/repositories/product_repositor
 import 'package:the_track_fit/features/store/data/datasources/product_remote_datasource.dart';
 import 'package:the_track_fit/features/store/presentation/widgets/product_card.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class FavoriteProductsScreen extends StatefulWidget {
   const FavoriteProductsScreen({super.key});
@@ -80,7 +81,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
       if (!_isDisposed && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to update favorite: $e'),
+            content: Text('${AppLocalizations.of(context)!.failedToUpdateFavorite}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -102,7 +103,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       appBar: AppBar(
-        title: const Text('Favorite Products'),
+        title: Text(AppLocalizations.of(context)!.favoriteProducts),
         backgroundColor: AppColors.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -218,7 +219,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Failed to load favorite products',
+              AppLocalizations.of(context)!.failedToLoadFavoriteProducts,
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w500,
@@ -227,7 +228,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
             ),
             SizedBox(height: 8.h),
             Text(
-              _error ?? 'Unknown error occurred',
+              _error ?? AppLocalizations.of(context)!.unknownErrorOccurred,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -241,7 +242,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Try Again'),
+              child: Text(AppLocalizations.of(context)!.tryAgain),
             ),
           ],
         ),
@@ -263,7 +264,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No Favorite Products',
+              AppLocalizations.of(context)!.noFavoriteProducts,
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w500,
@@ -272,7 +273,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Products you mark as favorite will appear here',
+              AppLocalizations.of(context)!.productsYouMarkAsFavoriteWillAppearHere,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -286,7 +287,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Browse Products'),
+              child: Text(AppLocalizations.of(context)!.browseProducts),
             ),
           ],
         ),

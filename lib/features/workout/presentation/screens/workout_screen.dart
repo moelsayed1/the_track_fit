@@ -12,6 +12,8 @@ import 'package:the_track_fit/features/workout/presentation/screens/select_locat
 import 'package:the_track_fit/features/workout/presentation/screens/select_equipment_screen.dart';
 import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 
 class WorkoutScreen extends StatefulWidget {
   const WorkoutScreen({super.key});
@@ -121,21 +123,23 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'No exercises available',
+                    AppLocalizations.of(context)!.noExercisesAvailable,
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.green[800],
                       letterSpacing: 0.5,
+                      fontFamily: context.fontFamily,
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'We couldn\'t find any workout data right now.\nPlease check back later!',
+                    AppLocalizations.of(context)!.weCouldntFindAnyWorkoutDataRightNowPleaseCheckBackLater,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.green[700],
+                      fontFamily: context.fontFamily,
                     ),
                   ),
                 ],
@@ -180,11 +184,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             // Title
             Center(
               child: Text(
-                'Workout',
+                AppLocalizations.of(context)!.workout,
                 style: TextStyle(
                   color: const Color(0xFF1E1E1E), // black
                   fontSize: responsiveHelper.sp(24),
-                  fontFamily: 'Poppins',
+                  fontFamily: context.fontFamily,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -250,16 +254,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                         style: TextStyle(
                           color: const Color(0xFF1E1E1E),
                           fontSize: responsiveHelper.sp(12),
-                          fontFamily: 'Poppins',
+                          fontFamily: context.fontFamily,
                           fontWeight: FontWeight.w400,
                           height: 1.33,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Search exercises',
+                          hintText: AppLocalizations.of(context)!.searchExercises,
                           hintStyle: TextStyle(
                             color: const Color(0xBF848484),
                             fontSize: responsiveHelper.sp(12),
-                            fontFamily: 'Poppins',
+                            fontFamily: context.fontFamily,
                             fontWeight: FontWeight.w400,
                             height: 1.33,
                           ),
@@ -349,12 +353,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                   Flexible(
                                     child: Text(
                                       selectedFilter == null 
-                                          ? 'Type'
-                                          : state.selectedCategoryName ?? 'Type',
+                                          ? AppLocalizations.of(context)!.type
+                                          : state.selectedCategoryName ?? AppLocalizations.of(context)!.type,
                                       style: TextStyle(
                                         color: const Color(0xFF1E1E1E),
                                         fontSize: responsiveHelper.sp(12),
-                                        fontFamily: 'Poppins',
+                                        fontFamily: context.fontFamily,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -454,16 +458,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                   Flexible(
                                     child: Text(
                                       selectedLocation == 'gym'
-                                          ? 'At Gym'
+                                          ? AppLocalizations.of(context)!.atGym
                                           : selectedLocation == 'home'
-                                          ? 'At Home'
-                                          : 'Gym',
+                                          ? AppLocalizations.of(context)!.atHome
+                                          : AppLocalizations.of(context)!.gym,
                                       style: TextStyle(
                                         color: const Color(
                                           0xFF1E1E1E,
                                         ), // black
                                         fontSize: responsiveHelper.sp(12),
-                                        fontFamily: 'Poppins',
+                                        fontFamily: context.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         height: 1.60,
                                       ),
@@ -562,18 +566,18 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                   Flexible(
                                     child: Text(
                                       selectedEquipment == 'no_equipment'
-                                          ? 'No Equipment'
+                                          ? AppLocalizations.of(context)!.noEquipment
                                           : selectedEquipment == 'mat_only'
-                                          ? 'Mat Only'
+                                          ? AppLocalizations.of(context)!.matOnly
                                           : selectedEquipment == 'machines'
-                                          ? 'Machines'
-                                          : 'Equipment',
+                                          ? AppLocalizations.of(context)!.machines
+                                          : AppLocalizations.of(context)!.equipment,
                                       style: TextStyle(
                                         color: const Color(
                                           0xFF1E1E1E,
                                         ), // black
                                         fontSize: responsiveHelper.sp(12),
-                                        fontFamily: 'Poppins',
+                                        fontFamily: context.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         height: 1.60,
                                       ),
@@ -650,11 +654,11 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   ),
                   SizedBox(width: responsiveHelper.w(6)),
                   Text(
-                    'All exercise',
+                    AppLocalizations.of(context)!.allExercise,
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E), // black
                       fontSize: responsiveHelper.sp(14),
-                      fontFamily: 'Poppins',
+                      fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w400,
                       height: 1.14,
                     ),
@@ -704,21 +708,21 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 ),
                                 SizedBox(height: responsiveHelper.h(16)),
                                 Text(
-                                  'No exercises found',
+                                  AppLocalizations.of(context)!.noExercisesFound,
                                   style: TextStyle(
                                     color: const Color(0xFF1E1E1E),
                                     fontSize: responsiveHelper.sp(16),
-                                    fontFamily: 'Poppins',
+                                    fontFamily: context.fontFamily,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 SizedBox(height: responsiveHelper.h(8)),
                                 Text(
-                                  'Try adjusting your search or filters',
+                                  AppLocalizations.of(context)!.tryAdjustingYourSearchOrFilters,
                                   style: TextStyle(
                                     color: const Color(0xBF848484),
                                     fontSize: responsiveHelper.sp(12),
-                                    fontFamily: 'Poppins',
+                                    fontFamily: context.fontFamily,
                                     fontWeight: FontWeight.w400,
                                   ),
                                   textAlign: TextAlign.center,
@@ -879,7 +883,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                                         fontSize:
                                                             responsiveHelper
                                                                 .sp(16),
-                                                        fontFamily: 'Poppins',
+                                                        fontFamily: context.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
@@ -902,7 +906,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                                         fontSize:
                                                             responsiveHelper
                                                                 .sp(14),
-                                                        fontFamily: 'Poppins',
+                                                        fontFamily: context.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w400,
                                                       ),

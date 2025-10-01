@@ -74,6 +74,20 @@ class AppConstants {
   static const String storeSubscriptionEndpoint = '/api/store-subscription';
   static const String saveDeviceTokenEndpoint = '/api/save-device-token';
   
+  // Language Configuration
+  static const String defaultLanguage = 'ar';
+  static const String arabicLanguage = 'ar';
+  static const String englishLanguage = 'en';
+  
+  // Supported Languages
+  static const List<String> supportedLanguages = ['en', 'ar'];
+  
+  // Language-specific API endpoints
+  static String getEndpointWithLanguage(String endpoint, String language) {
+    final separator = endpoint.contains('?') ? '&' : '?';
+    return '$endpoint${separator}lang=$language';
+  }
+  
   // API Helper Methods
   static String getNewProductsUrl({int perPage = 10, int page = 1}) {
     return '$newProductsEndpoint?per_page=$perPage&page=$page';

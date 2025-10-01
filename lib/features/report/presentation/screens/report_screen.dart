@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
@@ -10,11 +11,23 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  String selectedPeriod = "This Week";
+  late String selectedPeriod;
   bool isDropdownOpen = false;
   String? hoveredTooltip;
   String? hoveredImagePath;
   Offset? tooltipPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    // selectedPeriod needs context, so initialize in didChangeDependencies
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    selectedPeriod = AppLocalizations.of(context)!.thisWeek;
+  }
 
   final List<Map<String, dynamic>> stats = [
     {"day": "16", "minutes": 110.0, "kcal": 66.0},
@@ -38,11 +51,11 @@ class _ReportScreenState extends State<ReportScreen> {
             SizedBox(height: responsiveHelper.h(0)),
             Center(
               child: Text(
-                'Report',
+                AppLocalizations.of(context)!.report,
                 style: TextStyle(
                   color: const Color(0xFF1E1E1E),
                   fontSize: responsiveHelper.sp(24),
-                  fontFamily: 'Poppins',
+                  fontFamily: 'Cairo',
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -66,7 +79,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       responsiveHelper: responsiveHelper,
                       icon: 'assets/images/cal.png',
                       value: '0',
-                      unit: 'Kcal',
+                      unit: AppLocalizations.of(context)!.kcal,
                     ),
                   ),
                   SizedBox(width: responsiveHelper.w(12)),
@@ -75,7 +88,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       responsiveHelper: responsiveHelper,
                       icon: 'assets/images/time.png',
                       value: '0',
-                      unit: 'Minute',
+                      unit: AppLocalizations.of(context)!.minute,
                     ),
                   ),
                   SizedBox(width: responsiveHelper.w(12)),
@@ -84,7 +97,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       responsiveHelper: responsiveHelper,
                       icon: 'assets/images/dumbbell.png',
                       value: '0',
-                      unit: 'Workout',
+                      unit: AppLocalizations.of(context)!.workout,
                     ),
                   ),
                 ],
@@ -166,7 +179,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Statistics",
+                      AppLocalizations.of(context)!.statistics,
                       style: TextStyle(
                         color: const Color(0xFF1E1E1E),
                         fontSize: responsiveHelper.sp(18),
@@ -357,11 +370,11 @@ class _ReportScreenState extends State<ReportScreen> {
                        child: Column(
                          crossAxisAlignment: CrossAxisAlignment.start,
                          children: [
-                           _buildDropdownItem("Today", responsiveHelper),
-                           _buildDropdownItem("This Week", responsiveHelper),
-                           _buildDropdownItem("Last week", responsiveHelper),
-                           _buildDropdownItem("Last Month", responsiveHelper),
-                           _buildDropdownItem("Last 6 months", responsiveHelper),
+                           _buildDropdownItem(AppLocalizations.of(context)!.today, responsiveHelper),
+                           _buildDropdownItem(AppLocalizations.of(context)!.thisWeek, responsiveHelper),
+                           _buildDropdownItem(AppLocalizations.of(context)!.lastWeek, responsiveHelper),
+                           _buildDropdownItem(AppLocalizations.of(context)!.lastMonth, responsiveHelper),
+                           _buildDropdownItem(AppLocalizations.of(context)!.last6Months, responsiveHelper),
                          ],
                        ),
                      ),
@@ -382,13 +395,13 @@ class _ReportScreenState extends State<ReportScreen> {
                _buildLegend(
                  responsiveHelper: responsiveHelper,
                  color: const Color(0xFF28A228),
-                 text: "Minutes",
+                 text: AppLocalizations.of(context)!.minutes,
                ),
                SizedBox(width: responsiveHelper.w(80)),
                _buildLegend(
                  responsiveHelper: responsiveHelper,
                  color: const Color(0xFFCB574D),
-                 text: "Kcal",
+                 text: AppLocalizations.of(context)!.kcal,
                ),
              ],
            ),

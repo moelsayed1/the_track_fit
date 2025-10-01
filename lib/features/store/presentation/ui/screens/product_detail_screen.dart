@@ -7,6 +7,7 @@ import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 import 'package:the_track_fit/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -58,7 +59,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Product added to cart successfully'),
+            content: Text(AppLocalizations.of(context)!.productAddedToCart),
             backgroundColor: const Color(0xFF28A228),
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
@@ -81,7 +82,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add product to cart: $e'),
+            content: Text('${AppLocalizations.of(context)!.failedToAddProductToCart}: $e'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -147,7 +148,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    'Product Detail',
+                    AppLocalizations.of(context)!.productDetail,
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: 18.sp,
@@ -243,7 +244,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Product Details',
+                          AppLocalizations.of(context)!.productDetails,
                           style: TextStyle(
                             color: const Color(0xFF1E1E1E),
                             fontSize: 16.sp,
@@ -253,7 +254,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                         SizedBox(height: 8.h),
                         Text(
-                          widget.product.enDescription,
+                          widget.product.description,
                           style: TextStyle(
                             color: const Color(0xFF848484),
                             fontSize: 12.sp,
@@ -265,7 +266,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         Row(
                           children: [
                             Text(
-                              'Price : ',
+                              '${AppLocalizations.of(context)!.price} : ',
                               style: TextStyle(
                                 color: const Color(0xFF1E1E1E),
                                 fontSize: 16.sp,
@@ -408,7 +409,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               SizedBox(width: 8.w),
             ],
             Text(
-              _isAddingToCart ? 'Adding...' : 'Add To Cart',
+              _isAddingToCart ? AppLocalizations.of(context)!.adding : AppLocalizations.of(context)!.addToCart,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -32,7 +33,7 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
 
   // Diet system options from the API response
   List<Map<String, String>> _dietSystemOptions = [];
-  String _questionText = 'What\'s your Current Diet System?';
+  String _questionText = '';
 
   @override
   void initState() {
@@ -51,24 +52,24 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
       
       if (question != null && question.options != null) {
         setState(() {
-          _questionText = question.enText;
+          _questionText = question.localizedText;
           _dietSystemOptions = question.options!.map((option) => {
-            'value': option.en,
-            'label': option.en,
+            'value': option.localizedText,
+            'label': option.localizedText,
           }).toList();
           _isLoadingOptions = false;
         });
       } else {
         setState(() {
-          _error = 'No diet system options available';
+          _error = AppLocalizations.of(context)!.noDietSystemOptionsAvailable;
           _isLoadingOptions = false;
         });
       }
     } catch (e) {
-      setState(() {
-        _error = 'Failed to load diet system options: ${e.toString()}';
-        _isLoadingOptions = false;
-      });
+        setState(() {
+          _error = '${AppLocalizations.of(context)!.failedToLoadDietSystemOptions}: ${e.toString()}';
+          _isLoadingOptions = false;
+        });
     }
   }
 
@@ -83,7 +84,7 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -135,7 +136,7 @@ class _DietSystemQuestionBodyState extends State<DietSystemQuestionBody> {
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _loadDietSystemQuestion,
-                            child: Text('Retry'),
+                            child: Text(AppLocalizations.of(context)!.retry),
                           ),
                         ],
                       ),

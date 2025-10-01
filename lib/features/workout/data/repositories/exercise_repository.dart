@@ -26,7 +26,9 @@ class ExerciseRepository {
         final exercises = exerciseApiResponse.data.map((apiData) {
           return Exercise.fromApiData({
             'id': apiData.id,
+            'ar_name': apiData.arName,
             'en_name': apiData.enName,
+            'ar_description': apiData.arDescription,
             'en_description': apiData.enDescription,
             'gif': apiData.gif,
             'equipment': apiData.equipment,
@@ -70,7 +72,9 @@ class ExerciseRepository {
         final exercises = exerciseApiResponse.data.map((apiData) {
           return Exercise.fromApiData({
             'id': apiData.id,
+            'ar_name': apiData.arName,
             'en_name': apiData.enName,
+            'ar_description': apiData.arDescription,
             'en_description': apiData.enDescription,
             'gif': apiData.gif,
             'equipment': apiData.equipment,
@@ -110,7 +114,9 @@ class ExerciseRepository {
         final exercises = exerciseApiResponse.data.map((apiData) {
           return Exercise.fromApiData({
             'id': apiData.id,
+            'ar_name': apiData.arName,
             'en_name': apiData.enName,
+            'ar_description': apiData.arDescription,
             'en_description': apiData.enDescription,
             'gif': apiData.gif,
             'equipment': apiData.equipment,
@@ -139,8 +145,8 @@ class ExerciseRepository {
     final searchLower = query.toLowerCase();
     
     return allExercises.where((exercise) {
-      return exercise.title.toLowerCase().contains(searchLower) ||
-             (exercise.description?.toLowerCase().contains(searchLower) ?? false) ||
+      return exercise.localizedName.toLowerCase().contains(searchLower) ||
+             (exercise.localizedDescription.toLowerCase().contains(searchLower)) ||
              exercise.type.toLowerCase().contains(searchLower);
     }).toList();
   }
@@ -187,7 +193,9 @@ class ExerciseRepository {
           log('Processing exercise: ${apiData.enName}');
           return Exercise.fromApiData({
             'id': apiData.id,
+            'ar_name': apiData.arName,
             'en_name': apiData.enName,
+            'ar_description': apiData.arDescription,
             'en_description': apiData.enDescription,
             'gif': apiData.gif,
             'equipment': apiData.equipment,
@@ -233,8 +241,10 @@ class ExerciseRepository {
             'icon': apiData.icon,
             'exercises': apiData.exercises.map((exerciseData) => {
               'id': exerciseData.id,
-              'en_name': exerciseData.enName,
-              'en_description': exerciseData.enDescription,
+            'ar_name': exerciseData.arName,
+            'en_name': exerciseData.enName,
+            'ar_description': exerciseData.arDescription,
+            'en_description': exerciseData.enDescription,
               'gif': exerciseData.gif,
               'equipment': exerciseData.equipment,
               'gender': exerciseData.gender,
@@ -273,7 +283,9 @@ class ExerciseRepository {
         final favoriteExercises = exercises.map((exerciseData) {
           return Exercise.fromApiData({
             'id': exerciseData['id'],
+            'ar_name': exerciseData['ar_name'],
             'en_name': exerciseData['en_name'],
+            'ar_description': exerciseData['ar_description'],
             'en_description': exerciseData['en_description'],
             'gif': exerciseData['gif'],
             'equipment': exerciseData['equipment'],

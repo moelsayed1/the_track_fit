@@ -1,3 +1,6 @@
+import 'package:the_track_fit/core/helpers/api_localization_helper.dart';
+import 'package:the_track_fit/core/services/language_service.dart';
+
 class Product {
   final int id;
   final String enName;
@@ -42,8 +45,29 @@ class Product {
     );
   }
 
-  // Getter for display name (using English name for now)
-  String get name => enName;
+  // Getter for display name (localized)
+  String get name {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return ApiLocalizationHelper.getLocalizedValueSync(arName, enName, currentLang);
+  }
+
+  // Getter for display description (localized)
+  String get description {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return ApiLocalizationHelper.getLocalizedValueSync(arDescription, enDescription, currentLang);
+  }
+
+  // Async getter for display name with translation
+  Future<String> get localizedName async {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return await ApiLocalizationHelper.getLocalizedValue(arName, enName, currentLang);
+  }
+
+  // Async getter for display description with translation
+  Future<String> get localizedDescription async {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return await ApiLocalizationHelper.getLocalizedValue(arDescription, enDescription, currentLang);
+  }
 
   // Getter for display price as double
   double get priceAsDouble => double.tryParse(price) ?? 0.0;
