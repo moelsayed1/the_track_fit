@@ -72,6 +72,7 @@ class AppConstants {
   static const String getCurrentSubscriptionEndpoint = '/api/current-subscription-package';
   static const String applyCouponEndpoint = '/api/apply-coupon';
   static const String storeSubscriptionEndpoint = '/api/store-subscription';
+  static const String saveDeviceTokenEndpoint = '/api/save-device-token';
   
   // API Helper Methods
   static String getNewProductsUrl({int perPage = 10, int page = 1}) {

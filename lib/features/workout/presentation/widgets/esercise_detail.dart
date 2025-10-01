@@ -71,7 +71,7 @@ class ExerciseDetail extends StatelessWidget {
             // Exercise Illustration Section
             Container(
               width: double.infinity,
-              height: responsiveHelper.h(300),
+              height: responsiveHelper.h(350),
               color: const Color(0xFFF6FFF6),
               child: Center(
                 child: ClipRRect(
@@ -102,7 +102,7 @@ class ExerciseDetail extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: responsiveHelper.h(30)),
+            SizedBox(height: responsiveHelper.h(12)),
             
             // Divider Line
             Padding(
@@ -147,7 +147,7 @@ class ExerciseDetail extends StatelessWidget {
                     ),
                   ),
                   
-                  SizedBox(height: responsiveHelper.h(200)),
+                  SizedBox(height: responsiveHelper.h(170)),
                   
                   // Start Exercise Button
                   SizedBox(

@@ -52,7 +52,23 @@ class SubscriptionService {
       
       // Add payment proof file if provided
       if (paymentProofPath != null && paymentProofPath.isNotEmpty) {
-        formData['payment_proof'] = File(paymentProofPath);
+        final file = File(paymentProofPath);
+        
+        // Check if file exists
+        if (!await file.exists()) {
+          log('SubscriptionService: Payment proof file does not exist: $paymentProofPath');
+          throw Exception('Payment proof file not found. Please select the image again.');
+        }
+        
+        // Check file size (optional - prevent very large files)
+        final fileSize = await file.length();
+        if (fileSize > 10 * 1024 * 1024) { // 10MB limit
+          log('SubscriptionService: Payment proof file too large: ${fileSize} bytes');
+          throw Exception('Payment proof file is too large. Please select a smaller image.');
+        }
+        
+        log('SubscriptionService: Payment proof file validated - size: ${fileSize} bytes');
+        formData['payment_proof'] = file;
       }
       
       // Add user data if provided
@@ -77,6 +93,19 @@ class SubscriptionService {
       log('SubscriptionService: Response data: ${response.data}');
       
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Clean up temporary payment proof file if it was created
+        if (paymentProofPath != null && paymentProofPath!.contains('payment_proof_')) {
+          try {
+            final tempFile = File(paymentProofPath!);
+            if (await tempFile.exists()) {
+              await tempFile.delete();
+              log('SubscriptionService: Cleaned up temporary payment proof file');
+            }
+          } catch (e) {
+            log('SubscriptionService: Failed to clean up temporary file: $e');
+          }
+        }
+        
         return {
           'success': true,
           'data': response.data['data'],

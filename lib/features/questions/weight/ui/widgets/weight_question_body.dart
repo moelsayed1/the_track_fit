@@ -21,6 +21,7 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   final TextEditingController _weightController = TextEditingController();
   final FocusNode _weightFocusNode = FocusNode();
   bool _isInputFilled = false;
+  bool _isLoading = false;
   
   // Services
   final QuestionsService _questionsService = QuestionsService.instance;
@@ -80,6 +81,10 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
 
   void _onContinuePressed() async {
     if (_weightController.text.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+
       try {
         // Get the question ID from the service
         final question = await _questionsService.getCurrentWeightQuestion();
@@ -92,24 +97,16 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
         }
         
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Weight submitted: ${_weightController.text} kg'),
-              backgroundColor: AppColors.primaryGreen,
-            ),
-          );
-          
           // Navigate to target weight question after current weight selection
           context.push(AppRouter.targetWeightQuestion);
         }
       } catch (e) {
+        // Error handling - could log to analytics or show error state
+      } finally {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error submitting answer: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          setState(() {
+            _isLoading = false;
+          });
         }
       }
     }
@@ -213,6 +210,7 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   Widget _buildContinueButton(ResponsiveHelper responsive) {
     return QuestionContinueButton(
       isEnabled: _isInputFilled,
+      isLoading: _isLoading,
       onPressed: _onContinuePressed,
     );
   }

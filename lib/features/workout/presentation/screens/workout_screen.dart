@@ -115,37 +115,34 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red[300],
+                    Icons.fitness_center,
+                    size: 72,
+                    color: Colors.green[200],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   Text(
-                    'Error loading exercises',
+                    'No exercises available',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.red[700],
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green[800],
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
-                    state.error!,
+                    'We couldn\'t find any workout data right now.\nPlease check back later!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.red[600],
+                      fontSize: 15,
+                      color: Colors.green[700],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => context.read<ExerciseCubit>().loadAllExercises(),
-                    child: const Text('Retry'),
                   ),
                 ],
               ),
             );
           }
+        
 
           return Stack(
             children: [
@@ -351,7 +348,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                   ],
                                   Flexible(
                                     child: Text(
-                                      state.selectedCategoryName ?? 'Type',
+                                      selectedFilter == null 
+                                          ? 'Type'
+                                          : state.selectedCategoryName ?? 'Type',
                                       style: TextStyle(
                                         color: const Color(0xFF1E1E1E),
                                         fontSize: responsiveHelper.sp(12),

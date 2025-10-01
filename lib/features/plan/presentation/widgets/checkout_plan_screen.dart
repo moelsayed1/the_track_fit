@@ -1295,9 +1295,19 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       );
       
       if (image != null) {
+        // Copy the image to a permanent location to avoid file path issues
+        final Directory tempDir = Directory.systemTemp;
+        final String fileName = 'payment_proof_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final String permanentPath = '${tempDir.path}/$fileName';
+        
+        // Copy the file to permanent location
+        final File permanentFile = await File(image.path).copy(permanentPath);
+        
         setState(() {
-          paymentProofPath = image.path;
+          paymentProofPath = permanentFile.path;
         });
+        
+        log('Payment proof saved to permanent path: $paymentProofPath');
       }
     } catch (e) {
       _showErrorSnackBar('Failed to pick image: ${e.toString()}');

@@ -128,6 +128,11 @@ class ApiService {
     _bearerToken = null;
   }
 
+  // Check if Bearer token is available
+  bool hasBearerToken() {
+    return _bearerToken != null && _bearerToken!.isNotEmpty;
+  }
+
   // Generic GET request
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
     try {

@@ -617,6 +617,8 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                     userName = state.name;
                   } else if (state is AuthLoginSuccessWithProfile) {
                     userName = state.name;
+                  } else if (state is AuthGoogleSignInSuccess) {
+                    userName = state.name;
                   }
 
                   return Text(

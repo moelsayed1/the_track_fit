@@ -1903,7 +1903,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop(); // Close dialog
-                    context.go(AppRouter.homeFeature); // Navigate to home
+                    context.push(AppRouter.homeFeature); // Navigate to home
                   },
                   child: Container(
                     width: 200.w,

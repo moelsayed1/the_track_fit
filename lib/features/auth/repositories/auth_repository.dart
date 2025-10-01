@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
 import 'package:the_track_fit/core/services/google_signin_service.dart';
 import 'package:the_track_fit/core/services/storage_service.dart';
+import 'package:the_track_fit/core/services/fcm_service.dart';
 import 'package:the_track_fit/core/constants/app_constants.dart';
 import '../data/models/register_request.dart';
 import '../data/models/register_response.dart';
@@ -35,6 +36,8 @@ class AuthRepository {
         // Store the Bearer token for future authenticated requests
         if (registerResponse.data?.token != null) {
           _apiService.setBearerToken(registerResponse.data!.token);
+          // Send FCM token to backend after successful registration
+          FCMService.sendTokenIfAuthenticated();
         }
         return registerResponse;
       } else if (response.statusCode == 422) {
@@ -83,6 +86,8 @@ class AuthRepository {
         // Store the Bearer token for future authenticated requests
         if (registerResponse.data?.token != null) {
           _apiService.setBearerToken(registerResponse.data!.token);
+          // Send FCM token to backend after successful login
+          FCMService.sendTokenIfAuthenticated();
         }
         return registerResponse;
       } else if (response.statusCode == 422) {
@@ -363,9 +368,6 @@ class AuthRepository {
             _apiService.setBearerToken(backendToken);
             log('AuthRepository: Backend token set as Bearer token');
             
-            // Store backend token in local storage
-            await _storageService!.saveToken(backendToken);
-            
             // Create user data object from backend response
             final user = UserData(
               id: userData['id'] ?? 0,
@@ -378,7 +380,16 @@ class AuthRepository {
               createdAt: userData['created_at'] ?? DateTime.now().toIso8601String(),
               updatedAt: userData['updated_at'] ?? DateTime.now().toIso8601String(),
             );
-            await _storageService!.saveUserData(user);
+            
+            // Create AuthData object and save it (this will set isLoggedIn = true)
+            final authData = AuthData(
+              token: backendToken,
+              user: user,
+            );
+            await _storageService!.saveAuthData(authData);
+            
+            // Send FCM token to backend after successful Google authentication
+            FCMService.sendTokenIfAuthenticated();
             
             log('AuthRepository: Google user authenticated with backend successfully');
           } else {

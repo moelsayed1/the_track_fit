@@ -7,6 +7,7 @@ import 'package:the_track_fit/features/auth/data/models/register_response.dart';
 import 'package:the_track_fit/features/auth/repositories/auth_repository.dart';
 import 'package:the_track_fit/core/services/storage_service.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/services/fcm_service.dart';
 import 'auth_states.dart';
 
 // Cubit
@@ -54,6 +55,9 @@ class AuthCubit extends Cubit<AuthState> {
           // Set the bearer token in ApiService for authenticated requests
           ApiService().setBearerToken(authData.token);
           log('AuthCubit: Bearer token set in ApiService');
+          
+          // Send FCM token to backend for existing authenticated user
+          FCMService.sendTokenIfAuthenticated();
           
           // Update local profile data
           _userName = authData.user.name;

@@ -221,25 +221,11 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fitness level selected: $_selectedFitnessLevel'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to next question screen (Height Question)
         context.push(AppRouter.heightQuestion);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

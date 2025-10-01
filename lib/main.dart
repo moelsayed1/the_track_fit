@@ -7,6 +7,7 @@ import 'core/constants/constants.dart';
 import 'core/router/app_router.dart';
 import 'core/services/api_service.dart';
 import 'core/services/storage_service.dart';
+import 'core/services/fcm_service.dart';
 import 'core/widgets/shimmer_loading.dart';
 import 'features/workout/data/cubit/exercise_cubit.dart';
 import 'features/workout/data/repositories/exercise_repository.dart';
@@ -22,6 +23,12 @@ Future<void> main() async {
 
   // Initialize Firebase
   await Firebase.initializeApp();
+
+  // Initialize ApiService
+  ApiService().init();
+
+  // Initialize FCM Service
+  await FCMService.initialize();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
