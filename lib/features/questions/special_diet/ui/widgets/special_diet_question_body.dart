@@ -172,25 +172,11 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
       }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Special diet: ${_specialDietController.text.isEmpty ? "None specified" : _specialDietController.text}'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to next question screen
         context.push(AppRouter.injuryQuestion);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error submitting answer: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

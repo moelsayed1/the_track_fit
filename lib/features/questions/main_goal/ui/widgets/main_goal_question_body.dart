@@ -293,25 +293,11 @@ class _MainGoalQuestionBodyState extends State<MainGoalQuestionBody> {
       }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Main goal selected: $_selectedGoal'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to next question screen
         context.push(AppRouter.activityLevelQuestion);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error submitting answer: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

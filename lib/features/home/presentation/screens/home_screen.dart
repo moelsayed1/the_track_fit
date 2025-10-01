@@ -40,12 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return (index >= 0 && index < titles.length) ? titles[index] : 'Plan';
   }
 
-
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final hasSystemNavBar = bottomInset > 0;
-    
+
     return AppScaffoldWithCustomSafeArea(
       backgroundColor: const Color(0xFFF6FFF6),
       resizeToAvoidBottomInset: false,
@@ -260,11 +259,11 @@ class _GreetingSection extends StatelessWidget {
                           ),
                         ),
                       );
-                    } 
-                    
+                    }
+
                     // Show actual user name when loaded
                     String userName = '';
-                    
+
                     if (state is AuthUserProfileLoaded) {
                       userName = state.name;
                     } else if (state is AuthUserAlreadyLoggedIn) {
@@ -273,39 +272,40 @@ class _GreetingSection extends StatelessWidget {
                       userName = state.name;
                     } else if (state is AuthLoginSuccessWithProfile) {
                       userName = state.name;
+                    } else if (state is AuthGoogleSignInSuccess) {
+                      userName = state.name;
                     }
-                    
-                    return Text(
-                      'Hi $userName!',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 16.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w400,
-                      ),
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hi $userName! 👋',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 16.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(height: 2.h),
+                        SizedBox(
+                          width: 300.w,
+                          child: Text(
+                            'Ready to start your journey?',
+                            style: TextStyle(
+                              color: const Color(0xBF848484),
+                              fontSize: 14.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
-                SizedBox(width: 8.w),
-                SizedBox(
-                  width: 20.w,
-                  height: 20.h,
-                  child: const Text('👋', style: TextStyle(fontSize: 20)),
-                ),
               ],
-            ),
-            SizedBox(height: 2.h),
-            SizedBox(
-              width: 300.w,
-              child: Text(
-                'Ready to start your journey?',
-                style: TextStyle(
-                  color: const Color(0xBF848484),
-                  fontSize: 14.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
             ),
           ],
         ),
@@ -401,9 +401,10 @@ class _MainCTASection extends StatelessWidget {
                       onPressed: () async {
                         try {
                           // Mark user as no longer first-time
-                          final storageService = await StorageService.getInstance();
+                          final storageService =
+                              await StorageService.getInstance();
                           await storageService.markUserAsReturning();
-                          
+
                           // Navigate to home_feature
                           context.go(AppRouter.homeFeature);
                         } catch (e) {
@@ -494,12 +495,18 @@ class _BottomNavBar extends StatelessWidget {
         children: [
           Container(
             width: double.infinity,
-            height: 85.h + (hasSystemNavBar ? bottomInset : 0), // إضافة المساحة إذا كان هناك system nav bar
+            height:
+                85.h +
+                (hasSystemNavBar
+                    ? bottomInset
+                    : 0), // إضافة المساحة إذا كان هناك system nav bar
             padding: EdgeInsets.only(
-              top: 6.h, 
-              left: 12.w, 
+              top: 6.h,
+              left: 12.w,
               right: 12.w,
-              bottom: hasSystemNavBar ? bottomInset : 0, // إضافة padding من الأسفل إذا كان هناك system nav bar
+              bottom: hasSystemNavBar
+                  ? bottomInset
+                  : 0, // إضافة padding من الأسفل إذا كان هناك system nav bar
             ),
             decoration: const ShapeDecoration(
               color: Colors.white,

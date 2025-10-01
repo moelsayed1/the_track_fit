@@ -21,8 +21,7 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
   final TextEditingController _targetWeightController = TextEditingController();
   final FocusNode _targetWeightFocusNode = FocusNode();
   bool _isInputFilled = false;
-  bool _isLoadingQuestion = true;
-  String? _error;
+  bool _isLoading = false;
   final int _currentStep = 6; // This is question 6 of 14
   final int _totalSteps = 14;
   
@@ -43,8 +42,6 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
   Future<void> _loadTargetWeightQuestion() async {
     try {
       setState(() {
-        _isLoadingQuestion = true;
-        _error = null;
       });
 
       final question = await _questionsService.getTargetWeightQuestion();
@@ -52,18 +49,13 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
       if (question != null) {
         setState(() {
           _questionText = question.enText;
-          _isLoadingQuestion = false;
         });
       } else {
         setState(() {
-          _error = 'No target weight question available';
-          _isLoadingQuestion = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Failed to load target weight question: ${e.toString()}';
-        _isLoadingQuestion = false;
       });
     }
   }
@@ -89,6 +81,10 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
 
   void _onContinuePressed() async {
     if (_targetWeightController.text.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+
       try {
         // Get the question ID from the service
         final question = await _questionsService.getTargetWeightQuestion();
@@ -101,24 +97,16 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
         }
         
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Target weight submitted: ${_targetWeightController.text} kg'),
-              backgroundColor: AppColors.primaryGreen,
-            ),
-          );
-          
           // Navigate to main goal question after target weight selection
           context.push(AppRouter.mainGoalQuestion);
         }
       } catch (e) {
+        // Error handling - could log to analytics or show error state
+      } finally {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error submitting answer: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          setState(() {
+            _isLoading = false;
+          });
         }
       }
     }
@@ -222,6 +210,7 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
   Widget _buildContinueButton(ResponsiveHelper responsive) {
     return QuestionContinueButton(
       isEnabled: _isInputFilled,
+      isLoading: _isLoading,
       onPressed: _onContinuePressed,
     );
   }

@@ -178,25 +178,11 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
         // Mark user as no longer a first-time user
         await _markUserAsReturningUser();
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gender selected: $_selectedGender'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to next question screen (Fitness Level)
         context.push(AppRouter.fitnessLevel);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

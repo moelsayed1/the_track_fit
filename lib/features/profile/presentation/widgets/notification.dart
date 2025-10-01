@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/services/notification_service.dart';
+import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 
 class NotificationProfile extends StatefulWidget {
   const NotificationProfile({super.key});
@@ -11,13 +13,71 @@ class NotificationProfile extends StatefulWidget {
 }
 
 class _NotificationProfileState extends State<NotificationProfile> {
-  // Track which notifications are read
-  final List<bool> _readNotifications = List.generate(6, (index) => false);
+  List<NotificationModel> _notifications = [];
+  bool _isLoading = true;
 
-  void _markAsRead(int index) {
-    setState(() {
-      _readNotifications[index] = true;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    try {
+      final notifications = await NotificationService.getNotifications();
+      setState(() {
+        _notifications = notifications;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _markAsRead(String notificationId) async {
+    await NotificationService.markAsRead(notificationId);
+    _loadNotifications(); // Reload to update UI
+  }
+
+  Future<void> _markAllAsRead() async {
+    await NotificationService.markAllAsRead();
+    _loadNotifications(); // Reload to update UI
+  }
+
+  Future<void> _addTestNotification() async {
+    final testNotification = NotificationModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: 'Test Notification',
+      body: 'This is a test notification from TrackFit! 🎉',
+      type: 'workout_reminder',
+      data: {
+        'type': 'workout_reminder',
+        'screen': 'workout',
+        'action': 'start_workout'
+      },
+      timestamp: DateTime.now(),
+      isRead: false,
+    );
+
+    await NotificationService.addNotification(testNotification);
+    _loadNotifications(); // Reload to update UI
+  }
+
+  String _formatTimeAgo(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m';
+    } else {
+      return 'now';
+    }
   }
 
   @override
@@ -63,28 +123,128 @@ class _NotificationProfileState extends State<NotificationProfile> {
 
             // Notifications List
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: 16.h),
-                    
-                    // Notification items with dividers
-                    for (int i = 0; i < 6; i++) ...[
-                      _buildNotificationItem(
-                        index: i,
-                        hasRedDot: !_readNotifications[i],
-                        hasBackground: !_readNotifications[i],
-                      ),
-                      if (i < 5) // Add divider after each item except the last one
-                        Container(
-                          width: double.infinity,
-                          height: 1.h,
-                          color: const Color(0x26848484),
+              child: _isLoading
+                  ? Center(
+                      child: ShimmerLoading(
+                        child: Container(
+                          width: 320.w,
+                          height: 80.h,
+                          margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
                         ),
-                    ],
-                  ],
-                ),
-              ),
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: _loadNotifications,
+                      displacement: 32.h,
+                      edgeOffset: 0,
+                      child: _notifications.isEmpty
+                          ? ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                SizedBox(height: 64.h),
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.notifications_none,
+                                        size: 64.sp,
+                                        color: const Color(0xFF848484),
+                                      ),
+                                      SizedBox(height: 16.h),
+                                      Text(
+                                        'No notifications yet',
+                                        style: TextStyle(
+                                          color: const Color(0xFF848484),
+                                          fontSize: 16.sp,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      Text(
+                                        'You\'ll see your notifications here',
+                                        style: TextStyle(
+                                          color: const Color(0xFF848484),
+                                          fontSize: 14.sp,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(height: 24.h),
+                                      // Test notification button
+                                      // ElevatedButton(
+                                      //   onPressed: _addTestNotification,
+                                      //   style: ElevatedButton.styleFrom(
+                                      //     backgroundColor: const Color(0xFF28A228),
+                                      //     foregroundColor: Colors.white,
+                                      //     padding: EdgeInsets.symmetric(
+                                      //       horizontal: 24.w,
+                                      //       vertical: 12.h,
+                                      //     ),
+                                      //     shape: RoundedRectangleBorder(
+                                      //       borderRadius: BorderRadius.circular(8.r),
+                                      //     ),
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Add Test Notification',
+                                      //     style: TextStyle(
+                                      //       fontSize: 14.sp,
+                                      //       fontFamily: 'Poppins',
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ListView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              children: [
+                                SizedBox(height: 4.h),
+                                // Mark all as read button
+                                if (_notifications.any((n) => !n.isRead))
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: TextButton(
+                                        onPressed: _markAllAsRead,
+                                        child: Text(
+                                          'Mark all as read',
+                                          style: TextStyle(
+                                            color: const Color(0xFF28A228),
+                                            fontSize: 14.sp,
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                // Notification items with dividers
+                                for (int i = 0; i < _notifications.length; i++) ...[
+                                  _buildNotificationItem(
+                                    notification: _notifications[i],
+                                    hasRedDot: !_notifications[i].isRead,
+                                    hasBackground: !_notifications[i].isRead,
+                                  ),
+                                  if (i < _notifications.length - 1)
+                                    Container(
+                                      width: double.infinity,
+                                      height: 1.h,
+                                      color: const Color(0x26848484),
+                                    ),
+                                ],
+                              ],
+                            ),
+                    ),
             ),
 
             // Divider before footer
@@ -95,23 +255,23 @@ class _NotificationProfileState extends State<NotificationProfile> {
             ),
 
             // Show all Notifications link
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: GestureDetector(
-                onTap: () {
-                  // Handle show all notifications
-                },
-                child: Text(
-                  'Show all Notifications',
-                  style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
-                    fontSize: 14.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.all(16.w),
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       // Handle show all notifications
+            //     },
+            //     child: Text(
+            //       'Show all Notifications',
+            //       style: TextStyle(
+            //         color: const Color(0xFF1E1E1E),
+            //         fontSize: 14.sp,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.w400,
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -119,22 +279,21 @@ class _NotificationProfileState extends State<NotificationProfile> {
   }
 
   Widget _buildNotificationItem({
-    required int index,
+    required NotificationModel notification,
     required bool hasRedDot,
     required bool hasBackground,
   }) {
     return GestureDetector(
-      onTap: () => _markAsRead(index),
+      onTap: () => _markAsRead(notification.id),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: hasBackground ? const Color(0x26848484) : Colors.transparent,
-          // Border removed
         ),
         child: Row(
           children: [
-            // Timer icon container
+            // Notification icon container
             Container(
               width: 35.w,
               height: 35.h,
@@ -149,16 +308,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
                 ),
               ),
               child: Center(
-                child: SvgPicture.asset(
-                  'assets/images/timer.svg',
-                  width: 24.w,
-                  height: 24.h,
-                  placeholderBuilder: (context) => Icon(
-                    Icons.access_time,
-                    size: 24.sp,
-                    color: const Color(0xFF28A228),
-                  ),
-                ),
+                child: _getNotificationIconWidget(notification.type),
               ),
             ),
 
@@ -183,7 +333,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Your current plan will renew on August 15, 2025',
+                    notification.title,
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: 14.sp,
@@ -193,7 +343,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Make sure your payment method is up to date to avoid interruption.',
+                    notification.body,
                     style: TextStyle(
                       color: const Color(0xFF848484),
                       fontSize: 10.sp,
@@ -207,7 +357,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
 
             // Timestamp
             Text(
-              '5h',
+              _formatTimeAgo(notification.timestamp),
               style: TextStyle(
                 color: const Color(0xFF848484),
                 fontSize: 10.sp,
@@ -219,5 +369,65 @@ class _NotificationProfileState extends State<NotificationProfile> {
         ),
       ),
     );
+  }
+
+  Widget _getNotificationIconWidget(String type) {
+    switch (type) {
+      case 'workout_reminder':
+        return Image.asset(
+          'assets/images/dumbbell.png',
+          width: 24.w,
+          height: 24.h,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.fitness_center,
+            size: 24.sp,
+            color: const Color(0xFF28A228),
+          ),
+        );
+      case 'meal_reminder':
+        return SvgPicture.asset(
+          'assets/logos/food_icon.svg',
+          width: 24.w,
+          height: 24.h,
+          placeholderBuilder: (context) => Icon(
+            Icons.restaurant,
+            size: 24.sp,
+            color: const Color(0xFF28A228),
+          ),
+        );
+      case 'achievement':
+        return Image.asset(
+          'assets/images/trophy.gif',
+          width: 24.w,
+          height: 24.h,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.emoji_events,
+            size: 24.sp,
+            color: const Color(0xFF28A228),
+          ),
+        );
+      case 'subscription':
+        return Image.asset(
+          'assets/images/card_payment.png',
+          width: 24.w,
+          height: 24.h,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.payment,
+            size: 24.sp,
+            color: const Color(0xFF28A228),
+          ),
+        );
+      default:
+        return SvgPicture.asset(
+          'assets/images/timer.svg',
+          width: 24.w,
+          height: 24.h,
+          placeholderBuilder: (context) => Icon(
+            Icons.access_time,
+            size: 24.sp,
+            color: const Color(0xFF28A228),
+          ),
+        );
+    }
   }
 }

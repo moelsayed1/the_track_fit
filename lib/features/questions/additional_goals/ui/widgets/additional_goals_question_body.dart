@@ -284,25 +284,11 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
       }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Additional goals selected: ${_selectedAdditionalGoals.length}'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to completion screen
         context.push(AppRouter.questionDone);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error submitting answer: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

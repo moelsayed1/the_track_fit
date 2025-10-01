@@ -43,8 +43,8 @@ class _OnboardingPageViewScreenState extends State<OnboardingPageViewScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      // Navigate to home on last page
-      context.push('/home');
+      // Navigate to signup on last page
+      context.push(AppRouter.signup);
     }
   }
 

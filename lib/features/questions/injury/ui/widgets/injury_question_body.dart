@@ -172,25 +172,11 @@ class _InjuryQuestionBodyState extends State<InjuryQuestionBody> {
       }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Injury description: ${_injuryController.text.isEmpty ? "None specified" : _injuryController.text}'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to completion screen
         context.push(AppRouter.questionDone);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error submitting answer: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

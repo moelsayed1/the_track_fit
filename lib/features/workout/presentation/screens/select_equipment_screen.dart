@@ -174,7 +174,7 @@ class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
                           : null, // No color filter when not selected
                     ),
                   ),
-                  SizedBox(width: responsiveHelper.w(24)),
+                  SizedBox(width: responsiveHelper.w(12)),
                 ],
                 Expanded(
                   child: Text(

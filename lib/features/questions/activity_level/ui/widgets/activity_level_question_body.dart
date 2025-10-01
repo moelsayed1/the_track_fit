@@ -284,25 +284,11 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
       }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Activity level selected: $_selectedActivity'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to next question screen
         context.push(AppRouter.trainingTypesQuestion);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error submitting answer: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {

@@ -296,25 +296,11 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
       }
       
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Health issues selected: ${_selectedHealthIssues.length}'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-        
         // Navigate to next question screen
         context.push(AppRouter.specialDietQuestion);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error submitting answer: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Error handling - could log to analytics or show error state
     } finally {
       if (mounted) {
         setState(() {
