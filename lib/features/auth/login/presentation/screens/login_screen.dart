@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -39,14 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
   // Simplified validation - the cubit handles detailed validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppLocalizations.of(context)!.email + ' ' + AppLocalizations.of(context)!.required;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context)!.password + ' ' + AppLocalizations.of(context)!.required;
     }
     return null;
   }
@@ -151,8 +152,8 @@ class _LoginScreenState extends State<LoginScreen> {
       
                 // Header with illustration
                 AuthHeader(
-                  title: "Log In",
-                  subtitle: "Welcome Back",
+                  title: AppLocalizations.of(context)!.login,
+                  subtitle: AppLocalizations.of(context)!.welcomeBack,
                   illustration: SvgPicture.asset(
                     AppLogos.login,
                     width: responsive.wp(66.7),

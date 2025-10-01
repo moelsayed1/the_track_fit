@@ -7,7 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 import 'package:the_track_fit/core/widgets/custom_snackbar.dart';
+import 'package:the_track_fit/core/services/language_service.dart';
+import 'package:the_track_fit/core/bloc/language/language_bloc.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
 import '../../../auth/data/cubit/auth_cubit.dart';
 import '../../../auth/data/cubit/auth_states.dart';
 
@@ -20,8 +25,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String? selectedSection;
-  String currentLanguage = 'Arabic'; // Default language
   bool _isRefreshing = false;
+  bool _isChangingLanguage = false;
 
   void _selectSection(String section) {
     setState(() {
@@ -29,19 +34,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void _toggleLanguage() {
+  Future<void> _toggleLanguage() async {
+    if (_isChangingLanguage) return; // Prevent multiple taps
+    
     setState(() {
-      currentLanguage = currentLanguage == 'Arabic' ? 'English' : 'Arabic';
+      _isChangingLanguage = true;
       selectedSection = 'Language';
     });
+    
+    try {
+      final currentLang = LanguageService.instance.currentLanguage;
+      final newLang = currentLang == 'ar' ? 'en' : 'ar';
+      
+      // Change language using Bloc
+      context.read<LanguageBloc>().add(LanguageChanged(newLang));
+      
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(newLang == 'ar' ? AppLocalizations.of(context)!.languageChangedToArabic : AppLocalizations.of(context)!.languageChangedToEnglish),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      
+    } catch (e) {
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorChangingLanguage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isChangingLanguage = false;
+        });
+      }
+    }
   }
 
   void _handleLogout() {
+    final l10n = AppLocalizations.of(context)!;
+    
     // Show confirmation dialog
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      barrierLabel: "Close",
+      barrierLabel: l10n.close,
       pageBuilder: (context, animation, secondaryAnimation) {
         return Align(
           alignment: Alignment.center,
@@ -58,13 +103,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Logout',
+                  Text(
+                    l10n.logout,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Are you sure you want to logout?',
+                  Text(
+                    l10n.areYouSureLogout,
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 24),
@@ -73,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Cancel'),
+                        child: Text(l10n.cancel),
                       ),
                       const SizedBox(width: 8),
                       TextButton(
@@ -85,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.of(context).pop();
                           context.read<AuthCubit>().logout();
                         },
-                        child: const Text('Logout'),
+                        child: Text(l10n.logout),
                       ),
                     ],
                   ),
@@ -125,8 +170,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (_isRefreshing) {
             CustomSnackbar.show(
               context,
-              title: 'Profile Updated!',
-              message: 'Your profile data has been refreshed successfully',
+              title: AppLocalizations.of(context)!.profileUpdated,
+              message: AppLocalizations.of(context)!.yourProfileDataHasBeenRefreshedSuccessfully,
               type: SnackbarType.success,
             );
           }
@@ -140,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
             context,
-            title: 'Logout Successful!',
+            title: AppLocalizations.of(context)!.logoutSuccessful,
             message: state.message,
             type: SnackbarType.success,
           );
@@ -151,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Show error message with Custom Snackbar
           CustomSnackbar.show(
             context,
-            title: 'Logout Failed',
+            title: AppLocalizations.of(context)!.logoutFailed,
             message: state.message,
             type: SnackbarType.error,
           );
@@ -399,14 +444,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    Text(
+                    LocalizedText(
                       displayName,
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 16.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                      ),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1E1E1E),
                     ),
                   ],
                 ),
@@ -457,16 +499,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Logout Section
           _buildLogoutSection(),
+          
+          SizedBox(height: 16.h),
+          
+          // Language Test Section (for debugging)
+          _buildLanguageTestSection(),
         ],
       ),
     );
   }
 
   Widget _buildProductsSection() {
-    bool isSelected = selectedSection == "Products";
+    bool isSelected = selectedSection == AppLocalizations.of(context)!.products;
     return GestureDetector(
       onTap: () {
-        _selectSection("Products");
+        _selectSection(AppLocalizations.of(context)!.products);
         context.push(AppRouter.store);
       },
       child: Container(
@@ -494,16 +541,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             SizedBox(width: 8.w),
-            Text(
-              'Products',
-              style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF28A228)
-                    : const Color(0xFF1E1E1E),
-                fontSize: 16.sp,
-                fontFamily: 'Poppins',
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              ),
+            LocalizedText(
+              AppLocalizations.of(context)!.newProducts,
+              fontSize: 16,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+              color: isSelected
+                  ? const Color(0xFF28A228)
+                  : const Color(0xFF1E1E1E),
             ),
           ],
         ),
@@ -515,14 +559,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Profile Management',
-          style: TextStyle(
-            color: const Color(0xFF1E1E1E),
-            fontSize: 14.sp,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
-          ),
+        LocalizedText(
+          AppLocalizations.of(context)!.profile, // 👈 من ARB
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF1E1E1E),
         ),
         SizedBox(height: 8.h),
         Container(
@@ -545,12 +586,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               _buildProfileItem(
                 icon: 'assets/images/edit_profile.svg',
-                title: 'Edit Profile',
+                title: AppLocalizations.of(context)!.editProfile,
                 showDivider: true,
               ),
               _buildProfileItem(
                 icon: 'assets/images/premium_profile.png',
-                title: 'Subscription',
+                title: AppLocalizations.of(context)!.subscription,
                 showDivider: false,
               ),
               // _buildProfileItem(
@@ -570,11 +611,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Setting',
+          AppLocalizations.of(context)!.settings,
           style: TextStyle(
             color: const Color(0xFF1E1E1E),
             fontSize: 14.sp,
-            fontFamily: 'Poppins',
+            fontFamily: context.fontFamily,
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -599,7 +640,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               _buildProfileItem(
                 icon: 'assets/images/lock_icon.svg',
-                title: 'Change Password',
+                title: AppLocalizations.of(context)!.changePassword,
                 showDivider: true,
               ),
               _buildLanguageItem(),
@@ -611,10 +652,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildNotificationsSection() {
-    bool isSelected = selectedSection == "Notifications";
+    bool isSelected = selectedSection == AppLocalizations.of(context)!.notifications;
     return GestureDetector(
       onTap: () {
-        _selectSection("Notifications");
+        _selectSection(AppLocalizations.of(context)!.notifications);
         context.push('/notification');
       },
       child: Container(
@@ -643,13 +684,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(width: 8.w),
             Text(
-              'Notifications',
+              AppLocalizations.of(context)!.notifications,
               style: TextStyle(
                 color: isSelected
                     ? const Color(0xFF28A228)
                     : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -660,10 +701,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildMainGoalSection() {
-    bool isSelected = selectedSection == "Main Goal";
+    bool isSelected = selectedSection == AppLocalizations.of(context)!.mainGoal;
     return GestureDetector(
       onTap: () {
-        _selectSection("Main Goal");
+        _selectSection(AppLocalizations.of(context)!.mainGoal);
         context.push('/main-goal');
       },
       child: Container(
@@ -692,13 +733,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(width: 8.w),
             Text(
-              'Main Goal',
+              AppLocalizations.of(context)!.dailyGoal,
               style: TextStyle(
                 color: isSelected
                     ? const Color(0xFF28A228)
                     : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -709,10 +750,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildFavouriteExerciseSection() {
-    bool isSelected = selectedSection == "Favourite Exercise";
+    bool isSelected = selectedSection == AppLocalizations.of(context)!.favouriteExercise;
     return GestureDetector(
       onTap: () {
-        _selectSection("Favourite Exercise");
+        _selectSection(AppLocalizations.of(context)!.favouriteExercise);
         context.push(AppRouter.favouriteExercise);
       },
       child: Container(
@@ -741,13 +782,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(width: 8.w),
             Text(
-              'Favourite Exercise',
+              AppLocalizations.of(context)!.workout,
               style: TextStyle(
                 color: isSelected
                     ? const Color(0xFF28A228)
                     : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -782,11 +823,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  state is AuthLoading ? 'Logging out...' : 'Logout',
+                  state is AuthLoading ? AppLocalizations.of(context)!.loading : AppLocalizations.of(context)!.logout,
                   style: TextStyle(
-                    color: const Color(0xFFFF4444), // Red color for logout
+                    color: const Color(0xFFFF4444),
                     fontSize: 16.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -820,13 +861,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return GestureDetector(
       onTap: () {
-        if (title == 'Edit Profile') {
+        if (title == AppLocalizations.of(context)!.editProfile) {
           context.push('/edit-profile');
-        } else if (title == 'Subscription') {
+        } else if (title == AppLocalizations.of(context)!.subscription) {
           context.push('/subscription');
         } else if (title == 'Payment Info') {
           context.push('/payment-info');
-        } else if (title == 'Change Password') {
+        } else if (title == AppLocalizations.of(context)!.changePassword) {
           context.push('/change-password');
         } else {
           _selectSection(title);
@@ -860,7 +901,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? const Color(0xFF28A228)
                       : const Color(0xFF1E1E1E),
                   fontSize: 16.sp,
-                  fontFamily: 'Poppins',
+                  fontFamily: context.fontFamily,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
                 ),
               ),
@@ -888,9 +929,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildLanguageItem() {
-    bool isSelected = selectedSection == "Language";
+    bool isSelected = selectedSection == AppLocalizations.of(context)!.language;
     return GestureDetector(
-      onTap: () => _toggleLanguage(),
+      onTap: _isChangingLanguage ? null : () => _toggleLanguage(),
       child: Container(
         color: Colors.transparent,
         child: Row(
@@ -909,32 +950,111 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'Language',
+                  AppLocalizations.of(context)!.language,
                   style: TextStyle(
                     color: isSelected
                         ? const Color(0xFF28A228)
                         : const Color(0xFF1E1E1E),
                     fontSize: 16.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
                   ),
                 ),
               ],
             ),
-            Text(
-              currentLanguage,
-              style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF28A228)
-                    : const Color(0xFF1E1E1E),
-                fontSize: 14.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
+            if (_isChangingLanguage)
+              SizedBox(
+                width: 20.w,
+                height: 20.w,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF28A228)),
+                ),
+              )
+            else
+              Text(
+                LanguageService.instance.currentLanguage == 'ar' 
+                    ? AppLocalizations.of(context)!.arabic 
+                    : AppLocalizations.of(context)!.english,
+                style: TextStyle(
+                  color: isSelected
+                      ? const Color(0xFF28A228)
+                      : const Color(0xFF1E1E1E),
+                  fontSize: 14.sp,
+                  fontFamily: context.fontFamily,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLanguageTestSection() {
+    return BlocBuilder<LanguageBloc, LanguageState>(
+      builder: (context, languageState) {
+        final currentLanguage = languageState is LanguageLoaded 
+            ? languageState.currentLanguage 
+            : LanguageService.instance.currentLanguage;
+        
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15.r),
+            border: Border.all(color: const Color(0x26848484), width: 1.w),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Language Test (Debug)',
+                style: TextStyle(
+                  color: const Color(0xFF1E1E1E),
+                  fontSize: 14.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'Current: $currentLanguage',
+                style: TextStyle(fontSize: 12.sp),
+              ),
+              SizedBox(height: 8.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<LanguageBloc>().add(LanguageChanged('ar'));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentLanguage == 'ar' ? Colors.blue : Colors.grey,
+                      ),
+                      child: Text('العربية'),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<LanguageBloc>().add(LanguageChanged('en'));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: currentLanguage == 'en' ? Colors.green : Colors.grey,
+                      ),
+                      child: Text('English'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

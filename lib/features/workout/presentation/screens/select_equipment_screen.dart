@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class SelectEquipmentScreen extends StatefulWidget {
   final String? selectedEquipment;
@@ -31,19 +32,19 @@ class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
     equipmentOptions = [
       EquipmentOption(
         id: 'no_equipment',
-        name: 'No Equipment',
+        name: AppLocalizations.of(context)!.noEquipment,
         iconPath: null, // No icon for this option
         isSelected: selectedEquipmentId == 'no_equipment',
       ),
       EquipmentOption(
         id: 'mat_only',
-        name: 'Mat Only',
+        name: AppLocalizations.of(context)!.matOnly,
         iconPath: 'assets/images/mat_only.png',
         isSelected: selectedEquipmentId == 'mat_only',
       ),
       EquipmentOption(
         id: 'machines',
-        name: 'Machines',
+        name: AppLocalizations.of(context)!.machines,
         iconPath: 'assets/images/machines.png',
         isSelected: selectedEquipmentId == 'machines',
       ),
@@ -61,7 +62,7 @@ class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
       widget.onEquipmentSelected(equipmentId);
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     });
   }
 

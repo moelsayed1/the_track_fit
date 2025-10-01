@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/responsive_helper.dart';
@@ -46,28 +47,28 @@ class _SignupScreenState extends State<SignupScreen> {
   // Simplified validation - the cubit handles detailed validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppLocalizations.of(context)!.email + ' ' + AppLocalizations.of(context)!.required;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context)!.password + ' ' + AppLocalizations.of(context)!.required;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Confirm password is required';
+      return AppLocalizations.of(context)!.confirmPassword + ' ' + AppLocalizations.of(context)!.required;
     }
     return null;
   }
 
   String? _validateRequired(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
-      return '$fieldName is required';
+      return '$fieldName ' + AppLocalizations.of(context)!.required;
     }
     return null;
   }
@@ -113,7 +114,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final firstError = errors.values.first;
     CustomSnackbar.show(
       context,
-      title: 'Validation Error',
+      title: AppLocalizations.of(context)!.error,
       message: firstError,
       type: SnackbarType.warning,
     );
@@ -165,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
           // Show error message with Custom Snackbar
           CustomSnackbar.show(
             context,
-            title: 'Registration Failed',
+            title: AppLocalizations.of(context)!.error,
             message: state.message,
             type: SnackbarType.error,
           );
@@ -185,7 +186,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 // Header with illustration
                 AuthHeader(
                   title: "Let's Get You Started",
-                  subtitle: "Enter your email and password for login",
+                  subtitle: AppLocalizations.of(context)!.loginInstructions,
                   illustration: SvgPicture.asset(
                     AppLogos.signUp,
                     width: responsive.wp(66.7),
@@ -208,19 +209,19 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: responsive.hp(2)),
       
                     CustomTextField(
-                      hintText: 'Username',
+                      hintText: AppLocalizations.of(context)!.nameRequired,
                       prefixIconAsset: AppIcons.username,
                       controller: _usernameController,
-                      validator: (value) => _validateRequired(value, 'Username'),
+                      validator: (value) => _validateRequired(value, AppLocalizations.of(context)!.nameRequired),
                     ),
                     SizedBox(height: responsive.hp(2)),
       
                     CustomTextField(
-                      hintText: 'Phone',
+                      hintText: AppLocalizations.of(context)!.phoneRequired,
                       prefixIconAsset: AppIcons.phone,
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      validator: (value) => _validateRequired(value, 'Phone'),
+                      validator: (value) => _validateRequired(value, AppLocalizations.of(context)!.phoneRequired),
                     ),
                     SizedBox(height: responsive.hp(2)),
       
@@ -231,7 +232,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 16, top: 12, bottom: 8),
                           child: Text(
-                            'Gender',
+                            AppLocalizations.of(context)!.genderRequired,
                             style: TextStyle(
                               color: AppColors.grayMedium,
                               fontSize: responsive.sp(12),
@@ -302,7 +303,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Male',
+                                              AppLocalizations.of(context)!.male,
                                               style: TextStyle(
                                                 color: _selectedGender == 'male' 
                                                     ? Colors.white
@@ -381,7 +382,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Female',
+                                              AppLocalizations.of(context)!.female,
                                               style: TextStyle(
                                                 color: _selectedGender == 'female' 
                                                     ? Colors.white
@@ -405,7 +406,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 16, top: 8),
                             child: Text(
-                              'Gender is required',
+                              AppLocalizations.of(context)!.genderRequired,
                               style: TextStyle(
                                 color: Colors.red,
                                 fontSize: responsive.sp(12),
@@ -419,7 +420,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: responsive.hp(2)),
       
                     CustomTextField(
-                      hintText: 'Password',
+                      hintText: AppLocalizations.of(context)!.password,
                       prefixIconAsset: AppIcons.lock,
                       isPassword: true,
                       controller: _passwordController,
@@ -428,7 +429,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: responsive.hp(2)),
       
                     CustomTextField(
-                      hintText: 'Confirm Password',
+                      hintText: AppLocalizations.of(context)!.confirmPassword,
                       prefixIconAsset: AppIcons.lock,
                       isPassword: true,
                       controller: _confirmPasswordController,
@@ -443,7 +444,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     return PrimaryButton(
-                      text: 'Create Account',
+                      text: AppLocalizations.of(context)!.createAccount,
                       onPressed: _handleSignup,
                       height: responsive.hp(7),
                       isLoading: state is AuthLoading && state is! AuthGoogleSignInSuccess && state is! AuthGoogleSignInError && state is! AuthGoogleSignInCancelled,
@@ -469,7 +470,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     GestureDetector(
                       onTap: _navigateToLogin,
                       child: Text(
-                        'Login',
+                        AppLocalizations.of(context)!.login,
                         style: TextStyle(
                           color: AppColors.primaryGreen,
                           fontSize: responsive.sp(14),
@@ -487,7 +488,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     return SocialLoginButton(
-                      text: 'Continue with Google',
+                      text: AppLocalizations.of(context)!.signInWithGoogle,
                       iconPath: AppIcons.google,
                       onPressed: _handleGoogleSignup,
                       isLoading: state is AuthLoading && (state is! AuthRegisterSuccess && state is! AuthRegisterSuccessWithProfile && state is! AuthValidationError && state is! AuthError),

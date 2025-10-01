@@ -1,4 +1,6 @@
 import 'question_option.dart';
+import 'package:the_track_fit/core/helpers/api_localization_helper.dart';
+import 'package:the_track_fit/core/services/language_service.dart';
 
 class Question {
   final int id;
@@ -37,6 +39,18 @@ class Question {
       'type': type,
       'options': options?.map((option) => option.toJson()).toList(),
     };
+  }
+
+  // Getter for localized text
+  String get localizedText {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return ApiLocalizationHelper.getLocalizedValueSync(text, enText, currentLang);
+  }
+
+  // Async getter for localized text with translation
+  Future<String> get localizedTextAsync async {
+    final currentLang = LanguageService.instance.currentLanguage;
+    return await ApiLocalizationHelper.getLocalizedValue(text, enText, currentLang);
   }
 
   // Helper methods for different question types

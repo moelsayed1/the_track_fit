@@ -1502,128 +1502,145 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       builder: (context, cartState) {
         return BlocBuilder<CheckoutCubit, CheckoutState>(
           builder: (context, checkoutState) {
-        return GestureDetector(
-          onTap: () async {
-                    // Validate form fields
-                    if (_nameController.text.trim().isEmpty) {
-                      _showErrorSnackBar('Please enter your name');
-                      return;
-                    }
-                    if (_emailController.text.trim().isEmpty) {
-                      _showErrorSnackBar('Please enter your email');
-                      return;
-                    }
-                    if (_phoneController.text.trim().isEmpty) {
-                      _showErrorSnackBar('Please enter your phone number');
-                      return;
-                    }
-                    if (selectedCountryCode.isEmpty) {
-                      _showErrorSnackBar('Please select a country code');
-                      return;
-                    }
-                    if (_addressController.text.trim().isEmpty) {
-                      _showErrorSnackBar('Please enter your address');
-                      return;
-                    }
-                    if (selectedGovernorate == null) {
-                      _showErrorSnackBar('Please select a governorate');
-                      return;
-                    }
-                    if (_selectedPaymentMethod == null) {
-                      _showErrorSnackBar('Please select a payment method');
-                      return;
-                    }
-                    if (_selectedPaymentMethod == 'instapay' && paymentProofPath == null) {
-                      _showErrorSnackBar('Please upload payment proof for Instapay');
-                      return;
-                    }
+            final isLoading = checkoutState is CheckoutLoading;
+            return GestureDetector(
+              onTap: isLoading
+                  ? null
+                  : () async {
+                      // Validate form fields
+                      if (_nameController.text.trim().isEmpty) {
+                        _showErrorSnackBar('Please enter your name');
+                        return;
+                      }
+                      if (_emailController.text.trim().isEmpty) {
+                        _showErrorSnackBar('Please enter your email');
+                        return;
+                      }
+                      if (_phoneController.text.trim().isEmpty) {
+                        _showErrorSnackBar('Please enter your phone number');
+                        return;
+                      }
+                      if (selectedCountryCode.isEmpty) {
+                        _showErrorSnackBar('Please select a country code');
+                        return;
+                      }
+                      if (_addressController.text.trim().isEmpty) {
+                        _showErrorSnackBar('Please enter your address');
+                        return;
+                      }
+                      if (selectedGovernorate == null) {
+                        _showErrorSnackBar('Please select a governorate');
+                        return;
+                      }
+                      if (_selectedPaymentMethod == null) {
+                        _showErrorSnackBar('Please select a payment method');
+                        return;
+                      }
+                      if (_selectedPaymentMethod == 'instapay' && paymentProofPath == null) {
+                        _showErrorSnackBar('Please upload payment proof for Instapay');
+                        return;
+                      }
 
-                    if (cartState is! CartLoaded || cartState.cartItems.isEmpty) {
-                      _showErrorSnackBar('No items in cart to checkout');
-              return;
-            }
+                      if (cartState is! CartLoaded || cartState.cartItems.isEmpty) {
+                        _showErrorSnackBar('No items in cart to checkout');
+                        return;
+                      }
 
-            try {
-                      // Calculate totals
-                      double orderTotal = cartState.cartItems.fold(0.0, (sum, cartItem) => sum + cartItem.totalPrice);
-                      double total = orderTotal + shippingCost;
+                      try {
+                        // Calculate totals
+                        double orderTotal = cartState.cartItems.fold(0.0, (sum, cartItem) => sum + cartItem.totalPrice);
+                        double total = orderTotal + shippingCost;
 
-                      // Get government ID
-                      int governmentId = 1; // Default ID
-                      if (shippingGovernments.isNotEmpty) {
-                        try {
-                          final government = shippingGovernments.firstWhere(
-                            (gov) => gov.nameEn.toLowerCase() == selectedGovernorate!.toLowerCase(),
-                          );
-                          governmentId = government.id;
-                        } catch (e) {
-                          // Use default ID if not found
+                        // Get government ID
+                        int governmentId = 1; // Default ID
+                        if (shippingGovernments.isNotEmpty) {
+                          try {
+                            final government = shippingGovernments.firstWhere(
+                              (gov) => gov.nameEn.toLowerCase() == selectedGovernorate!.toLowerCase(),
+                            );
+                            governmentId = government.id;
+                          } catch (e) {
+                            // Use default ID if not found
+                          }
+                        }
+
+                        // Create checkout request
+                        final checkoutRequest = CheckoutRequest(
+                          userId: 14, // You might want to get this from user session
+                          paymentType: _selectedPaymentMethod!,
+                          clientName: _nameController.text.trim(),
+                          fullPhone: '$selectedCountryCode${_phoneController.text.trim()}',
+                          clientEmail: _emailController.text.trim(),
+                          clientAddress: _addressController.text.trim(),
+                          subtotal: orderTotal,
+                          shippingGovernmentId: governmentId,
+                          shippingCost: shippingCost,
+                          total: total,
+                          cartItems: cartState.cartItems,
+                        );
+
+                        // Submit order
+                        await context.read<CheckoutCubit>().submitOrder(
+                          checkoutRequest,
+                          paymentProofPath: paymentProofPath,
+                        );
+
+                        if (mounted) {
+                          // Clear cart after successful order
+                          await context.read<CartCubit>().clearCart();
+
+                          // Show success dialog
+                          _showSuccessDialog();
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          _showErrorSnackBar('Error: ${e.toString()}');
                         }
                       }
-
-                      // Create checkout request
-                      final checkoutRequest = CheckoutRequest(
-                        userId: 14, // You might want to get this from user session
-                        paymentType: _selectedPaymentMethod!,
-                        clientName: _nameController.text.trim(),
-                        fullPhone: '$selectedCountryCode${_phoneController.text.trim()}',
-                        clientEmail: _emailController.text.trim(),
-                        clientAddress: _addressController.text.trim(),
-                        subtotal: orderTotal,
-                        shippingGovernmentId: governmentId,
-                        shippingCost: shippingCost,
-                        total: total,
-                        cartItems: cartState.cartItems,
-                      );
-
-                      // Submit order
-                      await context.read<CheckoutCubit>().submitOrder(
-                        checkoutRequest, 
-                        paymentProofPath: paymentProofPath,
-                      );
-
-              if (mounted) {
-                        // Clear cart after successful order
-                        await context.read<CartCubit>().clearCart();
-                        
-                        // Show success dialog
-                        _showSuccessDialog();
-                      }
-                    } catch (e) {
-                      if (mounted) {
-                        _showErrorSnackBar('Error: ${e.toString()}');
-                      }
-                    }
-                  },
-                  child: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(30.r),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x2628A228),
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-            child: Text(
-              'Confirm Order',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-                height: 1.50,
-                letterSpacing: 0.50,
+                    },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(30.r),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x2628A228),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                      spreadRadius: 0,
+                    )
+                  ],
+                ),
+                child: isLoading
+                    ? SizedBox(
+                        height: 28.h,
+                        child: Center(
+                          child: SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 2.5.h,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Text(
+                        'Confirm Order',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          height: 1.50,
+                          letterSpacing: 0.50,
+                        ),
+                      ),
               ),
-            ),
-          ),
-        );
+            );
           },
         );
       },
@@ -1846,59 +1863,76 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        // Get screen size for responsive dialog
+        final mediaQuery = MediaQuery.of(context);
+        final double screenWidth = mediaQuery.size.width;
+        final double screenHeight = mediaQuery.size.height;
+
+        // Set max dialog width and height for responsiveness
+        final double dialogWidth = screenWidth * 0.85 > 400 ? 400 : screenWidth * 0.85;
+        final double dialogHeight = screenHeight * 0.5 > 380 ? 380 : screenHeight * 0.5;
+
         return Dialog(
           backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.05,
+            vertical: screenHeight * 0.18,
+          ),
           child: Container(
-            width: 370.w,
-            height: 340.h,
+            width: dialogWidth,
+            constraints: BoxConstraints(
+              maxWidth: 400,
+              minWidth: 260,
+              maxHeight: dialogHeight,
+              minHeight: 280,
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: dialogWidth * 0.07,
+              vertical: dialogHeight * 0.06,
+            ),
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.r),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Success GIF Animation
                 SizedBox(
-                  width: 150.w,
-                  height: 150.h,
+                  width: dialogWidth * 0.45,
+                  height: dialogWidth * 0.45,
                   child: Image.asset(
                     'assets/images/done_gif.gif',
                     fit: BoxFit.contain,
                   ),
                 ),
-                
-                SizedBox(height: 16.h),
-                
+                SizedBox(height: dialogHeight * 0.04),
                 // Congratulations Title
                 Text(
                   'Congratulations!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 20.sp,
+                    fontSize: dialogWidth * 0.07 > 22 ? 22 : dialogWidth * 0.07,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF28A228),
                     fontFamily: 'Poppins',
                   ),
                 ),
-                
-                SizedBox(height: 8.h),
-                
+                SizedBox(height: dialogHeight * 0.015),
                 // Subtitle
                 Text(
                   'Your Order has been confirmed',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: dialogWidth * 0.045 > 16 ? 16 : dialogWidth * 0.045,
                     color: const Color(0xFF848484),
                     fontFamily: 'Poppins',
                   ),
                 ),
-                
-                SizedBox(height: 24.h),
-                
+                SizedBox(height: dialogHeight * 0.06),
                 // Go to Home Page Button
                 GestureDetector(
                   onTap: () {
@@ -1906,17 +1940,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     context.push(AppRouter.homeFeature); // Navigate to home
                   },
                   child: Container(
-                    width: 200.w,
-                    height: 50.h,
+                    width: dialogWidth * 0.7,
+                    height: dialogHeight * 0.16 > 54 ? 54 : dialogHeight * 0.16,
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(28.r),
+                      borderRadius: BorderRadius.circular(28),
                     ),
                     child: Center(
                       child: Text(
                         'Go to Home Page',
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: dialogWidth * 0.045 > 16 ? 16 : dialogWidth * 0.045,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                           fontFamily: 'Poppins',

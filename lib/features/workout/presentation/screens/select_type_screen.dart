@@ -205,6 +205,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Colors.red[700],
+                fontFamily: 'Poppins',
               ),
             ),
             const SizedBox(height: 8),
@@ -214,12 +215,16 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.red[600],
+                fontFamily: 'Poppins',
               ),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadWorkoutTypes,
-              child: const Text('Retry'),
+              child: Text(
+                'Retry',
+                style: TextStyle(fontFamily: 'Poppins'),
+              ),
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:the_track_fit/core/constants/app_constants.dart';
+import 'package:the_track_fit/core/services/language_service.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -134,9 +135,16 @@ class ApiService {
   }
 
   // Generic GET request
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> get(String path, {Map<String, dynamic>? queryParameters, bool includeLanguage = true}) async {
     try {
-      final response = await _dio.get(path, queryParameters: queryParameters);
+      Map<String, dynamic> finalQueryParams = queryParameters ?? {};
+      
+      // Add language parameter if requested
+      if (includeLanguage) {
+        finalQueryParams['lang'] = LanguageService.instance.currentLanguage;
+      }
+      
+      final response = await _dio.get(path, queryParameters: finalQueryParams);
       return response;
     } on DioException catch (e) {
       throw _handleError(e);
@@ -144,9 +152,16 @@ class ApiService {
   }
 
   // Generic POST request
-  Future<Response> post(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> post(String path, {dynamic data, Map<String, dynamic>? queryParameters, bool includeLanguage = true}) async {
     try {
-      final response = await _dio.post(path, data: data, queryParameters: queryParameters);
+      Map<String, dynamic> finalQueryParams = queryParameters ?? {};
+      
+      // Add language parameter if requested
+      if (includeLanguage) {
+        finalQueryParams['lang'] = LanguageService.instance.currentLanguage;
+      }
+      
+      final response = await _dio.post(path, data: data, queryParameters: finalQueryParams);
       return response;
     } on DioException catch (e) {
       throw _handleError(e);
@@ -154,12 +169,19 @@ class ApiService {
   }
 
   // POST request with form data
-  Future<Response> postForm(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> postForm(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters, bool includeLanguage = true}) async {
     try {
+      Map<String, dynamic> finalQueryParams = queryParameters ?? {};
+      
+      // Add language parameter if requested
+      if (includeLanguage) {
+        finalQueryParams['lang'] = LanguageService.instance.currentLanguage;
+      }
+      
       final response = await _dio.post(
         path, 
         data: data,
-        queryParameters: queryParameters,
+        queryParameters: finalQueryParams,
         options: Options(
           contentType: 'application/x-www-form-urlencoded',
         ),
@@ -171,10 +193,17 @@ class ApiService {
   }
 
   // POST request with multipart form data (for file uploads)
-  Future<Response> postMultipart(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters, dynamic cartData}) async {
+  Future<Response> postMultipart(String path, {Map<String, dynamic>? data, Map<String, dynamic>? queryParameters, dynamic cartData, bool includeLanguage = true}) async {
     try {
       log('ApiService: postMultipart called with path: $path');
       log('ApiService: data: $data');
+      
+      Map<String, dynamic> finalQueryParams = queryParameters ?? {};
+      
+      // Add language parameter if requested
+      if (includeLanguage) {
+        finalQueryParams['lang'] = LanguageService.instance.currentLanguage;
+      }
       
       FormData formData = FormData();
       
@@ -218,7 +247,7 @@ class ApiService {
       final response = await _dio.post(
         path,
         data: formData,
-        queryParameters: queryParameters,
+        queryParameters: finalQueryParams,
         options: Options(
           contentType: 'multipart/form-data',
         ),
@@ -230,9 +259,16 @@ class ApiService {
   }
 
   // Generic PUT request
-  Future<Response> put(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+  Future<Response> put(String path, {dynamic data, Map<String, dynamic>? queryParameters, bool includeLanguage = true}) async {
     try {
-      final response = await _dio.put(path, data: data, queryParameters: queryParameters);
+      Map<String, dynamic> finalQueryParams = queryParameters ?? {};
+      
+      // Add language parameter if requested
+      if (includeLanguage) {
+        finalQueryParams['lang'] = LanguageService.instance.currentLanguage;
+      }
+      
+      final response = await _dio.put(path, data: data, queryParameters: finalQueryParams);
       return response;
     } on DioException catch (e) {
       throw _handleError(e);
@@ -240,9 +276,16 @@ class ApiService {
   }
 
   // Generic DELETE request
-  Future<Response> delete(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> delete(String path, {Map<String, dynamic>? queryParameters, bool includeLanguage = true}) async {
     try {
-      final response = await _dio.delete(path, queryParameters: queryParameters);
+      Map<String, dynamic> finalQueryParams = queryParameters ?? {};
+      
+      // Add language parameter if requested
+      if (includeLanguage) {
+        finalQueryParams['lang'] = LanguageService.instance.currentLanguage;
+      }
+      
+      final response = await _dio.delete(path, queryParameters: finalQueryParams);
       return response;
     } on DioException catch (e) {
       throw _handleError(e);

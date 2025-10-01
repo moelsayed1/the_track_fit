@@ -6,6 +6,8 @@ import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/constants/app_assets.dart';
 import 'dart:io';
 
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+
 class DashedBorderPainter extends CustomPainter {
   final Color color;
   final double strokeWidth;
@@ -151,12 +153,12 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Error'),
+          title: Text(AppLocalizations.of(context)!.error),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         );
@@ -204,7 +206,7 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                   ),
                   SizedBox(width: responsiveHelper.w(8)),
                   Text(
-                    'Scan Exercise',
+                    AppLocalizations.of(context)!.scanYourExercise,
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: responsiveHelper.sp(18),
@@ -231,19 +233,19 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                 child: Stack(
                   children: [
                     // Dashed border effect using CustomPaint
-                    Positioned.fill(
-                      child: CustomPaint(
-                        painter: DashedBorderPainter(
-                          color: const Color(0xFF28A228),
-                          strokeWidth: 4,
-                          dashWidth: 30,
-                          dashSpace: 24,
+                      Positioned.fill(
+                        child: CustomPaint(
+                          painter: DashedBorderPainter(
+                            color: const Color(0xFF28A228),
+                            strokeWidth: 4,
+                            dashWidth: 30,
+                            dashSpace: 24,
+                          ),
                         ),
                       ),
-                    ),
                     
                     // Camera Button in Center or Captured Image
-                    Center(
+                      Center(
                       child: _capturedImage != null
                           ? GestureDetector(
                               onTap: _startScan,
@@ -284,7 +286,7 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                                         ),
                                         SizedBox(height: 8.h),
                                         Text(
-                                          'Tap to scan again',
+                                          AppLocalizations.of(context)!.tryAgainWithBetterPhoto,
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontSize: responsiveHelper.sp(14),
@@ -300,43 +302,43 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                             )
                           : GestureDetector(
                               onTap: _isScanning ? null : _startScan,
-                              child: Container(
-                                padding: EdgeInsets.all(12.w),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
+                          child: Container(
+                            padding: EdgeInsets.all(12.w),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
                                     color: _isScanning 
                                         ? const Color(0xFF28A228).withValues(alpha: 0.5)
                                         : const Color(0xFF28A228).withValues(alpha: 0.2),
-                                    width: 2.w,
-                                  ),
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(24.w),
-                                  decoration: BoxDecoration(
+                                width: 2.w,
+                              ),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(24.w),
+                              decoration: BoxDecoration(
                                     color: _isScanning 
                                         ? const Color(0xFF28A228).withValues(alpha: 0.5)
                                         : const Color(0xFF28A228).withValues(alpha: 0.2),
-                                    shape: BoxShape.circle,
-                                  ),
+                                shape: BoxShape.circle,
+                              ),
                                   child: _isScanning
                                       ? SizedBox(
-                                          width: 28.w,
-                                          height: 28.h,
-                                          child: const CircularProgressIndicator(
+                                      width: 28.w,
+                                      height: 28.h,
+                                      child: const CircularProgressIndicator(
                                             color: Color(0xFF28A228),
                                             strokeWidth: 2,
-                                          ),
+                                      ),
                                         )
                                       : SvgPicture.asset(
                                           'assets/images/camera.svg',
                                           width: 28.w,
                                           height: 28.h,
-                                        ),
-                                ),
-                              ),
+                                    ),
                             ),
-                    ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -375,13 +377,13 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        _capturedImage != null ? 'Clear Image' : 'Stop Scan',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: responsiveHelper.sp(16),
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                        ),
+                        _capturedImage != null ? AppLocalizations.of(context)!.clearImage : AppLocalizations.of(context)!.stopScan,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: responsiveHelper.sp(16),
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                   ),

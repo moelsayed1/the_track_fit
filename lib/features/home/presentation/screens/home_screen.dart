@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/features/auth/data/cubit/auth_cubit.dart';
 import 'package:the_track_fit/features/auth/data/cubit/auth_states.dart';
@@ -36,8 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
       : const Color(0xFF848484);
 
   String _getScreenTitle(int index) {
-    const titles = ['Home', 'Workout', 'Scan', 'Report', 'Plan'];
-    return (index >= 0 && index < titles.length) ? titles[index] : 'Plan';
+    final l10n = AppLocalizations.of(context)!;
+    final titles = [l10n.home, l10n.workout, l10n.scan, l10n.report, l10n.packages];
+    return (index >= 0 && index < titles.length) ? titles[index] : l10n.packages;
   }
 
   @override
@@ -280,11 +283,11 @@ class _GreetingSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hi $userName! 👋',
+                          '${AppLocalizations.of(context)!.hi} $userName! 👋',
                           style: TextStyle(
                             color: const Color(0xFF1E1E1E),
                             fontSize: 16.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily: context.fontFamily,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -292,11 +295,11 @@ class _GreetingSection extends StatelessWidget {
                         SizedBox(
                           width: 300.w,
                           child: Text(
-                            'Ready to start your journey?',
+                            AppLocalizations.of(context)!.readyToStartYourJourney,
                             style: TextStyle(
                               color: const Color(0xBF848484),
                               fontSize: 14.sp,
-                              fontFamily: 'Poppins',
+                              fontFamily: context.fontFamily,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -368,11 +371,11 @@ class _MainCTASection extends StatelessWidget {
                         SizedBox(
                           width: 311.w,
                           child: Text(
-                            'You\'re One Step Away from a Healthier You',
+                            AppLocalizations.of(context)!.youreOneStepAwayFromAHealthierYou,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.sp,
-                              fontFamily: 'Poppins',
+                              fontFamily: context.fontFamily,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -381,11 +384,11 @@ class _MainCTASection extends StatelessWidget {
                         SizedBox(
                           width: 311.w,
                           child: Text(
-                            'Start your personalized workout and meal plan now to transform your body and mind.',
+                            AppLocalizations.of(context)!.startYourPersonalizedWorkoutAndMealPlanNowToTransformYourBodyAndMind,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
-                              fontFamily: 'Poppins',
+                              fontFamily: context.fontFamily,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -439,12 +442,12 @@ class _MainCTASection extends StatelessWidget {
                             ),
                           ),
                       child: Text(
-                        'Start Workout',
+                        AppLocalizations.of(context)!.startWorkout,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: const Color(0xFF28A228),
                           fontSize: 16.sp,
-                          fontFamily: 'Poppins',
+                          fontFamily: context.fontFamily,
                           fontWeight: FontWeight.w500,
                           height: 1.50,
                           letterSpacing: 0.50,
@@ -540,7 +543,7 @@ class _BottomNavBar extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  label: 'Home',
+                  label: AppLocalizations.of(context)!.home,
                   selected: currentIndex == 0,
                   onTap: () => onTabTapped(0),
                   color: getTabColor(0),
@@ -556,7 +559,7 @@ class _BottomNavBar extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  label: 'Workout',
+                  label: AppLocalizations.of(context)!.workout,
                   selected: currentIndex == 1,
                   onTap: () => onTabTapped(1),
                   color: getTabColor(1),
@@ -573,7 +576,7 @@ class _BottomNavBar extends StatelessWidget {
                       BlendMode.srcIn,
                     ),
                   ),
-                  label: 'Report',
+                  label: AppLocalizations.of(context)!.report,
                   selected: currentIndex == 3,
                   onTap: () => onTabTapped(3),
                   color: getTabColor(3),
@@ -586,7 +589,7 @@ class _BottomNavBar extends StatelessWidget {
                     fit: BoxFit.contain,
                     color: getTabColor(4),
                   ),
-                  label: 'Packages',
+                  label: AppLocalizations.of(context)!.packages,
                   selected: currentIndex == 4,
                   onTap: () => onTabTapped(4),
                   color: getTabColor(4),
@@ -632,7 +635,7 @@ class _NavBarItem extends StatelessWidget {
               style: TextStyle(
                 color: color,
                 fontSize: 12.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
                 height: 1.33,
               ),

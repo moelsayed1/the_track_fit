@@ -3,12 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'core/constants/constants.dart';
-import 'core/router/app_router.dart';
 import 'core/services/api_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/fcm_service.dart';
+import 'core/services/language_service.dart';
+import 'core/bloc/language/language_bloc.dart';
 import 'core/widgets/shimmer_loading.dart';
+import 'core/widgets/localized_app.dart';
 import 'features/workout/data/cubit/exercise_cubit.dart';
 import 'features/workout/data/repositories/exercise_repository.dart';
 import 'features/auth/data/cubit/auth_cubit.dart';
@@ -29,6 +30,9 @@ Future<void> main() async {
 
   // Initialize FCM Service
   await FCMService.initialize();
+
+  // Initialize Language Service
+  await LanguageService.instance.initialize();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
@@ -68,15 +72,9 @@ class TrackFit extends StatelessWidget {
                   BlocProvider(create: (context) => AuthCubit(AuthRepository(), snapshot.data!)),
                   BlocProvider(create: (context) => CartCubit(cartService: CartService(apiService: ApiService()))),
                   BlocProvider(create: (context) => CheckoutCubit(checkoutService: CheckoutService(apiService: ApiService()))),
+                  BlocProvider(create: (context) => LanguageBloc(languageService: LanguageService.instance)..add(const LanguageInitialized())),
                 ],
-                child: MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  title: AppConstants.appName,
-                  theme: ThemeData(
-                    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.splashDarkGreen),
-                  ),
-                  routerConfig: AppRouter.router,
-                ),
+                child: const LocalizedApp(), // 👈 استخدام LocalizedApp المنفصل
               );
             } else {
               return const MaterialApp(

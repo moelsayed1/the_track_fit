@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
@@ -73,7 +74,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -83,7 +84,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: Text(
-            _ageQuestion?.enText ?? 'Age',
+            _ageQuestion?.enText ?? AppLocalizations.of(context)!.age,
             style: AppTextStyles.heading2.copyWith(
               fontSize: responsive.sp(24),
               fontWeight: FontWeight.w600,
@@ -122,7 +123,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
         child: Column(
           children: [
             Text(
-              'Error loading age options',
+              AppLocalizations.of(context)!.errorLoadingAgeOptions,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: Colors.red,
                 fontSize: responsive.sp(16),
@@ -135,7 +136,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -145,7 +146,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
     if (_ageQuestion?.options == null || _ageQuestion!.options!.isEmpty) {
       return Center(
         child: Text(
-          'No age options available',
+          AppLocalizations.of(context)!.noAgeOptionsAvailable,
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.black,
             fontSize: responsive.sp(16),
