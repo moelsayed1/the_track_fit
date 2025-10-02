@@ -130,8 +130,8 @@ class _SignupScreenState extends State<SignupScreen> {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
             context,
-            title: AppLocalizations.of(context)!.success,
-            message: state is AuthRegisterSuccess ? state.response.message : AppLocalizations.of(context)!.welcome,
+            title: 'Registration Successful!',
+            message: state is AuthRegisterSuccess ? state.response.message : 'Welcome to TrackFit!',
             type: SnackbarType.success,
           );
           
@@ -141,8 +141,8 @@ class _SignupScreenState extends State<SignupScreen> {
           // Show success message for Google sign-in
           CustomSnackbar.show(
             context,
-            title: AppLocalizations.of(context)!.success,
-            message: '${AppLocalizations.of(context)!.welcome} ${state.name}!',
+            title: 'Google Sign-In Successful!',
+            message: 'Welcome ${state.name}!',
             type: SnackbarType.success,
           );
           
@@ -152,7 +152,7 @@ class _SignupScreenState extends State<SignupScreen> {
           // Show error message for Google sign-in
           CustomSnackbar.show(
             context,
-            title: AppLocalizations.of(context)!.error,
+            title: 'Google Sign-In Failed',
             message: state.message,
             type: SnackbarType.error,
           );
@@ -185,7 +185,7 @@ class _SignupScreenState extends State<SignupScreen> {
       
                 // Header with illustration
                 AuthHeader(
-                  title: AppLocalizations.of(context)!.letsGetYouStarted,
+                  title: "Let's Get You Started",
                   subtitle: AppLocalizations.of(context)!.loginInstructions,
                   illustration: SvgPicture.asset(
                     AppLogos.signUp,
@@ -200,7 +200,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Column(
                   children: [
                     CustomTextField(
-                      hintText: AppLocalizations.of(context)!.email,
+                      hintText: 'E-mail',
                       prefixIconAsset: AppIcons.email,
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -459,7 +459,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.alreadyHaveAccount + ' ',
+                      'You already have an account? ',
                       style: TextStyle(
                         color: AppColors.grayMedium,
                         fontSize: responsive.sp(14),
@@ -524,7 +524,3 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 }
-
-
-
-

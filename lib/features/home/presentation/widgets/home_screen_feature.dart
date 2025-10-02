@@ -62,10 +62,10 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
     );
     // Initialize the API service
     ApiService().init();
-    
+
     // Set selected date to today's day
     _setTodayAsSelected();
-    
+
     // Initialize storage and then load data
     _initializeAndLoadData();
   }
@@ -143,20 +143,22 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         final dateA = DateTime.parse(a.updatedAt);
         final dateB = DateTime.parse(b.updatedAt);
         final comparison = dateA.compareTo(dateB); // Oldest first
-        log('HomeScreen Sorting: ${a.name} (${a.updatedAt}) vs ${b.name} (${b.updatedAt}) -> $comparison');
+        log(
+          'HomeScreen Sorting: ${a.name} (${a.updatedAt}) vs ${b.name} (${b.updatedAt}) -> $comparison',
+        );
         return comparison;
       } catch (e) {
         log('HomeScreen Error parsing dates: $e');
         return 0; // Keep original order if parsing fails
       }
     });
-    
+
     // Log the final sorted order
     log('HomeScreen Final sorted order:');
     for (int i = 0; i < sortedProducts.length; i++) {
       log('$i: ${sortedProducts[i].name} (${sortedProducts[i].updatedAt})');
     }
-    
+
     return sortedProducts;
   }
 
@@ -208,7 +210,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         log('Storage not initialized, initializing now...');
         await _initializeStorage();
       }
-      
+
       // Get the user's selected main goal from storage
       final mainGoal = _storageService?.getMainGoal();
       log('User main goal: $mainGoal');
@@ -298,13 +300,19 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         setState(() {
           // The repository already updates the local state, so we just need to refresh
           // Find the product and update its favorite status based on the repository state
-          final productIndex = _newProducts.indexWhere((p) => p.id == productId);
+          final productIndex = _newProducts.indexWhere(
+            (p) => p.id == productId,
+          );
           if (productIndex != -1) {
             // Get the updated product from the repository's cached products
-            final updatedProduct = _productRepository.getCachedProducts()
-                .firstWhere((p) => p.id == productId, orElse: () => _newProducts[productIndex]);
+            final updatedProduct = _productRepository
+                .getCachedProducts()
+                .firstWhere(
+                  (p) => p.id == productId,
+                  orElse: () => _newProducts[productIndex],
+                );
             _newProducts[productIndex] = updatedProduct;
-            
+
             // Re-sort the products to maintain consistent order
             _newProducts = _sortProductsByDate(_newProducts);
           }
@@ -369,22 +377,22 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           Icon(Icons.error_outline, size: 32.w, color: Colors.red),
           SizedBox(height: 8.h),
           Text(
-            'Failed to load products',
+            AppLocalizations.of(context)!.failedToLoadProducts,
             style: TextStyle(
               color: Colors.red,
               fontSize: 12.sp,
-              fontFamily: 'Poppins',
+              fontFamily: context.fontFamily,
             ),
           ),
           SizedBox(height: 4.h),
           TextButton(
             onPressed: _loadNewProducts,
             child: Text(
-              'Retry',
+              AppLocalizations.of(context)!.retry,
               style: TextStyle(
                 color: const Color(0xFF28A228),
                 fontSize: 12.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
               ),
             ),
           ),
@@ -396,11 +404,11 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   Widget _buildNoProducts() {
     return Center(
       child: Text(
-        'No products available',
+        AppLocalizations.of(context)!.noProductsAvailable,
         style: TextStyle(
           color: Colors.grey,
           fontSize: 12.sp,
-                fontFamily: context.fontFamily,
+          fontFamily: context.fontFamily,
         ),
       ),
     );
@@ -424,7 +432,6 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
 
   @override
   Widget build(BuildContext context) {
-     
     return AppScaffoldWithCustomSafeArea(
       resizeToAvoidBottomInset: true,
       bottom: true,
@@ -474,7 +481,9 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                   // Warning text
                   SizedBox(width: 8.w),
                   Text(
-                    'Please Finish The previous challenge first.',
+                    AppLocalizations.of(
+                      context,
+                    )!.pleaseFinishThePreviousChallengeFirst,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
@@ -564,16 +573,14 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              color: const Color(0xFF28A228),
-            ),
+            CircularProgressIndicator(color: const Color(0xFF28A228)),
             SizedBox(height: 16.h),
             Text(
-              'Loading...',
+              AppLocalizations.of(context)!.loading,
               style: TextStyle(
                 color: const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -589,7 +596,12 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         _Header(title: _getScreenTitle(_currentIndex)),
         // Greeting section
         Padding(
-          padding: EdgeInsets.only(top: 20.h, bottom: 16.h, left: 16.w),
+          padding: EdgeInsets.only(
+            top: 20.h,
+            bottom: 16.h,
+            left: 16.w,
+            right: 16.w,
+          ),
           child: Row(
             children: [
               BlocBuilder<AuthCubit, AuthState>(
@@ -868,6 +880,8 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Use MediaQuery to push the error content to the bottom center responsively
+            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
             Icon(
               Icons.fitness_center_outlined,
               color: Colors.grey[400],
@@ -875,7 +889,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'No exercises available',
+              AppLocalizations.of(context)!.noExercisesAvailable,
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 18.sp,
@@ -884,14 +898,19 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               ),
             ),
             SizedBox(height: 8.h),
-            Text(
-              'There are no exercises scheduled for this day and goal.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 14.sp,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Text(
+                AppLocalizations.of(
+                  context,
+                )!.thereAreNoExercisesScheduledForThisDayAndGoal,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14.sp,
+                  fontFamily: context.fontFamily,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
             SizedBox(height: 24.h),
@@ -906,7 +925,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                 ),
               ),
               child: Text(
-                'Try Again',
+                AppLocalizations.of(context)!.tryAgain,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontFamily: context.fontFamily,
@@ -921,19 +940,22 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
 
     if (_dayExercises.isEmpty) {
       return Center(
-        child: Column(
-          children: [
-            Icon(Icons.fitness_center, color: Colors.grey, size: 48.sp),
-            SizedBox(height: 8.h),
-            Text(
-              'No exercises for this day',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16.sp,
-                fontFamily: context.fontFamily,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Column(
+            children: [
+              Icon(Icons.fitness_center, color: Colors.grey, size: 48.sp),
+              SizedBox(height: 8.h),
+              Text(
+                AppLocalizations.of(context)!.noExercisesForThisDay,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16.sp,
+                  fontFamily: context.fontFamily,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
@@ -951,7 +973,8 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             onTap: () => _onExerciseSelected(index),
             child: ExerciseCard(
               exerciseTitle: exercise.title,
-              setsAndReps: exercise.setsAndRepsDisplay, // Use the formatted sets and reps from API
+              setsAndReps: exercise
+                  .setsAndRepsDisplay, // Use the formatted sets and reps from API
               isLocked: index > 0, // You can customize this logic
               isSelected: _selectedExerciseIndex == index,
               isCompleted: _completedExercises.length > index

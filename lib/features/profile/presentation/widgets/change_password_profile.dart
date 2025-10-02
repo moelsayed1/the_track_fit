@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_track_fit/features/auth/data/cubit/auth_cubit.dart';
 import 'package:the_track_fit/features/auth/data/cubit/auth_states.dart';
 import 'package:the_track_fit/core/widgets/custom_snackbar.dart';
+import '../../../../../generated/l10n/app_localizations.dart';
 
 class ChangePasswordProfile extends StatefulWidget {
   const ChangePasswordProfile({super.key});
@@ -182,14 +183,14 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                         SizedBox(height: 24.h),
                         _buildPasswordField(
                           controller: newPasswordController,
-                          hintText: 'New Password',
+                          hintText: AppLocalizations.of(context)!.newPasswordPlaceholder,
                           isPasswordVisible: isNewPasswordVisible,
                           onToggleVisibility: () => _togglePasswordVisibility('new'),
                         ),
                         SizedBox(height: 16.h),
                         _buildPasswordField(
                           controller: confirmPasswordController,
-                          hintText: 'Confirm Password',
+                          hintText: AppLocalizations.of(context)!.confirmPasswordPlaceholder,
                           isPasswordVisible: isConfirmPasswordVisible,
                           onToggleVisibility: () => _togglePasswordVisibility('confirm'),
                         ),

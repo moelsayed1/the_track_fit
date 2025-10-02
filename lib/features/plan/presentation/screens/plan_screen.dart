@@ -22,7 +22,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
   List<Package> _packages = [];
   bool _isLoading = true;
   String? _error;
-  
+
   // Services
   final PackagesService _packagesService = PackagesService.instance;
 
@@ -40,12 +40,12 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
       });
 
       final packagesResponse = await _packagesService.getActivePackages();
-      
+
       setState(() {
         _packages = packagesResponse.data.packages;
         _isLoading = false;
       });
-      
+
       log('Loaded ${_packages.length} packages');
     } catch (e) {
       setState(() {
@@ -61,49 +61,53 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Close button at the top
-            Padding(
-              padding: EdgeInsets.only( right: 15.w),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: GestureDetector(
-                  onTap: () {
-                    context.push(AppRouter.homeFeature);
-                  },
-                  child: Container(
-                    width: 24.w,
-                    height: 24.h,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 20.sp,
+        child: Directionality(
+          textDirection: Localizations.localeOf(context).languageCode == 'ar'
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+          child: Column(
+            children: [
+              // Close button at the top
+              Padding(
+                padding: EdgeInsets.only(right: 15.w),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      context.push(AppRouter.homeFeature);
+                    },
+                    child: Container(
+                      width: 24.w,
+                      height: 24.h,
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20.sp,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            
-            // Scrollable content
-            Expanded(
-              child: _isLoading
-                  ? _buildLoadingState()
-                  : _error != null
-                      ? _buildErrorState()
-                      : _buildPackagesList(),
-            ),
-            
-            // Buy Now button at the bottom
-            if (_selectedPlanIndex != null)
-              _buildBuyNowButton(),
-          ],
+
+              // Scrollable content
+              Expanded(
+                child: _isLoading
+                    ? _buildLoadingState()
+                    : _error != null
+                    ? _buildErrorState()
+                    : _buildPackagesList(),
+              ),
+
+              // Buy Now button at the bottom
+              if (_selectedPlanIndex != null) _buildBuyNowButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -116,15 +120,18 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           SizedBox(height: 12.h),
           _buildHeader(),
           SizedBox(height: 30.h),
-          
+
           // Shimmer for plan cards
-          ...List.generate(3, (index) => Column(
-            children: [
-              _buildShimmerPlanCard(),
-              if (index < 2) SizedBox(height: 16.h),
-            ],
-          )),
-          
+          ...List.generate(
+            3,
+            (index) => Column(
+              children: [
+                _buildShimmerPlanCard(),
+                if (index < 2) SizedBox(height: 16.h),
+              ],
+            ),
+          ),
+
           SizedBox(height: 20.h),
         ],
       ),
@@ -154,11 +161,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 64.sp,
-            color: Colors.red,
-          ),
+          Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
           SizedBox(height: 16.h),
           Text(
             _error!,
@@ -172,7 +175,16 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           SizedBox(height: 16.h),
           ElevatedButton(
             onPressed: _loadPackages,
-            child: Text('Retry'),
+            child: Text(
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'إعادة المحاولة'
+                  : 'Retry',
+              style: TextStyle(
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+              ),
+            ),
           ),
         ],
       ),
@@ -191,10 +203,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
             final package = entry.value;
             return Column(
               children: [
-                _buildPlanCard(
-                  index: index,
-                  package: package,
-                ),
+                _buildPlanCard(index: index, package: package),
                 if (index < _packages.length - 1) SizedBox(height: 16.h),
               ],
             );
@@ -208,29 +217,34 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
-        SvgPicture.asset(
-          'assets/images/plan.svg',
-          height: 200.h,
-        ),
+        SvgPicture.asset('assets/images/plan.svg', height: 200.h),
         SizedBox(height: 20.h),
         Text(
-          'Unlock Your Fit The Track',
+          Localizations.localeOf(context).languageCode == 'en'
+              ? 'Unlock Your Fit The Track'
+              : 'افتح طريقك للتتبع',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.black,
             fontSize: 20.sp,
-            fontFamily: 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Choose the plan that fits your fitness journey.',
+          Localizations.localeOf(context).languageCode == 'en'
+              ? 'Choose the plan that fits your fitness journey.'
+              : 'اختر الباقة التي تناسب رحلتك اللياقة.',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Color(0xFF848484),
             fontSize: 12.sp,
-            fontFamily: 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -238,10 +252,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
     );
   }
 
-  Widget _buildPlanCard({
-    required int index,
-    required Package package,
-  }) {
+  Widget _buildPlanCard({required int index, required Package package}) {
     bool isSelected = _selectedPlanIndex != null && _selectedPlanIndex == index;
 
     return GestureDetector(
@@ -257,7 +268,9 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.r),
           border: Border.all(
-            color: isSelected ? const Color(0xFF28A228) : const Color(0x26848484),
+            color: isSelected
+                ? const Color(0xFF28A228)
+                : const Color(0x26848484),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -265,7 +278,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
               color: Color(0x191E1E1E),
               blurRadius: 4,
               offset: Offset(0, 0),
-            )
+            ),
           ],
         ),
         child: Column(
@@ -277,72 +290,107 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            package.enName,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              Localizations.localeOf(context).languageCode ==
+                                      'ar'
+                                  ? package.arName
+                                  : package.enName,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily:
+                                    Localizations.localeOf(
+                                          context,
+                                        ).languageCode ==
+                                        'ar'
+                                    ? 'Cairo'
+                                    : 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (package.mostPopular)
+                            Container(
+                              margin: EdgeInsets.only(left: 8.w),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0x26FBBC05),
+                                borderRadius: BorderRadius.circular(15.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: Color(0xFFFBBC05),
+                                    size: 10.sp,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    Localizations.localeOf(
+                                              context,
+                                            ).languageCode ==
+                                            'ar'
+                                        ? 'الأكثر شعبية'
+                                        : 'Most Popular',
+                                    style: TextStyle(
+                                      color: Color(0xFFFBBC05),
+                                      fontSize: 10.sp,
+                                      fontFamily:
+                                          Localizations.localeOf(
+                                                context,
+                                              ).languageCode ==
+                                              'ar'
+                                          ? 'Cairo'
+                                          : 'Poppins',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            package.formattedPrice,
+                            style: TextStyle(
+                              color: Color(0xFF1E1E1E),
+                              fontSize: 18.sp,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        if (package.mostPopular)
-                          Container(
-                            margin: EdgeInsets.only(left: 8.w),
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                            decoration: BoxDecoration(
-                              color: const Color(0x26FBBC05),
-                              borderRadius: BorderRadius.circular(15.r),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.star, color: Color(0xFFFBBC05), size: 10.sp),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Most Popular',
-                                  style: TextStyle(
-                                    color: Color(0xFFFBBC05),
-                                    fontSize: 10.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ],
+                          const SizedBox(width: 4),
+                          Text(
+                            Localizations.localeOf(context).languageCode == 'ar'
+                                ? '/${_getMonthsInArabic((package.durationDays / 30).round())}'
+                                : '/${package.durationInMonths}',
+                            style: TextStyle(
+                              color: Color(0xBF1E1E1E),
+                              fontSize: 10.sp,
+                              fontFamily:
+                                  Localizations.localeOf(
+                                        context,
+                                      ).languageCode ==
+                                      'ar'
+                                  ? 'Cairo'
+                                  : 'Poppins',
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          package.formattedPrice,
-                          style: TextStyle(
-                            color: Color(0xFF1E1E1E),
-                            fontSize: 18.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '/${package.durationInMonths}',
-                          style: TextStyle(
-                            color: Color(0xBF1E1E1E),
-                            fontSize: 10.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 _buildSelectButton(isSelected),
               ],
@@ -351,12 +399,17 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
             const Divider(color: Color(0x26848484), thickness: 1),
             const SizedBox(height: 16),
             // Display features from the package description
-            ...package.features.map((feature) => Column(
-              children: [
-                _buildFeatureRow(text: feature),
-                const SizedBox(height: 13),
-              ],
-            )),
+            ...(Localizations.localeOf(context).languageCode == 'ar'
+                    ? package.arFeatures
+                    : package.features)
+                .map(
+                  (feature) => Column(
+                    children: [
+                      _buildFeatureRow(text: feature),
+                      const SizedBox(height: 13),
+                    ],
+                  ),
+                ),
           ],
         ),
       ),
@@ -375,16 +428,20 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           ),
           borderRadius: BorderRadius.circular(30),
         ),
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.check, color: Colors.white, size: 14),
             SizedBox(width: 4),
             Text(
-              'Selected',
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'محدد'
+                  : 'Selected',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,
-                fontFamily: 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -398,12 +455,16 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           border: Border.all(color: const Color(0xFF28A228), width: 1),
           borderRadius: BorderRadius.circular(30),
         ),
-        child: const Text(
-          'Select',
+        child: Text(
+          Localizations.localeOf(context).languageCode == 'ar'
+              ? 'اختيار'
+              : 'Select',
           style: TextStyle(
             color: Color(0xFF28A228),
             fontSize: 16,
-            fontFamily: 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -420,10 +481,12 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.black,
               fontSize: 16,
-              fontFamily: 'Poppins',
+              fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'Cairo'
+                  : 'Poppins',
               fontWeight: FontWeight.w400,
             ),
             softWrap: true,
@@ -437,7 +500,7 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
   Widget _buildBuyNowButton() {
     // Get the selected plan details
     final selectedPlan = _getSelectedPlan();
-    
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -472,11 +535,15 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
           ),
           child: Center(
             child: Text(
-              'Buy Now',
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'اشتر الآن'
+                  : 'Buy Now',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -491,14 +558,30 @@ class _PlanSubscriptionScreenState extends State<PlanSubscriptionScreen> {
       final package = _packages[_selectedPlanIndex!];
       return {
         'id': package.id,
-        'title': package.enName,
+        'title': Localizations.localeOf(context).languageCode == 'en'
+            ? package.enName
+            : package.arName,
         'price': package.formattedPrice,
         'isMostPopular': package.mostPopular,
-        'features': package.features,
+        'features': Localizations.localeOf(context).languageCode == 'ar'
+            ? package.arFeatures
+            : package.features,
         'duration': package.durationInMonths,
         'image': package.fullImageUrl,
       };
     }
     return {};
+  }
+
+  String _getMonthsInArabic(int months) {
+    if (months == 1) {
+      return 'شهر واحد';
+    } else if (months == 2) {
+      return 'شهرين';
+    } else if (months >= 3 && months <= 10) {
+      return '$months أشهر';
+    } else {
+      return '$months شهر';
+    }
   }
 }

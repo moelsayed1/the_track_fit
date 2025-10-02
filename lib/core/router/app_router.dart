@@ -56,7 +56,6 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/widgets/favourite_exercise.dart';
 import '../../features/store/presentation/screens/favorite_products_screen.dart';
 
-
 class AppRouter {
   static const String splash = '/';
   static const String onboarding = '/onboarding';
@@ -65,7 +64,7 @@ class AppRouter {
   static const String onboarding3 = '/onboarding3';
   static const String onboarding4 = '/onboarding4';
   static const String home = '/home';
-  static const String homeFeature= '/homeFeature';
+  static const String homeFeature = '/homeFeature';
   static const String signup = '/signup';
   static const String login = '/login';
   static const String forgetPassword = '/forget-password';
@@ -113,7 +112,7 @@ class AppRouter {
   static const String mainGoal = '/main-goal';
   static const String favouriteExercise = '/favourite-exercise';
   static const String favoriteProducts = '/favorite-products';
-  
+
   static final GoRouter router = GoRouter(
     initialLocation: splash,
     routes: [
@@ -176,7 +175,8 @@ class AppRouter {
         path: otp,
         name: 'otp',
         builder: (context, state) {
-          final email = state.uri.queryParameters['email'] ?? 'user@example.com';
+          final email =
+              state.uri.queryParameters['email'] ?? 'user@example.com';
           return OtpScreen(email: email);
         },
       ),
@@ -186,7 +186,7 @@ class AppRouter {
         builder: (context, state) {
           final email = state.uri.queryParameters['email'];
           final otp = state.uri.queryParameters['otp'];
-          return NewPasswordScreen( email: email!, otp: otp! );
+          return NewPasswordScreen(email: email!, otp: otp!);
         },
       ),
       GoRoute(
@@ -321,14 +321,21 @@ class AppRouter {
         path: workout,
         name: 'workout',
         builder: (context, state) => const WorkoutScreen(),
-        
       ),
       GoRoute(
         path: exerciseDetail,
         name: 'exerciseDetail',
         builder: (context, state) {
           if (state.extra == null) {
-            return const ExerciseDetail(exercise: Exercise(id: 'default', title: 'Exercise name', subtitle: 'Exercise subtitle', imagePath: 'assets/images/exercise_image.png', type: 'Exercise type'));
+            return const ExerciseDetail(
+              exercise: Exercise(
+                id: 'default',
+                title: 'Exercise name',
+                subtitle: 'Exercise subtitle',
+                imagePath: 'assets/images/exercise_image.png',
+                type: 'Exercise type',
+              ),
+            );
           }
           return ExerciseDetail(exercise: state.extra as Exercise);
         },
@@ -423,42 +430,33 @@ class AppRouter {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               context.replace(AppRouter.store);
             });
-            return const ShimmerLoadingScreen(
-              message: 'Loading product...',
-            );
+            return const ShimmerLoadingScreen(message: 'Loading product...');
           }
-          
+
           try {
             final productData = state.extra as Map<String, dynamic>;
             final product = productData['product'];
-            
+
             if (product == null) {
               // Redirect to store if product is null
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 context.replace(AppRouter.store);
               });
               return const Scaffold(
-                body: Center(
-                  child: ShimmerCard(
-                    height: 50,
-                    width: 50,
-                  ),
-                ),
+                body: Center(child: ShimmerCard(height: 50, width: 50)),
               );
             }
-            
+
             return ProductDetailScreen(product: product);
           } catch (e) {
             // Redirect to store on any error
             WidgetsBinding.instance.addPostFrameCallback((_) {
               context.replace(AppRouter.store);
             });
-            return const ShimmerLoadingScreen(
-              message: 'Loading product...',
-            );
+            return const ShimmerLoadingScreen(message: 'Loading product...');
           }
         },
       ),
     ],
   );
-} 
+}

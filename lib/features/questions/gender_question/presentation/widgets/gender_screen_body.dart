@@ -8,6 +8,7 @@ import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
 import '../../../../../core/router/app_router.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../../generated/l10n/app_localizations.dart';
 
 class GenderScreenBody extends StatefulWidget {
   const GenderScreenBody({super.key});
@@ -35,7 +36,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)), // 16px equivalent
@@ -65,7 +66,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
       width: double.infinity,
       alignment: Alignment.centerLeft,
       child: Text(
-        'What\'s your gender ?',
+        AppLocalizations.of(context)!.whatsYourGender,
         style: AppTextStyles.heading2.copyWith(
           fontSize: responsive.sp(24),
           fontWeight: FontWeight.w700,
@@ -84,7 +85,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
           responsive,
           gender: 'female',
           icon: AppLogos.female,
-          label: 'Female',
+          label: AppLocalizations.of(context)!.female,
           isSelected: _selectedGender == 'female',
           onTap: () => _selectGender('female'),
         ),
@@ -96,7 +97,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
           responsive,
           gender: 'male',
           icon: AppLogos.male,
-          label: 'Male',
+          label: AppLocalizations.of(context)!.male,
           isSelected: _selectedGender == 'male',
           onTap: () => _selectGender('male'),
         ),

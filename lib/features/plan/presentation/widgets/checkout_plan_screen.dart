@@ -23,26 +23,26 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   String? _selectedPaymentMethod;
   bool _showCouponInput = false;
   final TextEditingController _couponController = TextEditingController();
-  
+
   // Plan data received from previous screen
   late Map<String, dynamic> _planData;
-  
+
   // Coupon-related state
   CouponData? _appliedCoupon;
   bool _isApplyingCoupon = false;
   String? _couponError;
-  
+
   // Payment proof
   String? paymentProofPath;
-  
+
   // Form fields for subscription
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  
+
   // Loading state
   bool _isSubmitting = false;
-  
+
   // Services
   final CouponService _couponService = CouponService.instance;
   final SubscriptionService _subscriptionService = SubscriptionService.instance;
@@ -68,7 +68,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     if (args != null && args is Map<String, dynamic>) {
       _planData = args;
     }
-    
+
     // Populate form fields with user data
     _populateUserData();
   }
@@ -85,7 +85,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   void _populateUserData() {
     try {
       final userData = _userDataService.getSubscriptionUserData(context);
-      
+
       // Populate form fields with user data
       if (userData['name']?.isNotEmpty == true) {
         _nameController.text = userData['name'];
@@ -96,7 +96,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       if (userData['phone']?.isNotEmpty == true) {
         _phoneController.text = userData['phone'];
       }
-      
+
       log('CheckoutPlanScreen: Populated form fields with user data');
     } catch (e) {
       log('CheckoutPlanScreen: Error populating user data: $e');
@@ -123,7 +123,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
           _appliedCoupon = response.data;
           _couponError = null;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Coupon applied successfully!'),
@@ -169,109 +169,213 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header with back button and Change Plan button
-            _buildHeader(),
-            
-            // Scrollable content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.h),
-                    
-                    // Your Plan section
-                    _buildYourPlanSection(),
-                    SizedBox(height: 24.h),
-                    
-                    // User information section
-                    _buildUserInfoSection(),
-                    SizedBox(height: 24.h),
-                    
-                    // Coupon section
-                    _buildCouponSection(),
-                    SizedBox(height: 24.h),
-                    
-                    // Price breakdown
-                    _buildPriceBreakdown(),
-                    SizedBox(height: 24.h),
-                    
-                    // Payment methods
-                    _buildPaymentMethods(),
-                    // SizedBox(height: 100.h), // Space for bottom button
-                  ],
+        child: Directionality(
+          textDirection: Localizations.localeOf(context).languageCode == 'ar'
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+          child: Column(
+            children: [
+              // Header with back button and Change Plan button
+              _buildHeader(),
+
+              // Scrollable content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20.h),
+
+                      // Your Plan section
+                      _buildYourPlanSection(),
+                      SizedBox(height: 24.h),
+
+                      // User information section
+                      _buildUserInfoSection(),
+                      SizedBox(height: 24.h),
+
+                      // Coupon section
+                      _buildCouponSection(),
+                      SizedBox(height: 24.h),
+
+                      // Price breakdown
+                      _buildPriceBreakdown(),
+                      SizedBox(height: 24.h),
+
+                      // Payment methods
+                      _buildPaymentMethods(),
+                      // SizedBox(height: 100.h), // Space for bottom button
+                    ],
+                  ),
                 ),
               ),
-            ),
-            
-            // Pay button at bottom
-            _buildPayButton(),
-          ],
+
+              // Pay button at bottom
+              _buildPayButton(),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader() {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: const BoxDecoration(
-        color: Color(0x26848484),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button and title
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => context.pop(),
-                child: SvgPicture.asset(
-                  'assets/logos/arrow_left.svg',
-                  width: 24.w,
-                  height: 24.h,
+      decoration: const BoxDecoration(color: Color(0x26848484)),
+      child: Builder(
+        builder: (context) {
+          if (isArabic) {
+            // Arabic: pay , button , arrow
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Title (Pay)
+                Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 8.w),
+                      Text(
+                        'الدفع',
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: 18.sp,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                'Checkout',
-                style: TextStyle(
-                  color: const Color(0xFF1E1E1E),
-                  fontSize: 18.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
+                // Change Plan button
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFF28A228),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        child: Text(
+                          'تغيير الباقة',
+                          style: TextStyle(
+                            color: const Color(0xFF28A228),
+                            fontSize: 12.sp,
+                            fontFamily: 'Cairo',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20.w),
+
+                    // Arrow
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Transform.rotate(
+                          angle: isArabic
+                              ? 0
+                              : 3.14159, // Rotate 180 degrees for Arabic
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          
-                     // Change Plan button
-           GestureDetector(
-             onTap: () => context.pop(),
-             child: Container(
-               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-               decoration: BoxDecoration(
-                 border: Border.all(
-                   color: const Color(0xFF28A228),
-                   width: 1,
-                 ),
-                 borderRadius: BorderRadius.circular(30.r),
-               ),
-               child: Text(
-                 'Change Plan',
-                 style: TextStyle(
-                   color: const Color(0xFF28A228),
-                   fontSize: 12.sp,
-                   fontFamily: 'Poppins',
-                   fontWeight: FontWeight.w500,
-                 ),
-               ),
-             ),
-           ),
-        ],
+              ],
+            );
+          } else {
+            // English: arrow , button , pay
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Transform.rotate(
+                          angle: 0,
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20.w),
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: const Color(0xFF28A228),
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(30.r),
+                        ),
+                        child: Text(
+                          'Change Plan',
+                          style: TextStyle(
+                            color: const Color(0xFF28A228),
+                            fontSize: 12.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 8.w),
+                      Text(
+                        'Checkout',
+                        style: TextStyle(
+                          color: const Color(0xFF1E1E1E),
+                          fontSize: 18.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Title (Pay)
+              ],
+            );
+          }
+        },
       ),
     );
   }
@@ -281,25 +385,26 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your Plan is',
+          Localizations.localeOf(context).languageCode == 'ar'
+              ? 'باقتك هي'
+              : 'Your Plan is',
           style: TextStyle(
             color: const Color(0xFF848484),
             fontSize: 12.sp,
-            fontFamily: 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w400,
           ),
         ),
         SizedBox(height: 16.h),
-        
+
         Container(
           width: double.infinity,
           padding: EdgeInsets.all(16.h),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(
-              color: const Color(0xFF28A228),
-              width: 1,
-            ),
+            border: Border.all(color: const Color(0xFF28A228), width: 1),
             borderRadius: BorderRadius.circular(15.r),
             boxShadow: [
               BoxShadow(
@@ -319,17 +424,28 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                     Row(
                       children: [
                         Text(
-                          _planData['title'] ?? 'Pro Plan',
+                          _planData['title'] ??
+                              (Localizations.localeOf(context).languageCode ==
+                                      'ar'
+                                  ? 'باقة برو'
+                                  : 'Pro Plan'),
                           style: TextStyle(
                             color: const Color(0xFF1E1E1E),
                             fontSize: 18.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         SizedBox(width: 8.w),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0x26FBBC05),
                             borderRadius: BorderRadius.circular(15.r),
@@ -344,7 +460,9 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                               ),
                               SizedBox(width: 4.w),
                               Text(
-                                _planData['isMostPopular'] == true ? 'Most Popular' : '',
+                                _planData['isMostPopular'] == true
+                                    ? 'Most Popular'
+                                    : '',
                                 style: TextStyle(
                                   color: const Color(0xFFFBBC05),
                                   fontSize: 10.sp,
@@ -371,11 +489,17 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          '/month',
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? '/شهر'
+                              : '/month',
                           style: TextStyle(
                             color: const Color(0xBF1E1E1E),
                             fontSize: 10.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -384,7 +508,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   ],
                 ),
               ),
-              
+
               // Selected indicator
               Container(
                 width: 24.w,
@@ -397,11 +521,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   ),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 14.sp,
-                ),
+                child: Icon(Icons.check, color: Colors.white, size: 14.sp),
               ),
             ],
           ),
@@ -415,16 +535,20 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your Information',
+          Localizations.localeOf(context).languageCode == 'ar'
+              ? 'معلوماتك'
+              : 'Your Information',
           style: TextStyle(
             color: const Color(0xFF1E1E1E),
             fontSize: 16.sp,
-            fontFamily: 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w500,
           ),
         ),
         SizedBox(height: 16.h),
-        
+
         // Name Field
         Container(
           width: double.infinity,
@@ -446,11 +570,17 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                 child: TextField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    hintText: 'Full Name',
+                    hintText:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'الاسم الكامل'
+                        : 'Full Name',
                     hintStyle: TextStyle(
                       color: Color(0xFF848484),
                       fontSize: 14.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily:
+                          Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'Cairo'
+                          : 'Poppins',
                       fontWeight: FontWeight.w400,
                     ),
                     border: InputBorder.none,
@@ -460,7 +590,10 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   style: TextStyle(
                     color: Color(0xFF1E1E1E),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -468,9 +601,9 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
             ],
           ),
         ),
-        
+
         SizedBox(height: 12.h),
-        
+
         // Email Field
         Container(
           width: double.infinity,
@@ -493,11 +626,17 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: 'Email Address',
+                    hintText:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'عنوان البريد الإلكتروني'
+                        : 'Email Address',
                     hintStyle: TextStyle(
                       color: Color(0xFF848484),
                       fontSize: 14.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily:
+                          Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'Cairo'
+                          : 'Poppins',
                       fontWeight: FontWeight.w400,
                     ),
                     border: InputBorder.none,
@@ -507,7 +646,10 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   style: TextStyle(
                     color: Color(0xFF1E1E1E),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -515,9 +657,9 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
             ],
           ),
         ),
-        
+
         SizedBox(height: 12.h),
-        
+
         // Phone Field
         Container(
           width: double.infinity,
@@ -540,11 +682,17 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    hintText: 'Phone Number',
+                    hintText:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'رقم الهاتف'
+                        : 'Phone Number',
                     hintStyle: TextStyle(
                       color: Color(0xFF848484),
                       fontSize: 14.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily:
+                          Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'Cairo'
+                          : 'Poppins',
                       fontWeight: FontWeight.w400,
                     ),
                     border: InputBorder.none,
@@ -554,7 +702,10 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   style: TextStyle(
                     color: Color(0xFF1E1E1E),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -588,11 +739,16 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Got a Coupon code ?',
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'هل لديك كود خصم؟'
+                    : 'Got a Coupon code ?',
                 style: TextStyle(
                   color: const Color(0xFF1E1E1E),
                   fontSize: 16.sp,
-                  fontFamily: 'Poppins',
+                  fontFamily:
+                      Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'Cairo'
+                      : 'Poppins',
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -608,11 +764,20 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   });
                 },
                 child: Text(
-                  _showCouponInput ? 'Cancel' : 'Apply Coupon',
+                  _showCouponInput
+                      ? (Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'إلغاء'
+                            : 'Cancel')
+                      : (Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'تطبيق الكوبون'
+                            : 'Apply Coupon'),
                   style: TextStyle(
                     color: const Color(0xFF28A228),
                     fontSize: 12.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: FontWeight.w400,
                     decoration: TextDecoration.underline,
                   ),
@@ -620,7 +785,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               ),
             ],
           ),
-          
+
           // Show applied coupon info
           if (_appliedCoupon != null) ...[
             SizedBox(height: 12.h),
@@ -630,10 +795,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF0F8F0),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: const Color(0xFF28A228),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFF28A228), width: 1),
               ),
               child: Row(
                 children: [
@@ -648,20 +810,32 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Coupon Applied Successfully!',
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? 'تم تطبيق الكوبون بنجاح!'
+                              : 'Coupon Applied Successfully!',
                           style: TextStyle(
                             color: const Color(0xFF28A228),
                             fontSize: 14.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         Text(
-                          'Discount: ${_appliedCoupon!.formattedDiscountAmount}',
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? 'الخصم: ${_appliedCoupon!.formattedDiscountAmount}'
+                              : 'Discount: ${_appliedCoupon!.formattedDiscountAmount}',
                           style: TextStyle(
                             color: const Color(0xFF1E1E1E),
                             fontSize: 12.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -685,7 +859,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               ),
             ),
           ],
-          
+
           // Show coupon error
           if (_couponError != null) ...[
             SizedBox(height: 12.h),
@@ -695,10 +869,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFFFF0F0),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: const Color(0xFFEA4335),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFFEA4335), width: 1),
               ),
               child: Row(
                 children: [
@@ -723,7 +894,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               ),
             ),
           ],
-          
+
           if (_showCouponInput) ...[
             SizedBox(height: 16.h),
             Container(
@@ -732,19 +903,21 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(30.r),
-                border: Border.all(
-                  color: const Color(0xFFE0E0E0),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
               ),
               child: TextField(
                 controller: _couponController,
                 decoration: InputDecoration(
-                  hintText: 'coupon',
+                  hintText: Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'كود الخصم'
+                      : 'coupon',
                   hintStyle: TextStyle(
                     color: const Color(0xFF848484),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: FontWeight.w400,
                   ),
                   border: InputBorder.none,
@@ -753,7 +926,10 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                 style: TextStyle(
                   color: const Color(0xFF1E1E1E),
                   fontSize: 14.sp,
-                  fontFamily: 'Poppins',
+                  fontFamily:
+                      Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'Cairo'
+                      : 'Poppins',
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -786,15 +962,25 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                             height: 20.h,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : Text(
-                            'Apply',
+                            Localizations.localeOf(context).languageCode == 'ar'
+                                ? 'تطبيق'
+                                : 'Apply',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
-                              fontFamily: 'Poppins',
+                              fontFamily:
+                                  Localizations.localeOf(
+                                        context,
+                                      ).languageCode ==
+                                      'ar'
+                                  ? 'Cairo'
+                                  : 'Poppins',
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -813,16 +999,13 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     final originalPrice = _planData['price'] ?? '30\$';
     final discountAmount = _appliedCoupon?.formattedDiscountAmount ?? '0 EGP';
     final finalPrice = _appliedCoupon?.formattedFinalPrice ?? originalPrice;
-    
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(
-          color: const Color(0x26848484),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0x26848484), width: 1),
         borderRadius: BorderRadius.circular(15.r),
         boxShadow: [
           BoxShadow(
@@ -834,19 +1017,41 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       ),
       child: Column(
         children: [
-          _buildPriceRow('Plan Price', originalPrice),
+          _buildPriceRow(
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? 'سعر الباقة'
+                : 'Plan Price',
+            originalPrice,
+          ),
           _buildDivider(),
           if (_appliedCoupon != null) ...[
-            _buildPriceRow('Coupon Discount', '-$discountAmount', isDiscount: true),
+            _buildPriceRow(
+              Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'خصم الكوبون'
+                  : 'Coupon Discount',
+              '-$discountAmount',
+              isDiscount: true,
+            ),
             _buildDivider(),
           ],
-          _buildPriceRow('Total', finalPrice, isTotal: true),
+          _buildPriceRow(
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? 'المجموع'
+                : 'Total',
+            finalPrice,
+            isTotal: true,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPriceRow(String label, String amount, {bool isDiscount = false, bool isTotal = false}) {
+  Widget _buildPriceRow(
+    String label,
+    String amount, {
+    bool isDiscount = false,
+    bool isTotal = false,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
@@ -855,7 +1060,9 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
           Text(
             label,
             style: TextStyle(
-              color: isTotal ? const Color(0xFF1E1E1E) : const Color(0xFF1E1E1E),
+              color: isTotal
+                  ? const Color(0xFF1E1E1E)
+                  : const Color(0xFF1E1E1E),
               fontSize: isTotal ? 16.sp : 16.sp,
               fontFamily: 'Poppins',
               fontWeight: isTotal ? FontWeight.w500 : FontWeight.w400,
@@ -864,11 +1071,11 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
           Text(
             amount,
             style: TextStyle(
-              color: isDiscount 
-                  ? const Color(0xFF28A228) 
-                  : isTotal 
-                      ? const Color(0xFF1E1E1E)
-                      : const Color(0xFF1E1E1E),
+              color: isDiscount
+                  ? const Color(0xFF28A228)
+                  : isTotal
+                  ? const Color(0xFF1E1E1E)
+                  : const Color(0xFF1E1E1E),
               fontSize: isTotal ? 18.sp : 18.sp,
               fontFamily: 'Poppins',
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
@@ -880,10 +1087,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
   }
 
   Widget _buildDivider() {
-    return Container(
-      height: 1,
-      color: const Color(0x26848484),
-    );
+    return Container(height: 1, color: const Color(0x26848484));
   }
 
   Widget _buildPaymentMethods() {
@@ -891,16 +1095,20 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Choose Payment Method',
+          Localizations.localeOf(context).languageCode == 'ar'
+              ? 'اختر طريقة الدفع'
+              : 'Choose Payment Method',
           style: TextStyle(
             color: const Color(0xFF1E1E1E),
             fontSize: 14.sp,
-            fontFamily: 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w400,
           ),
         ),
         SizedBox(height: 8.h),
-        
+
         Container(
           width: double.infinity,
           padding: EdgeInsets.all(16.h),
@@ -943,15 +1151,16 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
             ],
           ),
         ),
-        
+
         // Card details form when Card is selected
         if (_selectedPaymentMethod == 'card') ...[
           SizedBox(height: 16.h),
           _buildCardDetailsForm(),
         ],
-        
+
         // Payment proof upload when Vodafone Cash or Instapay is selected
-        if (_selectedPaymentMethod == 'vodafone_cash' || _selectedPaymentMethod == 'instapay') ...[
+        if (_selectedPaymentMethod == 'vodafone_cash' ||
+            _selectedPaymentMethod == 'instapay') ...[
           SizedBox(height: 16.h),
           _buildPaymentProofSection(),
         ],
@@ -987,14 +1196,14 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
             ),
           ),
           SizedBox(height: 16.h),
-          
+
           // Card Number field
           _buildCardInputField(
             hint: 'Card Number',
             icon: 'assets/images/person_card.svg',
           ),
           SizedBox(height: 16.h),
-          
+
           // Expiration and CVV row
           Row(
             children: [
@@ -1018,18 +1227,12 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     );
   }
 
-  Widget _buildCardInputField({
-    required String hint,
-    required String icon,
-  }) {
+  Widget _buildCardInputField({required String hint, required String icon}) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(
-          color: const Color(0xFFE0E0E0),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
       ),
       child: TextField(
         decoration: InputDecoration(
@@ -1070,7 +1273,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
 
   Widget _buildPaymentOption(String label, String iconPath, String value) {
     bool isSelected = _selectedPaymentMethod == value;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -1081,8 +1284,8 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         padding: EdgeInsets.all(12.h),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected 
-                ? const Color(0xFF28A228) 
+            color: isSelected
+                ? const Color(0xFF28A228)
                 : const Color(0x26848484),
             width: isSelected ? 2 : 1,
           ),
@@ -1099,12 +1302,12 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                 height: 20.h,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected 
-                      ? const Color(0xFF28A228) 
+                  color: isSelected
+                      ? const Color(0xFF28A228)
                       : Colors.transparent,
                   border: Border.all(
-                    color: isSelected 
-                        ? const Color(0xFF28A228) 
+                    color: isSelected
+                        ? const Color(0xFF28A228)
                         : const Color(0xFF848484),
                     width: 2,
                   ),
@@ -1184,38 +1387,52 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Payment Proof',
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? 'إثبات الدفع'
+                : 'Payment Proof',
             style: TextStyle(
               color: const Color(0xFF1E1E1E),
               fontSize: 16.sp,
-              fontFamily: 'Poppins',
+              fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'Cairo'
+                  : 'Poppins',
               fontWeight: FontWeight.w500,
             ),
           ),
           SizedBox(height: 8.h),
           Text(
-            _selectedPaymentMethod == 'vodafone_cash' 
-                ? 'Please upload a screenshot of your Vodafone Cash payment'
-                : 'Please upload a screenshot of your Instapay payment',
+            _selectedPaymentMethod == 'vodafone_cash'
+                ? (Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'يرجى تحميل لقطة شاشة لدفعك عبر فودافون كاش'
+                      : 'Please upload a screenshot of your Vodafone Cash payment')
+                : (Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'يرجى تحميل لقطة شاشة لدفعك عبر إنستاباي'
+                      : 'Please upload a screenshot of your Instapay payment'),
             style: TextStyle(
               color: const Color(0xFF848484),
               fontSize: 12.sp,
-              fontFamily: 'Poppins',
+              fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                  ? 'Cairo'
+                  : 'Poppins',
               fontWeight: FontWeight.w400,
             ),
           ),
           SizedBox(height: 16.h),
-          
+
           GestureDetector(
             onTap: _pickPaymentProofImage,
             child: Container(
               width: double.infinity,
               height: 120.h,
               decoration: BoxDecoration(
-                color: paymentProofPath != null ? Color(0xFFF0F8F0) : Color(0xFFF8F8F8),
+                color: paymentProofPath != null
+                    ? Color(0xFFF0F8F0)
+                    : Color(0xFFF8F8F8),
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: paymentProofPath != null ? Color(0xFF28A228) : Color(0xFFE0E0E0),
+                  color: paymentProofPath != null
+                      ? Color(0xFF28A228)
+                      : Color(0xFFE0E0E0),
                   width: 2,
                 ),
               ),
@@ -1267,11 +1484,17 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                         ),
                         SizedBox(height: 8.h),
                         Text(
-                          'Tap to upload payment proof',
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? 'اضغط لتحميل إثبات الدفع'
+                              : 'Tap to upload payment proof',
                           style: TextStyle(
                             color: Color(0xFF848484),
                             fontSize: 14.sp,
-                            fontFamily: 'Poppins',
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -1293,20 +1516,21 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         maxHeight: 1024,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         // Copy the image to a permanent location to avoid file path issues
         final Directory tempDir = Directory.systemTemp;
-        final String fileName = 'payment_proof_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final String fileName =
+            'payment_proof_${DateTime.now().millisecondsSinceEpoch}.jpg';
         final String permanentPath = '${tempDir.path}/$fileName';
-        
+
         // Copy the file to permanent location
         final File permanentFile = await File(image.path).copy(permanentPath);
-        
+
         setState(() {
           paymentProofPath = permanentFile.path;
         });
-        
+
         log('Payment proof saved to permanent path: $paymentProofPath');
       }
     } catch (e) {
@@ -1320,14 +1544,8 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         content: Text(message),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.only(
-          bottom: 100.h,
-          left: 16.w,
-          right: 16.w,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.r),
-        ),
+        margin: EdgeInsets.only(bottom: 100.h, left: 16.w, right: 16.w),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
       ),
     );
   }
@@ -1392,11 +1610,16 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                     ),
                     SizedBox(width: 12.w),
                     Text(
-                      'Processing...',
+                      Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'جاري المعالجة...'
+                          : 'Processing...',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily:
+                            Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'Cairo'
+                            : 'Poppins',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1406,11 +1629,16 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Pay',
+                      Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'ادفع'
+                          : 'Pay',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily:
+                            Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'Cairo'
+                            : 'Poppins',
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -1448,7 +1676,9 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       _showErrorSnackBar('Please select a payment method');
       return;
     }
-    if ((_selectedPaymentMethod == 'vodafone_cash' || _selectedPaymentMethod == 'instapay') && paymentProofPath == null) {
+    if ((_selectedPaymentMethod == 'vodafone_cash' ||
+            _selectedPaymentMethod == 'instapay') &&
+        paymentProofPath == null) {
       _showErrorSnackBar('Please upload payment proof to continue');
       return;
     }
@@ -1485,31 +1715,30 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         paymentType: _selectedPaymentMethod!,
         total: total,
         paymentProofPath: paymentProofPath,
-        couponCode: _couponController.text.trim().isNotEmpty ? _couponController.text.trim() : null,
+        couponCode: _couponController.text.trim().isNotEmpty
+            ? _couponController.text.trim()
+            : null,
         userData: completeUserData,
       );
 
       if (result['success']) {
         // Show success message with subscription details
         final subscriptionData = result['data'];
-        final message = result['message'] ?? 'Subscription created successfully';
-        
+        final message =
+            result['message'] ?? 'Subscription created successfully';
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message),
             backgroundColor: const Color(0xFF28A228),
             behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.only(
-              bottom: 100.h,
-              left: 16.w,
-              right: 16.w,
-            ),
+            margin: EdgeInsets.only(bottom: 100.h, left: 16.w, right: 16.w),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.r),
             ),
           ),
         );
-        
+
         // Log subscription details
         if (subscriptionData != null) {
           log('Subscription created:');
@@ -1520,14 +1749,16 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
           log('Starts At: ${subscriptionData['starts_at']}');
           log('Ends At: ${subscriptionData['ends_at']}');
         }
-        
+
         // Navigate to success screen
         if (mounted) {
           context.push(AppRouter.subscribtionDone);
         }
       } else {
         // Show error message
-        _showErrorSnackBar(result['message'] ?? 'Failed to submit subscription');
+        _showErrorSnackBar(
+          result['message'] ?? 'Failed to submit subscription',
+        );
       }
     } catch (e) {
       log('Error submitting subscription: $e');
