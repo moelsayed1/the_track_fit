@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
+import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../data/cubit/auth_cubit.dart';
 import '../../../data/cubit/auth_states.dart';
@@ -54,8 +57,8 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
         if (state is AuthPasswordResetSuccess) {
           CustomSnackbar.show(
             context,
-            title: 'Success',
-            message: state.message,
+            title: AppLocalizations.of(context)!.success,
+            message: AppLocalizations.of(context)!.passwordResetSuccessfully,
             type: SnackbarType.success,
           );
           // Show success dialog
@@ -64,14 +67,14 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
           final firstError = state.fieldErrors.values.first;
           CustomSnackbar.show(
             context,
-            title: 'Validation Error',
+            title: AppLocalizations.of(context)!.validationError,
             message: firstError,
             type: SnackbarType.error,
           );
         } else if (state is AuthPasswordResetError) {
           CustomSnackbar.show(
             context,
-            title: 'Error',
+            title: AppLocalizations.of(context)!.error,
             message: state.message,
             type: SnackbarType.error,
           );
@@ -139,23 +142,27 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'New Password',
-                  style: AppTextStyles.heading2.copyWith(
-                    fontSize: responsive.sp(20),
+                  AppLocalizations.of(context)!.newPassword,
+                  style: TextStyle(
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF111827),
+                    fontFamily: context.fontFamily,
                   ),
+                  textAlign: TextAlign.start,
                 ),
                 
                 SizedBox(height: responsive.h(8)),
                 
                 Text(
-                  'Create your new password',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontSize: responsive.sp(12),
+                  AppLocalizations.of(context)!.createYourNewPassword,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
                     color: AppColors.gray,
+                    fontFamily: context.fontFamily,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -180,7 +187,7 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
           // Password Field
           CustomTextField(
             controller: _passwordController,
-            hintText: 'Password',
+            hintText: AppLocalizations.of(context)!.password,
             prefixIconAsset: AppIcons.lock,
             isPassword: true,
             validator: _validatePassword,
@@ -191,7 +198,7 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
           // Confirm Password Field
           CustomTextField(
             controller: _confirmPasswordController,
-            hintText: 'Confirm Password',
+            hintText: AppLocalizations.of(context)!.confirmPassword,
             prefixIconAsset: AppIcons.lock,
             isPassword: true,
             validator: _validateConfirmPassword,
@@ -208,7 +215,7 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
 
   Widget _buildConfirmButton(ResponsiveHelper responsive, bool isLoading) {
     return PrimaryButton(
-      text: 'Confirm',
+      text: AppLocalizations.of(context)!.confirm,
       onPressed: isLoading ? null : _handleConfirm,
       isLoading: isLoading,
       height: responsive.h(56),
@@ -217,20 +224,20 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context)!.passwordRequired;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+      return AppLocalizations.of(context)!.passwordMustBeAtLeast6Characters;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+      return AppLocalizations.of(context)!.pleaseConfirmYourPassword;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return AppLocalizations.of(context)!.passwordsDoNotMatch;
     }
     return null;
   }
@@ -256,12 +263,12 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
-            width: responsive.w(343),
-            height: responsive.h(329),
+            width: responsive.w(300),
+            height: responsive.h(280),
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
             child: Column(
@@ -269,8 +276,8 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
               children: [
                 // Success GIF Animation
                 SizedBox(
-                  width: responsive.w(150),
-                  height: responsive.h(150),
+                  width: responsive.w(120),
+                  height: responsive.h(120),
                   child: Image.asset(
                     AppAnimations.doneGif,
                     fit: BoxFit.contain,
@@ -281,43 +288,48 @@ class _NewPasswordScreenBodyState extends State<NewPasswordScreenBody> {
                 
                 // Congratulations Title
                 Text(
-                  'Congratulations!',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.heading2.copyWith(
-                    fontSize: responsive.sp(20),
+                  AppLocalizations.of(context)!.congratulations,
+                  style: TextStyle(
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.primaryGreen,
+                    fontFamily: context.fontFamily,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 
                 SizedBox(height: responsive.h(8)),
                 
                 // Subtitle
                 Text(
-                  'Your Account is ready to use',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontSize: responsive.sp(14),
+                  AppLocalizations.of(context)!.yourAccountIsReadyToUse,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
                     color: AppColors.gray,
+                    fontFamily: context.fontFamily,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 
                 SizedBox(height: responsive.h(24)),
                 
                 // Go To Login Page Button
                 SizedBox(
-                  width: responsive.w(279),
-                  height: responsive.h(56),
+                  width: responsive.w(250),
+                  height: responsive.h(48),
                   child: PrimaryButton(
-                    text: 'Go to Login Page',
+                    text: AppLocalizations.of(context)!.goToLoginPage,
                     style: TextStyle(
-                      fontSize: responsive.sp(18),
+                      fontSize: responsive.sp(16),
+                      color: Colors.white,
+                      fontFamily: context.fontFamily,
                     ),
                     onPressed: () {
                       Navigator.of(context).pop(); // Close dialog
                       context.pushReplacement(AppRouter.login); // Navigate to login
                     },
-                    height: responsive.h(56),
+                    height: responsive.h(48),
                   ),
                 ),
               ],

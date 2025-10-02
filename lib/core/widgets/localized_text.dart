@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:the_track_fit/core/services/language_service.dart';
+import '../bloc/language/language_bloc.dart';
 
 /// Widget that automatically applies the correct font family based on current language
 /// - Arabic: Cairo font family
@@ -37,35 +38,40 @@ class LocalizedText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final languageService = LanguageService.instance;
-    final isArabic = languageService.currentLanguage == 'ar';
-    
-    // Determine font family based on language
-    final fontFamily = isArabic ? 'Cairo' : 'Poppins';
-    
-    // Create base text style
-    TextStyle textStyle = TextStyle(
-      fontFamily: fontFamily,
-      fontSize: fontSize?.sp,
-      fontWeight: fontWeight,
-      color: color,
-      decoration: decoration,
-      height: height,
-      letterSpacing: letterSpacing,
-      wordSpacing: wordSpacing,
-    );
+    return BlocBuilder<LanguageBloc, LanguageState>(
+      builder: (context, languageState) {
+        final currentLanguage = languageState is LanguageLoaded 
+            ? languageState.currentLanguage 
+            : 'ar';
+        final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+        
+        // Create base text style
+        TextStyle textStyle = TextStyle(
+          fontFamily: fontFamily,
+          fontSize: fontSize?.sp,
+          fontWeight: fontWeight,
+          color: color,
+          decoration: decoration,
+          height: height,
+          letterSpacing: letterSpacing,
+          wordSpacing: wordSpacing,
+        );
 
-    // Merge with custom style if provided
-    if (style != null) {
-      textStyle = textStyle.merge(style);
-    }
+        // Merge with custom style if provided
+        if (style != null) {
+          textStyle = textStyle.merge(style);
+        }
 
-    return Text(
-      text,
-      style: textStyle,
-      textAlign: textAlign,
-      maxLines: maxLines,
-      overflow: overflow,
+        return Center(
+          child: Text(
+            text,
+            style: textStyle,
+            textAlign: textAlign,
+            maxLines: maxLines,
+            overflow: overflow,
+          ),
+        );
+      },
     );
   }
 }
@@ -222,16 +228,21 @@ class LocalizedButtonText extends StatelessWidget {
 /// Extension to easily get localized font family
 extension LocalizedFontFamily on BuildContext {
   String get localizedFontFamily {
-    final languageService = LanguageService.instance;
-    return languageService.currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+    final languageState = read<LanguageBloc>().state;
+    if (languageState is LanguageLoaded) {
+      return languageState.currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+    }
+    return 'Poppins';
   }
 }
 
 /// Extension to easily create localized text styles
 extension LocalizedTextStyle on TextStyle {
-  TextStyle get localized {
-    final languageService = LanguageService.instance;
-    final fontFamily = languageService.currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+  TextStyle localized(BuildContext context) {
+    final languageState = context.read<LanguageBloc>().state;
+    final fontFamily = languageState is LanguageLoaded 
+        ? (languageState.currentLanguage == 'ar' ? 'Cairo' : 'Poppins')
+        : 'Poppins';
     return copyWith(fontFamily: fontFamily);
   }
 }

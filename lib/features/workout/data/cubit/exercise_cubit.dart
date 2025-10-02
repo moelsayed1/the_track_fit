@@ -5,6 +5,7 @@ import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
 import 'package:the_track_fit/features/workout/data/repositories/exercise_repository.dart';
 import 'package:the_track_fit/features/store/data/services/favorites_service.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/core/services/language_service.dart';
 
 // State class to hold exercises data
 class ExerciseState {
@@ -205,10 +206,14 @@ class ExerciseCubit extends Cubit<ExerciseState> {
       // Get exercises from the selected category
       final categoryExercises = selectedCategory.exercises ?? [];
       
+      // Get localized category name based on current language
+      final currentLang = LanguageService.instance.currentLanguage;
+      final localizedCategoryName = selectedCategory.getLocalizedName(currentLang);
+      
       emit(state.copyWith(
         allExercises: categoryExercises,
         selectedCategoryId: categoryId,
-        selectedCategoryName: categoryName,
+        selectedCategoryName: localizedCategoryName, // ✅ Use localized name
         isLoading: false,
       ));
     } catch (e) {

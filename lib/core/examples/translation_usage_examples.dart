@@ -3,7 +3,6 @@ import 'dart:developer';
 import '../helpers/api_response_helper.dart';
 import '../services/translation_service.dart';
 import '../repositories/translated_repository.dart';
-import '../models/translatable_model.dart';
 
 /// Examples of how to use the translation system in your app
 class TranslationUsageExamples {

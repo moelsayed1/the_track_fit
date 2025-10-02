@@ -20,4 +20,9 @@ class MealItem {
       'item_name_ar': itemNameAr,
     };
   }
+
+  // Helper method to get localized name based on current language
+  String getLocalizedName(String language) {
+    return language == 'ar' ? itemNameAr : itemNameEn;
+  }
 }

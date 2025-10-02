@@ -59,7 +59,6 @@ class LanguageStatusWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final l10n = AppLocalizations.of(context)!;
         final currentLanguage = languageState is LanguageLoaded 
             ? languageState.currentLanguage 
             : LanguageService.instance.currentLanguage;
@@ -68,7 +67,7 @@ class LanguageStatusWidget extends StatelessWidget {
           padding: EdgeInsets.all(16),
           margin: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: currentLanguage == 'ar' ? Colors.blue.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+            color: currentLanguage == 'ar' ? Colors.blue.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: currentLanguage == 'ar' ? Colors.blue : Colors.green,

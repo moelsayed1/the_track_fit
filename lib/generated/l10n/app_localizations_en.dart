@@ -273,6 +273,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueText => 'Continue';
 
   @override
+  String get specialDietHint =>
+      'Describe your special diet requirements (optional)';
+
+  @override
+  String get injuryHint =>
+      'Describe any current or previous injuries (optional)';
+
+  @override
+  String get buildingPlan => 'We\'re building your personalized plan';
+
+  @override
+  String get journeyStarts => 'Your journey starts in a few seconds.';
+
+  @override
+  String get scan => 'Scan';
+
+  @override
+  String get packages => 'Packages';
+
+  @override
+  String get sat => 'Sat';
+
+  @override
+  String get sun => 'Sun';
+
+  @override
+  String get mon => 'Mon';
+
+  @override
+  String get tue => 'Tue';
+
+  @override
+  String get wed => 'Wed';
+
+  @override
+  String get thu => 'Thu';
+
+  @override
+  String get fri => 'Fri';
+
+  @override
+  String get scanYourMeal => 'Scan Your Meal';
+
+  @override
+  String get scanning => 'Scanning...';
+
+  @override
+  String get totalKcal => 'Total 180 Kcal';
+
+  @override
+  String get carbs => 'Carbs';
+
+  @override
+  String get protein => 'Protein';
+
+  @override
+  String get fat => 'Fat';
+
+  @override
+  String get mealScannedSuccessfully => 'Meal scanned successfully!';
+
+  @override
+  String get tapCameraToScan => 'Tap the camera button to scan your meal';
+
+  @override
+  String get completeSetup => 'Complete Setup';
+
+  @override
   String get done => 'Done';
 
   @override
@@ -1104,15 +1172,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visceralFat => 'Visceral Fat';
 
   @override
-  String get protein => 'Protein';
-
-  @override
-  String get carbs => 'Carbs';
-
-  @override
-  String get fat => 'Fat';
-
-  @override
   String get fiber => 'Fiber';
 
   @override
@@ -1711,12 +1770,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get last6Months => 'Last 6 months';
 
   @override
-  String get scan => 'Scan';
-
-  @override
-  String get packages => 'Packages';
-
-  @override
   String get noEquipment => 'No Equipment';
 
   @override
@@ -2026,9 +2079,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meals => 'Meals';
 
   @override
-  String get scanYourMeal => 'Scan Your Meal';
-
-  @override
   String get tapToScanYourFood => 'Tap to Scan your food';
 
   @override
@@ -2176,6 +2226,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginFailed => 'Login Failed';
+
+  @override
+  String get googleSignInSuccessful => 'Google Sign-In Successful!';
+
+  @override
+  String get googleSignInFailed => 'Google Sign-In Failed';
 
   @override
   String get buildingYourPlan => 'We\'re building your personalized plan';
@@ -2388,7 +2444,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startShopping => 'Start Shopping';
 
   @override
-  String get congratulations => 'Congratulations!';
+  String get congratulations => 'Congratulations';
 
   @override
   String get yourOrderHasBeenConfirmed => 'Your Order has been confirmed';
@@ -2452,4 +2508,137 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get startShoppingToAddItemsToYourCart =>
       'Start shopping to add items to your cart';
+
+  @override
+  String get selectType => 'Select Type';
+
+  @override
+  String get errorLoadingCategories => 'Error loading categories';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get unableToLoadWorkoutTypes => 'Unable to load workout types';
+
+  @override
+  String get pleaseCheckYourConnection =>
+      'Please check your internet connection and try again';
+
+  @override
+  String get searchForExercises => 'Search for exercises';
+
+  @override
+  String get allExercises => 'All exercises';
+
+  @override
+  String get tryModifyingSearchOrFilters =>
+      'Try modifying the search or filters';
+
+  @override
+  String get selectLocation => 'Select Location';
+
+  @override
+  String get selectEquipment => 'Select Equipment';
+
+  @override
+  String get exerciseDetail => 'Exercise Detail';
+
+  @override
+  String get noDescriptionAvailable =>
+      'No description available for this exercise.';
+
+  @override
+  String get startYourExercise => 'Start Your Exercise';
+
+  @override
+  String get failedToCaptureImage => 'Failed to capture image';
+
+  @override
+  String get cameraPermissionRequired =>
+      'Camera permission is required to scan exercises. Please enable camera access in your device settings.';
+
+  @override
+  String get youveUpgradedToPremium => 'You\'ve Upgraded to Premium!';
+
+  @override
+  String get exploreMyPlan => 'Explore My Plan';
+
+  @override
+  String get goToHome => 'Go To Home';
+
+  @override
+  String get forgetPasswordInstructions =>
+      'We\'ll send a reset link to your email.';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get resendCode => 'Resend Code?';
+
+  @override
+  String get pleaseEnterValidEmailFirst => 'Please enter a valid email first';
+
+  @override
+  String get pleaseEnterValidEmail => 'Please enter a valid email address';
+
+  @override
+  String get otp => 'OTP';
+
+  @override
+  String codeHasBeenSentTo(String email) {
+    return 'Code has been sent to $email';
+  }
+
+  @override
+  String get verify => 'Verify';
+
+  @override
+  String resendOtpIn(int seconds) {
+    return 'Resend OTP in ${seconds}s';
+  }
+
+  @override
+  String get resendOtp => 'Resend OTP';
+
+  @override
+  String get pleaseEnterOtpCode => 'Please enter the OTP code';
+
+  @override
+  String get pleaseEnterCompleteOtp => 'Please enter the complete 6-digit OTP';
+
+  @override
+  String get otpMustContainOnlyNumbers => 'OTP must contain only numbers';
+
+  @override
+  String get createYourNewPassword => 'Create your new password';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'Password must be at least 6 characters';
+
+  @override
+  String get yourAccountIsReadyToUse => 'Your Account is ready to use';
+
+  @override
+  String get goToLoginPage => 'Go to Login Page';
+
+  @override
+  String get otpSentSuccessfully =>
+      'OTP sent successfully! Check your email for the verification code';
+
+  @override
+  String get otpVerifiedSuccessfully =>
+      'OTP verified successfully! You can now create a new password';
+
+  @override
+  String get passwordResetSuccessfully =>
+      'Password reset successfully! Your account is ready to use';
 }

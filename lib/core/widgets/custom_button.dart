@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../utils/responsive_helper.dart';
+import '../bloc/language/language_bloc.dart';
 
 enum ButtonType { primary, outline }
 
@@ -35,54 +37,62 @@ class CustomButton extends StatelessWidget {
         width ?? responsive.screenWidth - (responsive.wp(5) * 2);
     final buttonHeight = height ?? responsive.hp(6);
 
-    return Container(
-      margin: margin,
-      width: buttonWidth.isFinite ? buttonWidth : null,
-      height: buttonHeight,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          fixedSize: WidgetStateProperty.all(Size(buttonWidth, buttonHeight)),
-          padding: WidgetStateProperty.all(EdgeInsets.zero),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-              side: type == ButtonType.outline
-                  ? const BorderSide(color: AppColors.primaryGreen, width: 1.5)
-                  : BorderSide.none,
-            ),
-          ),
-          backgroundColor: type == ButtonType.primary
-              ? WidgetStateProperty.all(AppColors.primaryGreen)
-              : WidgetStateProperty.all(Colors.transparent),
-          elevation: WidgetStateProperty.all(
-            type == ButtonType.primary ? 3 : 0,
-          ),
-        ),
-        onPressed: isLoading ? null : onPressed,
-        child: isLoading
-            ? SizedBox(
-                width: responsive.wp(4),
-                height: responsive.wp(4),
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    type == ButtonType.primary
-                        ? AppColors.white
-                        : AppColors.primaryGreen,
-                  ),
+    return BlocBuilder<LanguageBloc, LanguageState>(
+      builder: (context, languageState) {
+        final currentLanguage = languageState is LanguageLoaded 
+            ? languageState.currentLanguage 
+            : 'ar';
+        final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+
+        return Container(
+          margin: margin,
+          width: buttonWidth.isFinite ? buttonWidth : null,
+          height: buttonHeight,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              fixedSize: WidgetStateProperty.all(Size(buttonWidth, buttonHeight)),
+              padding: WidgetStateProperty.all(EdgeInsets.zero),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                  side: type == ButtonType.outline
+                      ? const BorderSide(color: AppColors.primaryGreen, width: 1.5)
+                      : BorderSide.none,
                 ),
-              )
-            : Text(
-                text,
-                textAlign: TextAlign.center,
-                style:
-                    style ??
-                    (type == ButtonType.primary
-                        ? AppTextStyles.buttonPrimary
-                        : AppTextStyles.buttonSecondary),
               ),
-      ),
+              backgroundColor: type == ButtonType.primary
+                  ? WidgetStateProperty.all(AppColors.primaryGreen)
+                  : WidgetStateProperty.all(Colors.transparent),
+              elevation: WidgetStateProperty.all(
+                type == ButtonType.primary ? 3 : 0,
+              ),
+            ),
+            onPressed: isLoading ? null : onPressed,
+            child: isLoading
+                ? SizedBox(
+                    width: responsive.wp(4),
+                    height: responsive.wp(4),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        type == ButtonType.primary
+                            ? AppColors.white
+                            : AppColors.primaryGreen,
+                      ),
+                    ),
+                  )
+                : Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: style ?? 
+                        (type == ButtonType.primary
+                            ? AppTextStyles.buttonPrimary(context).copyWith(fontFamily: fontFamily)
+                            : AppTextStyles.buttonSecondary(context).copyWith(fontFamily: fontFamily)),
+                  ),
+          ),
+        );
+      },
     );
   }
 }

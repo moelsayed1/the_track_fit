@@ -184,7 +184,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     // Title
                     Center(
                       child: Text(
-                        AppLocalizations.of(context)!.workout,
+                        AppLocalizations.of(context)!.exercise,
                         style: TextStyle(
                           color: const Color(0xFF1E1E1E), // black
                           fontSize: responsiveHelper.sp(24),
@@ -265,7 +265,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                 decoration: InputDecoration(
                                   hintText: AppLocalizations.of(
                                     context,
-                                  )!.searchExercises,
+                                  )!.searchForExercises,
                                   hintStyle: TextStyle(
                                     color: const Color(0xBF848484),
                                     fontSize: responsiveHelper.sp(12),

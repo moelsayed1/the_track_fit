@@ -1022,6 +1022,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                 ? 'سعر الباقة'
                 : 'Plan Price',
             originalPrice,
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
           ),
           _buildDivider(),
           if (_appliedCoupon != null) ...[
@@ -1031,6 +1032,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   : 'Coupon Discount',
               '-$discountAmount',
               isDiscount: true,
+              fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
             ),
             _buildDivider(),
           ],
@@ -1051,6 +1053,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     String amount, {
     bool isDiscount = false,
     bool isTotal = false,
+    String? fontFamily,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -1064,9 +1067,12 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   ? const Color(0xFF1E1E1E)
                   : const Color(0xFF1E1E1E),
               fontSize: isTotal ? 16.sp : 16.sp,
-              fontFamily: 'Poppins',
+              fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : (fontFamily ?? 'Poppins'),
               fontWeight: isTotal ? FontWeight.w500 : FontWeight.w400,
             ),
+            textDirection: Localizations.localeOf(context).languageCode == 'ar'
+                ? TextDirection.rtl
+                : TextDirection.ltr,
           ),
           Text(
             amount,
@@ -1077,7 +1083,7 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
                   ? const Color(0xFF1E1E1E)
                   : const Color(0xFF1E1E1E),
               fontSize: isTotal ? 18.sp : 18.sp,
-              fontFamily: 'Poppins',
+              fontFamily: fontFamily ?? 'Poppins',
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
@@ -1293,10 +1299,11 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
         ),
         child: Stack(
           children: [
-            // Radio button in top right corner
+            // Radio button positioned based on language
             Positioned(
               top: 0,
-              right: 0,
+              left: Localizations.localeOf(context).languageCode == 'ar' ? 0 : null,
+              right: Localizations.localeOf(context).languageCode == 'ar' ? null : 0,
               child: Container(
                 width: 20.w,
                 height: 20.h,
@@ -1724,8 +1731,11 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
       if (result['success']) {
         // Show success message with subscription details
         final subscriptionData = result['data'];
-        final message =
-            result['message'] ?? 'Subscription created successfully';
+        final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+        final message = result['message'] ??
+            (isArabic
+                ? 'تم إنشاء الاشتراك بنجاح'
+                : 'Subscription created successfully');
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

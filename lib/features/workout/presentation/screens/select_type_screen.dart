@@ -5,6 +5,9 @@ import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
 import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
 import 'package:the_track_fit/features/workout/presentation/widgets/shimmer_loader.dart';
+import '../../../../core/widgets/localized_text.dart';
+import '../../../../core/extensions/localization_extensions.dart';
+import '../../../../generated/l10n/app_localizations.dart';
 
 class SelectTypeScreen extends StatefulWidget {
   final String? selectedType;
@@ -49,8 +52,10 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
         isLoading = false;
       });
     } catch (e) {
+      print('Error loading workout types: $e'); // Debug logging
       setState(() {
-        error = e.toString();
+        // Provide user-friendly error message instead of technical exception
+        error = 'Connection error';
         isLoading = false;
         // Fallback to mock data
         _initializeMockWorkoutTypes();
@@ -62,19 +67,22 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
     workoutTypes = [
       WorkoutType(
         id: 'cardio',
-        name: 'Cardio',
+        enName: 'Cardio',
+        arName: 'كارديو',
         iconPath: 'assets/images/cardio.png',
         isSelected: selectedTypeId == 'cardio',
       ),
       WorkoutType(
         id: 'dumbbell',
-        name: 'dumbbell',
+        enName: 'Dumbbell',
+        arName: 'دمبل',
         iconPath: 'assets/images/gym_icon.png',
         isSelected: selectedTypeId == 'dumbbell',
       ),
       WorkoutType(
         id: 'stretching',
-        name: 'Stretching',
+        enName: 'Stretching',
+        arName: 'تمارين الإطالة',
         iconPath: 'assets/images/streching.png',
         isSelected: selectedTypeId == 'stretching',
       ),
@@ -116,6 +124,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
             color: Color(0xFFF6FFF6),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Header with back button and title
               Container(
@@ -127,35 +136,34 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 decoration: const BoxDecoration(
                   color: Color(0x26848484),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: SvgPicture.asset(
-                        'assets/logos/arrow_left.svg',
-                        width: responsiveHelper.w(24),
-                        height: responsiveHelper.h(24),
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1E1E1E),
-                          BlendMode.srcIn,
+                child: Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: SvgPicture.asset(
+                          'assets/logos/arrow_left.svg',
+                          width: responsiveHelper.w(24),
+                          height: responsiveHelper.h(24),
+                          colorFilter: const ColorFilter.mode(
+                            Color(0xFF1E1E1E),
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: responsiveHelper.w(8)),
-                    Text(
-                      'Select Type',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
+                      SizedBox(width: responsiveHelper.w(8)),
+                      LocalizedText(
+                        AppLocalizations.of(context)!.selectType,
                         fontSize: responsiveHelper.sp(18),
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1E1E1E),
                         height: 0.89,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               
@@ -190,43 +198,82 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
 
     if (error != null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red[300],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Error loading categories',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: Colors.red[700],
-                fontFamily: 'Poppins',
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsiveHelper.w(32)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Error icon with better styling
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 40,
+                  color: Colors.red[400],
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              error!,
-              textAlign: TextAlign.center,
-              style: TextStyle(
+              SizedBox(height: responsiveHelper.h(24)),
+              
+              // Main error title
+              LocalizedText(
+                AppLocalizations.of(context)!.somethingWentWrong,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.red[700]!,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: responsiveHelper.h(8)),
+              
+              // User-friendly error message
+              LocalizedText(
+                AppLocalizations.of(context)!.unableToLoadWorkoutTypes,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[600]!,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: responsiveHelper.h(4)),
+              
+              // Additional helpful message
+              LocalizedText(
+                AppLocalizations.of(context)!.pleaseCheckYourConnection,
                 fontSize: 14,
-                color: Colors.red[600],
-                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+                color: Colors.grey[500]!,
+                textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadWorkoutTypes,
-              child: Text(
-                'Retry',
-                style: TextStyle(fontFamily: 'Poppins'),
+              SizedBox(height: responsiveHelper.h(32)),
+              
+              // Enhanced retry button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _loadWorkoutTypes,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF28A228),
+                    foregroundColor: Colors.white,
+                    elevation: 2,
+                    shadowColor: const Color(0xFF28A228).withValues(alpha: 0.3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: LocalizedText(
+                    AppLocalizations.of(context)!.retry,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
@@ -262,17 +309,14 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 _buildCategoryIcon(type, responsiveHelper),
                 SizedBox(width: responsiveHelper.w(8)),
                 Expanded(
-                  child: Text(
-                    type.name,
-                    style: TextStyle(
-                      color: type.isSelected 
-                          ? const Color(0xFF4CAF50) // Green text when selected
-                          : const Color(0xFF1E1E1E), // Black text when not selected
-                      fontSize: responsiveHelper.sp(16),
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      height: 1.0,
-                    ),
+                  child: LocalizedText(
+                    type.getLocalizedName(context.isArabic ? 'ar' : 'en'),
+                    fontSize: responsiveHelper.sp(16),
+                    fontWeight: FontWeight.w500,
+                    color: type.isSelected 
+                        ? const Color(0xFF4CAF50) // Green text when selected
+                        : const Color(0xFF1E1E1E), // Black text when not selected
+                    height: 1.0,
                   ),
                 ),
                 // Checkmark icon when selected

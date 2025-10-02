@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
+import 'package:the_track_fit/features/questions/domain/models/question.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
@@ -29,8 +32,7 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
   final AnswersService _answersService = AnswersService.instance;
 
   // Additional goals options from the API response
-  List<Map<String, String>> _additionalGoalsOptions = [];
-  String _questionText = 'Additional Goals (Optional)';
+  Question? _additionalGoalsQuestion;
 
   @override
   void initState() {
@@ -47,13 +49,9 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
 
       final question = await _questionsService.getAdditionalGoalsQuestion();
       
-      if (question != null && question.options != null) {
+      if (question != null) {
         setState(() {
-          _questionText = question.enText;
-          _additionalGoalsOptions = question.options!.map((option) => {
-            'value': option.en,
-            'label': option.en,
-          }).toList();
+          _additionalGoalsQuestion = question;
           _isLoadingOptions = false;
         });
       } else {
@@ -74,14 +72,16 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         // Common Header
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -89,14 +89,12 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
         // Question
         Container(
           width: double.infinity,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            _questionText,
-            style: AppTextStyles.heading2.copyWith(
-              fontSize: responsive.sp(24),
-              fontWeight: FontWeight.w600,
-              color: AppColors.black,
-            ),
+          alignment: AlignmentDirectional.centerStart,
+          child: LocalizedText(
+            _additionalGoalsQuestion?.localizedText ?? 'Additional Goals (Optional)',
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
             textAlign: TextAlign.start,
           ),
         ),
@@ -122,18 +120,22 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
                             color: Colors.red,
                           ),
                           SizedBox(height: 16),
-                          Text(
+                          LocalizedText(
                             _error!,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: Colors.red,
-                              fontSize: responsive.sp(16),
-                            ),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.red,
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _loadAdditionalGoalsQuestion,
-                            child: Text('Retry'),
+                            child: LocalizedText(
+                              'Retry',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -147,26 +149,38 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
         _buildContinueButton(responsive),
         
         SizedBox(height: responsive.hp(4)),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildAdditionalGoalsOptions(ResponsiveHelper responsive) {
+    if (_additionalGoalsQuestion?.options == null || _additionalGoalsQuestion!.options!.isEmpty) {
+      return Center(
+        child: LocalizedText(
+          'No additional goals options available',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black,
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
       child: Column(
-        children: _additionalGoalsOptions.map((option) {
-          final isSelected = _selectedAdditionalGoals.contains(option['value']);
+        children: _additionalGoalsQuestion!.options!.map((option) {
+          final isSelected = _selectedAdditionalGoals.contains(option.en);
           return Column(
             children: [
               _buildAdditionalGoalOption(
                 responsive,
-                value: option['value']!,
-                label: option['label']!,
+                value: option.en,
+                label: option.localizedText,
                 isSelected: isSelected,
-                onTap: () => _toggleAdditionalGoal(option['value']!),
+                onTap: () => _toggleAdditionalGoal(option.en),
               ),
-              if (option != _additionalGoalsOptions.last)
+              if (option != _additionalGoalsQuestion!.options!.last)
                 SizedBox(height: responsive.h(16)),
             ],
           );
@@ -233,13 +247,11 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
             
             // Text Content
             Expanded(
-              child: Text(
+              child: LocalizedText(
                 label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: responsive.sp(16),
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.black,
-                ),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.black,
               ),
             ),
           ],
@@ -253,7 +265,7 @@ class _AdditionalGoalsQuestionBodyState extends State<AdditionalGoalsQuestionBod
       isEnabled: true, // Always enabled for optional question
       isLoading: _isLoading,
       onPressed: _handleContinue,
-      text: 'Complete Setup',
+      text: AppLocalizations.of(context)!.completeSetup,
     );
   }
 

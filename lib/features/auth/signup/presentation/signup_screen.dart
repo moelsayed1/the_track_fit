@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
@@ -13,6 +14,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
+import '../../../../core/widgets/localized_text.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../data/cubit/auth_cubit.dart';
 import '../../data/cubit/auth_states.dart';
@@ -190,7 +192,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   illustration: SvgPicture.asset(
                     AppLogos.signUp,
                     width: responsive.wp(66.7),
-                    height: responsive.wp(64.5),
+                    height: responsive.wp(50),
                   ),
                 ),
       
@@ -234,11 +236,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Text(
                             AppLocalizations.of(context)!.genderRequired,
                             style: TextStyle(
-                              color: AppColors.grayMedium,
-                              fontSize: responsive.sp(12),
-                              fontFamily: 'Poppins',
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
+                              color: AppColors.grayMedium,
+                              fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                             ),
+                            textAlign: TextAlign.start,
                           ),
                         ),
                         Row(
@@ -253,7 +256,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                   });
                                 },
                                 child: Container(
-                                  margin: const EdgeInsets.only(right: 8),
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     color: _selectedGender == 'male' 
@@ -303,14 +305,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              AppLocalizations.of(context)!.male,
+                                              'ذكر',
                                               style: TextStyle(
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w600,
                                                 color: _selectedGender == 'male' 
                                                     ? Colors.white
                                                     : Colors.grey.shade700,
-                                                fontSize: responsive.sp(14),
-                                                fontFamily: 'Poppins',
-                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Cairo',
                                               ),
                                             ),
                                           
@@ -322,6 +324,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 ),
                               ),
                             ),
+                            const SizedBox(width: 16),
                             // Female Option
                             Expanded(
                               child: GestureDetector(
@@ -332,7 +335,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                   });
                                 },
                                 child: Container(
-                                  margin: const EdgeInsets.only(left: 8),
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     color: _selectedGender == 'female' 
@@ -382,14 +384,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              AppLocalizations.of(context)!.female,
+                                              'أنثى',
                                               style: TextStyle(
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w600,
                                                 color: _selectedGender == 'female' 
                                                     ? Colors.white
                                                     : Colors.grey.shade700,
-                                                fontSize: responsive.sp(14),
-                                                fontFamily: 'Poppins',
-                                                fontWeight: FontWeight.w600,
+                                                fontFamily: 'Cairo',
                                               ),
                                             ),
                                           ],
@@ -408,11 +410,12 @@ class _SignupScreenState extends State<SignupScreen> {
                             child: Text(
                               AppLocalizations.of(context)!.genderRequired,
                               style: TextStyle(
-                                color: Colors.red,
-                                fontSize: responsive.sp(12),
-                                fontFamily: 'Poppins',
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
+                                color: Colors.red,
+                                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                               ),
+                              textAlign: TextAlign.start,
                             ),
                           ),
                       ],
@@ -461,10 +464,10 @@ class _SignupScreenState extends State<SignupScreen> {
                     Text(
                       AppLocalizations.of(context)!.alreadyHaveAccount + ' ',
                       style: TextStyle(
-                        color: AppColors.grayMedium,
-                        fontSize: responsive.sp(14),
-                        fontFamily: 'Poppins',
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
+                        color: AppColors.grayMedium,
+                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                       ),
                     ),
                     GestureDetector(
@@ -472,10 +475,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: Text(
                         AppLocalizations.of(context)!.login,
                         style: TextStyle(
-                          color: AppColors.primaryGreen,
-                          fontSize: responsive.sp(14),
-                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
+                          color: AppColors.primaryGreen,
+                          fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                         ),
                       ),
                     ),

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:async';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/otp_input_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
+import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../data/cubit/auth_cubit.dart';
 import '../../../data/cubit/auth_states.dart';
@@ -39,6 +43,7 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
   bool _isResending = false;
   String _otpCode = '';
   int _resendCountdown = 0;
+  Timer? _countdownTimer;
 
   @override
   void initState() {
@@ -54,21 +59,27 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
   }
 
   void _startResendCountdown() {
+    // Cancel any existing timer
+    _countdownTimer?.cancel();
+    
     _resendCountdown = 30; // 30 seconds countdown
-    Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           _resendCountdown--;
         });
-        return _resendCountdown > 0;
+        if (_resendCountdown <= 0) {
+          timer.cancel();
+        }
+      } else {
+        timer.cancel();
       }
-      return false;
     });
   }
 
   @override
   void dispose() {
+    _countdownTimer?.cancel();
     for (var controller in _otpControllers) {
       controller.dispose();
     }
@@ -94,8 +105,8 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
         if (state is AuthOtpVerifiedSuccess) {
           CustomSnackbar.show(
             context,
-            title: 'OTP Verified!',
-            message: state.message,
+            title: AppLocalizations.of(context)!.otpVerified,
+            message: AppLocalizations.of(context)!.otpVerifiedSuccessfully,
             type: SnackbarType.success,
           );
           // Navigate to New Password screen with email and OTP
@@ -105,14 +116,14 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
           final firstError = state.fieldErrors.values.first;
           CustomSnackbar.show(
             context,
-            title: 'Validation Error',
+            title: AppLocalizations.of(context)!.validationError,
             message: firstError,
             type: SnackbarType.error,
           );
         } else if (state is AuthOtpVerificationError) {
           CustomSnackbar.show(
             context,
-            title: 'Verification Failed',
+            title: AppLocalizations.of(context)!.verificationFailed,
             message: state.message,
             type: SnackbarType.error,
           );
@@ -170,24 +181,28 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
       children: [
         // OTP Title
         Text(
-          'OTP',
-          style: AppTextStyles.heading2.copyWith(
-            fontSize: responsive.sp(20),
+          AppLocalizations.of(context)!.otp,
+          style: TextStyle(
+            fontSize: 20.sp,
             fontWeight: FontWeight.w500,
             color: const Color(0xFF111827),
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
           ),
+          textAlign: TextAlign.start,
         ),
         
         SizedBox(height: responsive.h(16)),
         
         // Email instruction text
         Text(
-          'Code has been sent to ${widget.email}',
-          textAlign: TextAlign.center,
-          style: AppTextStyles.bodySmall.copyWith(
-            fontSize: responsive.sp(10),
+          AppLocalizations.of(context)!.codeHasBeenSentTo(widget.email),
+          style: TextStyle(
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w400,
             color: AppColors.gray,
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
           ),
+          textAlign: TextAlign.center,
         ),
         
         SizedBox(height: responsive.h(16)),
@@ -199,27 +214,32 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
   }
 
   Widget _buildOtpInputFields(ResponsiveHelper responsive) {
+    final isArabic = context.isArabic;
+    
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: responsive.w(8)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(6, (index) {
-          return Row(
-            children: [
-                 OtpInputField(
-                 controller: _otpControllers[index],
-                 focusNode: _focusNodes[index],
-                 index: index,
-                 isActive: _focusNodes[index].hasFocus,
-                 isFilled: _otpControllers[index].text.isNotEmpty,
-                 onChanged: (value) => _handleOtpChange(value, index),
-                 onTap: () => _handleOtpTap(index),
-                 onBackspace: () => _handleBackspace(index),
-               ),
-              if (index < 5) SizedBox(width: responsive.w(10)),
-            ],
-          );
-        }),
+      child: Directionality(
+        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(6, (index) {
+            return Row(
+              children: [
+                OtpInputField(
+                  controller: _otpControllers[index],
+                  focusNode: _focusNodes[index],
+                  index: index,
+                  isActive: _focusNodes[index].hasFocus,
+                  isFilled: _otpControllers[index].text.isNotEmpty,
+                  onChanged: (value) => _handleOtpChange(value, index),
+                  onTap: () => _handleOtpTap(index),
+                  onBackspace: () => _handleBackspace(index),
+                ),
+                if (index < 5) SizedBox(width: responsive.w(10)),
+              ],
+            );
+          }),
+        ),
       ),
     );
   }
@@ -229,7 +249,7 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
       builder: (context, state) {
         final isLoading = state is AuthLoading;
         return PrimaryButton(
-          text: 'Verify',
+          text: AppLocalizations.of(context)!.verify,
           onPressed: isLoading ? null : _handleVerify,
           isLoading: isLoading,
           height: responsive.h(56),
@@ -248,14 +268,15 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
           onPressed: canResend ? _handleResendOtp : null,
           child: Text(
             _resendCountdown > 0 
-              ? 'Resend OTP in ${_resendCountdown}s'
-              : 'Resend OTP',
+              ? AppLocalizations.of(context)!.resendOtpIn(_resendCountdown)
+              : AppLocalizations.of(context)!.resendOtp,
             style: TextStyle(
-              color: canResend ? AppColors.primaryGreen : AppColors.gray,
-              fontSize: responsive.sp(14),
-              fontFamily: 'Poppins',
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
+              color: canResend ? AppColors.primaryGreen : AppColors.gray,
+              fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
             ),
+            textAlign: TextAlign.start,
           ),
         );
       },
@@ -301,8 +322,8 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
     if (_otpCode.isEmpty) {
       CustomSnackbar.show(
         context,
-        title: 'Validation Error',
-        message: 'Please enter the OTP code',
+        title: AppLocalizations.of(context)!.validationError,
+        message: AppLocalizations.of(context)!.pleaseEnterOtpCode,
         type: SnackbarType.warning,
       );
       return;
@@ -312,8 +333,8 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
     if (_otpCode.length != 6) {
       CustomSnackbar.show(
         context,
-        title: 'Validation Error',
-        message: 'Please enter the complete 6-digit OTP',
+        title: AppLocalizations.of(context)!.validationError,
+        message: AppLocalizations.of(context)!.pleaseEnterCompleteOtp,
         type: SnackbarType.warning,
       );
       return;
@@ -323,8 +344,8 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
     if (!RegExp(r'^\d{6}$').hasMatch(_otpCode)) {
       CustomSnackbar.show(
         context,
-        title: 'Validation Error',
-        message: 'OTP must contain only numbers',
+        title: AppLocalizations.of(context)!.validationError,
+        message: AppLocalizations.of(context)!.otpMustContainOnlyNumbers,
         type: SnackbarType.warning,
       );
       return;
@@ -344,6 +365,9 @@ class _OtpScreenBodyState extends State<OtpScreenBody> {
     
     // Call the sendOtp method from AuthCubit
     context.read<AuthCubit>().sendOtp(widget.email);
+    
+    // Start the countdown again after resending
+    _startResendCountdown();
     
     setState(() {
       _isResending = false;

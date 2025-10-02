@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/responsive_helper.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import '../widgets/new_password_screen_body.dart';
 
 class NewPasswordScreen extends StatelessWidget {
@@ -25,7 +26,7 @@ class NewPasswordScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios,
+            context.isArabic ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
             color: AppColors.black,
             size: responsive.sp(20),
           ),

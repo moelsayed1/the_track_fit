@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class SubscribtionDone extends StatelessWidget {
   const SubscribtionDone({super.key});
@@ -44,31 +46,25 @@ class SubscribtionDone extends StatelessWidget {
                         children: [
                           SizedBox(
                             width: 255.w,
-                            child: Text(
-                              'Congratulations',
+                            child: LocalizedText(
+                              AppLocalizations.of(context)!.congratulations,
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF28A228),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: const Color(0xFF28A228),
-                                fontSize: 20.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.50,
-                              ),
+                              letterSpacing: 0.50,
                             ),
                           ),
                           SizedBox(height: 8.h),
                           SizedBox(
                             width: 255.w,
-                            child: Text(
-                              'You\'ve Upgraded to Premium!',
+                            child: LocalizedText(
+                              AppLocalizations.of(context)!.youveUpgradedToPremium,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF848484),
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: const Color(0xFF848484),
-                                fontSize: 14.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.50,
-                              ),
+                              letterSpacing: 0.50,
                             ),
                           ),
                         ],
@@ -133,17 +129,14 @@ class SubscribtionDone extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'Explore My Plan',
+                            LocalizedText(
+                              AppLocalizations.of(context)!.exploreMyPlan,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                height: 1.50,
-                                letterSpacing: 0.50,
-                              ),
+                              height: 1.50,
+                              letterSpacing: 0.50,
                             ),
                           ],
                         ),
@@ -178,17 +171,14 @@ class SubscribtionDone extends StatelessWidget {
                             children: [
                               SizedBox(
                                 width: 311.w,
-                                child: Text(
-                                  'Go To Home',
+                                child: LocalizedText(
+                                  AppLocalizations.of(context)!.goToHome,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF28A228),
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: const Color(0xFF28A228),
-                                    fontSize: 16.sp,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.50,
-                                    letterSpacing: 0.50,
-                                  ),
+                                  height: 1.50,
+                                  letterSpacing: 0.50,
                                 ),
                               ),
                             ],

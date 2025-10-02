@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_assets.dart';
 import '../utils/responsive_helper.dart';
+import '../bloc/language/language_bloc.dart';
 
 class CustomTextField extends StatefulWidget {
   final String hintText;
@@ -37,72 +39,81 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Container(
-      width: double.infinity,
-      decoration: ShapeDecoration(
-        color: AppColors.white,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: AppColors.grayLight.withValues(alpha: 0.15),
+    return BlocBuilder<LanguageBloc, LanguageState>(
+      builder: (context, languageState) {
+        final currentLanguage = languageState is LanguageLoaded 
+            ? languageState.currentLanguage 
+            : 'ar';
+        final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+
+        return Container(
+          width: double.infinity,
+          decoration: ShapeDecoration(
+            color: AppColors.white,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                width: 1,
+                color: AppColors.grayLight.withValues(alpha: 0.15),
+              ),
+              borderRadius: BorderRadius.circular(30),
+            ),
           ),
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-      child: TextFormField(
-        controller: widget.controller,
-        validator: widget.validator,
-        keyboardType: widget.keyboardType,
-        enabled: widget.enabled,
-        obscureText: widget.isPassword ? _obscurePassword : false,
-        style: TextStyle(
-          color: AppColors.darkGray,
-          fontSize: responsive.sp(12),
-          fontFamily: 'Poppins',
-          fontWeight: FontWeight.w400,
-        ),
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          hintStyle: TextStyle(
-            color: AppColors.grayMedium.withValues(alpha: 0.7),
-            fontSize: responsive.sp(12),
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
+          child: TextFormField(
+            controller: widget.controller,
+            validator: widget.validator,
+            keyboardType: widget.keyboardType,
+            enabled: widget.enabled,
+            obscureText: widget.isPassword ? _obscurePassword : false,
+            style: TextStyle(
+              color: AppColors.darkGray,
+              fontSize: responsive.sp(12),
+              fontFamily: fontFamily,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              hintText: widget.hintText,
+              hintStyle: TextStyle(
+                color: AppColors.grayMedium.withValues(alpha: 0.7),
+                fontSize: responsive.sp(12),
+                fontFamily: fontFamily,
+                fontWeight: FontWeight.w400,
+              ),
+              prefixIcon: _buildPrefixIcon(responsive),
+              suffixIcon: widget.isPassword
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                      icon: _obscurePassword
+                          ? SvgPicture.asset(
+                              AppIcons.eyeSlash,
+                              width: responsive.sp(16),
+                              height: responsive.sp(16),
+                              colorFilter: ColorFilter.mode(
+                                AppColors.grayMedium,
+                                BlendMode.srcIn,
+                              ),
+                            )
+                          : Icon(
+                              Icons.visibility,
+                              size: responsive.sp(16),
+                              color: AppColors.grayMedium,
+                            ),
+                    )
+                  : null,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: responsive.wp(5),
+                vertical: responsive.hp(1.8),
+              ),
+            ),
           ),
-                     prefixIcon: _buildPrefixIcon(responsive),
-                     suffixIcon: widget.isPassword
-               ? IconButton(
-                   onPressed: () {
-                     setState(() {
-                       _obscurePassword = !_obscurePassword;
-                     });
-                   },
-                   icon: _obscurePassword
-                       ? SvgPicture.asset(
-                           AppIcons.eyeSlash,
-                           width: responsive.sp(16),
-                           height: responsive.sp(16),
-                           colorFilter: ColorFilter.mode(
-                             AppColors.grayMedium,
-                             BlendMode.srcIn,
-                           ),
-                         )
-                       : Icon(
-                           Icons.visibility,
-                           size: responsive.sp(16),
-                           color: AppColors.grayMedium,
-                         ),
-                 )
-               : null,
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: responsive.wp(5),
-            vertical: responsive.hp(1.8),
-          ),
-                 ),
-       ),
-     );
-   }
+        );
+      },
+    );
+  }
 
    Widget? _buildPrefixIcon(ResponsiveHelper responsive) {
      if (widget.prefixIconAsset != null) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
-import '../constants/app_text_styles.dart';
 import '../utils/responsive_helper.dart';
+import '../widgets/localized_text.dart';
 
 class QuestionHeader extends StatelessWidget {
   final int currentStep;
@@ -23,13 +23,11 @@ class QuestionHeader extends StatelessWidget {
       children: [
         SizedBox(height: responsive.hp(2)),
         // Title
-        Text(
+        LocalizedText(
           title,
-          style: AppTextStyles.heading1.copyWith(
-            fontSize: responsive.sp(14),
-            fontWeight: FontWeight.w500,
-            color: AppColors.black,
-          ),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: AppColors.black,
           textAlign: TextAlign.center,
         ),
         
@@ -58,14 +56,11 @@ class QuestionHeader extends StatelessWidget {
               ),
             ),
             SizedBox(width: responsive.w(16)),
-            Text(
+            LocalizedText(
               '$currentStep/$totalSteps',
-              style: TextStyle(
-                color: AppColors.primaryGreen,
-                fontSize: responsive.sp(14),
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
-              ),
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: AppColors.primaryGreen,
             ),
           ],
         ),

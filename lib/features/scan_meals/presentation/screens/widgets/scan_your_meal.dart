@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/extensions/localization_extensions.dart';
 
 class ScanYourMeal extends StatefulWidget {
   const ScanYourMeal({super.key});
@@ -75,32 +77,35 @@ class _ScanYourMealState extends State<ScanYourMeal> {
             decoration: const BoxDecoration(
               color: Color(0x26848484),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: SvgPicture.asset(
-                    'assets/logos/arrow_left.svg',
-                    width: 24.w,
-                    height: 24.h,
+             child: Directionality(
+               textDirection: context.textDirection,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: SvgPicture.asset(
+                      'assets/logos/arrow_left.svg',
+                      width: 24.w,
+                      height: 24.h,
+                    ),
                   ),
-                ),
-                SizedBox(width: 8.w),
+                  SizedBox(width: 8.w),
                 Text(
-                  'Scan Your Meal',
+                  AppLocalizations.of(context)!.scanYourMeal,
                   style: TextStyle(
                     color: const Color(0xFF1E1E1E),
                     fontSize: 18.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
                     height: 0.89,
                   ),
                 ),
               ],
             ),
+          ),
           ),
           SizedBox(height: 50.h),
           // Main Content
@@ -121,11 +126,11 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                         borderRadius: BorderRadius.circular(25.r),
                       ),
                       child: Text(
-                        'Scanning...',
+                        AppLocalizations.of(context)!.scanning,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,
-                          fontFamily: 'Poppins',
+                          fontFamily: context.fontFamily,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -283,11 +288,11 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Total 180 Kcal',
+                                  AppLocalizations.of(context)!.totalKcal,
                                   style: TextStyle(
                                     color: const Color(0xFF28A228),
                                     fontSize: 18.sp,
-                                    fontFamily: 'Poppins',
+                                    fontFamily: context.fontFamily,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -327,21 +332,21 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                                 _buildMacroCard(
                                   icon: 'assets/images/carbs.png',
                                   amount: '50g',
-                                  label: 'Carbs',
+                                  label: AppLocalizations.of(context)!.carbs,
                                 ),
                                 SizedBox(width: 12.w),
                                 // Protein
                                 _buildMacroCard(
                                   icon: 'assets/images/carbs2.png',
                                   amount: '50g',
-                                  label: 'Protein',
+                                  label: AppLocalizations.of(context)!.protein,
                                 ),
                                 SizedBox(width: 12.w),
                                 // Fat
                                 _buildMacroCard(
                                   icon: 'assets/images/carbs.png',
                                   amount: '50g',
-                                  label: 'Fat',
+                                  label: AppLocalizations.of(context)!.fat,
                                 ),
                               ],
                             ),
@@ -353,12 +358,12 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                     // Instruction Text
                     Text(
                       _scannedImage != null 
-                        ? 'Meal scanned successfully!'
-                        : 'Tap the camera button to scan your meal',
+                        ? AppLocalizations.of(context)!.mealScannedSuccessfully
+                        : AppLocalizations.of(context)!.tapCameraToScan,
                       style: TextStyle(
                         color: const Color(0xFF666666),
                         fontSize: 16.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w400,
                       ),
                       textAlign: TextAlign.center,
@@ -407,7 +412,7 @@ class _ScanYourMealState extends State<ScanYourMeal> {
             style: TextStyle(
               color: const Color(0xFF28A228),
               fontSize: 16.sp,
-              fontFamily: 'Poppins',
+              fontFamily: context.fontFamily,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -416,7 +421,7 @@ class _ScanYourMealState extends State<ScanYourMeal> {
             style: TextStyle(
               color: const Color(0xFF999999),
               fontSize: 14.sp,
-              fontFamily: 'Poppins',
+              fontFamily: context.fontFamily,
               fontWeight: FontWeight.w400,
             ),
           ),

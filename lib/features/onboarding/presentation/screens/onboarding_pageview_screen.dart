@@ -5,6 +5,7 @@ import 'package:the_track_fit/features/onboarding/presentation/screens/onboardin
 import 'package:the_track_fit/features/onboarding/presentation/screens/onboarding4_screen.dart';
 import '../../../../core/widgets/page_indicator.dart';
 import '../../../../core/widgets/custom_button.dart';
+import '../../../../core/widgets/localized_text.dart';
 import '../../../../core/utils/responsive_helper.dart';
 import '../../../../core/constants/app_colors.dart';
 import 'onboarding1_screen.dart';
@@ -137,22 +138,19 @@ class OnboardingScreenWrapper extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    LocalizedText(
                       "Don't have an account? ",
-                      style: TextStyle(
-                        color: AppColors.grayMedium,
-                        fontSize: ResponsiveHelper(context).sp(14),
-                      ),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.grayMedium,
                     ),
                     GestureDetector(
                       onTap: () => context.push(AppRouter.signup),
-                      child: Text(
+                      child: LocalizedText(
                         "Register",
-                        style: TextStyle(
-                          color: AppColors.primaryGreen,
-                          fontSize: ResponsiveHelper(context).sp(14),
-                          fontWeight: FontWeight.w600,
-                        ),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryGreen,
                       ),
                     ),
                   ],

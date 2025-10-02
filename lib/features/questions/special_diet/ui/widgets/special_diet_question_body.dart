@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
@@ -43,7 +45,7 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
       
       if (question != null) {
         setState(() {
-          _questionText = question.enText;
+          _questionText = question.localizedText;
         });
       } else {
         setState(() {
@@ -65,14 +67,16 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         // Common Header
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -80,14 +84,12 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
         // Question
         Container(
           width: double.infinity,
-          alignment: Alignment.centerLeft,
-          child: Text(
+          alignment: AlignmentDirectional.centerStart,
+          child: LocalizedText(
             _questionText,
-            style: AppTextStyles.heading2.copyWith(
-              fontSize: responsive.sp(24),
-              fontWeight: FontWeight.w600,
-              color: AppColors.black,
-            ),
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
             textAlign: TextAlign.start,
           ),
         ),
@@ -104,8 +106,9 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
         // Continue Button
         _buildContinueButton(responsive),
         
-        SizedBox(height: responsive.hp(4)),
-      ],
+        SizedBox(height: responsive.hp(2)),
+        ],
+      ),
     );
   }
 
@@ -128,17 +131,19 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
         maxLines: 8, // Multiple lines for textarea
         maxLength: 500, // Character limit
         decoration: InputDecoration(
-          hintText: 'Describe your special diet requirements (optional)',
-          hintStyle: AppTextStyles.bodyMedium.copyWith(
-            fontSize: responsive.sp(16),
+          hintText: AppLocalizations.of(context)!.specialDietHint,
+          hintStyle: TextStyle(
+            fontSize: 16,
+            fontFamily: context.fontFamily,
             color: const Color(0xFF848484),
           ),
           border: InputBorder.none,
           contentPadding: EdgeInsets.zero,
           counterText: '', // Hide character counter
         ),
-        style: AppTextStyles.bodyMedium.copyWith(
-          fontSize: responsive.sp(16),
+        style: TextStyle(
+          fontSize: 16,
+          fontFamily: context.fontFamily,
           color: AppColors.black,
         ),
         textAlignVertical: TextAlignVertical.top,
@@ -151,7 +156,7 @@ class _SpecialDietQuestionBodyState extends State<SpecialDietQuestionBody> {
       isEnabled: true, // Always enabled for optional text input
       isLoading: _isLoading,
       onPressed: _handleContinue,
-      text: 'Complete Setup',
+      text: AppLocalizations.of(context)!.completeSetup,
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/constants/app_assets.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
 import 'dart:io';
 
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
@@ -117,9 +118,9 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
       });
       
       // Handle permission denied or other errors
-      String errorMessage = 'Failed to capture image: ${e.toString()}';
+      String errorMessage = AppLocalizations.of(context)!.failedToCaptureImage + ': ${e.toString()}';
       if (e.toString().contains('permission') || e.toString().contains('denied')) {
-        errorMessage = 'Camera permission is required to scan exercises. Please enable camera access in your device settings.';
+        errorMessage = AppLocalizations.of(context)!.cameraPermissionRequired;
       }
       
       _showErrorDialog(errorMessage);
@@ -141,9 +142,14 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
     // 3. Providing feedback to the user
     
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Image captured! Processing for exercise recognition...'),
-        backgroundColor: Color(0xFF28A228),
+      SnackBar(
+        content: LocalizedText(
+          AppLocalizations.of(context)!.imageCapturedProcessing,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+        backgroundColor: const Color(0xFF28A228),
       ),
     );
   }
@@ -153,12 +159,27 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.error),
-          content: Text(message),
+          title: LocalizedText(
+            AppLocalizations.of(context)!.error,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1E1E1E),
+          ),
+          content: LocalizedText(
+            message,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF1E1E1E),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(AppLocalizations.of(context)!.ok),
+              child: LocalizedText(
+                AppLocalizations.of(context)!.ok,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF28A228),
+              ),
             ),
           ],
         );
@@ -187,35 +208,35 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
               decoration: const BoxDecoration(
                 color: Color(0x26848484),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset(
-                      'assets/logos/arrow_left.svg',
-                      width: responsiveHelper.w(24),
-                      height: responsiveHelper.h(24),
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF1E1E1E),
-                        BlendMode.srcIn,
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: SvgPicture.asset(
+                        'assets/logos/arrow_left.svg',
+                        width: responsiveHelper.w(24),
+                        height: responsiveHelper.h(24),
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF1E1E1E),
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: responsiveHelper.w(8)),
-                  Text(
-                    AppLocalizations.of(context)!.scanYourExercise,
-                    style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
+                    SizedBox(width: responsiveHelper.w(8)),
+                    LocalizedText(
+                      AppLocalizations.of(context)!.scanYourExercise,
                       fontSize: responsiveHelper.sp(18),
-                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1E1E1E),
                       height: 0.89,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             
@@ -285,14 +306,11 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                                           ),
                                         ),
                                         SizedBox(height: 8.h),
-                                        Text(
+                                        LocalizedText(
                                           AppLocalizations.of(context)!.tryAgainWithBetterPhoto,
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: responsiveHelper.sp(14),
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                          fontSize: responsiveHelper.sp(14),
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
                                         ),
                                       ],
                                     ),
@@ -376,14 +394,11 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                       borderRadius: BorderRadius.circular(30.r),
                     ),
                     child: Center(
-                      child: Text(
+                      child: LocalizedText(
                         _capturedImage != null ? AppLocalizations.of(context)!.clearImage : AppLocalizations.of(context)!.stopScan,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: responsiveHelper.sp(16),
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
+                        fontSize: responsiveHelper.sp(16),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                   ),

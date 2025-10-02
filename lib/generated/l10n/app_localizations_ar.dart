@@ -273,6 +273,72 @@ class AppLocalizationsAr extends AppLocalizations {
   String get continueText => 'متابعة';
 
   @override
+  String get specialDietHint => 'اوصف متطلبات نظامك الغذائي الخاص (اختياري)';
+
+  @override
+  String get injuryHint => 'اوصف أي إصابات حالية أو سابقة (اختياري)';
+
+  @override
+  String get buildingPlan => 'نحن نبني خطتك الشخصية';
+
+  @override
+  String get journeyStarts => 'رحلتك تبدأ خلال ثوانٍ قليلة.';
+
+  @override
+  String get scan => 'مسح';
+
+  @override
+  String get packages => 'الباقات';
+
+  @override
+  String get sat => 'سبت';
+
+  @override
+  String get sun => 'أحد';
+
+  @override
+  String get mon => 'اثنين';
+
+  @override
+  String get tue => 'ثلاثاء';
+
+  @override
+  String get wed => 'أربعاء';
+
+  @override
+  String get thu => 'خميس';
+
+  @override
+  String get fri => 'جمعة';
+
+  @override
+  String get scanYourMeal => 'مسح وجبتك';
+
+  @override
+  String get scanning => 'جاري المسح...';
+
+  @override
+  String get totalKcal => 'إجمالي 180 سعرة';
+
+  @override
+  String get carbs => 'الكربوهيدرات';
+
+  @override
+  String get protein => 'البروتين';
+
+  @override
+  String get fat => 'الدهون';
+
+  @override
+  String get mealScannedSuccessfully => 'تم مسح الوجبة بنجاح!';
+
+  @override
+  String get tapCameraToScan => 'اضغط على زر الكاميرا لمسح وجبتك';
+
+  @override
+  String get completeSetup => 'إكمال الإعداد';
+
+  @override
   String get done => 'تم';
 
   @override
@@ -1105,15 +1171,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get visceralFat => 'الدهون الحشوية';
 
   @override
-  String get protein => 'البروتين';
-
-  @override
-  String get carbs => 'الكربوهيدرات';
-
-  @override
-  String get fat => 'الدهون';
-
-  @override
   String get fiber => 'الألياف';
 
   @override
@@ -1711,12 +1768,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get last6Months => 'آخر 6 أشهر';
 
   @override
-  String get scan => 'مسح';
-
-  @override
-  String get packages => 'الباقات';
-
-  @override
   String get noEquipment => 'بدون معدات';
 
   @override
@@ -1977,7 +2028,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
 
   @override
-  String get pleaseConfirmYourPassword => 'يرجى تأكيد كلمة المرور';
+  String get pleaseConfirmYourPassword => 'يرجى تأكيد كلمة مرورك';
 
   @override
   String get success => 'نجح!';
@@ -2022,9 +2073,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get meals => 'الوجبات';
-
-  @override
-  String get scanYourMeal => 'مسح وجبتك';
 
   @override
   String get tapToScanYourFood => 'اضغط لمسح طعامك';
@@ -2160,7 +2208,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePasswordFailed => 'فشل تغيير كلمة المرور';
 
   @override
-  String get otpVerified => 'تم التحقق من الرمز';
+  String get otpVerified => 'تم التحقق من الكود!';
 
   @override
   String get verificationFailed => 'فشل التحقق';
@@ -2172,13 +2220,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginFailed => 'فشل تسجيل الدخول';
 
   @override
+  String get googleSignInSuccessful => 'تم تسجيل الدخول عبر Google بنجاح!';
+
+  @override
+  String get googleSignInFailed => 'فشل تسجيل الدخول عبر Google';
+
+  @override
   String get buildingYourPlan => 'جاري بناء خطتك';
 
   @override
   String get journeyStartsSoon => 'رحلتك ستبدأ قريباً';
 
   @override
-  String get imageCapturedProcessing => 'تم التقاط الصورة، جاري المعالجة';
+  String get imageCapturedProcessing =>
+      'تم التقاط الصورة! جاري معالجة التمرين...';
 
   @override
   String get currentPasswordPlaceholder => 'كلمة المرور الحالية';
@@ -2379,7 +2434,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get startShopping => 'ابدأ التسوق';
 
   @override
-  String get congratulations => 'تهانينا!';
+  String get congratulations => 'تهانينا';
 
   @override
   String get yourOrderHasBeenConfirmed => 'تم تأكيد طلبك';
@@ -2442,4 +2497,138 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get startShoppingToAddItemsToYourCart =>
       'ابدأ التسوق لإضافة العناصر إلى سلتك';
+
+  @override
+  String get selectType => 'اختر النوع';
+
+  @override
+  String get errorLoadingCategories => 'خطأ في تحميل الفئات';
+
+  @override
+  String get somethingWentWrong => 'حدث خطأ ما';
+
+  @override
+  String get unableToLoadWorkoutTypes => 'لا يمكن تحميل أنواع التمارين';
+
+  @override
+  String get pleaseCheckYourConnection =>
+      'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى';
+
+  @override
+  String get searchForExercises => 'البحث عن التمارين';
+
+  @override
+  String get allExercises => 'جميع التمارين';
+
+  @override
+  String get tryModifyingSearchOrFilters => 'حاول تعديل البحث أو الفلاتر';
+
+  @override
+  String get selectLocation => 'اختر المكان';
+
+  @override
+  String get selectEquipment => 'اختر المعدات';
+
+  @override
+  String get exerciseDetail => 'تفاصيل التمرين';
+
+  @override
+  String get noDescriptionAvailable => 'لا يوجد وصف متاح لهذا التمرين.';
+
+  @override
+  String get startYourExercise => 'ابدأ تمرينك';
+
+  @override
+  String get failedToCaptureImage => 'فشل في التقاط الصورة';
+
+  @override
+  String get cameraPermissionRequired =>
+      'مطلوب إذن الكاميرا لمسح التمارين. يرجى تفعيل الوصول للكاميرا في إعدادات الجهاز.';
+
+  @override
+  String get youveUpgradedToPremium => 'لقد قمت بالترقية إلى المميز!';
+
+  @override
+  String get exploreMyPlan => 'استكشف خطتي';
+
+  @override
+  String get goToHome => 'اذهب إلى الرئيسية';
+
+  @override
+  String get forgetPasswordInstructions =>
+      'سنرسل رابط إعادة تعيين إلى بريدك الإلكتروني.';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get resendCode => 'إعادة إرسال الكود؟';
+
+  @override
+  String get pleaseEnterValidEmailFirst =>
+      'يرجى إدخال بريد إلكتروني صحيح أولاً';
+
+  @override
+  String get pleaseEnterValidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get otp => 'كود التحقق';
+
+  @override
+  String codeHasBeenSentTo(String email) {
+    return 'تم إرسال الكود إلى $email';
+  }
+
+  @override
+  String get verify => 'تحقق';
+
+  @override
+  String resendOtpIn(int seconds) {
+    return 'إعادة إرسال الكود خلال $seconds ثانية';
+  }
+
+  @override
+  String get resendOtp => 'إعادة إرسال الكود';
+
+  @override
+  String get pleaseEnterOtpCode => 'يرجى إدخال كود التحقق';
+
+  @override
+  String get pleaseEnterCompleteOtp =>
+      'يرجى إدخال كود التحقق المكون من 6 أرقام';
+
+  @override
+  String get otpMustContainOnlyNumbers =>
+      'يجب أن يحتوي كود التحقق على أرقام فقط';
+
+  @override
+  String get createYourNewPassword => 'أنشئ كلمة مرورك الجديدة';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
+  String get passwordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get passwordMustBeAtLeast6Characters =>
+      'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+
+  @override
+  String get yourAccountIsReadyToUse => 'حسابك جاهز للاستخدام';
+
+  @override
+  String get goToLoginPage => 'الذهاب إلى صفحة تسجيل الدخول';
+
+  @override
+  String get otpSentSuccessfully =>
+      'تم إرسال كود التحقق بنجاح! تحقق من بريدك الإلكتروني للحصول على كود التحقق';
+
+  @override
+  String get otpVerifiedSuccessfully =>
+      'تم التحقق من كود التحقق بنجاح! يمكنك الآن إنشاء كلمة مرور جديدة';
+
+  @override
+  String get passwordResetSuccessfully =>
+      'تم إعادة تعيين كلمة المرور بنجاح! حسابك جاهز للاستخدام';
 }

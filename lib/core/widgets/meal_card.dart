@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_colors.dart';
+import '../extensions/localization_extensions.dart';
 
 class MealCard extends StatelessWidget {
   final String mealType;
@@ -64,7 +65,7 @@ class MealCard extends StatelessWidget {
                   style: TextStyle(
                     color: AppColors.black,
                     fontSize: 16.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -74,7 +75,7 @@ class MealCard extends StatelessWidget {
                   style: TextStyle(
                     color: const Color(0xFF6C757D),
                     fontSize: 14.sp,
-                    fontFamily: 'Poppins',
+                    fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -92,7 +93,7 @@ class MealCard extends StatelessWidget {
                       style: TextStyle(
                         color: AppColors.black,
                         fontSize: 14.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

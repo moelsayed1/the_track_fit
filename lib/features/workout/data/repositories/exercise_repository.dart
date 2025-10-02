@@ -238,6 +238,7 @@ class ExerciseRepository {
           return WorkoutType.fromApiData({
             'id': apiData.id,
             'en_name': apiData.enName,
+            'ar_name': apiData.arName,  // ✅ Added missing ar_name field
             'icon': apiData.icon,
             'exercises': apiData.exercises.map((exerciseData) => {
               'id': exerciseData.id,

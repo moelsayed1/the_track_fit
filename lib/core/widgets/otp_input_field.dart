@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 import '../utils/responsive_helper.dart';
+import '../extensions/localization_extensions.dart';
 
 class OtpInputFormatter extends TextInputFormatter {
   final VoidCallback? onBackspace;
@@ -49,6 +50,7 @@ class OtpInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
+    final isArabic = context.isArabic;
     
     return Container(
       width: responsive.w(40),
@@ -95,7 +97,7 @@ class OtpInputField extends StatelessWidget {
             fontWeight: FontWeight.w700,
             color: const Color(0xFF111827), // Dark gray for better visibility
             height: 1.0,
-            fontFamily: 'Poppins',
+            fontFamily: isArabic ? 'Cairo' : 'Poppins',
           ),
           decoration: const InputDecoration(
             border: InputBorder.none,

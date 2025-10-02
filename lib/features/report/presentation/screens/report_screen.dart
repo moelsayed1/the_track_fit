@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
+import 'package:the_track_fit/core/extensions/localization_extensions.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class ReportScreen extends StatefulWidget {
@@ -50,14 +52,11 @@ class _ReportScreenState extends State<ReportScreen> {
           children: [
             SizedBox(height: responsiveHelper.h(0)),
             Center(
-              child: Text(
+              child: LocalizedText(
                 AppLocalizations.of(context)!.report,
-                style: TextStyle(
-                  color: const Color(0xFF1E1E1E),
-                  fontSize: responsiveHelper.sp(24),
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.w600,
-                ),
+                fontSize: responsiveHelper.sp(24),
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1E1E1E),
               ),
             ),
             SizedBox(height: responsiveHelper.h(30)),
@@ -132,24 +131,19 @@ class _ReportScreenState extends State<ReportScreen> {
             height: responsiveHelper.h(32),
           ),
           SizedBox(height: responsiveHelper.h(12)),
-          Text(
+          LocalizedText(
             value,
-            style: TextStyle(
-              color: const Color(0xFF1E1E1E),
-              fontSize: responsiveHelper.sp(24),
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-            ),
+            fontSize: responsiveHelper.sp(24),
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1E1E1E),
           ),
-          SizedBox(height: responsiveHelper.h(8)),
-          Text(
+          SizedBox(height: responsiveHelper.h(12)),
+          LocalizedText(
             unit,
-            style: TextStyle(
-              color: const Color(0xFF848484),
-              fontSize: responsiveHelper.sp(14),
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-            ),
+            textAlign: TextAlign.center,
+            fontSize: responsiveHelper.sp(14),
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF848484),
           ),
         ],
       ),
@@ -178,14 +172,11 @@ class _ReportScreenState extends State<ReportScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    LocalizedText(
                       AppLocalizations.of(context)!.statistics,
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: responsiveHelper.sp(18),
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                      ),
+                      fontSize: responsiveHelper.sp(18),
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1E1E1E),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -211,14 +202,11 @@ class _ReportScreenState extends State<ReportScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
+                            LocalizedText(
                               selectedPeriod,
-                              style: TextStyle(
-                                color: const Color(0xFF1E1E1E),
-                                fontSize: responsiveHelper.sp(14),
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
+                              fontSize: responsiveHelper.sp(14),
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF1E1E1E),
                             ),
                             SizedBox(width: responsiveHelper.w(8)),
                             Icon(
@@ -272,8 +260,8 @@ class _ReportScreenState extends State<ReportScreen> {
                             label,
                             TextStyle(
                               color: Colors.black,
-                              fontSize: responsiveHelper.sp(12),
-                              fontFamily: 'Poppins',
+                              fontSize: responsiveHelper.sp(16),
+                              fontFamily: context.fontFamily,
                               fontWeight: FontWeight.w500,
                             ),
                           );
@@ -291,15 +279,12 @@ class _ReportScreenState extends State<ReportScreen> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             return Padding(
-                              padding: EdgeInsets.only(top: responsiveHelper.h(4)),
-                              child: Text(
+                              padding: EdgeInsets.symmetric(vertical: responsiveHelper.h(1)),
+                              child: LocalizedText(
                                 stats[value.toInt()]["day"].toString(),
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: responsiveHelper.sp(12),
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                fontSize: responsiveHelper.sp(12),
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
                               ),
                             );
                           },
@@ -432,15 +417,13 @@ class _ReportScreenState extends State<ReportScreen> {
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8.r),
         ),
-        child: Text(
+        child: LocalizedText(
           text,
-          style: TextStyle(
-            fontSize: responsiveHelper.sp(14),
-            color: Colors.black,
-            fontWeight: selectedPeriod == text
-                ? FontWeight.w600
-                : FontWeight.w400,
-          ),
+          fontSize: responsiveHelper.sp(14),
+          fontWeight: selectedPeriod == text
+              ? FontWeight.w600
+              : FontWeight.w400,
+          color: Colors.black,
         ),
       ),
     );
@@ -462,14 +445,11 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ),
         SizedBox(width: responsiveHelper.w(6)),
-        Text(
+        LocalizedText(
           text,
-          style: TextStyle(
-            color: const Color(0xFF848484),
-            fontSize: responsiveHelper.sp(14),
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w400,
-          ),
+          fontSize: responsiveHelper.sp(14),
+          fontWeight: FontWeight.w400,
+          color: const Color(0xFF848484),
         )
       ],
     );
@@ -505,14 +485,11 @@ class _ReportScreenState extends State<ReportScreen> {
             height: responsiveHelper.h(16),
           ),
           SizedBox(width: responsiveHelper.w(6)),
-          Text(
+          LocalizedText(
             label,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: responsiveHelper.sp(12),
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-            ),
+            fontSize: responsiveHelper.sp(12),
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
           ),
         ],
       ),

@@ -626,6 +626,138 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueText;
 
+  /// No description provided for @specialDietHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your special diet requirements (optional)'**
+  String get specialDietHint;
+
+  /// No description provided for @injuryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe any current or previous injuries (optional)'**
+  String get injuryHint;
+
+  /// No description provided for @buildingPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re building your personalized plan'**
+  String get buildingPlan;
+
+  /// No description provided for @journeyStarts.
+  ///
+  /// In en, this message translates to:
+  /// **'Your journey starts in a few seconds.'**
+  String get journeyStarts;
+
+  /// No description provided for @scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get scan;
+
+  /// No description provided for @packages.
+  ///
+  /// In en, this message translates to:
+  /// **'Packages'**
+  String get packages;
+
+  /// No description provided for @sat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get sat;
+
+  /// No description provided for @sun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sun;
+
+  /// No description provided for @mon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get mon;
+
+  /// No description provided for @tue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tue;
+
+  /// No description provided for @wed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wed;
+
+  /// No description provided for @thu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thu;
+
+  /// No description provided for @fri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get fri;
+
+  /// No description provided for @scanYourMeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Your Meal'**
+  String get scanYourMeal;
+
+  /// No description provided for @scanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning...'**
+  String get scanning;
+
+  /// No description provided for @totalKcal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total 180 Kcal'**
+  String get totalKcal;
+
+  /// No description provided for @carbs.
+  ///
+  /// In en, this message translates to:
+  /// **'Carbs'**
+  String get carbs;
+
+  /// No description provided for @protein.
+  ///
+  /// In en, this message translates to:
+  /// **'Protein'**
+  String get protein;
+
+  /// No description provided for @fat.
+  ///
+  /// In en, this message translates to:
+  /// **'Fat'**
+  String get fat;
+
+  /// No description provided for @mealScannedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal scanned successfully!'**
+  String get mealScannedSuccessfully;
+
+  /// No description provided for @tapCameraToScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the camera button to scan your meal'**
+  String get tapCameraToScan;
+
+  /// No description provided for @completeSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Setup'**
+  String get completeSetup;
+
   /// No description provided for @done.
   ///
   /// In en, this message translates to:
@@ -2258,24 +2390,6 @@ abstract class AppLocalizations {
   /// **'Visceral Fat'**
   String get visceralFat;
 
-  /// No description provided for @protein.
-  ///
-  /// In en, this message translates to:
-  /// **'Protein'**
-  String get protein;
-
-  /// No description provided for @carbs.
-  ///
-  /// In en, this message translates to:
-  /// **'Carbs'**
-  String get carbs;
-
-  /// No description provided for @fat.
-  ///
-  /// In en, this message translates to:
-  /// **'Fat'**
-  String get fat;
-
   /// No description provided for @fiber.
   ///
   /// In en, this message translates to:
@@ -3464,18 +3578,6 @@ abstract class AppLocalizations {
   /// **'Last 6 months'**
   String get last6Months;
 
-  /// No description provided for @scan.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan'**
-  String get scan;
-
-  /// No description provided for @packages.
-  ///
-  /// In en, this message translates to:
-  /// **'Packages'**
-  String get packages;
-
   /// No description provided for @noEquipment.
   ///
   /// In en, this message translates to:
@@ -4077,12 +4179,6 @@ abstract class AppLocalizations {
   /// **'Meals'**
   String get meals;
 
-  /// No description provided for @scanYourMeal.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan Your Meal'**
-  String get scanYourMeal;
-
   /// No description provided for @tapToScanYourFood.
   ///
   /// In en, this message translates to:
@@ -4370,6 +4466,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login Failed'**
   String get loginFailed;
+
+  /// No description provided for @googleSignInSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In Successful!'**
+  String get googleSignInSuccessful;
+
+  /// No description provided for @googleSignInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Sign-In Failed'**
+  String get googleSignInFailed;
 
   /// No description provided for @buildingYourPlan.
   ///
@@ -4770,7 +4878,7 @@ abstract class AppLocalizations {
   /// No description provided for @congratulations.
   ///
   /// In en, this message translates to:
-  /// **'Congratulations!'**
+  /// **'Congratulations'**
   String get congratulations;
 
   /// No description provided for @yourOrderHasBeenConfirmed.
@@ -4892,6 +5000,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start shopping to add items to your cart'**
   String get startShoppingToAddItemsToYourCart;
+
+  /// No description provided for @selectType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Type'**
+  String get selectType;
+
+  /// No description provided for @errorLoadingCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading categories'**
+  String get errorLoadingCategories;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @unableToLoadWorkoutTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load workout types'**
+  String get unableToLoadWorkoutTypes;
+
+  /// No description provided for @pleaseCheckYourConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again'**
+  String get pleaseCheckYourConnection;
+
+  /// No description provided for @searchForExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for exercises'**
+  String get searchForExercises;
+
+  /// No description provided for @allExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'All exercises'**
+  String get allExercises;
+
+  /// No description provided for @tryModifyingSearchOrFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try modifying the search or filters'**
+  String get tryModifyingSearchOrFilters;
+
+  /// No description provided for @selectLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Location'**
+  String get selectLocation;
+
+  /// No description provided for @selectEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Equipment'**
+  String get selectEquipment;
+
+  /// No description provided for @exerciseDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise Detail'**
+  String get exerciseDetail;
+
+  /// No description provided for @noDescriptionAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No description available for this exercise.'**
+  String get noDescriptionAvailable;
+
+  /// No description provided for @startYourExercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Your Exercise'**
+  String get startYourExercise;
+
+  /// No description provided for @failedToCaptureImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to capture image'**
+  String get failedToCaptureImage;
+
+  /// No description provided for @cameraPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission is required to scan exercises. Please enable camera access in your device settings.'**
+  String get cameraPermissionRequired;
+
+  /// No description provided for @youveUpgradedToPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve Upgraded to Premium!'**
+  String get youveUpgradedToPremium;
+
+  /// No description provided for @exploreMyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore My Plan'**
+  String get exploreMyPlan;
+
+  /// No description provided for @goToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Go To Home'**
+  String get goToHome;
+
+  /// No description provided for @forgetPasswordInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a reset link to your email.'**
+  String get forgetPasswordInstructions;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @resendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Code?'**
+  String get resendCode;
+
+  /// No description provided for @pleaseEnterValidEmailFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email first'**
+  String get pleaseEnterValidEmailFirst;
+
+  /// No description provided for @pleaseEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get pleaseEnterValidEmail;
+
+  /// No description provided for @otp.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP'**
+  String get otp;
+
+  /// No description provided for @codeHasBeenSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Code has been sent to {email}'**
+  String codeHasBeenSentTo(String email);
+
+  /// No description provided for @verify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verify;
+
+  /// No description provided for @resendOtpIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP in {seconds}s'**
+  String resendOtpIn(int seconds);
+
+  /// No description provided for @resendOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP'**
+  String get resendOtp;
+
+  /// No description provided for @pleaseEnterOtpCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the OTP code'**
+  String get pleaseEnterOtpCode;
+
+  /// No description provided for @pleaseEnterCompleteOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the complete 6-digit OTP'**
+  String get pleaseEnterCompleteOtp;
+
+  /// No description provided for @otpMustContainOnlyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP must contain only numbers'**
+  String get otpMustContainOnlyNumbers;
+
+  /// No description provided for @createYourNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your new password'**
+  String get createYourNewPassword;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequired;
+
+  /// No description provided for @passwordMustBeAtLeast6Characters.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordMustBeAtLeast6Characters;
+
+  /// No description provided for @yourAccountIsReadyToUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Account is ready to use'**
+  String get yourAccountIsReadyToUse;
+
+  /// No description provided for @goToLoginPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Login Page'**
+  String get goToLoginPage;
+
+  /// No description provided for @otpSentSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent successfully! Check your email for the verification code'**
+  String get otpSentSuccessfully;
+
+  /// No description provided for @otpVerifiedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP verified successfully! You can now create a new password'**
+  String get otpVerifiedSuccessfully;
+
+  /// No description provided for @passwordResetSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully! Your account is ready to use'**
+  String get passwordResetSuccessfully;
 }
 
 class _AppLocalizationsDelegate

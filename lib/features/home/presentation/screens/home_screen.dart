@@ -150,7 +150,7 @@ class _Header extends StatelessWidget {
               style: TextStyle(
                 color: const Color(0xFF1E1E1E),
                 fontSize: 24.sp,
-                fontFamily: 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -248,65 +248,67 @@ class _GreetingSection extends StatelessWidget {
           children: [
             Row(
               children: [
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    // Show shimmer loading while user data is being fetched
-                    if (state is AuthLoading || state is AuthInitial) {
-                      return ShimmerLoading(
-                        child: Container(
-                          width: 120.w,
-                          height: 20.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                      );
-                    }
-
-                    // Show actual user name when loaded
-                    String userName = '';
-
-                    if (state is AuthUserProfileLoaded) {
-                      userName = state.name;
-                    } else if (state is AuthUserAlreadyLoggedIn) {
-                      userName = state.name;
-                    } else if (state is AuthRegisterSuccessWithProfile) {
-                      userName = state.name;
-                    } else if (state is AuthLoginSuccessWithProfile) {
-                      userName = state.name;
-                    } else if (state is AuthGoogleSignInSuccess) {
-                      userName = state.name;
-                    }
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${AppLocalizations.of(context)!.hi} $userName! 👋',
-                          style: TextStyle(
-                            color: const Color(0xFF1E1E1E),
-                            fontSize: 16.sp,
-                            fontFamily: context.fontFamily,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        SizedBox(
-                          width: 300.w,
-                          child: Text(
-                            AppLocalizations.of(context)!.readyToStartYourJourney,
-                            style: TextStyle(
-                              color: const Color(0xBF848484),
-                              fontSize: 14.sp,
-                              fontFamily: context.fontFamily,
-                              fontWeight: FontWeight.w400,
+                Expanded(
+                  child: BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      // Show shimmer loading while user data is being fetched
+                      if (state is AuthLoading || state is AuthInitial) {
+                        return ShimmerLoading(
+                          child: Container(
+                            width: 120.w,
+                            height: 20.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
+                        );
+                      }
+
+                      // Show actual user name when loaded
+                      String userName = '';
+
+                      if (state is AuthUserProfileLoaded) {
+                        userName = state.name;
+                      } else if (state is AuthUserAlreadyLoggedIn) {
+                        userName = state.name;
+                      } else if (state is AuthRegisterSuccessWithProfile) {
+                        userName = state.name;
+                      } else if (state is AuthLoginSuccessWithProfile) {
+                        userName = state.name;
+                      } else if (state is AuthGoogleSignInSuccess) {
+                        userName = state.name;
+                      }
+
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${AppLocalizations.of(context)!.hi} $userName! 👋',
+                              style: TextStyle(
+                                color: const Color(0xFF1E1E1E),
+                                fontSize: 16.sp,
+                                fontFamily: context.fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 2.h),
+                            Text(
+                              AppLocalizations.of(context)!.readyToStartYourJourney,
+                              style: TextStyle(
+                                color: const Color(0xBF848484),
+                                fontSize: 14.sp,
+                                fontFamily: context.fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

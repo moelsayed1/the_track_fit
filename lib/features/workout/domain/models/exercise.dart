@@ -88,7 +88,7 @@ class Exercise {
 
   // Factory method to create Exercise from API data
   factory Exercise.fromApiData(Map<String, dynamic> apiData) {
-    final gifPath = apiData['gif'] as String;
+    final gifPath = apiData['gif'] as String? ?? '';
     final fullImagePath = gifPath.startsWith('http') 
         ? gifPath 
         : 'https://thetrackfit.com/storage/$gifPath';
@@ -107,7 +107,7 @@ class Exercise {
     );
     
     return Exercise(
-      id: apiData['id'].toString(),
+      id: apiData['id']?.toString() ?? '',
       title: localizedName.isNotEmpty ? localizedName : (apiData['en_name'] as String? ?? 'Exercise'),
       subtitle: localizedDescription.isNotEmpty ? localizedDescription : 'No description available',
       imagePath: fullImagePath,
@@ -118,7 +118,7 @@ class Exercise {
       location: apiData['location'] as String?,
       equipment: apiData['equipment'] as String?,
       goal: apiData['goal'] as String?,
-      categoryId: apiData['exercise_category_id'].toString(),
+      categoryId: apiData['exercise_category_id']?.toString(),
       sets: apiData['sets'] as int?,
       reps: apiData['reps'] as int?,
       arName: apiData['ar_name'] as String?,
@@ -168,14 +168,27 @@ class Exercise {
 
   // Helper method to format sets and reps as a display string
   String get setsAndRepsDisplay {
+    final currentLang = LanguageService.instance.currentLanguage;
+    final isArabic = currentLang == 'ar';
+
+    String setsLabel = isArabic ? 'مجموعات' : 'Sets';
+    String repsLabel = isArabic ? 'تكرارات' : 'reps';
+    String xLabel = isArabic ? '×' : 'x';
+    String noDataLabel = isArabic ? 'لا يوجد مجموعات/تكرارات محددة' : 'No sets/reps specified';
+
     if (sets != null && reps != null) {
-      return '$sets Sets x $reps reps';
+      // In Arabic, the order is usually: [عدد] [الاسم] × [عدد] [الاسم]
+      if (isArabic) {
+        return '$sets $setsLabel $xLabel $reps $repsLabel';
+      } else {
+        return '$sets $setsLabel $xLabel $reps $repsLabel';
+      }
     } else if (sets != null) {
-      return '$sets Sets';
+      return isArabic ? '$sets $setsLabel' : '$sets $setsLabel';
     } else if (reps != null) {
-      return '$reps reps';
+      return isArabic ? '$reps $repsLabel' : '$reps $repsLabel';
     } else {
-      return 'No sets/reps specified';
+      return noDataLabel;
     }
   }
 }
