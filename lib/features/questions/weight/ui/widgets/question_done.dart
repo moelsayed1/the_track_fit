@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import '../../../../../core/router/app_router.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class QuestionDone extends StatefulWidget {
   const QuestionDone({super.key});
@@ -67,10 +69,12 @@ class _QuestionDoneState extends State<QuestionDone>
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA), // Light off-white background
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      body: Directionality(
+        textDirection: context.textDirection,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
             // Circular Progress Indicator
             SizedBox(
               width: responsive.w(120),
@@ -104,13 +108,11 @@ class _QuestionDoneState extends State<QuestionDone>
                     ),
                   ),
                   // Percentage text
-                  Text(
+                  LocalizedText(
                     '${(_currentProgress * 100).toInt()}%',
-                    style: AppTextStyles.heading1.copyWith(
-                      fontSize: responsive.sp(24),
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black,
-                    ),
+                    fontSize: responsive.sp(24),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
                   ),
                 ],
               ),
@@ -119,28 +121,26 @@ class _QuestionDoneState extends State<QuestionDone>
             SizedBox(height: responsive.h(40)),
             
             // Main heading
-            Text(
-              "We're building your personalized plan",
-              style: AppTextStyles.heading1.copyWith(
-                fontSize: responsive.sp(20),
-                fontWeight: FontWeight.w600,
-                color: AppColors.black,
-              ),
+            LocalizedText(
+              AppLocalizations.of(context)!.buildingPlan,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: AppColors.black,
               textAlign: TextAlign.center,
             ),
             
             SizedBox(height: responsive.h(16)),
             
             // Subtitle
-            Text(
-              "Your journey starts in a few seconds.",
-              style: AppTextStyles.bodyMedium.copyWith(
-                fontSize: responsive.sp(16),
-                color: const Color(0xFF6C757D), // Light gray color
-              ),
+            LocalizedText(
+              AppLocalizations.of(context)!.journeyStarts,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF6C757D),
               textAlign: TextAlign.center,
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../questions/data/services/questions_service.dart';
@@ -67,9 +68,11 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         // Common Header
         QuestionHeader(
           currentStep: _currentStep,
@@ -82,14 +85,12 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
         // Question
         Container(
           width: double.infinity,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            _ageQuestion?.enText ?? AppLocalizations.of(context)!.age,
-            style: AppTextStyles.heading2.copyWith(
-              fontSize: responsive.sp(24),
-              fontWeight: FontWeight.w600,
-              color: AppColors.black,
-            ),
+          alignment: AlignmentDirectional.centerStart,
+          child: LocalizedText(
+            _ageQuestion?.localizedText ?? AppLocalizations.of(context)!.whatsYourAge,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
             textAlign: TextAlign.start,
           ),
         ),
@@ -105,7 +106,8 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
         GestureDetector(onTap: () => _handleContinue(), child: _buildContinueButton(responsive)),
         
         SizedBox(height: responsive.hp(4)),
-      ],
+        ],
+      ),
     );
   }
 
@@ -122,12 +124,11 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
       return Center(
         child: Column(
           children: [
-            Text(
+            LocalizedText(
               AppLocalizations.of(context)!.errorLoadingAgeOptions,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: Colors.red,
-                fontSize: responsive.sp(16),
-              ),
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Colors.red,
             ),
             SizedBox(height: responsive.h(16)),
             ElevatedButton(
@@ -136,7 +137,12 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
                 backgroundColor: AppColors.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: Text(AppLocalizations.of(context)!.retry),
+              child: LocalizedText(
+                AppLocalizations.of(context)!.retry,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -145,12 +151,11 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
 
     if (_ageQuestion?.options == null || _ageQuestion!.options!.isEmpty) {
       return Center(
-        child: Text(
+        child: LocalizedText(
           AppLocalizations.of(context)!.noAgeOptionsAvailable,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.black,
-            fontSize: responsive.sp(16),
-          ),
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black,
         ),
       );
     }
@@ -166,7 +171,7 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
             _buildAgeOption(
               responsive,
               value: option.en,
-              label: option.en,
+              label: option.localizedText,
               isSelected: isSelected,
               onTap: () => _selectAge(option.en),
             ),
@@ -239,13 +244,11 @@ class _AgeQuestionBodyState extends State<AgeQuestionBody> {
             
             // Text Content
             Expanded(
-              child: Text(
+              child: LocalizedText(
                 label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: responsive.sp(16),
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.black,
-                ),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.black,
               ),
             ),
           ],

@@ -2,6 +2,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
@@ -13,6 +14,7 @@ import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/social_login_button.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
+import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/services/storage_service.dart';
 import '../../../data/cubit/auth_cubit.dart';
@@ -66,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final firstError = errors.values.first;
     CustomSnackbar.show(
       context,
-      title: 'Validation Error',
+      title: AppLocalizations.of(context)!.validationError,
       message: firstError,
       type: SnackbarType.warning,
     );
@@ -94,13 +96,15 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthLoginSuccess || state is AuthLoginSuccessWithProfile) {
-          // Show success message with Custom Snackbar
-          CustomSnackbar.show(
-            context,
-            title: 'Login Successful!',
-            message: state is AuthLoginSuccess ? state.response.message : 'Welcome back!',
-            type: SnackbarType.success,
-          );
+          // Show success message with Custom Snackbar (only once)
+          if (state is AuthLoginSuccess) {
+            CustomSnackbar.show(
+              context,
+              title: AppLocalizations.of(context)!.loginSuccessful,
+              message: AppLocalizations.of(context)!.welcomeBack,
+              type: SnackbarType.success,
+            );
+          }
           
           // Check if user is first time or returning user
           _navigateBasedOnUserType(context);
@@ -108,8 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
           // Show success message for Google sign-in
           CustomSnackbar.show(
             context,
-            title: 'Google Sign-In Successful!',
-            message: 'Welcome ${state.name}!',
+            title: AppLocalizations.of(context)!.googleSignInSuccessful,
+            message: '${AppLocalizations.of(context)!.welcome} ${state.name}!',
             type: SnackbarType.success,
           );
           
@@ -119,13 +123,13 @@ class _LoginScreenState extends State<LoginScreen> {
           // Show error message for Google sign-in
           CustomSnackbar.show(
             context,
-            title: 'Google Sign-In Failed',
+            title: AppLocalizations.of(context)!.googleSignInFailed,
             message: state.message,
             type: SnackbarType.error,
           );
         } else if (state is AuthGoogleSignInCancelled) {
           // User cancelled Google sign-in, no need to show error
-          log('Google sign-in cancelled by user');
+          log('Google sign-in cancelled by user'); 
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -133,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Show error message with Custom Snackbar
           CustomSnackbar.show(
             context,
-            title: 'Login Failed',
+            title: AppLocalizations.of(context)!.loginFailed,
             message: state.message,
             type: SnackbarType.error,
           );
@@ -196,11 +200,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               AppLocalizations.of(context)!.forgetPassword,
                               style: TextStyle(
-                                color: AppColors.grayMedium,
-                                fontSize: responsive.sp(12),
-                                fontFamily: 'Poppins',
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
+                                color: AppColors.grayMedium,
+                                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                               ),
+                              textAlign: TextAlign.start,
                             ),
                           ),
                         ),
@@ -215,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     return PrimaryButton(
-                      text: 'Login',
+                      text: AppLocalizations.of(context)!.login,
                       onPressed: _handleLogin,
                       height: responsive.hp(7),
                       isLoading: state is AuthLoading && state is! AuthGoogleSignInSuccess && state is! AuthGoogleSignInError && state is! AuthGoogleSignInCancelled,
@@ -230,23 +235,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "You don't have an account? ",
+                      AppLocalizations.of(context)!.dontHaveAccountSignUp,
                       style: TextStyle(
-                        color: AppColors.grayMedium,
-                        fontSize: responsive.sp(14),
-                        fontFamily: 'Poppins',
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
+                        color: AppColors.grayMedium,
+                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                       ),
                     ),
                     GestureDetector(
                       onTap: _navigateToSignup,
                       child: Text(
-                        'Sign Up',
+                        AppLocalizations.of(context)!.signUp,
                         style: TextStyle(
-                          color: AppColors.primaryGreen,
-                          fontSize: responsive.sp(14),
-                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
+                          color: AppColors.primaryGreen,
+                          fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                         ),
                       ),
                     ),
@@ -259,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 BlocBuilder<AuthCubit, AuthState>(
                   builder: (context, state) {
                     return SocialLoginButton(
-                      text: 'Continue with Google',
+                      text: AppLocalizations.of(context)!.signInWithGoogle,
                       iconPath: AppIcons.google,
                       onPressed: _handleGoogleLogin,
                       isLoading: state is AuthLoading && (state is! AuthLoginSuccess && state is! AuthValidationError && state is! AuthError),

@@ -5,6 +5,8 @@ import 'package:the_track_fit/features/workout/domain/models/exercise.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/constants/app_assets.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import 'package:the_track_fit/features/workout/presentation/screens/scan_exercise_screen.dart';
 
 class ExerciseDetail extends StatelessWidget {
@@ -35,35 +37,35 @@ class ExerciseDetail extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: Color(0x26848484),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset(
-                      'assets/logos/arrow_left.svg',
-                      width: responsiveHelper.w(24),
-                      height: responsiveHelper.h(24),
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF1E1E1E),
-                        BlendMode.srcIn,
+              child: Directionality(
+                textDirection: TextDirection.ltr,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: SvgPicture.asset(
+                        'assets/logos/arrow_left.svg',
+                        width: responsiveHelper.w(24),
+                        height: responsiveHelper.h(24),
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF1E1E1E),
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: responsiveHelper.w(8)),
-                  Text(
-                    'Exercise Detail',
-                    style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
+                    SizedBox(width: responsiveHelper.w(8)),
+                    LocalizedText(
+                      AppLocalizations.of(context)!.exerciseDetail,
                       fontSize: responsiveHelper.sp(18),
-                      fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1E1E1E),
                       height: 0.89,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             SizedBox(height: responsiveHelper.h(28)),
@@ -121,30 +123,24 @@ class ExerciseDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Exercise Title
-                  Text(
+                  LocalizedText(
                     exercise.title,
-                    style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
-                      fontSize: responsiveHelper.sp(20),
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                    ),
+                    fontSize: responsiveHelper.sp(20),
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF1E1E1E),
                   ),
                   
                   SizedBox(height: responsiveHelper.h(12)),
                   
                   // Exercise Description
-                  Text(
+                  LocalizedText(
                     exercise.description?.isNotEmpty == true 
                         ? exercise.description! 
-                        : 'No description available for this exercise.',
-                    style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
-                      fontSize: responsiveHelper.sp(14),
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                      height: 1.5,
-                    ),
+                        : AppLocalizations.of(context)!.noDescriptionAvailable,
+                    fontSize: responsiveHelper.sp(14),
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF1E1E1E),
+                    height: 1.5,
                   ),
                   
                   SizedBox(height: responsiveHelper.h(170)),
@@ -168,14 +164,11 @@ class ExerciseDetail extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
-                          child: Text(
-                            'Start Your Exercise',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: responsiveHelper.sp(16),
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
+                          child: LocalizedText(
+                            AppLocalizations.of(context)!.startYourExercise,
+                            fontSize: responsiveHelper.sp(16),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
                       ),

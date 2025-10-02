@@ -7,14 +7,14 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/widgets/date_selector.dart';
 import '../../../../core/widgets/meal_card.dart';
+import '../../../../core/widgets/localized_text.dart';
 import '../../data/repositories/meals_repository_impl.dart';
 import '../../domain/models/meals_response.dart';
-import 'package:the_track_fit/generated/l10n/app_localizations.dart';
-import 'package:the_track_fit/core/utils/font_helper.dart';
+import '../../../../core/extensions/localization_extensions.dart';
 
 class MealScreen extends StatefulWidget {
   const MealScreen({super.key});
@@ -33,7 +33,7 @@ class _MealScreenState extends State<MealScreen> {
   final Map<String, int> _selectedMealIndices = {};
 
   // Day names mapping: day_id 1 = Sat, 2 = Sun, 3 = Mon, 4 = Tue, 5 = Wed, 6 = Thu, 7 = Fri
-  final List<String> _dayNames = [
+  List<String> _dayNames = [
     'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'
   ];
 
@@ -44,6 +44,28 @@ class _MealScreenState extends State<MealScreen> {
     super.initState();
     _initializeSelectedDate();
     _loadMealsForDay();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Update day names when dependencies change (language change)
+    _updateDayNames();
+  }
+
+  void _updateDayNames() {
+    // Update day names when language changes
+    setState(() {
+      _dayNames = [
+        AppLocalizations.of(context)!.sat,
+        AppLocalizations.of(context)!.sun,
+        AppLocalizations.of(context)!.mon,
+        AppLocalizations.of(context)!.tue,
+        AppLocalizations.of(context)!.wed,
+        AppLocalizations.of(context)!.thu,
+        AppLocalizations.of(context)!.fri,
+      ];
+    });
   }
 
   void _initializeSelectedDate() {
@@ -157,7 +179,7 @@ class _MealScreenState extends State<MealScreen> {
         children: [
           // Header
           _buildHeader(),
-          
+          SizedBox(height: 12.h),
           // Scan Your Meal Section
           _buildScanSection(),
           SizedBox(height: 12.h),
@@ -178,14 +200,11 @@ class _MealScreenState extends State<MealScreen> {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
-      child: Text(
+      child: LocalizedText(
         AppLocalizations.of(context)!.meals,
-        style: AppTextStyles.heading1.copyWith(
-          fontSize: 24.sp,
-          fontWeight: FontWeight.w600,
-          color: AppColors.black,
-          fontFamily: context.fontFamily,
-        ),
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: AppColors.black,
         textAlign: TextAlign.center,
       ),
     );
@@ -202,14 +221,11 @@ class _MealScreenState extends State<MealScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          LocalizedText(
             AppLocalizations.of(context)!.scanYourMeal,
-            style: TextStyle(
-              color: const Color(0xFF28A228),
-              fontSize: 16.sp,
-              fontFamily: context.fontFamily,
-              fontWeight: FontWeight.w600,
-            ),
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF28A228),
           ),
           SizedBox(height: 16.h),
           GestureDetector(
@@ -230,14 +246,11 @@ class _MealScreenState extends State<MealScreen> {
                     height: 32.h,
                   ),
                   SizedBox(width: 12.w),
-                  Text(
+                  LocalizedText(
                     AppLocalizations.of(context)!.tapToScanYourFood,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontFamily: context.fontFamily,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ],
               ),
@@ -254,14 +267,11 @@ class _MealScreenState extends State<MealScreen> {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.h),
-          child: Text(
+          child: LocalizedText(
             AppLocalizations.of(context)!.yourMeals,
-            style: TextStyle(
-              color: AppColors.black,
-              fontSize: 16.sp,
-              fontFamily: context.fontFamily,
-              fontWeight: FontWeight.w500,
-            ),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.black,
           ),
         ),
         SizedBox(height: 12.h),
@@ -321,27 +331,21 @@ class _MealScreenState extends State<MealScreen> {
                   ),
                 ),
                 SizedBox(height: 24.h),
-                Text(
+                LocalizedText(
                   AppLocalizations.of(context)!.noMealCategoriesFound,
-                  style: TextStyle(
-                    color: AppColors.black,
-                    fontSize: 18.sp,
-                    fontFamily: context.fontFamily,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 10.h),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 32.w),
-                  child: Text(
+                  child: LocalizedText(
                     AppLocalizations.of(context)!.thereAreNoMealCategoriesAvailableForThisDayPleaseTryAnotherDay,
-                    style: TextStyle(
-                      color: const Color(0xFF6C757D),
-                      fontSize: 14.sp,
-                      fontFamily: context.fontFamily,
-                      fontWeight: FontWeight.w400,
-                    ),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF6C757D),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -358,14 +362,11 @@ class _MealScreenState extends State<MealScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.4,
           child: Center(
-            child: Text(
+            child: LocalizedText(
               AppLocalizations.of(context)!.noMealsAvailableForThisDay,
-              style: TextStyle(
-                color: const Color(0xFF6C757D),
-                fontSize: 16.sp,
-                fontFamily: context.fontFamily,
-                fontWeight: FontWeight.w400,
-              ),
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF6C757D),
             ),
           ),
         ),
@@ -387,8 +388,8 @@ class _MealScreenState extends State<MealScreen> {
           final selectedMeal = category.meals[safeIndex];
           
           return MealCard(
-            mealType: category.enName,
-            description: selectedMeal.description,
+            mealType: category.getLocalizedName(context.isArabic ? 'ar' : 'en'),
+            description: selectedMeal.getLocalizedDescription(context.isArabic ? 'ar' : 'en'),
             calories: selectedMeal.calories,
             imagePath: category.fullImageUrl,
             onSwap: () => _onMealSwap(category.enName),

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
-import 'package:the_track_fit/core/constants/app_text_styles.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/widgets/question_header.dart';
 import 'package:the_track_fit/core/widgets/question_continue_button.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
+import 'package:the_track_fit/core/extensions/localization_extensions.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
 
@@ -46,7 +48,7 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
       
       if (question != null) {
         setState(() {
-          _questionText = question.enText;
+          _questionText = question.localizedText;
         });
       } else {
         setState(() {
@@ -116,17 +118,19 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
     
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: const Color(0xFFF6FFF6), // Background color from Figma
-      child: Column(
-        children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: const Color(0xFFF6FFF6), // Background color from Figma
+        child: Column(
+          children: [
           SizedBox(height: responsive.h(28)),
           
           // Question Header
           QuestionHeader(
-            title: "Let's Set Up Your Plan",
+            title: AppLocalizations.of(context)!.letsSetUpYourPlan,
             currentStep: 5,
             totalSteps: 14,
           ),
@@ -147,7 +151,8 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
           _buildContinueButton(responsive),
           
           SizedBox(height: responsive.h(72)),
-                ],
+          ],
+        ),
       ),
     );
   }
@@ -155,14 +160,12 @@ class _WeightQuestionBodyState extends State<WeightQuestionBody> {
   Widget _buildQuestion(ResponsiveHelper responsive) {
     return Container(
       width: double.infinity,
-      alignment: Alignment.centerLeft,
-      child: Text(
+      alignment: AlignmentDirectional.centerStart,
+      child: LocalizedText(
         _questionText,
-        style: AppTextStyles.heading2.copyWith(
-          fontSize: responsive.sp(24),
-          fontWeight: FontWeight.w600,
-          color: AppColors.black,
-        ),
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: AppColors.black,
         textAlign: TextAlign.start,
       ),
     );

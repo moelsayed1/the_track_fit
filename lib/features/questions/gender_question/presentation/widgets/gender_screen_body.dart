@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import '../../../../../core/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../generated/l10n/app_localizations.dart';
@@ -27,9 +28,11 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         SizedBox(height: responsive.hp(0)), // 44px equivalent
         
         // Common Header
@@ -55,7 +58,8 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
         _buildContinueButton(responsive),
         
         SizedBox(height: responsive.hp(4)), // 16px equivalent
-      ],
+        ],
+      ),
     );
   }
 
@@ -64,14 +68,12 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
   Widget _buildQuestion(ResponsiveHelper responsive) {
     return Container(
       width: double.infinity,
-      alignment: Alignment.centerLeft,
-      child: Text(
+      alignment: AlignmentDirectional.centerStart,
+      child: LocalizedText(
         AppLocalizations.of(context)!.whatsYourGender,
-        style: AppTextStyles.heading2.copyWith(
-          fontSize: responsive.sp(24),
-          fontWeight: FontWeight.w700,
-          color: AppColors.black,
-        ),
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: AppColors.black,
         textAlign: TextAlign.start,
       ),
     );

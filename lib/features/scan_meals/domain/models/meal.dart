@@ -57,4 +57,14 @@ class Meal {
   String get description {
     return items.map((item) => item.itemNameEn).join(', ');
   }
+
+  // Helper method to get localized name based on current language
+  String getLocalizedName(String language) {
+    return language == 'ar' ? arName : enName;
+  }
+
+  // Helper method to get localized description from items
+  String getLocalizedDescription(String language) {
+    return items.map((item) => item.getLocalizedName(language)).join(', ');
+  }
 }

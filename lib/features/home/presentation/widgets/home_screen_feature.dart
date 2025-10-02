@@ -261,17 +261,17 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
   String _getScreenTitle(int index) {
     switch (index) {
       case 0:
-        return 'Home';
+        return AppLocalizations.of(context)!.home;
       case 1:
-        return 'Workout';
+        return AppLocalizations.of(context)!.workout;
       case 2:
-        return 'Scan';
+        return AppLocalizations.of(context)!.scan;
       case 3:
-        return 'Report';
+        return AppLocalizations.of(context)!.report;
       case 4:
-        return 'Packages';
+        return AppLocalizations.of(context)!.packages;
       default:
-        return 'Home';
+        return AppLocalizations.of(context)!.home;
     }
   }
 
@@ -546,7 +546,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : Colors.white,
                 fontSize: 11.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -844,13 +844,13 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildDateItem('Sat', 0),
-              _buildDateItem('Sun', 1),
-              _buildDateItem('Mon', 2),
-              _buildDateItem('Tue', 3),
-              _buildDateItem('Wed', 4),
-              _buildDateItem('Thu', 5),
-              _buildDateItem('Fri', 6),
+              _buildDateItem(AppLocalizations.of(context)!.sat, 0),
+              _buildDateItem(AppLocalizations.of(context)!.sun, 1),
+              _buildDateItem(AppLocalizations.of(context)!.mon, 2),
+              _buildDateItem(AppLocalizations.of(context)!.tue, 3),
+              _buildDateItem(AppLocalizations.of(context)!.wed, 4),
+              _buildDateItem(AppLocalizations.of(context)!.thu, 5),
+              _buildDateItem(AppLocalizations.of(context)!.fri, 6),
             ],
           ),
         ),

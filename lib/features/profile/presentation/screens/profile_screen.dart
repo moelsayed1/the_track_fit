@@ -7,12 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
-import 'package:the_track_fit/core/utils/font_helper.dart';
 import 'package:the_track_fit/core/widgets/custom_snackbar.dart';
 import 'package:the_track_fit/core/services/language_service.dart';
 import 'package:the_track_fit/core/bloc/language/language_bloc.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
-import 'package:the_track_fit/core/widgets/localized_text.dart';
 import '../../../auth/data/cubit/auth_cubit.dart';
 import '../../../auth/data/cubit/auth_states.dart';
 
@@ -444,11 +442,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    LocalizedText(
+                    Text(
                       displayName,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1E1E1E),
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1E1E1E),
+                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                      ),
                     ),
                   ],
                 ),
@@ -500,10 +501,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Logout Section
           _buildLogoutSection(),
           
-          SizedBox(height: 16.h),
+          // SizedBox(height: 16.h),
           
           // Language Test Section (for debugging)
-          _buildLanguageTestSection(),
+          // _buildLanguageTestSection(),
         ],
       ),
     );
@@ -541,13 +542,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             SizedBox(width: 8.w),
-            LocalizedText(
+            Text(
               AppLocalizations.of(context)!.newProducts,
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-              color: isSelected
-                  ? const Color(0xFF28A228)
-                  : const Color(0xFF1E1E1E),
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+                color: isSelected
+                    ? const Color(0xFF28A228)
+                    : const Color(0xFF1E1E1E),
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+              ),
             ),
           ],
         ),
@@ -559,11 +563,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LocalizedText(
-          AppLocalizations.of(context)!.profile, // 👈 من ARB
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: const Color(0xFF1E1E1E),
+        Text(
+          AppLocalizations.of(context)!.profile,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF1E1E1E),
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+          ),
         ),
         SizedBox(height: 8.h),
         Container(
@@ -615,7 +622,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(
             color: const Color(0xFF1E1E1E),
             fontSize: 14.sp,
-            fontFamily: context.fontFamily,
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -690,7 +697,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? const Color(0xFF28A228)
                     : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: context.fontFamily,
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -739,7 +746,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? const Color(0xFF28A228)
                     : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: context.fontFamily,
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -788,7 +795,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? const Color(0xFF28A228)
                     : const Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: context.fontFamily,
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -827,7 +834,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: TextStyle(
                     color: const Color(0xFFFF4444),
                     fontSize: 16.sp,
-                    fontFamily: context.fontFamily,
+                    fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -901,7 +908,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? const Color(0xFF28A228)
                       : const Color(0xFF1E1E1E),
                   fontSize: 16.sp,
-                  fontFamily: context.fontFamily,
+                  fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
                 ),
               ),
@@ -956,7 +963,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? const Color(0xFF28A228)
                         : const Color(0xFF1E1E1E),
                     fontSize: 16.sp,
-                    fontFamily: context.fontFamily,
+                    fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
                   ),
                 ),
@@ -981,7 +988,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? const Color(0xFF28A228)
                       : const Color(0xFF1E1E1E),
                   fontSize: 14.sp,
-                  fontFamily: context.fontFamily,
+                  fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -991,72 +998,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildLanguageTestSection() {
-    return BlocBuilder<LanguageBloc, LanguageState>(
-      builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
-            : LanguageService.instance.currentLanguage;
-        
-        return Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15.r),
-            border: Border.all(color: const Color(0x26848484), width: 1.w),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Language Test (Debug)',
-                style: TextStyle(
-                  color: const Color(0xFF1E1E1E),
-                  fontSize: 14.sp,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Current: $currentLanguage',
-                style: TextStyle(fontSize: 12.sp),
-              ),
-              SizedBox(height: 8.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.read<LanguageBloc>().add(LanguageChanged('ar'));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: currentLanguage == 'ar' ? Colors.blue : Colors.grey,
-                      ),
-                      child: Text('العربية'),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.read<LanguageBloc>().add(LanguageChanged('en'));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: currentLanguage == 'en' ? Colors.green : Colors.grey,
-                      ),
-                      child: Text('English'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
 
 // Custom Clipper to create the wave shape precisely as in the image

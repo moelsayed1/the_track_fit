@@ -6,7 +6,7 @@ import '../../generated/l10n/app_localizations.dart';
 /// Extension to get font family based on current language
 extension FontFamilyExtension on BuildContext {
   String get fontFamily {
-    final languageState = read<LanguageBloc>().state;
+    final languageState = watch<LanguageBloc>().state;
     final currentLanguage = languageState is LanguageLoaded 
         ? languageState.currentLanguage 
         : 'ar';
@@ -17,7 +17,7 @@ extension FontFamilyExtension on BuildContext {
 /// Extension to get text direction based on current language
 extension TextDirectionExtension on BuildContext {
   TextDirection get textDirection {
-    final languageState = read<LanguageBloc>().state;
+    final languageState = watch<LanguageBloc>().state;
     final currentLanguage = languageState is LanguageLoaded 
         ? languageState.currentLanguage 
         : 'ar';
@@ -30,14 +30,25 @@ extension LocalizationExtension on BuildContext {
   AppLocalizations get l10n => AppLocalizations.of(this)!;
 }
 
+/// Extension to check if current language is Arabic
+extension LanguageCheckExtension on BuildContext {
+  bool get isArabic {
+    final languageState = watch<LanguageBloc>().state;
+    final currentLanguage = languageState is LanguageLoaded 
+        ? languageState.currentLanguage 
+        : 'ar';
+    return currentLanguage == 'ar';
+  }
+}
+
 /// Widget wrapper for automatic directionality
 class DirectionalityWrapper extends StatelessWidget {
   final Widget child;
   
   const DirectionalityWrapper({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,45 +64,6 @@ class DirectionalityWrapper extends StatelessWidget {
         return Directionality(
           textDirection: textDirection,
           child: child,
-        );
-      },
-    );
-  }
-}
-
-/// Localized Text widget that automatically uses correct font
-class LocalizedText extends StatelessWidget {
-  final String text;
-  final TextStyle? style;
-  final TextAlign? textAlign;
-  final int? maxLines;
-  final TextOverflow? overflow;
-  
-  const LocalizedText(
-    this.text, {
-    Key? key,
-    this.style,
-    this.textAlign,
-    this.maxLines,
-    this.overflow,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LanguageBloc, LanguageState>(
-      builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
-            : 'ar';
-        final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
-        
-        return Text(
-          text,
-          style: style?.copyWith(fontFamily: fontFamily) ?? 
-                 TextStyle(fontFamily: fontFamily),
-          textAlign: textAlign,
-          maxLines: maxLines,
-          overflow: overflow,
         );
       },
     );

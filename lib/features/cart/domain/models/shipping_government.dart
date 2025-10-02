@@ -29,6 +29,10 @@ class ShippingGovernment {
     };
   }
 
+  String getLocalizedName(String language) {
+    return language == 'ar' ? nameAr : nameEn;
+  }
+
   @override
   String toString() {
     return nameEn; // Use English name for display

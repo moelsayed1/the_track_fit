@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/custom_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 
 class ResetPasswordDone extends StatelessWidget {
@@ -57,26 +57,23 @@ class ResetPasswordDone extends StatelessWidget {
                 SizedBox(height: responsive.h(16)),
                 
                 // Congratulations Title
-                Text(
+                LocalizedText(
                   'Congratulations!',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primaryGreen,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.heading2.copyWith(
-                    fontSize: responsive.sp(20),
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primaryGreen,
-                  ),
                 ),
                 
                 SizedBox(height: responsive.h(8)),
                 
                 // Subtitle
-                Text(
+                LocalizedText(
                   text,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.gray,
                   textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontSize: responsive.sp(14),
-                    color: AppColors.gray,
-                  ),
                 ),
                 
                 SizedBox(height: responsive.h(24)),

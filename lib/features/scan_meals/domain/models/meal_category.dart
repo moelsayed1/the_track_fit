@@ -49,4 +49,9 @@ class MealCategory {
   String get fullImageUrl {
     return 'https://thetrackfit.com/storage/$image';
   }
+
+  // Helper method to get localized name based on current language
+  String getLocalizedName(String language) {
+    return language == 'ar' ? arName : enName;
+  }
 }

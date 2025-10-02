@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
@@ -24,14 +26,16 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         // Common Header
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -39,14 +43,12 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
         // Question
         Container(
           width: double.infinity,
-          alignment: Alignment.centerLeft,
-          child: Text(
+          alignment: AlignmentDirectional.centerStart,
+          child: LocalizedText(
             'What\'s your Fitness Level ?',
-            style: AppTextStyles.heading2.copyWith(
-              fontSize: responsive.sp(24),
-              fontWeight: FontWeight.w600,
-              color: AppColors.black,
-            ),
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
             textAlign: TextAlign.start,
           ),
         ),
@@ -62,7 +64,8 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
         _buildContinueButton(responsive),
         
         SizedBox(height: responsive.hp(4)),
-      ],
+        ],
+      ),
     );
   }
 
@@ -167,24 +170,20 @@ class _FitnessLevelBodyState extends State<FitnessLevelBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  LocalizedText(
                     level,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: responsive.sp(16),
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black,
-                    ),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.black,
                   ),
                   SizedBox(height: responsive.h(4)),
-                  Text(
+                  LocalizedText(
                     description,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: responsive.sp(12),
-                      fontWeight: FontWeight.w400,
-                      color: isSelected 
-                          ? const Color(0xFF1E1E1E) 
-                          : const Color(0xFF848484),
-                    ),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: isSelected 
+                        ? const Color(0xFF1E1E1E) 
+                        : const Color(0xFF848484),
                   ),
                 ],
               ),

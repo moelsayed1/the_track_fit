@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class SelectEquipmentScreen extends StatefulWidget {
@@ -100,35 +101,35 @@ class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
                 decoration: const BoxDecoration(
                   color: Color(0x26848484),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: SvgPicture.asset(
-                        'assets/logos/arrow_left.svg',
-                        width: responsiveHelper.w(24),
-                        height: responsiveHelper.h(24),
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1E1E1E),
-                          BlendMode.srcIn,
+                child: Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: SvgPicture.asset(
+                          'assets/logos/arrow_left.svg',
+                          width: responsiveHelper.w(24),
+                          height: responsiveHelper.h(24),
+                          colorFilter: const ColorFilter.mode(
+                            Color(0xFF1E1E1E),
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: responsiveHelper.w(8)),
-                    Text(
-                      'Select Equipment',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
+                      SizedBox(width: responsiveHelper.w(8)),
+                      LocalizedText(
+                        AppLocalizations.of(context)!.selectEquipment,
                         fontSize: responsiveHelper.sp(18),
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1E1E1E),
                         height: 0.89,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               
@@ -187,17 +188,14 @@ class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
                   SizedBox(width: responsiveHelper.w(12)),
                 ],
                 Expanded(
-                  child: Text(
+                  child: LocalizedText(
                     option.name,
-                    style: TextStyle(
-                      color: option.isSelected 
-                          ? const Color(0xFF4CAF50) // Green text when selected
-                          : const Color(0xFF1E1E1E), // Black text when not selected
-                      fontSize: responsiveHelper.sp(16),
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      height: 1.0,
-                    ),
+                    fontSize: responsiveHelper.sp(16),
+                    fontWeight: FontWeight.w500,
+                    color: option.isSelected 
+                        ? const Color(0xFF4CAF50) // Green text when selected
+                        : const Color(0xFF1E1E1E), // Black text when not selected
+                    height: 1.0,
                   ),
                 ),
                 // Checkmark icon when selected

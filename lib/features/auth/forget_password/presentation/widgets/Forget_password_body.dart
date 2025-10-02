@@ -2,16 +2,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/auth_header.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
+import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../data/cubit/auth_cubit.dart';
 import '../../../data/cubit/auth_states.dart';
@@ -54,8 +56,8 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
             log('ForgetPassword: Success state received, showing snackbar and navigating');
             CustomSnackbar.show(
               context,
-              title: 'Success',
-              message: state.message,
+              title: AppLocalizations.of(context)!.success,
+              message: AppLocalizations.of(context)!.otpSentSuccessfully,
               type: SnackbarType.success,
             );
             // Navigate to OTP screen
@@ -66,7 +68,7 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
             final firstError = state.fieldErrors.values.first;
             CustomSnackbar.show(
               context,
-              title: 'Validation Error',
+              title: AppLocalizations.of(context)!.validationError,
               message: firstError,
               type: SnackbarType.error,
             );
@@ -74,7 +76,7 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
             log('ForgetPassword: Error state received: ${state.message}');
             CustomSnackbar.show(
               context,
-              title: 'Error',
+              title: AppLocalizations.of(context)!.error,
               message: state.message,
               type: SnackbarType.error,
             );
@@ -93,8 +95,8 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
                     
                     // Auth Header with logo, title, and subtitle
                     AuthHeader(
-                      title: 'Forget Password',
-                      subtitle: 'We\'ll send a reset link to your email.',
+                      title: AppLocalizations.of(context)!.forgetPassword,
+                      subtitle: AppLocalizations.of(context)!.forgetPasswordInstructions,
                       illustration: SvgPicture.asset(
                         AppLogos.forgetPassword,
                         fit: BoxFit.contain,
@@ -131,7 +133,7 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
       key: _formKey,
       child: CustomTextField(
         controller: _emailController,
-        hintText: 'E-mail',
+        hintText: AppLocalizations.of(context)!.email,
         prefixIconAsset: AppIcons.email,
         keyboardType: TextInputType.emailAddress,
         validator: _validateEmail,
@@ -145,7 +147,7 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
         //context.read<AuthCubit>().forgetPassword(_emailController.text);
         final isLoading = state is AuthLoading;
         return PrimaryButton(
-          text: 'Send',
+          text: AppLocalizations.of(context)!.send,
           onPressed: isLoading ? null : _handleSendResetLink,
           isLoading: isLoading,
         );
@@ -157,19 +159,21 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
     return TextButton(
       onPressed: _handleResendCode,
       child: Text(
-        'Resend Code?',
-        style: AppTextStyles.bodyMedium.copyWith(
-          fontSize: responsive.sp(12),
-          color: AppColors.primaryGreen,
+        AppLocalizations.of(context)!.resendCode,
+        style: TextStyle(
+          fontSize: 12.sp,
           fontWeight: FontWeight.w400,
+          color: AppColors.primaryGreen,
+          fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
         ),
+        textAlign: TextAlign.start,
       ),
     );
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter your email';
+      return AppLocalizations.of(context)!.pleaseEnterYourEmail;
     }
 
     // Email regex pattern
@@ -177,7 +181,7 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
     final regExp = RegExp(pattern);
 
     if (!regExp.hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return AppLocalizations.of(context)!.pleaseEnterValidEmail;
     }
 
     return null;
@@ -200,8 +204,8 @@ class _ForgetPasswordBodyState extends State<ForgetPasswordBody> {
     } else {
       CustomSnackbar.show(
         context,
-        title: 'Warning',
-        message: 'Please enter a valid email first',
+        title: AppLocalizations.of(context)!.warning,
+        message: AppLocalizations.of(context)!.pleaseEnterValidEmailFirst,
         type: SnackbarType.warning,
       );
     }

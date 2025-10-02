@@ -3,11 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
+import 'package:the_track_fit/features/questions/domain/models/question.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
@@ -30,9 +33,8 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
   final QuestionsService _questionsService = QuestionsService.instance;
   final AnswersService _answersService = AnswersService.instance;
 
-  // Health status options from the API response
-  List<Map<String, String>> _healthStatusOptions = [];
-  String _questionText = 'What\'s your Health Status?';
+  // Health status question from the API response
+  Question? _healthStatusQuestion;
 
   @override
   void initState() {
@@ -49,13 +51,9 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
 
       final question = await _questionsService.getHealthStatusQuestion();
       
-      if (question != null && question.options != null) {
+      if (question != null) {
         setState(() {
-          _questionText = question.enText;
-          _healthStatusOptions = question.options!.map((option) => {
-            'value': option.en,
-            'label': option.en,
-          }).toList();
+          _healthStatusQuestion = question;
           _isLoadingOptions = false;
         });
       } else {
@@ -76,14 +74,16 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         // Common Header
         QuestionHeader(
           currentStep: _currentStep,
           totalSteps: _totalSteps,
-          title: 'Let\'s Set Up Your Plan',
+          title: AppLocalizations.of(context)!.letsSetUpYourPlan,
         ),
         
         SizedBox(height: responsive.hp(4)),
@@ -91,14 +91,12 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
         // Question
         Container(
           width: double.infinity,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            _questionText,
-            style: AppTextStyles.heading2.copyWith(
-              fontSize: responsive.sp(24),
-              fontWeight: FontWeight.w600,
-              color: AppColors.black,
-            ),
+          alignment: AlignmentDirectional.centerStart,
+          child: LocalizedText(
+            _healthStatusQuestion?.localizedText ?? 'What\'s your Health Status?',
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
             textAlign: TextAlign.start,
           ),
         ),
@@ -124,18 +122,22 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
                             color: Colors.red,
                           ),
                           SizedBox(height: 16),
-                          Text(
+                          LocalizedText(
                             _error!,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: Colors.red,
-                              fontSize: responsive.sp(16),
-                            ),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.red,
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _loadHealthStatusQuestion,
-                            child: Text('Retry'),
+                            child: LocalizedText(
+                              'Retry',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -148,27 +150,39 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
         // Continue Button
         _buildContinueButton(responsive),
         
-        SizedBox(height: responsive.hp(4)),
-      ],
+        SizedBox(height: responsive.hp(2)),
+        ],
+      ),
     );
   }
 
   Widget _buildHealthStatusOptions(ResponsiveHelper responsive) {
+    if (_healthStatusQuestion?.options == null || _healthStatusQuestion!.options!.isEmpty) {
+      return Center(
+        child: LocalizedText(
+          'No health status options available',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black,
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
       child: Column(
-        children: _healthStatusOptions.map((option) {
-          final isSelected = _selectedHealthIssues.contains(option['value']);
+        children: _healthStatusQuestion!.options!.map((option) {
+          final isSelected = _selectedHealthIssues.contains(option.en);
           return Column(
             children: [
               _buildHealthStatusOption(
                 responsive,
-                value: option['value']!,
-                label: option['label']!,
+                value: option.en,
+                label: option.localizedText,
                 isSelected: isSelected,
-                onTap: () => _toggleHealthIssue(option['value']!),
+                onTap: () => _toggleHealthIssue(option.en),
               ),
-              if (option != _healthStatusOptions.last)
+              if (option != _healthStatusQuestion!.options!.last)
                 SizedBox(height: responsive.h(16)),
             ],
           );
@@ -235,13 +249,11 @@ class _HealthStatusQuestionBodyState extends State<HealthStatusQuestionBody> {
             
             // Text Content
             Expanded(
-              child: Text(
+              child: LocalizedText(
                 label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: responsive.sp(16),
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.black,
-                ),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.black,
               ),
             ),
           ],

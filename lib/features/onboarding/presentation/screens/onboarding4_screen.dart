@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_text_styles.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/localized_text.dart';
 import '../../../../core/utils/responsive_helper.dart';
 
 class Onboarding4Screen extends StatelessWidget {
@@ -64,25 +64,24 @@ class Onboarding4Screen extends StatelessWidget {
                     // Title and description
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: responsive.wp(5)),
-                      child: Text(
+                      child: LocalizedText(
                         'Smart Fitness Powered\nby AI',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.black,
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.onboardingTitle.copyWith(
-                          fontSize: responsive.sp(22),
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.50,
-                        ),
+                        letterSpacing: 0.50,
                       ),
                     ),
                     SizedBox(height: responsive.hp(1.5)),
                     SizedBox(
                       width: responsive.wp(82.9),
-                      child: Text(
+                      child: LocalizedText(
                         'Get personalized training plans, intelligent suggestions and detailed tracking — all powered by AI.',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.gray,
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.onboardingDescription.copyWith(
-                          fontSize: responsive.sp(10),
-                        ),
                       ),
                     ),
                   ],
@@ -101,12 +100,12 @@ class Onboarding4Screen extends StatelessWidget {
                   // Navigate to home screen
                   context.push(AppRouter.signup);
                 },
-                child: Text(
+                child: LocalizedText(
                   'Skip',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.white,
                   textAlign: TextAlign.right,
-                  style: AppTextStyles.skipButton.copyWith(
-                    fontSize: responsive.sp(16),
-                  ),
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../extensions/localization_extensions.dart';
 
 class DateSelector extends StatefulWidget {
   final Function(int) onDateSelected;
@@ -69,7 +70,7 @@ class _DateSelectorState extends State<DateSelector> {
               style: TextStyle(
                 color: isSelected ? const Color(0xFF28A228) : Colors.white,
                 fontSize: 11.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
               ),
             ),

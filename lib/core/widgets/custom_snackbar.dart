@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../extensions/localization_extensions.dart';
 
 enum SnackbarType { success, error, warning, info }
 
@@ -60,7 +61,7 @@ class CustomSnackbar {
                         color: Colors.white,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                       ),
                     ),
                     SizedBox(height: 4.h),
@@ -69,7 +70,7 @@ class CustomSnackbar {
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                       ),
                     ),
                   ],

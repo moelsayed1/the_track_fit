@@ -411,7 +411,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Row(
                 children: [
                   Text(
-                    'Cart Items (${cartItems.length})',
+                    isArabic
+                        ? 'عناصر السلة (${cartItems.length})'
+                        : 'Cart Items (${cartItems.length})',
                     style: TextStyle(
                       color: Color(0xFF1E1E1E),
                       fontSize: 16.sp,
@@ -454,7 +456,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             SizedBox(height: 24.h),
 
             // Address Section
-            _buildAddressSection(),
+            _buildAddressSection(isArabic),
 
             SizedBox(height: 24.h),
 
@@ -742,7 +744,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               Expanded(
                 child: _buildPaymentOption(
-                  AppLocalizations.of(context)!.vodafoneCash,
+                  'Vodafone Cash',
+                  // AppLocalizations.of(context)!.vodafoneCash,
                   'assets/images/vodafon_cash.png',
                   'vodafone_cash',
                 ),
@@ -758,7 +761,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               // SizedBox(width: 8.w),
               Expanded(
                 child: _buildPaymentOption(
-                  AppLocalizations.of(context)!.instapay,
+                  'Instapay',
+                  // AppLocalizations.of(context)!.instapay,
                   'assets/images/instapay.png',
                   'instapay',
                 ),
@@ -1301,7 +1305,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildAddressSection() {
+  Widget _buildAddressSection(bool isArabic) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1392,7 +1396,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   : egyptianGovernorates.length,
               itemBuilder: (context, index) {
                 final governorate = shippingGovernments.isNotEmpty
-                    ? shippingGovernments[index].nameEn
+                    ? shippingGovernments[index].getLocalizedName(isArabic ? 'ar' : 'en')
                     : egyptianGovernorates[index];
                 return GestureDetector(
                   onTap: () {
@@ -1598,7 +1602,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Text(
               shippingCost > 0
                   ? '${shippingCost.toStringAsFixed(2)} EGP'
-                  : 'Free',
+                  : (Localizations.localeOf(context).languageCode == 'ar' ? 'مجاني' : 'Free'),
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,

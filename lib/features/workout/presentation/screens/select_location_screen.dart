@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import '../../../../core/widgets/localized_text.dart';
 
 class SelectLocationScreen extends StatefulWidget {
   final String? selectedLocation;
@@ -91,10 +92,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                 ),
                 decoration: const BoxDecoration(color: Color(0x26848484)),
                 child: Directionality(
-                  textDirection:
-                      Localizations.localeOf(context).languageCode == 'en'
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
+                  textDirection: TextDirection.ltr,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,21 +111,12 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                         ),
                       ),
                       SizedBox(width: responsiveHelper.w(8)),
-                      Text(
-                        Localizations.localeOf(context).languageCode == 'ar'
-                            ? 'اختار المكان'
-                            : 'Select Location',
-                        style: TextStyle(
-                          color: const Color(0xFF1E1E1E),
-                          fontSize: responsiveHelper.sp(18),
-                          fontFamily:
-                              Localizations.localeOf(context).languageCode ==
-                                  'ar'
-                              ? 'Cairo'
-                              : 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          height: 0.89,
-                        ),
+                      LocalizedText(
+                        AppLocalizations.of(context)!.selectLocation,
+                        fontSize: responsiveHelper.sp(18),
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1E1E1E),
+                        height: 0.89,
                       ),
                     ],
                   ),
@@ -197,19 +186,14 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                 ),
                 SizedBox(width: responsiveHelper.w(8)),
                 Expanded(
-                  child: Text(
+                  child: LocalizedText(
                     option.name,
-                    style: TextStyle(
-                      color: option.isSelected
-                          ? const Color(0xFF4CAF50) // Green text when selected
-                          : const Color(
-                              0xFF1E1E1E,
-                            ), // Black text when not selected
-                      fontSize: responsiveHelper.sp(16),
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      height: 1.0,
-                    ),
+                    fontSize: responsiveHelper.sp(16),
+                    fontWeight: FontWeight.w500,
+                    color: option.isSelected
+                        ? const Color(0xFF4CAF50) // Green text when selected
+                        : const Color(0xFF1E1E1E), // Black text when not selected
+                    height: 1.0,
                   ),
                 ),
                 // Checkmark icon when selected

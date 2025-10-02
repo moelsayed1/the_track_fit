@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/features/questions/data/services/answers_service.dart';
 import 'package:the_track_fit/features/questions/data/services/questions_service.dart';
+import 'package:the_track_fit/features/questions/domain/models/question.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/app_text_styles.dart';
 import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/question_header.dart';
 import '../../../../../core/widgets/question_continue_button.dart';
+import '../../../../../core/widgets/localized_text.dart';
+import '../../../../../core/extensions/localization_extensions.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 
@@ -29,9 +31,8 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
   final QuestionsService _questionsService = QuestionsService.instance;
   final AnswersService _answersService = AnswersService.instance;
 
-  // Activity level options from the API response
-  List<Map<String, String>> _activityOptions = [];
-  String _questionText = '';
+  // Activity level question from the API response
+  Question? _activityQuestion;
 
   @override
   void initState() {
@@ -48,13 +49,9 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
 
       final question = await _questionsService.getCurrentActivityLevelQuestion();
       
-      if (question != null && question.options != null) {
+      if (question != null) {
         setState(() {
-          _questionText = question.enText ?? AppLocalizations.of(context)!.currentActivityLevel;
-          _activityOptions = question.options!.map((option) => {
-            'value': option.en,
-            'label': option.en,
-          }).toList();
+          _activityQuestion = question;
           _isLoadingOptions = false;
         });
       } else {
@@ -75,9 +72,11 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+    return Directionality(
+      textDirection: context.textDirection,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
         // Common Header
         QuestionHeader(
           currentStep: _currentStep,
@@ -90,14 +89,12 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
         // Question
         Container(
           width: double.infinity,
-          alignment: Alignment.centerLeft,
-          child: Text(
-            _questionText,
-            style: AppTextStyles.heading2.copyWith(
-              fontSize: responsive.sp(24),
-              fontWeight: FontWeight.w600,
-              color: AppColors.black,
-            ),
+          alignment: AlignmentDirectional.centerStart,
+          child: LocalizedText(
+            _activityQuestion?.localizedText ?? AppLocalizations.of(context)!.currentActivityLevel,
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: AppColors.black,
             textAlign: TextAlign.start,
           ),
         ),
@@ -123,18 +120,22 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
                             color: Colors.red,
                           ),
                           SizedBox(height: 16),
-                          Text(
+                          LocalizedText(
                             _error!,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: Colors.red,
-                              fontSize: responsive.sp(16),
-                            ),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.red,
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: _loadActivityLevelQuestion,
-                            child: Text(AppLocalizations.of(context)!.retry),
+                            child: LocalizedText(
+                              AppLocalizations.of(context)!.retry,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -147,27 +148,39 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
         // Continue Button
         _buildContinueButton(responsive),
         
-        SizedBox(height: responsive.hp(4)),
-      ],
+        SizedBox(height: responsive.hp(2)),
+        ],
+      ),
     );
   }
 
   Widget _buildActivityOptions(ResponsiveHelper responsive) {
+    if (_activityQuestion?.options == null || _activityQuestion!.options!.isEmpty) {
+      return Center(
+        child: LocalizedText(
+          AppLocalizations.of(context)!.noActivityLevelOptionsAvailable,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black,
+        ),
+      );
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: responsive.h(8)),
       child: Column(
-        children: _activityOptions.map((option) {
-          final isSelected = _selectedActivity == option['value'];
+        children: _activityQuestion!.options!.map((option) {
+          final isSelected = _selectedActivity == option.en;
           return Column(
             children: [
               _buildActivityOption(
                 responsive,
-                value: option['value']!,
-                label: option['label']!,
+                value: option.en,
+                label: option.localizedText,
                 isSelected: isSelected,
-                onTap: () => _selectActivity(option['value']!),
+                onTap: () => _selectActivity(option.en),
               ),
-              if (option != _activityOptions.last)
+              if (option != _activityQuestion!.options!.last)
                 SizedBox(height: responsive.h(16)),
             ],
           );
@@ -237,13 +250,11 @@ class _ActivityLevelQuestionBodyState extends State<ActivityLevelQuestionBody> {
             
             // Text Content
             Expanded(
-              child: Text(
+              child: LocalizedText(
                 label,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: responsive.sp(16),
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.black,
-                ),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.black,
               ),
             ),
           ],

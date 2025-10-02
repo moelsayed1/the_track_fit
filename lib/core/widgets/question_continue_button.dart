@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
-import 'package:the_track_fit/core/constants/app_text_styles.dart';
+import 'package:the_track_fit/core/widgets/localized_text.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 /// Common continue button widget for all question screens
 /// 
@@ -17,7 +18,7 @@ class QuestionContinueButton extends StatelessWidget {
   final bool isEnabled;
   final bool isLoading;
   final VoidCallback? onPressed;
-  final String text;
+  final String? text;
   final double? width;
   final double? height;
 
@@ -26,7 +27,7 @@ class QuestionContinueButton extends StatelessWidget {
     required this.isEnabled,
     this.isLoading = false,
     this.onPressed,
-    this.text = 'Continue',
+    this.text,
     this.width,
     this.height,
   });
@@ -78,15 +79,11 @@ class QuestionContinueButton extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Text(
-                      text,
-                      style: AppTextStyles.buttonPrimary.copyWith(
-                        fontSize: responsive.sp(16),
-                        fontWeight: FontWeight.w500,
-                        color: isEnabled ? Colors.white : Colors.grey[600]!,
-                        height: 1.50,
-                        letterSpacing: 0.50,
-                      ),
+                  : LocalizedText(
+                      text ?? AppLocalizations.of(context)!.continueText,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: isEnabled ? Colors.white : Colors.grey[600]!,
                     ),
             ),
           ),

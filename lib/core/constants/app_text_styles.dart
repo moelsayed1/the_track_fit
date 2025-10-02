@@ -1,92 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_colors.dart';
+import '../bloc/language/language_bloc.dart';
 
 class AppTextStyles {
+  // Helper method to get localized font family
+  static String _getFontFamily(BuildContext context) {
+    final languageState = context.read<LanguageBloc>().state;
+    if (languageState is LanguageLoaded) {
+      return languageState.currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+    }
+    return 'Poppins'; // Default to Poppins
+  }
+
   // Heading styles
-  static const TextStyle heading1 = TextStyle(
+  static TextStyle heading1(BuildContext context) => TextStyle(
     color: AppColors.black,
     fontSize: 24,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     fontWeight: FontWeight.w700,
     letterSpacing: 0.50,
   );
   
-  static const TextStyle heading2 = TextStyle(
+  static TextStyle heading2(BuildContext context) => TextStyle(
     color: AppColors.black,
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     letterSpacing: 0.50,
   );
   
   // Body text styles
-  static const TextStyle bodyLarge = TextStyle(
+  static TextStyle bodyLarge(BuildContext context) => TextStyle(
     color: AppColors.black,
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.50,
   );
   
-  static const TextStyle bodyMedium = TextStyle(
+  static TextStyle bodyMedium(BuildContext context) => TextStyle(
     color: AppColors.gray,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.50,
   );
   
-  static const TextStyle bodySmall = TextStyle(
+  static TextStyle bodySmall(BuildContext context) => TextStyle(
     color: AppColors.gray,
     fontSize: 10,
     fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.80,
   );
   
   // Button text styles
-  static const TextStyle buttonPrimary = TextStyle(
+  static TextStyle buttonPrimary(BuildContext context) => TextStyle(
     color: AppColors.white,
     fontSize: 16,
     fontWeight: FontWeight.w500,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.50,
     letterSpacing: 0.50,
   );
   
-  static const TextStyle buttonSecondary = TextStyle(
+  static TextStyle buttonSecondary(BuildContext context) => TextStyle(
     color: AppColors.primaryGreen,
     fontSize: 16,
     fontWeight: FontWeight.w500,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.50,
     letterSpacing: 0.50,
   );
   
   // Special text styles
-  static const TextStyle skipButton = TextStyle(
+  static TextStyle skipButton(BuildContext context) => TextStyle(
     color: AppColors.white,
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.50,
     letterSpacing: 0.50,
   );
   
   // Onboarding specific styles
-  static const TextStyle onboardingTitle = TextStyle(
+  static TextStyle onboardingTitle(BuildContext context) => TextStyle(
     color: AppColors.black,
     fontSize: 24,
     fontWeight: FontWeight.w700,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     letterSpacing: 0.50,
   );
   
-  static const TextStyle onboardingDescription = TextStyle(
+  static TextStyle onboardingDescription(BuildContext context) => TextStyle(
     color: AppColors.gray,
     fontSize: 10,
     fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
+    fontFamily: _getFontFamily(context),
     height: 1.80,
   );
 }
