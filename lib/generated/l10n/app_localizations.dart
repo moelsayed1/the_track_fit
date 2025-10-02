@@ -542,6 +542,12 @@ abstract class AppLocalizations {
   /// **'Storage'**
   String get storage;
 
+  /// No description provided for @store.
+  ///
+  /// In en, this message translates to:
+  /// **'Store'**
+  String get store;
+
   /// No description provided for @microphone.
   ///
   /// In en, this message translates to:
@@ -4106,6 +4112,786 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No meals available for this day'**
   String get noMealsAvailableForThisDay;
+
+  /// No description provided for @whatsYourGender.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your gender?'**
+  String get whatsYourGender;
+
+  /// No description provided for @whatsYourAge.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your age?'**
+  String get whatsYourAge;
+
+  /// No description provided for @whatsYourHeight.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your height?'**
+  String get whatsYourHeight;
+
+  /// No description provided for @whatsYourWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your weight?'**
+  String get whatsYourWeight;
+
+  /// No description provided for @whatsYourTargetWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your target weight?'**
+  String get whatsYourTargetWeight;
+
+  /// No description provided for @whatsYourMainGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your main goal?'**
+  String get whatsYourMainGoal;
+
+  /// No description provided for @whatsYourActivityLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your activity level?'**
+  String get whatsYourActivityLevel;
+
+  /// No description provided for @whatsYourTrainingTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your preferred training types?'**
+  String get whatsYourTrainingTypes;
+
+  /// No description provided for @whatsYourEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your available equipment?'**
+  String get whatsYourEquipment;
+
+  /// No description provided for @whatsYourDietSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your current diet system?'**
+  String get whatsYourDietSystem;
+
+  /// No description provided for @whatsYourHealthStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your health status?'**
+  String get whatsYourHealthStatus;
+
+  /// No description provided for @whatsYourSpecialDiet.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your special diet? (Describe)'**
+  String get whatsYourSpecialDiet;
+
+  /// No description provided for @whatsYourInjury.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your current or previous injury? (Describe)'**
+  String get whatsYourInjury;
+
+  /// No description provided for @whatsYourAdditionalGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s your additional goals (Optional)?'**
+  String get whatsYourAdditionalGoals;
+
+  /// No description provided for @forgetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget Password?'**
+  String get forgetPassword;
+
+  /// No description provided for @emailPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailPlaceholder;
+
+  /// No description provided for @passwordPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordPlaceholder;
+
+  /// No description provided for @newPasswordPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPasswordPlaceholder;
+
+  /// No description provided for @confirmPasswordPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPasswordPlaceholder;
+
+  /// No description provided for @namePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get namePlaceholder;
+
+  /// No description provided for @phonePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phonePlaceholder;
+
+  /// No description provided for @addressPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get addressPlaceholder;
+
+  /// No description provided for @cardNumberPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Card Number'**
+  String get cardNumberPlaceholder;
+
+  /// No description provided for @expirationPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get expirationPlaceholder;
+
+  /// No description provided for @cvvPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'CVV'**
+  String get cvvPlaceholder;
+
+  /// No description provided for @fullNamePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullNamePlaceholder;
+
+  /// No description provided for @emailAddressPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddressPlaceholder;
+
+  /// No description provided for @phoneNumberPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumberPlaceholder;
+
+  /// No description provided for @couponPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon'**
+  String get couponPlaceholder;
+
+  /// No description provided for @searchProductPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Product'**
+  String get searchProductPlaceholder;
+
+  /// No description provided for @describeSpecialDietPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your special diet requirements (optional)'**
+  String get describeSpecialDietPlaceholder;
+
+  /// No description provided for @describeInjuryPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe any current or previous injuries (optional)'**
+  String get describeInjuryPlaceholder;
+
+  /// No description provided for @validationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Validation Error'**
+  String get validationError;
+
+  /// No description provided for @noChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'No Changes'**
+  String get noChanges;
+
+  /// No description provided for @uploadingImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading Image'**
+  String get uploadingImage;
+
+  /// No description provided for @imageUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Uploaded!'**
+  String get imageUploaded;
+
+  /// No description provided for @uploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Failed'**
+  String get uploadFailed;
+
+  /// No description provided for @imageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Error'**
+  String get imageError;
+
+  /// No description provided for @changePasswordFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password Failed'**
+  String get changePasswordFailed;
+
+  /// No description provided for @otpVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP Verified!'**
+  String get otpVerified;
+
+  /// No description provided for @verificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Failed'**
+  String get verificationFailed;
+
+  /// No description provided for @loginSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Successful!'**
+  String get loginSuccessful;
+
+  /// No description provided for @loginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Failed'**
+  String get loginFailed;
+
+  /// No description provided for @buildingYourPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re building your personalized plan'**
+  String get buildingYourPlan;
+
+  /// No description provided for @journeyStartsSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Your journey starts in a few seconds.'**
+  String get journeyStartsSoon;
+
+  /// No description provided for @imageCapturedProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Image captured! Processing for exercise recognition...'**
+  String get imageCapturedProcessing;
+
+  /// No description provided for @currentPasswordPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPasswordPlaceholder;
+
+  /// No description provided for @warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get warning;
+
+  /// No description provided for @testNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Notification'**
+  String get testNotification;
+
+  /// No description provided for @failedToLoadMainGoalOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load main goal options'**
+  String get failedToLoadMainGoalOptions;
+
+  /// No description provided for @mainGoalUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Main goal updated successfully!'**
+  String get mainGoalUpdatedSuccessfully;
+
+  /// No description provided for @failedToUpdateMainGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update main goal'**
+  String get failedToUpdateMainGoal;
+
+  /// No description provided for @errorPickingImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error picking image'**
+  String get errorPickingImage;
+
+  /// No description provided for @couponAppliedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Coupon applied successfully!'**
+  String get couponAppliedSuccessfully;
+
+  /// No description provided for @exerciseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise subtitle'**
+  String get exerciseSubtitle;
+
+  /// No description provided for @exerciseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise type'**
+  String get exerciseType;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @noNotificationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get noNotificationsYet;
+
+  /// No description provided for @noNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll see your notifications here'**
+  String get noNotificationsDesc;
+
+  /// No description provided for @markAllAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllAsRead;
+
+  /// No description provided for @testNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Notification'**
+  String get testNotificationTitle;
+
+  /// No description provided for @testNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a test notification from TrackFit! 🎉'**
+  String get testNotificationBody;
+
+  /// No description provided for @addTestNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Test Notification'**
+  String get addTestNotification;
+
+  /// No description provided for @showAllNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all Notifications'**
+  String get showAllNotifications;
+
+  /// No description provided for @daysShort.
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get daysShort;
+
+  /// No description provided for @hoursShort.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hoursShort;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minutesShort;
+
+  /// No description provided for @now.
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get now;
+
+  /// No description provided for @chooseImageSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Image Source'**
+  String get chooseImageSource;
+
+  /// No description provided for @tapToChangeProfilePicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change profile picture'**
+  String get tapToChangeProfilePicture;
+
+  /// No description provided for @pleaseWaitWhileWeUploadYourImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait while we upload your image...'**
+  String get pleaseWaitWhileWeUploadYourImage;
+
+  /// No description provided for @yourProfileImageHasBeenUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile image has been updated successfully'**
+  String get yourProfileImageHasBeenUpdatedSuccessfully;
+
+  /// No description provided for @failedToUploadImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload image. Please try again.'**
+  String get failedToUploadImage;
+
+  /// No description provided for @selectedImageFileIsNotAccessible.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected image file is not accessible'**
+  String get selectedImageFileIsNotAccessible;
+
+  /// No description provided for @noChangesDetectedToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'No changes detected to save'**
+  String get noChangesDetectedToSave;
+
+  /// No description provided for @updateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Failed'**
+  String get updateFailed;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
+  /// No description provided for @failedToLoadFavourites.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to Load Favourites'**
+  String get failedToLoadFavourites;
+
+  /// No description provided for @noFavouriteExercises.
+  ///
+  /// In en, this message translates to:
+  /// **'No Favourite Exercises'**
+  String get noFavouriteExercises;
+
+  /// No description provided for @youHaventAddedAnyExercisesToYourFavouritesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t added any exercises to your favourites yet.'**
+  String get youHaventAddedAnyExercisesToYourFavouritesYet;
+
+  /// No description provided for @failedToLoadSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load subscription'**
+  String get failedToLoadSubscription;
+
+  /// No description provided for @noActiveSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'No Active Subscription'**
+  String get noActiveSubscription;
+
+  /// No description provided for @youDontHaveAnActiveSubscriptionYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have an active subscription yet.\nChoose a plan to get started!'**
+  String get youDontHaveAnActiveSubscriptionYet;
+
+  /// No description provided for @browsePackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Packages'**
+  String get browsePackages;
+
+  /// No description provided for @planActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Active'**
+  String get planActive;
+
+  /// No description provided for @planInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Inactive'**
+  String get planInactive;
+
+  /// No description provided for @yourPlanIsAvailableTill.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Plan is available till'**
+  String get yourPlanIsAvailableTill;
+
+  /// No description provided for @months.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get months;
+
+  /// No description provided for @pleaseFinishThePreviousChallengeFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Finish The previous challenge first.'**
+  String get pleaseFinishThePreviousChallengeFirst;
+
+  /// No description provided for @failedToLoadProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load products'**
+  String get failedToLoadProducts;
+
+  /// No description provided for @noProductsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No products available'**
+  String get noProductsAvailable;
+
+  /// No description provided for @thereAreNoExercisesScheduledForThisDayAndGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no exercises scheduled for this day and goal.'**
+  String get thereAreNoExercisesScheduledForThisDayAndGoal;
+
+  /// No description provided for @noExercisesForThisDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No exercises for this day'**
+  String get noExercisesForThisDay;
+
+  /// No description provided for @choosePaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Payment Method'**
+  String get choosePaymentMethod;
+
+  /// No description provided for @paymentProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Proof'**
+  String get paymentProof;
+
+  /// No description provided for @pleaseUploadScreenshotOfPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload a screenshot of your Instapay payment'**
+  String get pleaseUploadScreenshotOfPayment;
+
+  /// No description provided for @tapToUploadPaymentProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload payment proof'**
+  String get tapToUploadPaymentProof;
+
+  /// No description provided for @info.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get info;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @governorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Governorate'**
+  String get governorate;
+
+  /// No description provided for @confirmOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Order'**
+  String get confirmOrder;
+
+  /// No description provided for @noProductsInCart.
+  ///
+  /// In en, this message translates to:
+  /// **'No products in cart'**
+  String get noProductsInCart;
+
+  /// No description provided for @addSomeProductsToContinueShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Add some products to continue shopping'**
+  String get addSomeProductsToContinueShopping;
+
+  /// No description provided for @goToStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Store'**
+  String get goToStore;
+
+  /// No description provided for @startShoppingToAddItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Start shopping to add items to your cart'**
+  String get startShoppingToAddItems;
+
+  /// No description provided for @startShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Shopping'**
+  String get startShopping;
+
+  /// No description provided for @congratulations.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations!'**
+  String get congratulations;
+
+  /// No description provided for @yourOrderHasBeenConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Order has been confirmed'**
+  String get yourOrderHasBeenConfirmed;
+
+  /// No description provided for @goToHomePage.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Home Page'**
+  String get goToHomePage;
+
+  /// No description provided for @pleaseEnterYourName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get pleaseEnterYourName;
+
+  /// No description provided for @pleaseEnterYourEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get pleaseEnterYourEmail;
+
+  /// No description provided for @pleaseEnterYourPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your phone number'**
+  String get pleaseEnterYourPhone;
+
+  /// No description provided for @pleaseSelectCountryCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a country code'**
+  String get pleaseSelectCountryCode;
+
+  /// No description provided for @pleaseEnterYourAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your address'**
+  String get pleaseEnterYourAddress;
+
+  /// No description provided for @pleaseSelectGovernorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a governorate'**
+  String get pleaseSelectGovernorate;
+
+  /// No description provided for @pleaseSelectPaymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a payment method'**
+  String get pleaseSelectPaymentMethod;
+
+  /// No description provided for @pleaseUploadPaymentProof.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload payment proof for Instapay'**
+  String get pleaseUploadPaymentProof;
+
+  /// No description provided for @noItemsInCart.
+  ///
+  /// In en, this message translates to:
+  /// **'No items in cart to checkout'**
+  String get noItemsInCart;
+
+  /// No description provided for @failedToPickImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image'**
+  String get failedToPickImage;
+
+  /// No description provided for @vodafoneCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Vodafone Cash'**
+  String get vodafoneCash;
+
+  /// No description provided for @instapay.
+  ///
+  /// In en, this message translates to:
+  /// **'Instapay'**
+  String get instapay;
+
+  /// No description provided for @pleaseEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get pleaseEnterName;
+
+  /// No description provided for @pleaseEnterPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your phone number'**
+  String get pleaseEnterPhoneNumber;
+
+  /// No description provided for @pleaseEnterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your address'**
+  String get pleaseEnterAddress;
+
+  /// No description provided for @pleaseUploadPaymentProofForInstapay.
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload payment proof for Instapay'**
+  String get pleaseUploadPaymentProofForInstapay;
+
+  /// No description provided for @noItemsInCartToCheckout.
+  ///
+  /// In en, this message translates to:
+  /// **'No items in cart to checkout'**
+  String get noItemsInCartToCheckout;
+
+  /// No description provided for @startShoppingToAddItemsToYourCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start shopping to add items to your cart'**
+  String get startShoppingToAddItemsToYourCart;
 }
 
 class _AppLocalizationsDelegate

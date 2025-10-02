@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomTextField(
-                      hintText: 'Email',
+                      hintText: AppLocalizations.of(context)!.emailPlaceholder,
                       prefixIconAsset: AppIcons.email,
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -181,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomTextField(
-                          hintText: 'Password',
+                          hintText: AppLocalizations.of(context)!.passwordPlaceholder,
                           prefixIconAsset: AppIcons.lock,
                           isPassword: true,
                           controller: _passwordController,
@@ -194,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: GestureDetector(
                             onTap: _handleForgotPassword,
                             child: Text(
-                              'Forget Password ?',
+                              AppLocalizations.of(context)!.forgetPassword,
                               style: TextStyle(
                                 color: AppColors.grayMedium,
                                 fontSize: responsive.sp(12),

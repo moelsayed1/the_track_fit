@@ -20,12 +20,21 @@ class SelectEquipmentScreen extends StatefulWidget {
 class _SelectEquipmentScreenState extends State<SelectEquipmentScreen> {
   late List<EquipmentOption> equipmentOptions;
   String? selectedEquipmentId;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     selectedEquipmentId = widget.selectedEquipment;
-    _initializeEquipmentOptions();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initializeEquipmentOptions();
+      _initialized = true;
+    }
   }
 
   void _initializeEquipmentOptions() {

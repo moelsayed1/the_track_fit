@@ -231,6 +231,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storage => 'Storage';
 
   @override
+  String get store => 'Store';
+
+  @override
   String get microphone => 'Microphone';
 
   @override
@@ -2040,4 +2043,413 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMealsAvailableForThisDay => 'No meals available for this day';
+
+  @override
+  String get whatsYourGender => 'What\'s your gender?';
+
+  @override
+  String get whatsYourAge => 'What\'s your age?';
+
+  @override
+  String get whatsYourHeight => 'What\'s your height?';
+
+  @override
+  String get whatsYourWeight => 'What\'s your weight?';
+
+  @override
+  String get whatsYourTargetWeight => 'What\'s your target weight?';
+
+  @override
+  String get whatsYourMainGoal => 'What\'s your main goal?';
+
+  @override
+  String get whatsYourActivityLevel => 'What\'s your activity level?';
+
+  @override
+  String get whatsYourTrainingTypes => 'What\'s your preferred training types?';
+
+  @override
+  String get whatsYourEquipment => 'What\'s your available equipment?';
+
+  @override
+  String get whatsYourDietSystem => 'What\'s your current diet system?';
+
+  @override
+  String get whatsYourHealthStatus => 'What\'s your health status?';
+
+  @override
+  String get whatsYourSpecialDiet => 'What\'s your special diet? (Describe)';
+
+  @override
+  String get whatsYourInjury =>
+      'What\'s your current or previous injury? (Describe)';
+
+  @override
+  String get whatsYourAdditionalGoals =>
+      'What\'s your additional goals (Optional)?';
+
+  @override
+  String get forgetPassword => 'Forget Password?';
+
+  @override
+  String get emailPlaceholder => 'Email';
+
+  @override
+  String get passwordPlaceholder => 'Password';
+
+  @override
+  String get newPasswordPlaceholder => 'New Password';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Confirm Password';
+
+  @override
+  String get namePlaceholder => 'Name';
+
+  @override
+  String get phonePlaceholder => 'Phone Number';
+
+  @override
+  String get addressPlaceholder => 'Address';
+
+  @override
+  String get cardNumberPlaceholder => 'Card Number';
+
+  @override
+  String get expirationPlaceholder => 'Expiration';
+
+  @override
+  String get cvvPlaceholder => 'CVV';
+
+  @override
+  String get fullNamePlaceholder => 'Full Name';
+
+  @override
+  String get emailAddressPlaceholder => 'Email Address';
+
+  @override
+  String get phoneNumberPlaceholder => 'Phone Number';
+
+  @override
+  String get couponPlaceholder => 'Coupon';
+
+  @override
+  String get searchProductPlaceholder => 'Search Product';
+
+  @override
+  String get describeSpecialDietPlaceholder =>
+      'Describe your special diet requirements (optional)';
+
+  @override
+  String get describeInjuryPlaceholder =>
+      'Describe any current or previous injuries (optional)';
+
+  @override
+  String get validationError => 'Validation Error';
+
+  @override
+  String get noChanges => 'No Changes';
+
+  @override
+  String get uploadingImage => 'Uploading Image';
+
+  @override
+  String get imageUploaded => 'Image Uploaded!';
+
+  @override
+  String get uploadFailed => 'Upload Failed';
+
+  @override
+  String get imageError => 'Image Error';
+
+  @override
+  String get changePasswordFailed => 'Change Password Failed';
+
+  @override
+  String get otpVerified => 'OTP Verified!';
+
+  @override
+  String get verificationFailed => 'Verification Failed';
+
+  @override
+  String get loginSuccessful => 'Login Successful!';
+
+  @override
+  String get loginFailed => 'Login Failed';
+
+  @override
+  String get buildingYourPlan => 'We\'re building your personalized plan';
+
+  @override
+  String get journeyStartsSoon => 'Your journey starts in a few seconds.';
+
+  @override
+  String get imageCapturedProcessing =>
+      'Image captured! Processing for exercise recognition...';
+
+  @override
+  String get currentPasswordPlaceholder => 'Current Password';
+
+  @override
+  String get warning => 'Warning';
+
+  @override
+  String get testNotification => 'Test Notification';
+
+  @override
+  String get failedToLoadMainGoalOptions => 'Failed to load main goal options';
+
+  @override
+  String get mainGoalUpdatedSuccessfully => 'Main goal updated successfully!';
+
+  @override
+  String get failedToUpdateMainGoal => 'Failed to update main goal';
+
+  @override
+  String get errorPickingImage => 'Error picking image';
+
+  @override
+  String get couponAppliedSuccessfully => 'Coupon applied successfully!';
+
+  @override
+  String get exerciseSubtitle => 'Exercise subtitle';
+
+  @override
+  String get exerciseType => 'Exercise type';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get noNotificationsYet => 'No notifications yet';
+
+  @override
+  String get noNotificationsDesc => 'You\'ll see your notifications here';
+
+  @override
+  String get markAllAsRead => 'Mark all as read';
+
+  @override
+  String get testNotificationTitle => 'Test Notification';
+
+  @override
+  String get testNotificationBody =>
+      'This is a test notification from TrackFit! 🎉';
+
+  @override
+  String get addTestNotification => 'Add Test Notification';
+
+  @override
+  String get showAllNotifications => 'Show all Notifications';
+
+  @override
+  String get daysShort => 'd';
+
+  @override
+  String get hoursShort => 'h';
+
+  @override
+  String get minutesShort => 'm';
+
+  @override
+  String get now => 'now';
+
+  @override
+  String get chooseImageSource => 'Choose Image Source';
+
+  @override
+  String get tapToChangeProfilePicture => 'Tap to change profile picture';
+
+  @override
+  String get pleaseWaitWhileWeUploadYourImage =>
+      'Please wait while we upload your image...';
+
+  @override
+  String get yourProfileImageHasBeenUpdatedSuccessfully =>
+      'Your profile image has been updated successfully';
+
+  @override
+  String get failedToUploadImage => 'Failed to upload image. Please try again.';
+
+  @override
+  String get selectedImageFileIsNotAccessible =>
+      'Selected image file is not accessible';
+
+  @override
+  String get noChangesDetectedToSave => 'No changes detected to save';
+
+  @override
+  String get updateFailed => 'Update Failed';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get failedToLoadFavourites => 'Failed to Load Favourites';
+
+  @override
+  String get noFavouriteExercises => 'No Favourite Exercises';
+
+  @override
+  String get youHaventAddedAnyExercisesToYourFavouritesYet =>
+      'You haven\'t added any exercises to your favourites yet.';
+
+  @override
+  String get failedToLoadSubscription => 'Failed to load subscription';
+
+  @override
+  String get noActiveSubscription => 'No Active Subscription';
+
+  @override
+  String get youDontHaveAnActiveSubscriptionYet =>
+      'You don\'t have an active subscription yet.\nChoose a plan to get started!';
+
+  @override
+  String get browsePackages => 'Browse Packages';
+
+  @override
+  String get planActive => 'Plan Active';
+
+  @override
+  String get planInactive => 'Plan Inactive';
+
+  @override
+  String get yourPlanIsAvailableTill => 'Your Plan is available till';
+
+  @override
+  String get months => 'months';
+
+  @override
+  String get pleaseFinishThePreviousChallengeFirst =>
+      'Please Finish The previous challenge first.';
+
+  @override
+  String get failedToLoadProducts => 'Failed to load products';
+
+  @override
+  String get noProductsAvailable => 'No products available';
+
+  @override
+  String get thereAreNoExercisesScheduledForThisDayAndGoal =>
+      'There are no exercises scheduled for this day and goal.';
+
+  @override
+  String get noExercisesForThisDay => 'No exercises for this day';
+
+  @override
+  String get choosePaymentMethod => 'Choose Payment Method';
+
+  @override
+  String get paymentProof => 'Payment Proof';
+
+  @override
+  String get pleaseUploadScreenshotOfPayment =>
+      'Please upload a screenshot of your Instapay payment';
+
+  @override
+  String get tapToUploadPaymentProof => 'Tap to upload payment proof';
+
+  @override
+  String get info => 'Info';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get governorate => 'Governorate';
+
+  @override
+  String get confirmOrder => 'Confirm Order';
+
+  @override
+  String get noProductsInCart => 'No products in cart';
+
+  @override
+  String get addSomeProductsToContinueShopping =>
+      'Add some products to continue shopping';
+
+  @override
+  String get goToStore => 'Go to Store';
+
+  @override
+  String get startShoppingToAddItems =>
+      'Start shopping to add items to your cart';
+
+  @override
+  String get startShopping => 'Start Shopping';
+
+  @override
+  String get congratulations => 'Congratulations!';
+
+  @override
+  String get yourOrderHasBeenConfirmed => 'Your Order has been confirmed';
+
+  @override
+  String get goToHomePage => 'Go to Home Page';
+
+  @override
+  String get pleaseEnterYourName => 'Please enter your name';
+
+  @override
+  String get pleaseEnterYourEmail => 'Please enter your email';
+
+  @override
+  String get pleaseEnterYourPhone => 'Please enter your phone number';
+
+  @override
+  String get pleaseSelectCountryCode => 'Please select a country code';
+
+  @override
+  String get pleaseEnterYourAddress => 'Please enter your address';
+
+  @override
+  String get pleaseSelectGovernorate => 'Please select a governorate';
+
+  @override
+  String get pleaseSelectPaymentMethod => 'Please select a payment method';
+
+  @override
+  String get pleaseUploadPaymentProof =>
+      'Please upload payment proof for Instapay';
+
+  @override
+  String get noItemsInCart => 'No items in cart to checkout';
+
+  @override
+  String get failedToPickImage => 'Failed to pick image';
+
+  @override
+  String get vodafoneCash => 'Vodafone Cash';
+
+  @override
+  String get instapay => 'Instapay';
+
+  @override
+  String get pleaseEnterName => 'Please enter your name';
+
+  @override
+  String get pleaseEnterPhoneNumber => 'Please enter your phone number';
+
+  @override
+  String get pleaseEnterAddress => 'Please enter your address';
+
+  @override
+  String get pleaseUploadPaymentProofForInstapay =>
+      'Please upload payment proof for Instapay';
+
+  @override
+  String get noItemsInCartToCheckout => 'No items in cart to checkout';
+
+  @override
+  String get startShoppingToAddItemsToYourCart =>
+      'Start shopping to add items to your cart';
 }

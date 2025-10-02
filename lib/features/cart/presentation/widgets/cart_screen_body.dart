@@ -16,6 +16,7 @@ import 'package:the_track_fit/features/store/presentation/widgets/product_card.d
 import 'package:the_track_fit/core/services/api_service.dart';
 import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 
 class CartScreenBody extends StatefulWidget {
   const CartScreenBody({super.key});
@@ -27,7 +28,7 @@ class CartScreenBody extends StatefulWidget {
 class _CartScreenBodyState extends State<CartScreenBody> {
   bool isCartActive = true;
   bool isHeartActive = false;
-  
+
   // Favorite products state
   late final ProductRepository _productRepository;
   List<Product> _favoriteProducts = [];
@@ -48,6 +49,8 @@ class _CartScreenBodyState extends State<CartScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
         return Scaffold(
@@ -58,120 +61,221 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                 // Header Section
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 0.h),
-                  decoration: BoxDecoration(
-                    color: const Color(0x26848484),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Left side - Back button and title
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => context.pop(),
-                            icon: SvgPicture.asset(
-                              'assets/logos/arrow_left.svg',
-                              width: 24.w,
-                              height: 24.h,
+                  decoration: const BoxDecoration(color: Color(0x26848484)),
+                  child: Directionality(
+                    textDirection: isArabic
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Left side - Title (and icons for English)
+                        Row(
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.cart,
+                              style: TextStyle(
+                                color: const Color(0xFF1E1E1E),
+                                fontSize: 18.sp,
+                                fontFamily: context.fontFamily,
+                                fontWeight: FontWeight.w500,
+                                height: 0.89,
+                              ),
                             ),
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.cart,
-                            style: TextStyle(
-                              color: Color(0xFF1E1E1E),
-                              fontSize: 18.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                              height: 0.89,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Right side - Cart and heart icons
-                      Row(
-                        children: [
-                          // Cart Button
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isCartActive = true;
-                                isHeartActive = false;
-                              });
-                            },
-                            child: Container(
-                              width: 32.w,
-                              height: 32.h,
-                              decoration: ShapeDecoration(
-                                color: isCartActive
-                                    ? const Color(0xFF28A228)
-                                    : const Color(0x3328A228),
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                    width: 1,
-                                    color: Color(0xFF28A228),
+                            if (!isArabic) ...[
+                              SizedBox(width: 8.w),
+                              // Cart Button
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isCartActive = true;
+                                    isHeartActive = false;
+                                  });
+                                },
+                                child: Container(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  decoration: ShapeDecoration(
+                                    color: isCartActive
+                                        ? const Color(0xFF28A228)
+                                        : const Color(0x3328A228),
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 1,
+                                        color: Color(0xFF28A228),
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
                                   ),
-                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      'assets/logos/cart_icon.svg',
+                                      width: 20.w,
+                                      height: 20.h,
+                                      colorFilter: ColorFilter.mode(
+                                        isCartActive
+                                            ? Colors.white
+                                            : const Color(0xFF28A228),
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Center(
+                              SizedBox(width: 8.w),
+                              // Heart Button
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isHeartActive = true;
+                                    isCartActive = false;
+                                  });
+                                  // Load favorite products when heart is tapped
+                                  _loadFavoriteProducts();
+                                },
+                                child: Container(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  decoration: ShapeDecoration(
+                                    color: isHeartActive
+                                        ? const Color(0xFF28A228)
+                                        : const Color(0x3328A228),
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 1,
+                                        color: Color(0xFF28A228),
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      isHeartActive
+                                          ? Icons.favorite_border
+                                          : Icons.favorite_border,
+                                      color: isHeartActive
+                                          ? Colors.white
+                                          : const Color(0xFF28A228),
+                                      size: 18.sp,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        // Right side - Icons for Arabic + Back arrow
+                        Row(
+                          children: [
+                            if (isArabic) ...[
+                              // Cart Button
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isCartActive = true;
+                                    isHeartActive = false;
+                                  });
+                                },
+                                child: Container(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  decoration: ShapeDecoration(
+                                    color: isCartActive
+                                        ? const Color(0xFF28A228)
+                                        : const Color(0x3328A228),
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 1,
+                                        color: Color(0xFF28A228),
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: SvgPicture.asset(
+                                      'assets/logos/cart_icon.svg',
+                                      width: 20.w,
+                                      height: 20.h,
+                                      colorFilter: ColorFilter.mode(
+                                        isCartActive
+                                            ? Colors.white
+                                            : const Color(0xFF28A228),
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              // Heart Button
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isHeartActive = true;
+                                    isCartActive = false;
+                                  });
+                                  // Load favorite products when heart is tapped
+                                  _loadFavoriteProducts();
+                                },
+                                child: Container(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  decoration: ShapeDecoration(
+                                    color: isHeartActive
+                                        ? const Color(0xFF28A228)
+                                        : const Color(0x3328A228),
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        width: 1,
+                                        color: Color(0xFF28A228),
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      isHeartActive
+                                          ? Icons.favorite_border
+                                          : Icons.favorite_border,
+                                      color: isHeartActive
+                                          ? Colors.white
+                                          : const Color(0xFF28A228),
+                                      size: 18.sp,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                            ],
+                            // Back arrow
+                            GestureDetector(
+                              onTap: () => context.pop(),
+                              child: Transform.rotate(
+                                angle: !isArabic ? 3.14159 : 0,
                                 child: SvgPicture.asset(
-                                  'assets/logos/cart_icon.svg',
-                                  width: 20.w,
-                                  height: 20.h,
-                                  colorFilter: ColorFilter.mode(
-                                    isCartActive ? Colors.white : const Color(0xFF28A228),
+                                  'assets/logos/arrow_left.svg',
+                                  width: 24.w,
+                                  height: 24.h,
+                                  colorFilter: const ColorFilter.mode(
+                                    Color(0xFF1E1E1E),
                                     BlendMode.srcIn,
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 8.w),
-                          // Heart Button
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isHeartActive = true;
-                                isCartActive = false;
-                              });
-                              // Load favorite products when heart is tapped
-                              _loadFavoriteProducts();
-                            },
-                            child: Container(
-                              width: 32.w,
-                              height: 32.h,
-                              decoration: ShapeDecoration(
-                                color: isHeartActive
-                                    ? const Color(0xFF28A228)
-                                    : const Color(0x3328A228),
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                    width: 1,
-                                    color: Color(0xFF28A228),
-                                  ),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  isHeartActive ? Icons.favorite_border : Icons.favorite_border,
-                                  color: isHeartActive ? Colors.white : const Color(0xFF28A228),
-                                  size: 18.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                
+
                 // Product List Section
-                Expanded(
-                  child: _buildCartContent(state),
-                ),
+                Expanded(child: _buildCartContent(state)),
               ],
             ),
           ),
@@ -187,7 +291,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     if (isHeartActive) {
       return _buildFavoriteProductsContent();
     }
-    
+
     if (state is CartLoading) {
       return _buildCartShimmerLoading();
     } else if (state is CartError) {
@@ -195,18 +299,14 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64.sp,
-              color: Colors.red,
-            ),
+            Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
             SizedBox(height: 16.h),
             Text(
               AppLocalizations.of(context)!.failedToLoadCartItems,
               style: TextStyle(
                 color: Colors.red,
                 fontSize: 18.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -217,7 +317,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 14.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -235,7 +335,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       );
     } else if (state is CartLoaded) {
       final cartItems = state.cartItems;
-      
+
       return SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
         child: Column(
@@ -258,7 +358,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                       style: TextStyle(
                         color: Color(0xFF848484),
                         fontSize: 18.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -268,7 +368,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                       style: TextStyle(
                         color: Color(0xFF848484),
                         fontSize: 14.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -277,22 +377,28 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               )
             else ...[
               // Dynamic Product Cards
-              ...cartItems.asMap().entries.map((entry) {
-                int index = entry.key;
-                CartItem cartItem = entry.value;
-                return Column(
-                  children: [
-                    _buildProductCard(cartItem, index),
-                    if (index < cartItems.length - 1) SizedBox(height: 16.h),
-                  ],
-                );
-              }).toList().cast<Widget>(),
+              ...cartItems
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                    int index = entry.key;
+                    CartItem cartItem = entry.value;
+                    return Column(
+                      children: [
+                        _buildProductCard(cartItem, index),
+                        if (index < cartItems.length - 1)
+                          SizedBox(height: 16.h),
+                      ],
+                    );
+                  })
+                  .toList()
+                  .cast<Widget>(),
             ],
           ],
         ),
       );
     }
-    
+
     return const SizedBox.shrink();
   }
 
@@ -322,9 +428,8 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           children: [
             // Payment Summary Section
             _buildPaymentSummary(state.cartItems),
-            
+
             SizedBox(height: 24.h), // Fixed 24.h spacing as requested
-            
             // Checkout Button
             _buildCheckoutButton(),
           ],
@@ -334,7 +439,9 @@ class _CartScreenBodyState extends State<CartScreenBody> {
     return null;
   }
 
-    Widget _buildProductCard(CartItem cartItem, int index) {
+  Widget _buildProductCard(CartItem cartItem, int index) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -349,7 +456,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             blurRadius: 4,
             offset: Offset(0, 0),
             spreadRadius: 0,
-          )
+          ),
         ],
       ),
       child: Stack(
@@ -400,7 +507,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                       style: TextStyle(
                         color: Color(0xFF1E1E1E),
                         fontSize: 16.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -410,7 +517,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                       style: TextStyle(
                         color: Color(0xFF1E1E1E),
                         fontSize: 16.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -420,7 +527,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                       style: TextStyle(
                         color: Color(0xFF28A228),
                         fontSize: 16.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily: context.fontFamily,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -429,10 +536,11 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               ),
             ],
           ),
-          // Remove Button - Positioned at top right
+          // Remove Button - Positioned at top right for English, top left for Arabic
           Positioned(
             top: -10,
-            right: -10,
+            right: isArabic ? null : -10,
+            left: isArabic ? -10 : null,
             child: IconButton(
               onPressed: () {
                 _removeProduct(index);
@@ -445,11 +553,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.black, width: 1.5),
                 ),
-                child: Icon(
-                  Icons.close,
-                  size: 14.sp,
-                  color: Colors.black,
-                ),
+                child: Icon(Icons.close, size: 14.sp, color: Colors.black),
               ),
             ),
           ),
@@ -457,22 +561,24 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       ),
     );
   }
-  
+
   // Method to remove product from cart
   Future<void> _removeProduct(int index) async {
     final cartCubit = context.read<CartCubit>();
     final currentState = cartCubit.state;
-    
+
     if (currentState is CartLoaded) {
       final cartItem = currentState.cartItems[index];
-      
+
       try {
         await cartCubit.removeFromCart(cartItem.id);
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.productRemovedFromCart),
+              content: Text(
+                AppLocalizations.of(context)!.productRemovedFromCart,
+              ),
               backgroundColor: const Color(0xFF28A228),
               duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
@@ -491,7 +597,9 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${AppLocalizations.of(context)!.failedToRemoveProduct}: $e'),
+              content: Text(
+                '${AppLocalizations.of(context)!.failedToRemoveProduct}: $e',
+              ),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
               behavior: SnackBarBehavior.floating,
@@ -509,12 +617,15 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       }
     }
   }
-   
+
   Widget _buildPaymentSummary(List<CartItem> cartItems) {
     // Calculate totals dynamically
-    double orderTotal = cartItems.fold(0.0, (sum, cartItem) => sum + cartItem.totalPrice);
+    double orderTotal = cartItems.fold(
+      0.0,
+      (sum, cartItem) => sum + cartItem.totalPrice,
+    );
     double total = orderTotal; // No discount applied
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -523,12 +634,12 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           style: TextStyle(
             color: Color(0xFF1E1E1E),
             fontSize: 16.sp,
-            fontFamily: 'Poppins',
+            fontFamily: context.fontFamily,
             fontWeight: FontWeight.w500,
           ),
         ),
         SizedBox(height: 16.h),
-        
+
         // Order Total
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -538,7 +649,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Color(0xFF848484),
                 fontSize: 14.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
                 height: 1.14,
               ),
@@ -549,7 +660,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
                 height: 1.29,
               ),
@@ -557,8 +668,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           ],
         ),
         SizedBox(height: 16.h),
-        
-        
+
         // Shipping
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -568,7 +678,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Color(0xFF848484),
                 fontSize: 14.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
                 height: 1.14,
               ),
@@ -579,25 +689,25 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 14.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
                 height: 1.29,
               ),
             ),
           ],
         ),
-        
+
         SizedBox(height: 16.h),
-        
+
         // Divider
         Container(
           width: double.infinity,
           height: 1.h,
           color: const Color(0x26848484),
         ),
-        
+
         SizedBox(height: 16.h),
-        
+
         // Total
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -607,7 +717,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w400,
                 height: 1.13,
               ),
@@ -618,7 +728,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               style: TextStyle(
                 color: Color(0xFF1E1E1E),
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w600,
                 height: 1.13,
               ),
@@ -653,7 +763,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
               blurRadius: 4,
               offset: Offset(4, 0),
               spreadRadius: 0,
-            )
+            ),
           ],
         ),
         child: Text(
@@ -662,7 +772,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 16.sp,
-            fontFamily: 'Poppins',
+            fontFamily: context.fontFamily,
             fontWeight: FontWeight.w500,
             height: 1.50,
             letterSpacing: 0.50,
@@ -681,22 +791,16 @@ class _CartScreenBodyState extends State<CartScreenBody> {
           ...List.generate(3, (index) {
             return Column(
               children: [
-                ShimmerCard(
-                  height: 100.h,
-                  padding: EdgeInsets.all(16.w),
-                ),
+                ShimmerCard(height: 100.h, padding: EdgeInsets.all(16.w)),
                 if (index < 2) SizedBox(height: 16.h),
               ],
             );
           }),
-          
+
           SizedBox(height: 24.h),
-          
+
           // Shimmer for payment summary
-          ShimmerCard(
-            height: 200.h,
-            padding: EdgeInsets.all(16.w),
-          ),
+          ShimmerCard(height: 200.h, padding: EdgeInsets.all(16.w)),
         ],
       ),
     );
@@ -705,15 +809,16 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   /// Load favorite products from API
   Future<void> _loadFavoriteProducts() async {
     if (_isDisposed) return;
-    
+
     setState(() {
       _isLoadingFavorites = true;
       _favoriteError = null;
     });
 
     try {
-      final favoriteProducts = await _productRepository.getFavoriteProductsFromAPI();
-      
+      final favoriteProducts = await _productRepository
+          .getFavoriteProductsFromAPI();
+
       if (!_isDisposed) {
         setState(() {
           _favoriteProducts = favoriteProducts;
@@ -733,7 +838,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
   /// Toggle product favorite status
   Future<void> _onFavoriteToggle(int productId) async {
     if (_isDisposed) return;
-    
+
     try {
       await _productRepository.toggleProductFavorite(productId);
       if (!_isDisposed) {
@@ -803,17 +908,9 @@ class _CartScreenBodyState extends State<CartScreenBody> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      height: 16.h,
-                      width: 100.w,
-                      color: Colors.white,
-                    ),
+                    Container(height: 16.h, width: 100.w, color: Colors.white),
                     SizedBox(height: 8.h),
-                    Container(
-                      height: 16.h,
-                      width: 80.w,
-                      color: Colors.white,
-                    ),
+                    Container(height: 16.h, width: 80.w, color: Colors.white),
                   ],
                 ),
               ),
@@ -840,11 +937,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64.sp,
-              color: Colors.red,
-            ),
+            Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
             SizedBox(height: 16.h),
             Text(
               AppLocalizations.of(context)!.failedToLoadFavoriteProducts,
@@ -856,12 +949,10 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 8.h),
             Text(
-              _favoriteError ?? AppLocalizations.of(context)!.unknownErrorOccurred,
+              _favoriteError ??
+                  AppLocalizations.of(context)!.unknownErrorOccurred,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
             ),
             SizedBox(height: 24.h),
             ElevatedButton(
@@ -886,11 +977,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.favorite_border,
-              size: 64.sp,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.favorite_border, size: 64.sp, color: Colors.grey[400]),
             SizedBox(height: 16.h),
             Text(
               AppLocalizations.of(context)!.noFavoriteProducts,
@@ -902,12 +989,11 @@ class _CartScreenBodyState extends State<CartScreenBody> {
             ),
             SizedBox(height: 8.h),
             Text(
-              AppLocalizations.of(context)!.productsYouMarkAsFavoriteWillAppearHere,
+              AppLocalizations.of(
+                context,
+              )!.productsYouMarkAsFavoriteWillAppearHere,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             ),
             SizedBox(height: 24.h),
             ElevatedButton(

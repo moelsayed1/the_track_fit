@@ -21,7 +21,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get package => 'الباقة';
 
   @override
-  String get report => 'التقرير';
+  String get report => 'التقارير';
 
   @override
   String get profile => 'الملف الشخصي';
@@ -229,6 +229,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get storage => 'التخزين';
+
+  @override
+  String get store => 'المتجر';
 
   @override
   String get microphone => 'الميكروفون';
@@ -538,7 +541,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logoutFailed => 'فشل تسجيل الخروج';
 
   @override
-  String get profileUpdated => 'تم تحديث الملف الشخصي!';
+  String get profileUpdated => 'تم تحديث الملف الشخصي';
 
   @override
   String get profileRefreshedSuccessfully =>
@@ -1624,7 +1627,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get stopScan => 'إيقاف المسح';
 
   @override
-  String get letsSetUpYourPlan => 'دعنا نعد خطتك';
+  String get letsSetUpYourPlan => 'دعنا نضع خطة لك';
 
   @override
   String get noDietSystemOptionsAvailable => 'لا توجد خيارات نظام غذائي متاحة';
@@ -1961,7 +1964,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currentPassword => 'كلمة المرور الحالية';
 
   @override
-  String get newPassword => 'كلمة المرور الجديدة';
+  String get newPassword => 'كلمة مرور جديدة';
 
   @override
   String get pleaseEnterYourCurrentPassword => 'يرجى إدخال كلمة المرور الحالية';
@@ -2038,4 +2041,405 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noMealsAvailableForThisDay => 'لا توجد وجبات متاحة لهذا اليوم';
+
+  @override
+  String get whatsYourGender => 'ما هو جنسك؟';
+
+  @override
+  String get whatsYourAge => 'ما هو عمرك؟';
+
+  @override
+  String get whatsYourHeight => 'ما هو طولك؟';
+
+  @override
+  String get whatsYourWeight => 'ما هو وزنك؟';
+
+  @override
+  String get whatsYourTargetWeight => 'ما هو وزنك المستهدف؟';
+
+  @override
+  String get whatsYourMainGoal => 'ما هو هدفك الرئيسي؟';
+
+  @override
+  String get whatsYourActivityLevel => 'ما هو مستوى نشاطك؟';
+
+  @override
+  String get whatsYourTrainingTypes => 'ما هي أنواع التدريب المفضلة لديك؟';
+
+  @override
+  String get whatsYourEquipment => 'ما هو المعدات المتاحة لديك؟';
+
+  @override
+  String get whatsYourDietSystem => 'ما هو نظامك الغذائي الحالي؟';
+
+  @override
+  String get whatsYourHealthStatus => 'ما هو وضعك الصحي؟';
+
+  @override
+  String get whatsYourSpecialDiet => 'ما هو نظامك الغذائي الخاص؟ (اشرح)';
+
+  @override
+  String get whatsYourInjury => 'ما هي إصابتك الحالية أو السابقة؟ (اشرح)';
+
+  @override
+  String get whatsYourAdditionalGoals => 'ما هي أهدافك الإضافية (اختياري)؟';
+
+  @override
+  String get forgetPassword => 'نسيت كلمة المرور؟';
+
+  @override
+  String get emailPlaceholder => 'البريد الإلكتروني';
+
+  @override
+  String get passwordPlaceholder => 'كلمة المرور';
+
+  @override
+  String get newPasswordPlaceholder => 'كلمة مرور جديدة';
+
+  @override
+  String get confirmPasswordPlaceholder => 'تأكيد كلمة المرور';
+
+  @override
+  String get namePlaceholder => 'الاسم';
+
+  @override
+  String get phonePlaceholder => 'رقم الهاتف';
+
+  @override
+  String get addressPlaceholder => 'العنوان';
+
+  @override
+  String get cardNumberPlaceholder => 'رقم البطاقة';
+
+  @override
+  String get expirationPlaceholder => 'تاريخ الانتهاء';
+
+  @override
+  String get cvvPlaceholder => 'رمز الأمان';
+
+  @override
+  String get fullNamePlaceholder => 'الاسم الكامل';
+
+  @override
+  String get emailAddressPlaceholder => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get phoneNumberPlaceholder => 'رقم الهاتف';
+
+  @override
+  String get couponPlaceholder => 'كود الخصم';
+
+  @override
+  String get searchProductPlaceholder => 'البحث عن منتج';
+
+  @override
+  String get describeSpecialDietPlaceholder => 'اشرح نظامك الغذائي الخاص';
+
+  @override
+  String get describeInjuryPlaceholder => 'اشرح إصابتك';
+
+  @override
+  String get validationError => 'خطأ في التحقق';
+
+  @override
+  String get noChanges => 'لا توجد تغييرات';
+
+  @override
+  String get uploadingImage => 'جاري رفع الصورة';
+
+  @override
+  String get imageUploaded => 'تم رفع الصورة';
+
+  @override
+  String get uploadFailed => 'فشل الرفع';
+
+  @override
+  String get imageError => 'خطأ في الصورة';
+
+  @override
+  String get changePasswordFailed => 'فشل تغيير كلمة المرور';
+
+  @override
+  String get otpVerified => 'تم التحقق من الرمز';
+
+  @override
+  String get verificationFailed => 'فشل التحقق';
+
+  @override
+  String get loginSuccessful => 'تم تسجيل الدخول بنجاح';
+
+  @override
+  String get loginFailed => 'فشل تسجيل الدخول';
+
+  @override
+  String get buildingYourPlan => 'جاري بناء خطتك';
+
+  @override
+  String get journeyStartsSoon => 'رحلتك ستبدأ قريباً';
+
+  @override
+  String get imageCapturedProcessing => 'تم التقاط الصورة، جاري المعالجة';
+
+  @override
+  String get currentPasswordPlaceholder => 'كلمة المرور الحالية';
+
+  @override
+  String get warning => 'تحذير';
+
+  @override
+  String get testNotification => 'إشعار تجريبي';
+
+  @override
+  String get failedToLoadMainGoalOptions => 'فشل في تحميل خيارات الهدف الرئيسي';
+
+  @override
+  String get mainGoalUpdatedSuccessfully => 'تم تحديث الهدف الرئيسي بنجاح!';
+
+  @override
+  String get failedToUpdateMainGoal => 'فشل في تحديث الهدف الرئيسي';
+
+  @override
+  String get errorPickingImage => 'خطأ في اختيار الصورة';
+
+  @override
+  String get couponAppliedSuccessfully => 'تم تطبيق الكوبون بنجاح!';
+
+  @override
+  String get exerciseSubtitle => 'وصف التمرين';
+
+  @override
+  String get exerciseType => 'نوع التمرين';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get noNotificationsYet => 'لا توجد إشعارات بعد';
+
+  @override
+  String get noNotificationsDesc => 'ستظهر إشعاراتك هنا';
+
+  @override
+  String get markAllAsRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get testNotificationTitle => 'إشعار تجريبي';
+
+  @override
+  String get testNotificationBody => 'هذا إشعار تجريبي من تراك فيت! 🎉';
+
+  @override
+  String get addTestNotification => 'إضافة إشعار تجريبي';
+
+  @override
+  String get showAllNotifications => 'عرض جميع الإشعارات';
+
+  @override
+  String get daysShort => 'ي';
+
+  @override
+  String get hoursShort => 'س';
+
+  @override
+  String get minutesShort => 'د';
+
+  @override
+  String get now => 'الآن';
+
+  @override
+  String get chooseImageSource => 'اختر مصدر الصورة';
+
+  @override
+  String get tapToChangeProfilePicture => 'اضغط لتغيير صورة الملف الشخصي';
+
+  @override
+  String get pleaseWaitWhileWeUploadYourImage =>
+      'يرجى الانتظار بينما نقوم برفع صورتك...';
+
+  @override
+  String get yourProfileImageHasBeenUpdatedSuccessfully =>
+      'تم تحديث صورة ملفك الشخصي بنجاح';
+
+  @override
+  String get failedToUploadImage => 'فشل رفع الصورة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get selectedImageFileIsNotAccessible =>
+      'ملف الصورة المحدد غير قابل للوصول';
+
+  @override
+  String get noChangesDetectedToSave => 'لم يتم اكتشاف أي تغييرات للحفظ';
+
+  @override
+  String get updateFailed => 'فشل التحديث';
+
+  @override
+  String get username => 'اسم المستخدم';
+
+  @override
+  String get saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get saving => 'جاري الحفظ...';
+
+  @override
+  String get failedToLoadFavourites => 'فشل في تحميل المفضلات';
+
+  @override
+  String get noFavouriteExercises => 'لا توجد تمارين مفضلة';
+
+  @override
+  String get youHaventAddedAnyExercisesToYourFavouritesYet =>
+      'لم تقم بإضافة أي تمارين إلى مفضلاتك بعد.';
+
+  @override
+  String get failedToLoadSubscription => 'فشل في تحميل الاشتراك';
+
+  @override
+  String get noActiveSubscription => 'لا يوجد اشتراك نشط';
+
+  @override
+  String get youDontHaveAnActiveSubscriptionYet =>
+      'ليس لديك اشتراك نشط حتى الآن.\nاختر باقة للبدء!';
+
+  @override
+  String get browsePackages => 'تصفح الباقات';
+
+  @override
+  String get planActive => 'الباقة نشطة';
+
+  @override
+  String get planInactive => 'الباقة غير نشطة';
+
+  @override
+  String get yourPlanIsAvailableTill => 'باقتك متاحة حتى';
+
+  @override
+  String get months => 'أشهر';
+
+  @override
+  String get pleaseFinishThePreviousChallengeFirst =>
+      'يرجى إنهاء التحدي السابق أولاً.';
+
+  @override
+  String get failedToLoadProducts => 'فشل في تحميل المنتجات';
+
+  @override
+  String get noProductsAvailable => 'لا توجد منتجات متاحة';
+
+  @override
+  String get thereAreNoExercisesScheduledForThisDayAndGoal =>
+      'لا توجد تمارين مجدولة لهذا اليوم والهدف.';
+
+  @override
+  String get noExercisesForThisDay => 'لا توجد تمارين لهذا اليوم';
+
+  @override
+  String get choosePaymentMethod => 'اختر طريقة الدفع';
+
+  @override
+  String get paymentProof => 'إثبات الدفع';
+
+  @override
+  String get pleaseUploadScreenshotOfPayment =>
+      'يرجى تحميل لقطة شاشة لدفع Instapay الخاص بك';
+
+  @override
+  String get tapToUploadPaymentProof => 'اضغط لتحميل إثبات الدفع';
+
+  @override
+  String get info => 'المعلومات';
+
+  @override
+  String get name => 'الاسم';
+
+  @override
+  String get phoneNumber => 'رقم الهاتف';
+
+  @override
+  String get governorate => 'المحافظة';
+
+  @override
+  String get confirmOrder => 'تأكيد الطلب';
+
+  @override
+  String get noProductsInCart => 'لا توجد منتجات في السلة';
+
+  @override
+  String get addSomeProductsToContinueShopping =>
+      'أضف بعض المنتجات لمتابعة التسوق';
+
+  @override
+  String get goToStore => 'اذهب للمتجر';
+
+  @override
+  String get startShoppingToAddItems => 'ابدأ التسوق لإضافة العناصر إلى سلتك';
+
+  @override
+  String get startShopping => 'ابدأ التسوق';
+
+  @override
+  String get congratulations => 'تهانينا!';
+
+  @override
+  String get yourOrderHasBeenConfirmed => 'تم تأكيد طلبك';
+
+  @override
+  String get goToHomePage => 'الذهاب للصفحة الرئيسية';
+
+  @override
+  String get pleaseEnterYourName => 'يرجى إدخال اسمك';
+
+  @override
+  String get pleaseEnterYourEmail => 'يرجى إدخال بريدك الإلكتروني';
+
+  @override
+  String get pleaseEnterYourPhone => 'يرجى إدخال رقم هاتفك';
+
+  @override
+  String get pleaseSelectCountryCode => 'يرجى اختيار رمز البلد';
+
+  @override
+  String get pleaseEnterYourAddress => 'يرجى إدخال عنوانك';
+
+  @override
+  String get pleaseSelectGovernorate => 'يرجى اختيار المحافظة';
+
+  @override
+  String get pleaseSelectPaymentMethod => 'يرجى اختيار طريقة الدفع';
+
+  @override
+  String get pleaseUploadPaymentProof => 'يرجى تحميل إثبات الدفع لـ Instapay';
+
+  @override
+  String get noItemsInCart => 'لا توجد عناصر في السلة للدفع';
+
+  @override
+  String get failedToPickImage => 'فشل في اختيار الصورة';
+
+  @override
+  String get vodafoneCash => 'فودافون كاش';
+
+  @override
+  String get instapay => 'إنستاباي';
+
+  @override
+  String get pleaseEnterName => 'يرجى إدخال اسمك';
+
+  @override
+  String get pleaseEnterPhoneNumber => 'يرجى إدخال رقم هاتفك';
+
+  @override
+  String get pleaseEnterAddress => 'يرجى إدخال عنوانك';
+
+  @override
+  String get pleaseUploadPaymentProofForInstapay =>
+      'يرجى تحميل إثبات الدفع لـ Instapay';
+
+  @override
+  String get noItemsInCartToCheckout => 'لا توجد عناصر في السلة للدفع';
+
+  @override
+  String get startShoppingToAddItemsToYourCart =>
+      'ابدأ التسوق لإضافة العناصر إلى سلتك';
 }

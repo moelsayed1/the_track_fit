@@ -8,14 +8,12 @@ import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
 import 'package:the_track_fit/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
+import 'package:the_track_fit/core/utils/font_helper.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
 
-  const ProductDetailScreen({
-    super.key,
-    required this.product,
-  });
+  const ProductDetailScreen({super.key, required this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -41,7 +39,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Future<void> _addToCart() async {
     if (_isAddingToCart) return; // Prevent multiple calls
-    
+
     setState(() {
       _isAddingToCart = true;
     });
@@ -82,7 +80,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppLocalizations.of(context)!.failedToAddProductToCart}: $e'),
+            content: Text(
+              '${AppLocalizations.of(context)!.failedToAddProductToCart}: $e',
+            ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -108,258 +108,268 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 0.h),
-            // Header with back button and title
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              decoration: const BoxDecoration(
-                color: Color(0x26848484),
-              ),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: SizedBox(
-                      width: 32.w,
-                      height: 32.h,
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/logos/arrow_left.svg',
-                          width: 20.w,
-                          height: 20.h,
-                          colorFilter: const ColorFilter.mode(
-                            Color(0xFF1E1E1E),
-                            BlendMode.srcIn,
-                          ),
-                          placeholderBuilder: (context) => Icon(
-                            Icons.arrow_back,
-                            color: const Color(0xFF1E1E1E),
-                            size: 20.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    AppLocalizations.of(context)!.productDetail,
-                    style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
-                      fontSize: 18.sp,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      height: 0.89,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Product content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 100.h), // Added bottom padding for fixed button
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.h),
-
-                    // Product name
-                    Center(
-                      child: Text(
-                        widget.product.name,
+        child: Directionality(
+          textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+          child: Column(
+            children: [
+              SizedBox(height: 0.h),
+              // Header with back button and title
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: const BoxDecoration(color: Color(0x26848484)),
+                child: Directionality(
+                  textDirection: isArabic
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.productDetail,
                         style: TextStyle(
                           color: const Color(0xFF1E1E1E),
-                          fontSize: 20.sp,
-                          fontFamily: 'Poppins',
+                          fontSize: 18.sp,
+                          fontFamily: context.fontFamily,
                           fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    // Product image
-                    Center(
-                      child: Container(
-                        width: 150.w,
-                        height: 180.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
-                          child: widget.product.imageUrl.startsWith('http')
-                              ? Image.network(
-                                  widget.product.imageUrl,
-                                  width: 150.w,
-                                  height: 180.h,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset(
-                                      'assets/images/product_image.png',
-                                      width: 150.w,
-                                      height: 177.h,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    // Handle loading state correctly with a centered shimmer
-                                    return Center(
-                                      child: ShimmerLoading(
-                                        child: Container(
-                                          width: 150.w,
-                                          height: 177.h,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius: BorderRadius.circular(12.r),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )
-                              : Image.asset(
-                                  widget.product.imageUrl,
-                                  width: 150.w,
-                                  height: 180.h,
-                                  fit: BoxFit.cover,
-                                ),
+                          height: 0.89,
                         ),
                       ),
-                    ),
-
-                    SizedBox(height: 40.h),
-
-                    // Product details section
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.productDetails,
-                          style: TextStyle(
-                            color: const Color(0xFF1E1E1E),
-                            fontSize: 16.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
+                      SizedBox(width: 8.w),
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Transform.rotate(
+                          angle: !isArabic ? 3.14159 : 0,
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1E1E1E),
+                              BlendMode.srcIn,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Text(
-                          widget.product.description,
-                          style: TextStyle(
-                            color: const Color(0xFF848484),
-                            fontSize: 12.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        Row(
-                          children: [
-                            Text(
-                              '${AppLocalizations.of(context)!.price} : ',
-                              style: TextStyle(
-                                color: const Color(0xFF1E1E1E),
-                                fontSize: 16.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              '\$${widget.product.price}',
-                              style: TextStyle(
-                                color: const Color(0xFF28A228),
-                                fontSize: 20.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 60.h),
-
-                    // Quantity selector
-                    Center(
-                      child: Container(
-                        width: 120.w,
-                        height: 32.h,
-                        decoration: ShapeDecoration(
-                          color: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(60.r),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            GestureDetector(
-                              onTap: _decreaseQuantity,
-                              child: Container(
-                                width: 32.w,
-                                height: 32.h,
-                                decoration: const ShapeDecoration(
-                                  color: Color(0x3F848484),
-                                  shape: OvalBorder(),
-                                ),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.remove,
-                                    color: Color(0xFF1E1E1E),
-                                    size: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Text(
-                              quantity.toString(),
-                              style: TextStyle(
-                                color: const Color(0xFF1E1E1E),
-                                fontSize: 16.sp,
-                                fontFamily: 'Overpass',
-                                fontWeight: FontWeight.w700,
-                                height: 1.13,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: _increaseQuantity,
-                              child: Container(
-                                width: 32.w,
-                                height: 32.h,
-                                decoration: const ShapeDecoration(
-                                  color: Color(0xFF28A228),
-                                  shape: OvalBorder(),
-                                ),
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
-
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              // Product content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    16.w,
+                    16.h,
+                    16.w,
+                    100.h,
+                  ), // Added bottom padding for fixed button
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20.h),
+
+                      // Product name
+                      Center(
+                        child: Text(
+                          widget.product.name,
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 20.sp,
+                            fontFamily: context.fontFamily,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      // Product image
+                      Center(
+                        child: Container(
+                          width: 150.w,
+                          height: 180.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: widget.product.imageUrl.startsWith('http')
+                                ? Image.network(
+                                    widget.product.imageUrl,
+                                    width: 150.w,
+                                    height: 180.h,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/images/product_image.png',
+                                        width: 150.w,
+                                        height: 177.h,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          // Handle loading state correctly with a centered shimmer
+                                          return Center(
+                                            child: ShimmerLoading(
+                                              child: Container(
+                                                width: 150.w,
+                                                height: 177.h,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey[200],
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        12.r,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                  )
+                                : Image.asset(
+                                    widget.product.imageUrl,
+                                    width: 150.w,
+                                    height: 180.h,
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 40.h),
+
+                      // Product details section
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.productDetails,
+                            style: TextStyle(
+                              color: const Color(0xFF1E1E1E),
+                              fontSize: 16.sp,
+                              fontFamily: context.fontFamily,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            widget.product.description,
+                            style: TextStyle(
+                              color: const Color(0xFF848484),
+                              fontSize: 12.sp,
+                              fontFamily: context.fontFamily,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                          Row(
+                            children: [
+                              Text(
+                                '${AppLocalizations.of(context)!.price} : ',
+                                style: TextStyle(
+                                  color: const Color(0xFF1E1E1E),
+                                  fontSize: 16.sp,
+                                  fontFamily: context.fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '\$${widget.product.price}',
+                                style: TextStyle(
+                                  color: const Color(0xFF28A228),
+                                  fontSize: 20.sp,
+                                  fontFamily: context.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 60.h),
+
+                      // Quantity selector
+                      Center(
+                        child: Container(
+                          width: 120.w,
+                          height: 32.h,
+                          decoration: ShapeDecoration(
+                            color: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(60.r),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              GestureDetector(
+                                onTap: _decreaseQuantity,
+                                child: Container(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  decoration: const ShapeDecoration(
+                                    color: Color(0x3F848484),
+                                    shape: OvalBorder(),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.remove,
+                                      color: Color(0xFF1E1E1E),
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                quantity.toString(),
+                                style: TextStyle(
+                                  color: const Color(0xFF1E1E1E),
+                                  fontSize: 16.sp,
+                                  fontFamily: 'Overpass',
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.13,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: _increaseQuantity,
+                                child: Container(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  decoration: const ShapeDecoration(
+                                    color: Color(0xFF28A228),
+                                    shape: OvalBorder(),
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.add,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       // Fixed Add To Cart Button at bottom
@@ -389,7 +399,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             blurRadius: 4,
             offset: Offset(4, 0),
             spreadRadius: 0,
-          )
+          ),
         ],
       ),
       child: GestureDetector(
@@ -409,12 +419,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               SizedBox(width: 8.w),
             ],
             Text(
-              _isAddingToCart ? AppLocalizations.of(context)!.adding : AppLocalizations.of(context)!.addToCart,
+              _isAddingToCart
+                  ? AppLocalizations.of(context)!.adding
+                  : AppLocalizations.of(context)!.addToCart,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16.sp,
-                fontFamily: 'Poppins',
+                fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
                 height: 1.50,
                 letterSpacing: 0.50,

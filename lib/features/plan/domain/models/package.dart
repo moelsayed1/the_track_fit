@@ -74,7 +74,7 @@ class Package {
   /// Parse HTML description to extract features list
   List<String> get features {
     List<String> processedFeatures = [];
-    
+
     // Use regex to find all <li>...</li> patterns
     RegExp exp = RegExp(r'<li>(.*?)</li>');
     Iterable<RegExpMatch> matches = exp.allMatches(enDescription);
@@ -85,7 +85,10 @@ class Package {
 
       // Clean up HTML entities and tags
       featureText = featureText
-          .replaceAll(RegExp(r'<[^>]*>'), '') // Remove all HTML tags including <strong>
+          .replaceAll(
+            RegExp(r'<[^>]*>'),
+            '',
+          ) // Remove all HTML tags including <strong>
           .replaceAll('&nbsp;', ' ')
           .replaceAll('&amp;', '&')
           .replaceAll('&lt;', '<')
@@ -98,8 +101,12 @@ class Package {
       // Check for "every month" and split if found
       if (featureText.contains('every month')) {
         int index = featureText.indexOf('every month');
-        String part1 = featureText.substring(0, index + 'every month'.length).trim();
-        String part2 = featureText.substring(index + 'every month'.length).trim();
+        String part1 = featureText
+            .substring(0, index + 'every month'.length)
+            .trim();
+        String part2 = featureText
+            .substring(index + 'every month'.length)
+            .trim();
 
         if (part1.isNotEmpty) {
           processedFeatures.add(part1);
@@ -111,7 +118,54 @@ class Package {
         processedFeatures.add(featureText);
       }
     }
-    
+
+    return processedFeatures;
+  }
+
+  /// Parse Arabic HTML description to extract features list
+  List<String> get arFeatures {
+    List<String> processedFeatures = [];
+
+    // Use regex to find all <li>...</li> patterns
+    RegExp exp = RegExp(r'<li>(.*?)</li>');
+    Iterable<RegExpMatch> matches = exp.allMatches(arDescription);
+
+    for (final m in matches) {
+      String featureText = m.group(1)?.trim() ?? '';
+      if (featureText.isEmpty) continue;
+
+      // Clean up HTML entities and tags
+      featureText = featureText
+          .replaceAll(
+            RegExp(r'<[^>]*>'),
+            '',
+          ) // Remove all HTML tags including <strong>
+          .replaceAll('&nbsp;', ' ')
+          .replaceAll('&amp;', '&')
+          .replaceAll('&lt;', '<')
+          .replaceAll('&gt;', '>')
+          .replaceAll('&quot;', '"')
+          .replaceAll('&#39;', "'")
+          .replaceAll(RegExp(r'\s+'), ' ')
+          .trim();
+
+      // Check for "كل شهر" and split if found
+      if (featureText.contains('كل شهر')) {
+        int index = featureText.indexOf('كل شهر');
+        String part1 = featureText.substring(0, index + 'كل شهر'.length).trim();
+        String part2 = featureText.substring(index + 'كل شهر'.length).trim();
+
+        if (part1.isNotEmpty) {
+          processedFeatures.add(part1);
+        }
+        if (part2.isNotEmpty) {
+          processedFeatures.add(part2);
+        }
+      } else {
+        processedFeatures.add(featureText);
+      }
+    }
+
     return processedFeatures;
   }
 
