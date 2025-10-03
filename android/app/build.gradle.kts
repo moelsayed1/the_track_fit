@@ -23,6 +23,15 @@ android {
         freeCompilerArgs += listOf("-Xjvm-default=all")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("KeyOfApp.jks")
+            storePassword = "M0H@MeDFARES"
+            keyAlias = "moka"
+            keyPassword = "M0H@MeDFARES"
+        }
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.the_track_fit"
@@ -36,9 +45,8 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Use the release signing config with KeyOfApp.jks
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
