@@ -921,8 +921,9 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                                                             loadingProgress,
                                                                           ) {
                                                                             if (loadingProgress ==
-                                                                                null)
+                                                                                null) {
                                                                               return child;
+                                                                            }
                                                                             return ShimmerLoading(
                                                                               child: Container(
                                                                                 width: responsiveHelper.w(

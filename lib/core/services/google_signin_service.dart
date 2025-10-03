@@ -22,6 +22,7 @@ class GoogleSignInService {
       );
       
       // Sign in with Google
+      // ignore: unnecessary_nullable_for_final_variable_declarations
       final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
       
       if (googleUser == null) {
@@ -32,7 +33,7 @@ class GoogleSignInService {
       log('GoogleSignInService: Google user obtained: ${googleUser.email}');
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(

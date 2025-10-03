@@ -1,3 +1,5 @@
+import 'dart:developer' show log;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -42,9 +44,11 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
         isLoading = true;
         error = null;
       });
-      
-      final categories = await context.read<ExerciseCubit>().getExerciseCategories();
-      
+
+      final categories = await context
+          .read<ExerciseCubit>()
+          .getExerciseCategories();
+
       setState(() {
         workoutTypes = categories.map((category) {
           return category.copyWith(isSelected: selectedTypeId == category.id);
@@ -52,7 +56,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading workout types: $e'); // Debug logging
+      log('Error loading workout types: $e'); // Debug logging
       setState(() {
         // Provide user-friendly error message instead of technical exception
         error = 'Connection error';
@@ -96,13 +100,13 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
         return type.copyWith(isSelected: type.id == typeId);
       }).toList();
     });
-    
+
     // Find the selected type to get its name
     final selectedType = workoutTypes.firstWhere(
       (type) => type.id == typeId,
       orElse: () => workoutTypes.first,
     );
-    
+
     // Add a small delay to show the selection change
     Future.delayed(const Duration(milliseconds: 300), () {
       widget.onTypeSelected(typeId, selectedType.name);
@@ -113,16 +117,14 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
   @override
   Widget build(BuildContext context) {
     final responsiveHelper = ResponsiveHelper(context);
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFFF6FFF6),
-          ),
+          decoration: const BoxDecoration(color: Color(0xFFF6FFF6)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -133,9 +135,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                   horizontal: responsiveHelper.w(16),
                   vertical: responsiveHelper.h(8),
                 ),
-                decoration: const BoxDecoration(
-                  color: Color(0x26848484),
-                ),
+                decoration: const BoxDecoration(color: Color(0x26848484)),
                 child: Directionality(
                   textDirection: TextDirection.ltr,
                   child: Row(
@@ -166,13 +166,11 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                   ),
                 ),
               ),
-              
+
               SizedBox(height: responsiveHelper.h(16)),
-              
+
               // Type options list
-              Expanded(
-                child: _buildContent(responsiveHelper),
-              ),
+              Expanded(child: _buildContent(responsiveHelper)),
             ],
           ),
         ),
@@ -218,7 +216,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 ),
               ),
               SizedBox(height: responsiveHelper.h(24)),
-              
+
               // Main error title
               LocalizedText(
                 AppLocalizations.of(context)!.somethingWentWrong,
@@ -228,7 +226,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: responsiveHelper.h(8)),
-              
+
               // User-friendly error message
               LocalizedText(
                 AppLocalizations.of(context)!.unableToLoadWorkoutTypes,
@@ -238,7 +236,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: responsiveHelper.h(4)),
-              
+
               // Additional helpful message
               LocalizedText(
                 AppLocalizations.of(context)!.pleaseCheckYourConnection,
@@ -248,7 +246,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: responsiveHelper.h(32)),
-              
+
               // Enhanced retry button
               SizedBox(
                 width: double.infinity,
@@ -297,8 +295,10 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
             width: double.infinity,
             padding: EdgeInsets.all(responsiveHelper.w(16)),
             decoration: BoxDecoration(
-              color: type.isSelected 
-                  ? const Color(0xFFD8F1D8) // Light green background when selected
+              color: type.isSelected
+                  ? const Color(
+                      0xFFD8F1D8,
+                    ) // Light green background when selected
                   : Colors.white, // White background when not selected
             ),
             child: Row(
@@ -313,9 +313,11 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                     type.getLocalizedName(context.isArabic ? 'ar' : 'en'),
                     fontSize: responsiveHelper.sp(16),
                     fontWeight: FontWeight.w500,
-                    color: type.isSelected 
+                    color: type.isSelected
                         ? const Color(0xFF4CAF50) // Green text when selected
-                        : const Color(0xFF1E1E1E), // Black text when not selected
+                        : const Color(
+                            0xFF1E1E1E,
+                          ), // Black text when not selected
                     height: 1.0,
                   ),
                 ),
@@ -344,7 +346,10 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
     );
   }
 
-  Widget _buildCategoryIcon(WorkoutType type, ResponsiveHelper responsiveHelper) {
+  Widget _buildCategoryIcon(
+    WorkoutType type,
+    ResponsiveHelper responsiveHelper,
+  ) {
     if (type.iconPath.startsWith('http')) {
       // Network image with shimmer loading
       return SizedBox(
@@ -359,7 +364,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: ColorFiltered(
-                  colorFilter: type.isSelected 
+                  colorFilter: type.isSelected
                       ? const ColorFilter.mode(
                           Color(0xFF4CAF50), // Green color when selected
                           BlendMode.srcIn,
@@ -406,7 +411,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
           image: DecorationImage(
             image: AssetImage(type.iconPath),
             fit: BoxFit.cover,
-            colorFilter: type.isSelected 
+            colorFilter: type.isSelected
                 ? const ColorFilter.mode(
                     Color(0xFF4CAF50), // Green color when selected
                     BlendMode.srcIn,
@@ -423,9 +428,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(responsiveHelper.w(16)),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Row(
         children: [
           // Icon shimmer

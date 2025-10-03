@@ -49,28 +49,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
     _loadNotifications(); // Reload to update UI
   }
 
-  Future<void>  _addTestNotification() async {
-    final testNotification = NotificationModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      title:
-          AppLocalizations.of(context)?.testNotificationTitle ??
-          'Test Notification',
-      body:
-          AppLocalizations.of(context)?.testNotificationBody ??
-          'This is a test notification from TrackFit! 🎉',
-      type: 'workout_reminder',
-      data: {
-        'type': 'workout_reminder',
-        'screen': 'workout',
-        'action': 'start_workout',
-      },
-      timestamp: DateTime.now(),
-      isRead: false,
-    );
 
-    await NotificationService.addNotification(testNotification);
-    _loadNotifications(); // Reload to update UI
-  }
 
   String _formatTimeAgo(DateTime timestamp) {
     final now = DateTime.now();

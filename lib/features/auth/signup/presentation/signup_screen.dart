@@ -14,7 +14,6 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
-import '../../../../core/widgets/localized_text.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../data/cubit/auth_cubit.dart';
 import '../../data/cubit/auth_states.dart';
@@ -49,34 +48,28 @@ class _SignupScreenState extends State<SignupScreen> {
   // Simplified validation - the cubit handles detailed validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.email +
-          ' ' +
-          AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.email} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.password +
-          ' ' +
-          AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.password} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.confirmPassword +
-          ' ' +
-          AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.confirmPassword} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validateRequired(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
-      return '$fieldName ' + AppLocalizations.of(context)!.required;
+      return '$fieldName ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
@@ -510,7 +503,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        AppLocalizations.of(context)!.alreadyHaveAccount + ' ',
+                        '${AppLocalizations.of(context)!.alreadyHaveAccount} ',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
@@ -575,6 +568,8 @@ class _SignupScreenState extends State<SignupScreen> {
       final storageService = await StorageService.getInstance();
       final isFirstTime = storageService.isFirstTimeUser();
 
+      if (!mounted) return;
+
       if (isFirstTime) {
         // First time user - go to age question (onboarding flow)
         context.push(AppRouter.ageQuestion);
@@ -584,6 +579,7 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     } catch (e) {
       // Fallback to age question if error
+      if (!mounted) return;
       context.push(AppRouter.ageQuestion);
     }
   }
