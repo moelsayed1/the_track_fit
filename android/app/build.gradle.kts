@@ -71,3 +71,6 @@ dependencies {
     // Add other Firebase products as needed
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
+// Certificate fingerprints:
+//      SHA1: EB:43:93:E0:C9:30:7D:08:EA:45:A4:D9:D9:52:CD:57:3C:37:B4:96
+//      SHA256: 00:EE:D4:92:80:5C:C1:D8:B3:4A:EA:46:5A:6D:95:C5:79:BD:08:E2:AE:4B:17:4E:C2:F9:BD:D0:5E:F3:C5:C7
