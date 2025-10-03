@@ -174,7 +174,7 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
     });
 
     try {
-      // TODO: Implement gender selection logic
+      
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
       
       if (mounted) {
@@ -196,7 +196,6 @@ class _GenderScreenBodyState extends State<GenderScreenBody> {
   }
 
   Future<void> _markUserAsReturningUser() async {
-    // TODO: Implement actual logic to mark user as returning
     // This could:
     // - Update SharedPreferences with "hasCompletedOnboarding: true"
     // - Make API call to update user profile

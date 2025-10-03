@@ -85,7 +85,7 @@ class LocalizedTextField extends StatelessWidget {
   final bool enabled;
   
   const LocalizedTextField({
-    Key? key,
+    super.key,
     this.hintText,
     this.labelText,
     this.controller,
@@ -97,7 +97,7 @@ class LocalizedTextField extends StatelessWidget {
     this.onChanged,
     this.maxLines = 1,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

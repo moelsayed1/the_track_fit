@@ -71,17 +71,21 @@ class NotificationService {
   static const String _unreadCountKey = 'unread_count';
 
   /// Save notifications to local storage
-  static Future<void> saveNotifications(List<NotificationModel> notifications) async {
+  static Future<void> saveNotifications(
+    List<NotificationModel> notifications,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final notificationsJson = notifications.map((n) => n.toJson()).toList();
       await prefs.setString(_notificationsKey, jsonEncode(notificationsJson));
-      
+
       // Update unread count
       final unreadCount = notifications.where((n) => !n.isRead).length;
       await prefs.setInt(_unreadCountKey, unreadCount);
-      
-      log('📱 Saved ${notifications.length} notifications, ${unreadCount} unread');
+
+      log(
+        '📱 Saved ${notifications.length} notifications, $unreadCount unread',
+      );
     } catch (e) {
       log('❌ Error saving notifications: $e');
     }
@@ -92,12 +96,14 @@ class NotificationService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final notificationsJson = prefs.getString(_notificationsKey);
-      
+
       if (notificationsJson != null) {
         final List<dynamic> jsonList = jsonDecode(notificationsJson);
-        return jsonList.map((json) => NotificationModel.fromJson(json)).toList();
+        return jsonList
+            .map((json) => NotificationModel.fromJson(json))
+            .toList();
       }
-      
+
       return [];
     } catch (e) {
       log('❌ Error getting notifications: $e');
@@ -110,12 +116,12 @@ class NotificationService {
     try {
       final notifications = await getNotifications();
       notifications.insert(0, notification); // Add to beginning
-      
+
       // Keep only last 50 notifications
       if (notifications.length > 50) {
         notifications.removeRange(50, notifications.length);
       }
-      
+
       await saveNotifications(notifications);
       log('📱 Added new notification: ${notification.title}');
     } catch (e) {
@@ -128,7 +134,7 @@ class NotificationService {
     try {
       final notifications = await getNotifications();
       final index = notifications.indexWhere((n) => n.id == notificationId);
-      
+
       if (index != -1) {
         notifications[index] = notifications[index].copyWith(isRead: true);
         await saveNotifications(notifications);
@@ -143,7 +149,9 @@ class NotificationService {
   static Future<void> markAllAsRead() async {
     try {
       final notifications = await getNotifications();
-      final updatedNotifications = notifications.map((n) => n.copyWith(isRead: true)).toList();
+      final updatedNotifications = notifications
+          .map((n) => n.copyWith(isRead: true))
+          .toList();
       await saveNotifications(updatedNotifications);
       log('📱 Marked all notifications as read');
     } catch (e) {

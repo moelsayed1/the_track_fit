@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,8 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-
-
   void _handleGoogleLogin() {
     // Call the Google sign-in method from AuthCubit
     context.read<AuthCubit>().signInWithGoogle();
@@ -104,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
               type: SnackbarType.success,
             );
           }
-          
+
           // Check if user is first time or returning user
           _navigateBasedOnUserType(context);
         } else if (state is AuthGoogleSignInSuccess) {
@@ -115,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
             message: '${AppLocalizations.of(context)!.welcome} ${state.name}!',
             type: SnackbarType.success,
           );
-          
+
           // Navigate based on user type
           _navigateBasedOnUserType(context);
         } else if (state is AuthGoogleSignInError) {
@@ -128,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         } else if (state is AuthGoogleSignInCancelled) {
           // User cancelled Google sign-in, no need to show error
-          log('Google sign-in cancelled by user'); 
+          log('Google sign-in cancelled by user');
         } else if (state is AuthValidationError) {
           // Show validation errors
           _showValidationErrors(state.fieldErrors);
@@ -143,140 +140,170 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6), // Light green background
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: responsive.wp(4.3)),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(height: responsive.hp(2.5)),
-      
-                // Header with illustration
-                AuthHeader(
-                  title: AppLocalizations.of(context)!.login,
-                  subtitle: AppLocalizations.of(context)!.welcomeBack,
-                  illustration: SvgPicture.asset(
-                    AppLogos.login,
-                    width: responsive.wp(66.7),
-                    height: responsive.wp(64.5),
-                  ),
-                ),
-      
-                SizedBox(height: responsive.hp(4)),
-      
-                // Form fields
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextField(
-                      hintText: AppLocalizations.of(context)!.emailPlaceholder,
-                      prefixIconAsset: AppIcons.email,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: _validateEmail,
+        backgroundColor: const Color(0xFFF6FFF6), // Light green background
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsive.wp(4.3)),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(height: responsive.hp(2.5)),
+
+                  // Header with illustration
+                  AuthHeader(
+                    title: AppLocalizations.of(context)!.login,
+                    subtitle: AppLocalizations.of(context)!.welcomeBack,
+                    illustration: SvgPicture.asset(
+                      AppLogos.login,
+                      width: responsive.wp(66.7),
+                      height: responsive.wp(64.5),
                     ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    // Password field with Forgot Password link
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomTextField(
-                          hintText: AppLocalizations.of(context)!.passwordPlaceholder,
-                          prefixIconAsset: AppIcons.lock,
-                          isPassword: true,
-                          controller: _passwordController,
-                          validator: _validatePassword,
-                        ),
-                        SizedBox(height: responsive.hp(1.25)), // 10px spacing like in your code
-                        // Forgot Password link positioned under password field
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: responsive.wp(3.5)), // 10px padding matching your code
-                          child: GestureDetector(
-                            onTap: _handleForgotPassword,
-                            child: Text(
-                              AppLocalizations.of(context)!.forgetPassword,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.grayMedium,
-                                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                  ),
+
+                  SizedBox(height: responsive.hp(4)),
+
+                  // Form fields
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(
+                        hintText: AppLocalizations.of(
+                          context,
+                        )!.emailPlaceholder,
+                        prefixIconAsset: AppIcons.email,
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _validateEmail,
+                      ),
+                      SizedBox(height: responsive.hp(2)),
+
+                      // Password field with Forgot Password link
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomTextField(
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.passwordPlaceholder,
+                            prefixIconAsset: AppIcons.lock,
+                            isPassword: true,
+                            controller: _passwordController,
+                            validator: _validatePassword,
+                          ),
+                          SizedBox(
+                            height: responsive.hp(1.25),
+                          ), // 10px spacing like in your code
+                          // Forgot Password link positioned under password field
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsive.wp(3.5),
+                            ), // 10px padding matching your code
+                            child: GestureDetector(
+                              onTap: _handleForgotPassword,
+                              child: Text(
+                                AppLocalizations.of(context)!.forgetPassword,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.grayMedium,
+                                  fontFamily:
+                                      Localizations.localeOf(
+                                            context,
+                                          ).languageCode ==
+                                          'ar'
+                                      ? 'Cairo'
+                                      : 'Poppins',
+                                ),
+                                textAlign: TextAlign.start,
                               ),
-                              textAlign: TextAlign.start,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-      
-                SizedBox(height: responsive.hp(4)),
-      
-                // Login button
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    return PrimaryButton(
-                      text: AppLocalizations.of(context)!.login,
-                      onPressed: _handleLogin,
-                      height: responsive.hp(7),
-                      isLoading: state is AuthLoading && state is! AuthGoogleSignInSuccess && state is! AuthGoogleSignInError && state is! AuthGoogleSignInCancelled,
-                    );
-                  },
-                ),
-      
-                SizedBox(height: responsive.hp(1.5)),
-      
-                // Sign up link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.dontHaveAccountSignUp,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grayMedium,
-                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                        ],
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: _navigateToSignup,
-                      child: Text(
-                        AppLocalizations.of(context)!.signUp,
+                    ],
+                  ),
+
+                  SizedBox(height: responsive.hp(4)),
+
+                  // Login button
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      return PrimaryButton(
+                        text: AppLocalizations.of(context)!.login,
+                        onPressed: _handleLogin,
+                        height: responsive.hp(7),
+                        isLoading:
+                            state is AuthLoading &&
+                            state is! AuthGoogleSignInSuccess &&
+                            state is! AuthGoogleSignInError &&
+                            state is! AuthGoogleSignInCancelled,
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: responsive.hp(1.5)),
+
+                  // Sign up link
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.dontHaveAccountSignUp,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryGreen,
-                          fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                          color: AppColors.grayMedium,
+                          fontFamily:
+                              Localizations.localeOf(context).languageCode ==
+                                  'ar'
+                              ? 'Cairo'
+                              : 'Poppins',
                         ),
                       ),
-                    ),
-                  ],
-                ),
-      
-                SizedBox(height: responsive.hp(10)),
-      
-                // Google login button
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    return SocialLoginButton(
-                      text: AppLocalizations.of(context)!.signInWithGoogle,
-                      iconPath: AppIcons.google,
-                      onPressed: _handleGoogleLogin,
-                      isLoading: state is AuthLoading && (state is! AuthLoginSuccess && state is! AuthValidationError && state is! AuthError),
-                    );
-                  },
-                ),
-                SizedBox(height: responsive.hp(1.5)),
-              ],
+                      GestureDetector(
+                        onTap: _navigateToSignup,
+                        child: Text(
+                          AppLocalizations.of(context)!.signUp,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primaryGreen,
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: responsive.hp(10)),
+
+                  // Google login button
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      return SocialLoginButton(
+                        text: AppLocalizations.of(context)!.signInWithGoogle,
+                        iconPath: AppIcons.google,
+                        onPressed: _handleGoogleLogin,
+                        isLoading:
+                            state is AuthLoading &&
+                            (state is! AuthLoginSuccess &&
+                                state is! AuthValidationError &&
+                                state is! AuthError),
+                      );
+                    },
+                  ),
+                  SizedBox(height: responsive.hp(1.5)),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -285,7 +312,9 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final storageService = await StorageService.getInstance();
       final isFirstTime = storageService.isFirstTimeUser();
-      
+
+      if (!mounted) return;
+
       if (isFirstTime) {
         // First time user - go to home_screen (onboarding flow)
         context.push(AppRouter.home);
@@ -295,6 +324,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       // Fallback to home_screen if error
+      if (!mounted) return;
       context.push(AppRouter.home);
     }
   }
