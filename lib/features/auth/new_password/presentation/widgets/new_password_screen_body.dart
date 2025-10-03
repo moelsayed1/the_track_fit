@@ -11,7 +11,6 @@ import '../../../../../core/utils/responsive_helper.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
-import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../data/cubit/auth_cubit.dart';
 import '../../../data/cubit/auth_states.dart';
