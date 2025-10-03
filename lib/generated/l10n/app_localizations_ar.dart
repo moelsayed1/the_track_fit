@@ -2631,4 +2631,37 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get passwordResetSuccessfully =>
       'تم إعادة تعيين كلمة المرور بنجاح! حسابك جاهز للاستخدام';
+
+  @override
+  String get achieveYourFitnessGoal => 'حقق هدف اللياقة البدنية الخاص بك';
+
+  @override
+  String get getPersonalizedWorkoutPlan =>
+      'احصل على خطة تمارين مخصصة تتناسب مع هدفك - سواء كان فقدان الوزن أو زيادة العضلات أو الحفاظ على لياقتك.';
+
+  @override
+  String get levelUpYourHealthWithSmartMeals => 'ارتق بصحتك مع الوجبات الذكية';
+
+  @override
+  String get followDailyMealPlans =>
+      'اتبع خطط الوجبات اليومية المصممة خصيصاً لسرعة فقدان السعرات الحرارية والأسلوب الصحي الذي يحسِّن الصحة العامة.';
+
+  @override
+  String get scanYourPlateKnowYourCalories =>
+      'امسح طبقك. اعرف سعراتك الحرارية فوراً';
+
+  @override
+  String get takePhotoOfYourFood =>
+      'التقط صورة لطعامك وسيقوم ذكاؤنا الاصطناعي بتحديد السعرات الحرارية والمواد الغذائية وتتبعها تلقائياً.';
+
+  @override
+  String get smartFitnessPoweredByAi =>
+      'اللياقة الذكية مدعومة بالذكاء الاصطناعي';
+
+  @override
+  String get getPersonalizedTrainingPlans =>
+      'احصل على خطط تدريب مخصصة واقتراحات ذكية وتتبع تفصيلي - كل ذلك مدعوم بالذكاء الاصطناعي.';
+
+  @override
+  String get getStarted => 'ابدأ الآن';
 }

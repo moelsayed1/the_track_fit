@@ -4,7 +4,9 @@ import 'package:the_track_fit/core/router/app_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/localized_text.dart';
+import '../../../../core/widgets/language_toggle_button.dart';
 import '../../../../core/utils/responsive_helper.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 class Onboarding4Screen extends StatelessWidget {
   const Onboarding4Screen({super.key});
@@ -36,7 +38,7 @@ class Onboarding4Screen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Gradient overlay
             Positioned(
               left: 0,
@@ -49,7 +51,7 @@ class Onboarding4Screen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Main content
             Positioned(
               left: responsive.wp(6.4),
@@ -63,34 +65,56 @@ class Onboarding4Screen extends StatelessWidget {
                   children: [
                     // Title and description
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: responsive.wp(5)),
-                      child: LocalizedText(
-                        'Smart Fitness Powered\nby AI',
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.black,
-                        textAlign: TextAlign.center,
-                        letterSpacing: 0.50,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: responsive.wp(5),
+                      ),
+                      child: Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context)!;
+                          return LocalizedText(
+                            l10n.smartFitnessPoweredByAi,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.black,
+                            textAlign: TextAlign.center,
+                            letterSpacing: 0.50,
+                            style: TextStyle(height: 1.2),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: responsive.hp(1.5)),
                     SizedBox(
                       width: responsive.wp(82.9),
-                      child: LocalizedText(
-                        'Get personalized training plans, intelligent suggestions and detailed tracking — all powered by AI.',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.gray,
-                        textAlign: TextAlign.center,
+                      child: Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context)!;
+                          return LocalizedText(
+                            l10n.getPersonalizedTrainingPlans,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.gray,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(height: 1.4),
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            
 
-            
+            // Language toggle button
+            Positioned(
+              left: responsive.wp(4.3),
+              top: responsive.hp(6),
+              child: const LanguageToggleButton(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                borderRadius: 20,
+              ),
+            ),
+
             // Skip button
             Positioned(
               right: responsive.wp(4.3),
@@ -100,12 +124,17 @@ class Onboarding4Screen extends StatelessWidget {
                   // Navigate to home screen
                   context.push(AppRouter.signup);
                 },
-                child: LocalizedText(
-                  'Skip',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.white,
-                  textAlign: TextAlign.right,
+                child: Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return LocalizedText(
+                      l10n.skip,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.white,
+                      textAlign: TextAlign.right,
+                    );
+                  },
                 ),
               ),
             ),

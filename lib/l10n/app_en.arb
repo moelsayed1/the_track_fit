@@ -902,5 +902,14 @@
   "goToLoginPage": "Go to Login Page",
   "otpSentSuccessfully": "OTP sent successfully! Check your email for the verification code",
   "otpVerifiedSuccessfully": "OTP verified successfully! You can now create a new password",
-  "passwordResetSuccessfully": "Password reset successfully! Your account is ready to use"
+  "passwordResetSuccessfully": "Password reset successfully! Your account is ready to use",
+  "achieveYourFitnessGoal": "Achieve Your Fitness Goal",
+  "getPersonalizedWorkoutPlan": "Get a personalized workout plan that matches your goal — whether it's weight loss, muscle gain, or staying fit.",
+  "levelUpYourHealthWithSmartMeals": "Level Up Your Health with Smart Meals",
+  "followDailyMealPlans": "Follow daily meal plans tailored to how fast you want to lose healthy calories and lifestyle that improve overall.",
+  "scanYourPlateKnowYourCalories": "Scan Your Plate. Know Your Calories Instantly",
+  "takePhotoOfYourFood": "Take a photo of your food and our AI will instantly identify calories, nutrients, and track it automatically.",
+  "smartFitnessPoweredByAi": "Smart Fitness Powered by AI",
+  "getPersonalizedTrainingPlans": "Get personalized training plans, intelligent suggestions and detailed tracking — all powered by AI.",
+  "getStarted": "Get Started"
 }

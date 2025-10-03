@@ -2641,4 +2641,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get passwordResetSuccessfully =>
       'Password reset successfully! Your account is ready to use';
+
+  @override
+  String get achieveYourFitnessGoal => 'Achieve Your Fitness Goal';
+
+  @override
+  String get getPersonalizedWorkoutPlan =>
+      'Get a personalized workout plan that matches your goal — whether it\'s weight loss, muscle gain, or staying fit.';
+
+  @override
+  String get levelUpYourHealthWithSmartMeals =>
+      'Level Up Your Health with Smart Meals';
+
+  @override
+  String get followDailyMealPlans =>
+      'Follow daily meal plans tailored to how fast you want to lose healthy calories and lifestyle that improve overall.';
+
+  @override
+  String get scanYourPlateKnowYourCalories =>
+      'Scan Your Plate. Know Your Calories Instantly';
+
+  @override
+  String get takePhotoOfYourFood =>
+      'Take a photo of your food and our AI will instantly identify calories, nutrients, and track it automatically.';
+
+  @override
+  String get smartFitnessPoweredByAi => 'Smart Fitness Powered by AI';
+
+  @override
+  String get getPersonalizedTrainingPlans =>
+      'Get personalized training plans, intelligent suggestions and detailed tracking — all powered by AI.';
+
+  @override
+  String get getStarted => 'Get Started';
 }

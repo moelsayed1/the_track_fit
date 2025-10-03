@@ -36,13 +36,7 @@ Future<void> main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-//   SystemChrome.setSystemUIOverlayStyle(
-//   const SystemUiOverlayStyle(
-//     statusBarColor: Colors.transparent, // ✅ شفاف
-//     statusBarIconBrightness: Brightness.dark, // حسب خلفيتك
-//   ),
-// );
-  
+
   // Initialize API service
   ApiService().init();
   

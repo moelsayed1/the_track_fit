@@ -14,7 +14,6 @@ import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/custom_button.dart';
 import '../../../../../core/widgets/social_login_button.dart';
 import '../../../../../core/widgets/custom_snackbar.dart';
-import '../../../../../core/widgets/localized_text.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/services/storage_service.dart';
 import '../../../data/cubit/auth_cubit.dart';
@@ -42,14 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
   // Simplified validation - the cubit handles detailed validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.email + ' ' + AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.email} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.password + ' ' + AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.password} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
