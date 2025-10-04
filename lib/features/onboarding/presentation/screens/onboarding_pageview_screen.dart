@@ -6,10 +6,12 @@ import 'package:the_track_fit/features/onboarding/presentation/screens/onboardin
 import '../../../../core/widgets/page_indicator.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/localized_text.dart';
+import '../../../../core/widgets/language_toggle_button.dart';
 import '../../../../core/utils/responsive_helper.dart';
 import '../../../../core/constants/app_colors.dart';
 import 'onboarding1_screen.dart';
 import 'onboarding2_screen.dart';
+import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 
 typedef OnNextPressed = void Function();
 typedef OnCreateAccountPressed = void Function();
@@ -18,7 +20,8 @@ class OnboardingPageViewScreen extends StatefulWidget {
   const OnboardingPageViewScreen({super.key});
 
   @override
-  State<OnboardingPageViewScreen> createState() => _OnboardingPageViewScreenState();
+  State<OnboardingPageViewScreen> createState() =>
+      _OnboardingPageViewScreenState();
 }
 
 class _OnboardingPageViewScreenState extends State<OnboardingPageViewScreen> {
@@ -49,55 +52,67 @@ class _OnboardingPageViewScreenState extends State<OnboardingPageViewScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          // PageView with onboarding screens
-          PageView(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            children: [
-              OnboardingScreenWrapper(
-                screen: const Onboarding1Screen(),
-                onNextPressed: _nextPage,
-                showGetStarted: false,
-              ),
-              OnboardingScreenWrapper(
-                screen: const Onboarding2Screen(),
-                onNextPressed: _nextPage,
-                showGetStarted: false,
-              ),
-              OnboardingScreenWrapper(
-                screen: const Onboarding3Screen(),
-                onNextPressed: _nextPage,
-                showGetStarted: false,
-              ),
-              OnboardingScreenWrapper(
-                screen: const Onboarding4Screen(),
-                onNextPressed: _nextPage,
-                showGetStarted: true,
-              ),
-            ],
-          ),
-          
-          // Page indicator overlay
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: responsive.hp(26.5), // Position between content and buttons
-            child: Center(
-              child: PageIndicator(
-                currentPage: _currentPage,
-                totalPages: 4,
+    return Directionality(
+      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // PageView with onboarding screens
+            PageView(
+              controller: _pageController,
+              onPageChanged: _onPageChanged,
+              children: [
+                OnboardingScreenWrapper(
+                  screen: const Onboarding1Screen(),
+                  onNextPressed: _nextPage,
+                  showGetStarted: false,
+                ),
+                OnboardingScreenWrapper(
+                  screen: const Onboarding2Screen(),
+                  onNextPressed: _nextPage,
+                  showGetStarted: false,
+                ),
+                OnboardingScreenWrapper(
+                  screen: const Onboarding3Screen(),
+                  onNextPressed: _nextPage,
+                  showGetStarted: false,
+                ),
+                OnboardingScreenWrapper(
+                  screen: const Onboarding4Screen(),
+                  onNextPressed: _nextPage,
+                  showGetStarted: true,
+                ),
+              ],
+            ),
+
+            // Language toggle button
+            Positioned(
+              left: responsive.wp(4.3),
+              top: responsive.hp(6),
+              child: const LanguageToggleButton(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                borderRadius: 20,
               ),
             ),
-          ),
-        ],
+
+            // Page indicator overlay
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: responsive.hp(
+                26.5,
+              ), // Position between content and buttons
+              child: Center(
+                child: PageIndicator(currentPage: _currentPage, totalPages: 4),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -121,7 +136,7 @@ class OnboardingScreenWrapper extends StatelessWidget {
       children: [
         // Original screen content
         screen,
-                Positioned(
+        Positioned(
           left: ResponsiveHelper(context).wp(4.3),
           bottom: ResponsiveHelper(context).hp(8),
           right: ResponsiveHelper(context).wp(4.3),
@@ -129,45 +144,70 @@ class OnboardingScreenWrapper extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (showGetStarted) ...[
-                PrimaryButton(
-                  text: 'Get Started',
-                  onPressed: onNextPressed,
-                  height: ResponsiveHelper(context).hp(6.9), 
+                Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return PrimaryButton(
+                      text: l10n.getStarted,
+                      onPressed: onNextPressed,
+                      height: ResponsiveHelper(context).hp(6.9),
+                    );
+                  },
                 ),
                 SizedBox(height: ResponsiveHelper(context).hp(2)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    LocalizedText(
-                      "Don't have an account? ",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.grayMedium,
+                    Builder(
+                      builder: (context) {
+                        final l10n = AppLocalizations.of(context)!;
+                        return LocalizedText(
+                          l10n.dontHaveAccount,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.grayMedium,
+                        );
+                      },
                     ),
                     GestureDetector(
                       onTap: () => context.push(AppRouter.signup),
-                      child: LocalizedText(
-                        "Register",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryGreen,
+                      child: Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context)!;
+                          return LocalizedText(
+                            l10n.signUp,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primaryGreen,
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
               ] else ...[
-                PrimaryButton(
-                  text: 'Next',
-                  onPressed: onNextPressed,
-                  height: ResponsiveHelper(context).hp(6.9),
+                Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return PrimaryButton(
+                      text: l10n.next,
+                      onPressed: onNextPressed,
+                      height: ResponsiveHelper(context).hp(6.9),
+                    );
+                  },
                 ),
                 SizedBox(height: ResponsiveHelper(context).hp(2)),
-                OutlineButton(
-                  text: 'Create Account',
-                  onPressed: () {
-                    context.push(AppRouter.signup);
+                Builder(
+                  builder: (context) {
+                    final l10n = AppLocalizations.of(context)!;
+                    return OutlineButton(
+                      text: l10n.createAccount,
+                      onPressed: () {
+                        context.push(AppRouter.signup);
+                      },
+                      height: ResponsiveHelper(context).hp(6.9),
+                    );
                   },
-                  height: ResponsiveHelper(context).hp(6.9),
                 ),
               ],
             ],

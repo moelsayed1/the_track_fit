@@ -6,22 +6,40 @@ import '../../generated/l10n/app_localizations.dart';
 /// Extension to get font family based on current language
 extension FontFamilyExtension on BuildContext {
   String get fontFamily {
-    final languageState = watch<LanguageBloc>().state;
-    final currentLanguage = languageState is LanguageLoaded 
-        ? languageState.currentLanguage 
-        : 'ar';
-    return currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+    try {
+      final languageState = watch<LanguageBloc>().state;
+      final currentLanguage = languageState is LanguageLoaded
+          ? languageState.currentLanguage
+          : 'ar';
+      return currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+    } catch (e) {
+      // Fallback when called outside widget tree context
+      final languageState = read<LanguageBloc>().state;
+      final currentLanguage = languageState is LanguageLoaded
+          ? languageState.currentLanguage
+          : 'ar';
+      return currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
+    }
   }
 }
 
 /// Extension to get text direction based on current language
 extension TextDirectionExtension on BuildContext {
   TextDirection get textDirection {
-    final languageState = watch<LanguageBloc>().state;
-    final currentLanguage = languageState is LanguageLoaded 
-        ? languageState.currentLanguage 
-        : 'ar';
-    return currentLanguage == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    try {
+      final languageState = watch<LanguageBloc>().state;
+      final currentLanguage = languageState is LanguageLoaded
+          ? languageState.currentLanguage
+          : 'ar';
+      return currentLanguage == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    } catch (e) {
+      // Fallback when called outside widget tree context
+      final languageState = read<LanguageBloc>().state;
+      final currentLanguage = languageState is LanguageLoaded
+          ? languageState.currentLanguage
+          : 'ar';
+      return currentLanguage == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    }
   }
 }
 
@@ -33,38 +51,41 @@ extension LocalizationExtension on BuildContext {
 /// Extension to check if current language is Arabic
 extension LanguageCheckExtension on BuildContext {
   bool get isArabic {
-    final languageState = watch<LanguageBloc>().state;
-    final currentLanguage = languageState is LanguageLoaded 
-        ? languageState.currentLanguage 
-        : 'ar';
-    return currentLanguage == 'ar';
+    try {
+      final languageState = watch<LanguageBloc>().state;
+      final currentLanguage = languageState is LanguageLoaded
+          ? languageState.currentLanguage
+          : 'ar';
+      return currentLanguage == 'ar';
+    } catch (e) {
+      // Fallback when called outside widget tree context
+      final languageState = read<LanguageBloc>().state;
+      final currentLanguage = languageState is LanguageLoaded
+          ? languageState.currentLanguage
+          : 'ar';
+      return currentLanguage == 'ar';
+    }
   }
 }
 
 /// Widget wrapper for automatic directionality
 class DirectionalityWrapper extends StatelessWidget {
   final Widget child;
-  
-  const DirectionalityWrapper({
-    super.key,
-    required this.child,
-  });
+
+  const DirectionalityWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
-        final textDirection = currentLanguage == 'ar' 
-            ? TextDirection.rtl 
+        final textDirection = currentLanguage == 'ar'
+            ? TextDirection.rtl
             : TextDirection.ltr;
-        
-        return Directionality(
-          textDirection: textDirection,
-          child: child,
-        );
+
+        return Directionality(textDirection: textDirection, child: child);
       },
     );
   }
@@ -83,9 +104,9 @@ class LocalizedTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final int? maxLines;
   final bool enabled;
-  
+
   const LocalizedTextField({
-    Key? key,
+    super.key,
     this.hintText,
     this.labelText,
     this.controller,
@@ -97,20 +118,20 @@ class LocalizedTextField extends StatelessWidget {
     this.onChanged,
     this.maxLines = 1,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
         final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
-        final textDirection = currentLanguage == 'ar' 
-            ? TextDirection.rtl 
+        final textDirection = currentLanguage == 'ar'
+            ? TextDirection.rtl
             : TextDirection.ltr;
-        
+
         return TextField(
           controller: controller,
           keyboardType: keyboardType,

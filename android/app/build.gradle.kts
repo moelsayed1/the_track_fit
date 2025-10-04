@@ -23,12 +23,21 @@ android {
         freeCompilerArgs += listOf("-Xjvm-default=all")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("KeyOfApp.jks")
+            storePassword = "M0H@MeDFARES"
+            keyAlias = "moka"
+            keyPassword = "M0H@MeDFARES"
+        }
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.the_track_fit"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -36,9 +45,8 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Use the release signing config with KeyOfApp.jks
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
@@ -63,3 +71,6 @@ dependencies {
     // Add other Firebase products as needed
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
+// Certificate fingerprints:
+//      SHA1: EB:43:93:E0:C9:30:7D:08:EA:45:A4:D9:D9:52:CD:57:3C:37:B4:96
+//      SHA256: 00:EE:D4:92:80:5C:C1:D8:B3:4A:EA:46:5A:6D:95:C5:79:BD:08:E2:AE:4B:17:4E:C2:F9:BD:D0:5E:F3:C5:C7

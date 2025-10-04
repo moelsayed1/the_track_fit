@@ -217,8 +217,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     },
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
+                                          if (loadingProgress == null) {
                                             return child;
+                                          }
                                           // Handle loading state correctly with a centered shimmer
                                           return Center(
                                             child: ShimmerLoading(

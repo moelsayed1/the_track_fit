@@ -39,8 +39,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _getScreenTitle(int index) {
     final l10n = AppLocalizations.of(context)!;
-    final titles = [l10n.home, l10n.workout, l10n.scan, l10n.report, l10n.packages];
-    return (index >= 0 && index < titles.length) ? titles[index] : l10n.packages;
+    final titles = [
+      l10n.home,
+      l10n.workout,
+      l10n.scan,
+      l10n.report,
+      l10n.packages,
+    ];
+    return (index >= 0 && index < titles.length)
+        ? titles[index]
+        : l10n.packages;
   }
 
   @override
@@ -97,11 +105,11 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4: // Plan
         return PlanSubscriptionScreen();
       default:
-        return _HomeTabContent();
+        return _homeTabContent();
     }
   }
 
-  Widget _HomeTabContent() {
+  Widget _homeTabContent() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +158,9 @@ class _Header extends StatelessWidget {
               style: TextStyle(
                 color: const Color(0xFF1E1E1E),
                 fontSize: 24.sp,
-                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -296,7 +306,9 @@ class _GreetingSection extends StatelessWidget {
                             ),
                             SizedBox(height: 2.h),
                             Text(
-                              AppLocalizations.of(context)!.readyToStartYourJourney,
+                              AppLocalizations.of(
+                                context,
+                              )!.readyToStartYourJourney,
                               style: TextStyle(
                                 color: const Color(0xBF848484),
                                 fontSize: 14.sp,
@@ -373,7 +385,9 @@ class _MainCTASection extends StatelessWidget {
                         SizedBox(
                           width: 311.w,
                           child: Text(
-                            AppLocalizations.of(context)!.youreOneStepAwayFromAHealthierYou,
+                            AppLocalizations.of(
+                              context,
+                            )!.youreOneStepAwayFromAHealthierYou,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.sp,
@@ -386,7 +400,9 @@ class _MainCTASection extends StatelessWidget {
                         SizedBox(
                           width: 311.w,
                           child: Text(
-                            AppLocalizations.of(context)!.startYourPersonalizedWorkoutAndMealPlanNowToTransformYourBodyAndMind,
+                            AppLocalizations.of(
+                              context,
+                            )!.startYourPersonalizedWorkoutAndMealPlanNowToTransformYourBodyAndMind,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,

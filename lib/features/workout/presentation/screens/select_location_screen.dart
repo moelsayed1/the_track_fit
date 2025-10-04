@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../../core/widgets/localized_text.dart';
+import '../../../../core/extensions/localization_extensions.dart';
 
 class SelectLocationScreen extends StatefulWidget {
   final String? selectedLocation;
@@ -98,7 +99,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      GestureDetector(    
+                      GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: SvgPicture.asset(
                           'assets/logos/arrow_left.svg',
@@ -166,15 +167,13 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                     ) // Light green background when selected
                   : Colors.white, // White background when not selected
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: responsiveHelper.w(24),
-                  height: responsiveHelper.h(24),
-                  child: Image.asset(
+            child: DirectionalityWrapper(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
                     option.iconPath,
                     width: responsiveHelper.w(24),
                     height: responsiveHelper.h(24),
@@ -183,27 +182,23 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
                         ? const Color(0xFF4CAF50) // Green color when selected
                         : null, // No color filter when not selected
                   ),
-                ),
-                SizedBox(width: responsiveHelper.w(8)),
-                Expanded(
-                  child: LocalizedText(
-                    option.name,
-                    fontSize: responsiveHelper.sp(16),
-                    fontWeight: FontWeight.w500,
-                    color: option.isSelected
-                        ? const Color(0xFF4CAF50) // Green text when selected
-                        : const Color(0xFF1E1E1E), // Black text when not selected
-                    height: 1.0,
+                  SizedBox(width: responsiveHelper.w(8)),
+                  Expanded(
+                    child: LocalizedText(
+                      option.name,
+                      fontSize: responsiveHelper.sp(16),
+                      fontWeight: FontWeight.w500,
+                      color: option.isSelected
+                          ? const Color(0xFF4CAF50) // Green text when selected
+                          : const Color(
+                              0xFF1E1E1E,
+                            ), // Black text when not selected
+                      height: 1.0,
+                      textAlign: TextAlign.start,
+                    ),
                   ),
-                ),
-                // Checkmark icon when selected
-                if (option.isSelected)
-                  Icon(
-                    Icons.check_circle,
-                    color: const Color(0xFF4CAF50), // Green checkmark
-                    size: responsiveHelper.sp(24),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

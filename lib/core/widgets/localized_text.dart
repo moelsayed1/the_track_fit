@@ -40,11 +40,11 @@ class LocalizedText extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
         final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
-        
+
         // Create base text style
         TextStyle textStyle = TextStyle(
           fontFamily: fontFamily,
@@ -62,14 +62,12 @@ class LocalizedText extends StatelessWidget {
           textStyle = textStyle.merge(style);
         }
 
-        return Center(
-          child: Text(
-            text,
-            style: textStyle,
-            textAlign: textAlign,
-            maxLines: maxLines,
-            overflow: overflow,
-          ),
+        return Text(
+          text,
+          style: textStyle,
+          textAlign: textAlign,
+          maxLines: maxLines,
+          overflow: overflow,
         );
       },
     );
@@ -240,7 +238,7 @@ extension LocalizedFontFamily on BuildContext {
 extension LocalizedTextStyle on TextStyle {
   TextStyle localized(BuildContext context) {
     final languageState = context.read<LanguageBloc>().state;
-    final fontFamily = languageState is LanguageLoaded 
+    final fontFamily = languageState is LanguageLoaded
         ? (languageState.currentLanguage == 'ar' ? 'Cairo' : 'Poppins')
         : 'Poppins';
     return copyWith(fontFamily: fontFamily);

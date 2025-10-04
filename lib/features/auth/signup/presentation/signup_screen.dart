@@ -14,7 +14,6 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/social_login_button.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
-import '../../../../core/widgets/localized_text.dart';
 import '../../../../core/services/storage_service.dart';
 import '../../data/cubit/auth_cubit.dart';
 import '../../data/cubit/auth_states.dart';
@@ -49,39 +48,38 @@ class _SignupScreenState extends State<SignupScreen> {
   // Simplified validation - the cubit handles detailed validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.email + ' ' + AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.email} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.password + ' ' + AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.password} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.confirmPassword + ' ' + AppLocalizations.of(context)!.required;
+      return '${AppLocalizations.of(context)!.confirmPassword} ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
 
   String? _validateRequired(String? value, String fieldName) {
     if (value == null || value.isEmpty) {
-      return '$fieldName ' + AppLocalizations.of(context)!.required;
+      return '$fieldName ${AppLocalizations.of(context)!.required}';
     }
     return null;
   }
-
 
   void _handleSignup() {
     // Validate form first
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     // Validate gender selection
     if (_selectedGender == null) {
       setState(() {
@@ -89,7 +87,7 @@ class _SignupScreenState extends State<SignupScreen> {
       });
       return;
     }
-    
+
     // Call the register method from AuthCubit
     // The cubit will handle validation internally
     context.read<AuthCubit>().register(
@@ -128,15 +126,18 @@ class _SignupScreenState extends State<SignupScreen> {
 
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is AuthRegisterSuccess || state is AuthRegisterSuccessWithProfile) {
+        if (state is AuthRegisterSuccess ||
+            state is AuthRegisterSuccessWithProfile) {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
             context,
             title: AppLocalizations.of(context)!.success,
-            message: state is AuthRegisterSuccess ? state.response.message : AppLocalizations.of(context)!.welcome,
+            message: state is AuthRegisterSuccess
+                ? state.response.message
+                : AppLocalizations.of(context)!.welcome,
             type: SnackbarType.success,
           );
-          
+
           // Check if user is first time or returning user
           _navigateBasedOnUserType(context);
         } else if (state is AuthGoogleSignInSuccess) {
@@ -147,7 +148,7 @@ class _SignupScreenState extends State<SignupScreen> {
             message: '${AppLocalizations.of(context)!.welcome} ${state.name}!',
             type: SnackbarType.success,
           );
-          
+
           // Navigate based on user type
           _navigateBasedOnUserType(context);
         } else if (state is AuthGoogleSignInError) {
@@ -175,336 +176,389 @@ class _SignupScreenState extends State<SignupScreen> {
         }
       },
       child: Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6), // Light green background
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: responsive.wp(4.3)),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(height: responsive.hp(1)),
-      
-                // Header with illustration
-                AuthHeader(
-                  title: AppLocalizations.of(context)!.letsGetYouStarted,
-                  subtitle: AppLocalizations.of(context)!.loginInstructions,
-                  illustration: SvgPicture.asset(
-                    AppLogos.signUp,
-                    width: responsive.wp(66.7),
-                    height: responsive.wp(50),
+        backgroundColor: const Color(0xFFF6FFF6), // Light green background
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsive.wp(4.3)),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(height: responsive.hp(1)),
+
+                  // Header with illustration
+                  AuthHeader(
+                    title: AppLocalizations.of(context)!.letsGetYouStarted,
+                    subtitle: AppLocalizations.of(context)!.loginInstructions,
+                    illustration: SvgPicture.asset(
+                      AppLogos.signUp,
+                      width: responsive.wp(66.7),
+                      height: responsive.wp(50),
+                    ),
                   ),
-                ),
-      
-                SizedBox(height: responsive.hp(4)),
-      
-                // Form fields
-                Column(
-                  children: [
-                    CustomTextField(
-                      hintText: AppLocalizations.of(context)!.email,
-                      prefixIconAsset: AppIcons.email,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: _validateEmail,
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    CustomTextField(
-                      hintText: AppLocalizations.of(context)!.nameRequired,
-                      prefixIconAsset: AppIcons.username,
-                      controller: _usernameController,
-                      validator: (value) => _validateRequired(value, AppLocalizations.of(context)!.nameRequired),
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    CustomTextField(
-                      hintText: AppLocalizations.of(context)!.phoneRequired,
-                      prefixIconAsset: AppIcons.phone,
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      validator: (value) => _validateRequired(value, AppLocalizations.of(context)!.phoneRequired),
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    // Gender Selection with Custom Toggle
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, top: 12, bottom: 8),
-                          child: Text(
-                            AppLocalizations.of(context)!.genderRequired,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.grayMedium,
-                              fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
+
+                  SizedBox(height: responsive.hp(4)),
+
+                  // Form fields
+                  Column(
+                    children: [
+                      CustomTextField(
+                        hintText: AppLocalizations.of(context)!.email,
+                        prefixIconAsset: AppIcons.email,
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _validateEmail,
+                      ),
+                      SizedBox(height: responsive.hp(2)),
+
+                      CustomTextField(
+                        hintText: AppLocalizations.of(context)!.nameRequired,
+                        prefixIconAsset: AppIcons.username,
+                        controller: _usernameController,
+                        validator: (value) => _validateRequired(
+                          value,
+                          AppLocalizations.of(context)!.nameRequired,
                         ),
-                        Row(
-                          children: [
-                            // Male Option
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedGender = 'male';
-                                    _showGenderValidation = false;
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: _selectedGender == 'male' 
-                                        ? AppColors.primaryGreen
-                                        : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: _selectedGender == 'male' 
-                                          ? AppColors.primaryGreen
-                                          : Colors.grey.shade300,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: _selectedGender == 'male' 
-                                              ? Colors.white
-                                              : Colors.transparent,
-                                          border: Border.all(
-                                            color: _selectedGender == 'male' 
-                                                ? Colors.white
-                                                : Colors.grey.shade500,
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: _selectedGender == 'male'
-                                            ? Center(
-                                                child: Container(
-                                                  width: 8,
-                                                  height: 8,
-                                                  decoration: const BoxDecoration(
-                                                    color: AppColors.primaryGreen,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                ),
-                                              )
-                                            : null,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'ذكر',
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w600,
-                                                color: _selectedGender == 'male' 
-                                                    ? Colors.white
-                                                    : Colors.grey.shade700,
-                                                fontFamily: 'Cairo',
-                                              ),
-                                            ),
-                                          
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            // Female Option
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedGender = 'female';
-                                    _showGenderValidation = false;
-                                  });
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: _selectedGender == 'female' 
-                                        ? AppColors.primaryGreen
-                                        : Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: _selectedGender == 'female' 
-                                          ? AppColors.primaryGreen
-                                          : Colors.grey.shade300,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: _selectedGender == 'female' 
-                                              ? Colors.white
-                                              : Colors.transparent,
-                                          border: Border.all(
-                                            color: _selectedGender == 'female' 
-                                                ? Colors.white
-                                                : Colors.grey.shade500,
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: _selectedGender == 'female'
-                                            ? Center(
-                                                child: Container(
-                                                  width: 8,
-                                                  height: 8,
-                                                  decoration: const BoxDecoration(
-                                                    color: AppColors.primaryGreen,
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                ),
-                                              )
-                                            : null,
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'أنثى',
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w600,
-                                                color: _selectedGender == 'female' 
-                                                    ? Colors.white
-                                                    : Colors.grey.shade700,
-                                                fontFamily: 'Cairo',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                      ),
+                      SizedBox(height: responsive.hp(2)),
+
+                      CustomTextField(
+                        hintText: AppLocalizations.of(context)!.phoneRequired,
+                        prefixIconAsset: AppIcons.phone,
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        validator: (value) => _validateRequired(
+                          value,
+                          AppLocalizations.of(context)!.phoneRequired,
                         ),
-                        if (_showGenderValidation && _selectedGender == null)
+                      ),
+                      SizedBox(height: responsive.hp(2)),
+
+                      // Gender Selection with Custom Toggle
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 16, top: 8),
+                            padding: const EdgeInsets.only(
+                              left: 16,
+                              top: 12,
+                              bottom: 8,
+                            ),
                             child: Text(
                               AppLocalizations.of(context)!.genderRequired,
                               style: TextStyle(
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.red,
-                                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.grayMedium,
+                                fontFamily:
+                                    Localizations.localeOf(
+                                          context,
+                                        ).languageCode ==
+                                        'ar'
+                                    ? 'Cairo'
+                                    : 'Poppins',
                               ),
                               textAlign: TextAlign.start,
                             ),
                           ),
-                      ],
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    CustomTextField(
-                      hintText: AppLocalizations.of(context)!.password,
-                      prefixIconAsset: AppIcons.lock,
-                      isPassword: true,
-                      controller: _passwordController,
-                      validator: _validatePassword,
-                    ),
-                    SizedBox(height: responsive.hp(2)),
-      
-                    CustomTextField(
-                      hintText: AppLocalizations.of(context)!.confirmPassword,
-                      prefixIconAsset: AppIcons.lock,
-                      isPassword: true,
-                      controller: _confirmPasswordController,
-                      validator: _validateConfirmPassword,
-                    ),
-                  ],
-                ),
-      
-                SizedBox(height: responsive.hp(4)),
-      
-                // Create Account button
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    return PrimaryButton(
-                      text: AppLocalizations.of(context)!.createAccount,
-                      onPressed: _handleSignup,
-                      height: responsive.hp(7),
-                      isLoading: state is AuthLoading && state is! AuthGoogleSignInSuccess && state is! AuthGoogleSignInError && state is! AuthGoogleSignInCancelled,
-                    );
-                  },
-                ),
-      
-                SizedBox(height: responsive.hp(1)),
-      
-                // Login link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.alreadyHaveAccount + ' ',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.grayMedium,
-                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                          Row(
+                            children: [
+                              // Male Option
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedGender = 'male';
+                                      _showGenderValidation = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: _selectedGender == 'male'
+                                          ? AppColors.primaryGreen
+                                          : Colors.grey.shade200,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: _selectedGender == 'male'
+                                            ? AppColors.primaryGreen
+                                            : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: _selectedGender == 'male'
+                                                ? Colors.white
+                                                : Colors.transparent,
+                                            border: Border.all(
+                                              color: _selectedGender == 'male'
+                                                  ? Colors.white
+                                                  : Colors.grey.shade500,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: _selectedGender == 'male'
+                                              ? Center(
+                                                  child: Container(
+                                                    width: 8,
+                                                    height: 8,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                          color: AppColors
+                                                              .primaryGreen,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                  ),
+                                                )
+                                              : null,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.male,
+                                                style: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      _selectedGender == 'male'
+                                                      ? Colors.white
+                                                      : Colors.grey.shade700,
+                                                  fontFamily: 'Cairo',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // Female Option
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedGender = 'female';
+                                      _showGenderValidation = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: _selectedGender == 'female'
+                                          ? AppColors.primaryGreen
+                                          : Colors.grey.shade200,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: _selectedGender == 'female'
+                                            ? AppColors.primaryGreen
+                                            : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: _selectedGender == 'female'
+                                                ? Colors.white
+                                                : Colors.transparent,
+                                            border: Border.all(
+                                              color: _selectedGender == 'female'
+                                                  ? Colors.white
+                                                  : Colors.grey.shade500,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: _selectedGender == 'female'
+                                              ? Center(
+                                                  child: Container(
+                                                    width: 8,
+                                                    height: 8,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                          color: AppColors
+                                                              .primaryGreen,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                  ),
+                                                )
+                                              : null,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.female,
+                                                style: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      _selectedGender ==
+                                                          'female'
+                                                      ? Colors.white
+                                                      : Colors.grey.shade700,
+                                                  fontFamily: 'Cairo',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (_showGenderValidation && _selectedGender == null)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, top: 8),
+                              child: Text(
+                                AppLocalizations.of(context)!.genderRequired,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.red,
+                                  fontFamily:
+                                      Localizations.localeOf(
+                                            context,
+                                          ).languageCode ==
+                                          'ar'
+                                      ? 'Cairo'
+                                      : 'Poppins',
+                                ),
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                        ],
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: _navigateToLogin,
-                      child: Text(
-                        AppLocalizations.of(context)!.login,
+                      SizedBox(height: responsive.hp(2)),
+
+                      CustomTextField(
+                        hintText: AppLocalizations.of(context)!.password,
+                        prefixIconAsset: AppIcons.lock,
+                        isPassword: true,
+                        controller: _passwordController,
+                        validator: _validatePassword,
+                      ),
+                      SizedBox(height: responsive.hp(2)),
+
+                      CustomTextField(
+                        hintText: AppLocalizations.of(context)!.confirmPassword,
+                        prefixIconAsset: AppIcons.lock,
+                        isPassword: true,
+                        controller: _confirmPasswordController,
+                        validator: _validateConfirmPassword,
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: responsive.hp(4)),
+
+                  // Create Account button
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      return PrimaryButton(
+                        text: AppLocalizations.of(context)!.createAccount,
+                        onPressed: _handleSignup,
+                        height: responsive.hp(7),
+                        isLoading:
+                            state is AuthLoading &&
+                            state is! AuthGoogleSignInSuccess &&
+                            state is! AuthGoogleSignInError &&
+                            state is! AuthGoogleSignInCancelled,
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: responsive.hp(1)),
+
+                  // Login link
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${AppLocalizations.of(context)!.alreadyHaveAccount} ',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.primaryGreen,
-                          fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                          color: AppColors.grayMedium,
+                          fontFamily:
+                              Localizations.localeOf(context).languageCode ==
+                                  'ar'
+                              ? 'Cairo'
+                              : 'Poppins',
                         ),
                       ),
-                    ),
-                  ],
-                ),
-      
-                SizedBox(height: responsive.hp(4)),
-      
-                // Google signup button
-                BlocBuilder<AuthCubit, AuthState>(
-                  builder: (context, state) {
-                    return SocialLoginButton(
-                      text: AppLocalizations.of(context)!.signInWithGoogle,
-                      iconPath: AppIcons.google,
-                      onPressed: _handleGoogleSignup,
-                      isLoading: state is AuthLoading && (state is! AuthRegisterSuccess && state is! AuthRegisterSuccessWithProfile && state is! AuthValidationError && state is! AuthError),
-                    );
-                  },
-                ),
-                SizedBox(height: responsive.hp(4)),
-              ],
+                      GestureDetector(
+                        onTap: _navigateToLogin,
+                        child: Text(
+                          AppLocalizations.of(context)!.login,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primaryGreen,
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: responsive.hp(4)),
+
+                  // Google signup button
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      return SocialLoginButton(
+                        text: AppLocalizations.of(context)!.signInWithGoogle,
+                        iconPath: AppIcons.google,
+                        onPressed: _handleGoogleSignup,
+                        isLoading:
+                            state is AuthLoading &&
+                            (state is! AuthRegisterSuccess &&
+                                state is! AuthRegisterSuccessWithProfile &&
+                                state is! AuthValidationError &&
+                                state is! AuthError),
+                      );
+                    },
+                  ),
+                  SizedBox(height: responsive.hp(4)),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 
@@ -513,7 +567,9 @@ class _SignupScreenState extends State<SignupScreen> {
     try {
       final storageService = await StorageService.getInstance();
       final isFirstTime = storageService.isFirstTimeUser();
-      
+
+      if (!mounted) return;
+
       if (isFirstTime) {
         // First time user - go to age question (onboarding flow)
         context.push(AppRouter.ageQuestion);
@@ -523,11 +579,8 @@ class _SignupScreenState extends State<SignupScreen> {
       }
     } catch (e) {
       // Fallback to age question if error
+      if (!mounted) return;
       context.push(AppRouter.ageQuestion);
     }
   }
 }
-
-
-
-

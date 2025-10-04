@@ -5240,6 +5240,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password reset successfully! Your account is ready to use'**
   String get passwordResetSuccessfully;
+
+  /// No description provided for @achieveYourFitnessGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Achieve Your Fitness Goal'**
+  String get achieveYourFitnessGoal;
+
+  /// No description provided for @getPersonalizedWorkoutPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a personalized workout plan that matches your goal — whether it\'s weight loss, muscle gain, or staying fit.'**
+  String get getPersonalizedWorkoutPlan;
+
+  /// No description provided for @levelUpYourHealthWithSmartMeals.
+  ///
+  /// In en, this message translates to:
+  /// **'Level Up Your Health with Smart Meals'**
+  String get levelUpYourHealthWithSmartMeals;
+
+  /// No description provided for @followDailyMealPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow daily meal plans tailored to how fast you want to lose healthy calories and lifestyle that improve overall.'**
+  String get followDailyMealPlans;
+
+  /// No description provided for @scanYourPlateKnowYourCalories.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Your Plate. Know Your Calories Instantly'**
+  String get scanYourPlateKnowYourCalories;
+
+  /// No description provided for @takePhotoOfYourFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo of your food and our AI will instantly identify calories, nutrients, and track it automatically.'**
+  String get takePhotoOfYourFood;
+
+  /// No description provided for @smartFitnessPoweredByAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Fitness Powered by AI'**
+  String get smartFitnessPoweredByAi;
+
+  /// No description provided for @getPersonalizedTrainingPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Get personalized training plans, intelligent suggestions and detailed tracking — all powered by AI.'**
+  String get getPersonalizedTrainingPlans;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
 }
 
 class _AppLocalizationsDelegate
