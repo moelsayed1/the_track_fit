@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:the_track_fit/firebase_options.dart';
 import 'core/services/api_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/fcm_service.dart';
@@ -22,8 +25,11 @@ import 'features/cart/data/services/checkout_service.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp();
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.android);
+  } else {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.ios);
+  }
 
   // Initialize ApiService
   ApiService().init();
@@ -36,13 +42,12 @@ Future<void> main() async {
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-
   // Initialize API service
   ApiService().init();
-  
+
   // Initialize StorageService
   await StorageService.getInstance();
-  
+
   runApp(const TrackFit());
 }
 
@@ -62,19 +67,40 @@ class TrackFit extends StatelessWidget {
             if (snapshot.hasData) {
               return MultiBlocProvider(
                 providers: [
-                  BlocProvider(create: (context) => ExerciseCubit(exerciseRepository: ExerciseRepository(apiService: ApiService()))),
-                  BlocProvider(create: (context) => AuthCubit(AuthRepository(), snapshot.data!)),
-                  BlocProvider(create: (context) => CartCubit(cartService: CartService(apiService: ApiService()))),
-                  BlocProvider(create: (context) => CheckoutCubit(checkoutService: CheckoutService(apiService: ApiService()))),
-                  BlocProvider(create: (context) => LanguageBloc(languageService: LanguageService.instance)..add(const LanguageInitialized())),
+                  BlocProvider(
+                    create: (context) => ExerciseCubit(
+                      exerciseRepository: ExerciseRepository(
+                        apiService: ApiService(),
+                      ),
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        AuthCubit(AuthRepository(), snapshot.data!),
+                  ),
+                  BlocProvider(
+                    create: (context) => CartCubit(
+                      cartService: CartService(apiService: ApiService()),
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (context) => CheckoutCubit(
+                      checkoutService: CheckoutService(
+                        apiService: ApiService(),
+                      ),
+                    ),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        LanguageBloc(languageService: LanguageService.instance)
+                          ..add(const LanguageInitialized()),
+                  ),
                 ],
                 child: const LocalizedApp(), // 👈 استخدام LocalizedApp المنفصل
               );
             } else {
               return const MaterialApp(
-                home: ShimmerLoadingScreen(
-                  message: 'Initializing app...',
-                ),
+                home: ShimmerLoadingScreen(message: 'Initializing app...'),
               );
             }
           },
@@ -83,5 +109,3 @@ class TrackFit extends StatelessWidget {
     );
   }
 }
-
-
