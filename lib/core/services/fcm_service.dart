@@ -3,9 +3,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
 import 'package:the_track_fit/core/services/notification_service.dart';
+import 'package:the_track_fit/core/services/permission_service.dart';
 import 'package:the_track_fit/core/constants/app_constants.dart';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 // Handle background messages - Must be top-level function
 @pragma('vm:entry-point')
@@ -19,7 +21,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Save notification to local storage
   if (message.notification != null) {
     final notification = NotificationService.fromFCMData(
-      messageId: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      messageId:
+          message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
       title: message.notification!.title ?? 'Notification',
       body: message.notification!.body ?? '',
       data: message.data,
@@ -40,7 +43,21 @@ class FCMService {
   /// Initialize FCM Service
   static Future<void> initialize() async {
     try {
-      // Request permission for iOS and Android 13+
+      // First check if permission is already granted
+      bool hasPermission =
+          await PermissionService.isNotificationPermissionGranted();
+
+      if (!hasPermission) {
+        // Request permission using our custom service
+        hasPermission = await PermissionService.requestNotificationPermission();
+
+        if (!hasPermission) {
+          log('⚠️ Notification permission denied by user');
+          return;
+        }
+      }
+
+      // Request Firebase permission (this is different from system permission)
       NotificationSettings settings = await _messaging.requestPermission(
         alert: true,
         badge: true,
@@ -50,14 +67,17 @@ class FCMService {
         announcement: false,
       );
 
-      log('✅ User granted permission: ${settings.authorizationStatus}');
+      log('✅ Firebase permission status: ${settings.authorizationStatus}');
 
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
         // Initialize local notifications
         await _initializeLocalNotifications();
 
         // Set up background message handler
-        FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+        FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler,
+        );
 
         // Handle foreground messages
         FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -76,15 +96,17 @@ class FCMService {
         await getFCMToken();
 
         // Set foreground notification presentation options for iOS
-        await _messaging.setForegroundNotificationPresentationOptions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+        if (Platform.isIOS) {
+          await _messaging.setForegroundNotificationPresentationOptions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+        }
 
         log('✅ FCM Service initialized successfully');
       } else {
-        log('⚠️ Notification permission denied');
+        log('⚠️ Firebase notification permission denied');
       }
     } catch (e) {
       log('❌ Error initializing FCM: $e');
@@ -96,11 +118,12 @@ class FCMService {
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@drawable/ic_notification');
 
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
@@ -133,7 +156,9 @@ class FCMService {
     );
 
     await _localNotifications
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
@@ -161,30 +186,31 @@ class FCMService {
   static Future<void> sendTokenToBackend(String token) async {
     try {
       log('📤 Sending FCM token to backend: $token');
-      
+
       // Ensure ApiService is initialized
       _apiService.init();
-      
+
       // Initialize CSRF token before sending FCM token
       await _apiService.initializeCsrfToken();
-      
+
       final response = await _apiService.postForm(
         AppConstants.saveDeviceTokenEndpoint,
-        data: {
-          'device_token': token,
-        },
+        data: {'device_token': token},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         log('✅ FCM token sent to backend successfully');
       } else {
-        log('⚠️ Failed to send FCM token to backend. Status: ${response.statusCode}');
+        log(
+          '⚠️ Failed to send FCM token to backend. Status: ${response.statusCode}',
+        );
         log('Response: ${response.data}');
       }
     } catch (e) {
       log('❌ Error sending FCM token to backend: $e');
       // Store the token for later retry if authentication is required
-      if (e.toString().contains('Unauthenticated') || e.toString().contains('401')) {
+      if (e.toString().contains('Unauthenticated') ||
+          e.toString().contains('401')) {
         log('🔄 FCM token will be retried after user authentication');
       }
     }
@@ -200,7 +226,9 @@ class FCMService {
     // Save notification to local storage
     if (message.notification != null) {
       final notification = NotificationService.fromFCMData(
-        messageId: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        messageId:
+            message.messageId ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         title: message.notification!.title ?? 'Notification',
         body: message.notification!.body ?? '',
         data: message.data,
@@ -220,7 +248,9 @@ class FCMService {
     // Save notification to local storage if not already saved
     if (message.notification != null) {
       final notification = NotificationService.fromFCMData(
-        messageId: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        messageId:
+            message.messageId ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         title: message.notification!.title ?? 'Notification',
         body: message.notification!.body ?? '',
         data: message.data,
@@ -243,7 +273,9 @@ class FCMService {
     final screen = data['screen'];
     final action = data['action'];
 
-    log('🧭 Notification navigation - Type: $type, Screen: $screen, Action: $action');
+    log(
+      '🧭 Notification navigation - Type: $type, Screen: $screen, Action: $action',
+    );
 
     // You can implement navigation logic here
     // This will be called when user taps on notification
@@ -273,16 +305,16 @@ class FCMService {
         notification.title,
         notification.body,
         NotificationDetails(
-           android: AndroidNotificationDetails(
-             'trackfit_notifications',
-             'TrackFit Notifications',
-             channelDescription: 'Important notifications from TrackFit app',
-             importance: Importance.high,
-             priority: Priority.high,
-             icon: '@drawable/ic_notification',
-             enableVibration: true,
-             playSound: true,
-           ),
+          android: AndroidNotificationDetails(
+            'trackfit_notifications',
+            'TrackFit Notifications',
+            channelDescription: 'Important notifications from TrackFit app',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@drawable/ic_notification',
+            enableVibration: true,
+            playSound: true,
+          ),
           iOS: const DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
@@ -319,7 +351,7 @@ class FCMService {
     try {
       await _messaging.deleteToken();
       log('✅ FCM token deleted');
-      
+
       // Optionally notify backend that token is no longer valid
       // You can implement this if your backend needs to know about token deletion
     } catch (e) {

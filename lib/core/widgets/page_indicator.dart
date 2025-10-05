@@ -17,7 +17,6 @@ class PageIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    final indicatorSpacing = spacing ?? responsive.wp(1);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -25,18 +24,22 @@ class PageIndicator extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: List.generate(
         totalPages,
-        (index) => Container(
-          width: index == currentPage ? responsive.wp(5.3) : responsive.wp(1.6),
-          height: responsive.wp(1.6),
-          margin: EdgeInsets.only(
-            right: index < totalPages - 1 ? indicatorSpacing : 0,
-          ),
-          decoration: ShapeDecoration(
-            color: index == currentPage
-                ? AppColors.primaryGreen
-                : AppColors.grayLight,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(100),
+        (index) => Padding(
+          padding: EdgeInsets.only(right: 2, left: 2),
+          child: Container(
+            width: index == currentPage
+                ? responsive.wp(5.3)
+                : responsive.wp(2.3),
+            height: responsive.wp(1.6),
+
+            margin: EdgeInsets.only(right: 1, left: 1),
+            decoration: ShapeDecoration(
+              color: index == currentPage
+                  ? AppColors.primaryGreen
+                  : AppColors.grayLight,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100),
+              ),
             ),
           ),
         ),

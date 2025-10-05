@@ -37,16 +37,30 @@ android {
         applicationId = "com.example.the_track_fit"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+    }
+    // Enable APK splits per ABI to reduce APK size for each architecture
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86_64")
+            isUniversalApk = true 
+        }
     }
 
     buildTypes {
         release {
             // Use the release signing config with KeyOfApp.jks
             signingConfig = signingConfigs.getByName("release")
+            
+            // Disable all minification and obfuscation
+            isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = false
         }
     }
 }
@@ -58,16 +72,16 @@ flutter {
 dependencies {
     // Core library desugaring for flutter_local_notifications
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
-    
+
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
-    
+
     // Add Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
-    
+
     // Add Firebase Analytics (optional but recommended)
     implementation("com.google.firebase:firebase-analytics")
-    
+
     // Add other Firebase products as needed
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
