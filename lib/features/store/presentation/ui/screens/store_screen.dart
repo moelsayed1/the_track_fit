@@ -300,70 +300,62 @@ class _StoreScreenState extends State<StoreScreen> {
       body: SafeArea(
         child: Builder(
           builder: (context) {
-            final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+            final isArabic =
+                Localizations.localeOf(context).languageCode == 'ar';
             final String fontFamily = isArabic ? 'Cairo' : 'Poppins';
 
             return Column(
               children: [
-                // Custom AppBar matching Figma design
                 Container(
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   decoration: const BoxDecoration(color: Color(0x26848484)),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Left side - Back button and Store title
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () => context.pop(),
-                            child: SizedBox(
-                              width: 32.w,
-                              height: 32.h,
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/logos/arrow_left.svg',
-                                  width: 20.w,
-                                  height: 20.h,
-                                  colorFilter: const ColorFilter.mode(
-                                    Color(0xFF1E1E1E),
-                                    BlendMode.srcIn,
-                                  ),
-                                  placeholderBuilder: (context) => Icon(
-                                    Icons.arrow_back,
-                                    color: const Color(0xFF1E1E1E),
-                                    size: 20.sp,
-                                  ),
-                                ),
-                              ),
+                      // Back arrow (direction depends on language)
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Localizations.localeOf(context).languageCode == 'ar'
+                              ? Matrix4.rotationY(3.1415926535897932)
+                              : Matrix4.identity(),
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1E1E1E),
+                              BlendMode.srcIn,
                             ),
                           ),
-                          SizedBox(width: 8.w),
-                          LocalizedText(
-                            AppLocalizations.of(context)!.store,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1E1E1E),
-                          ),
-                        ],
+                        ),
                       ),
-                      // Right side - Action icons
+                      SizedBox(width: 8.w),
+                      LocalizedText(
+                        AppLocalizations.of(context)!.store,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1E1E1E),
+                        height: 0.89,
+                      ),
+                      Spacer(),
+                      // Action icons (cart, favorite, search)
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Cart Icon - Light green background with green border and dark green icon
+                          // Cart Icon
                           GestureDetector(
                             onTap: () {
-                              // Handle cart tap
                               context.push(AppRouter.cart);
                             },
                             child: Container(
                               width: 32.w,
                               height: 32.h,
                               decoration: ShapeDecoration(
-                                color: const Color(
-                                  0x1A28A228,
-                                ), // Light green background
+                                color: const Color(0x1A28A228),
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
                                     width: 1,
@@ -378,16 +370,15 @@ class _StoreScreenState extends State<StoreScreen> {
                                   width: 20.w,
                                   height: 20.h,
                                   colorFilter: const ColorFilter.mode(
-                                    AppColors.primaryGreen, // Dark green icon on light green background
+                                    AppColors.primaryGreen,
                                     BlendMode.srcIn,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 8.w,
-                          ), // Favorite Icon - Light green background with green border and dark green icon
+                          SizedBox(width: 8.w),
+                          // Favorite Icon
                           GestureDetector(
                             onTap: _toggleFavoriteFilter,
                             child: Container(
@@ -395,12 +386,8 @@ class _StoreScreenState extends State<StoreScreen> {
                               height: 32.h,
                               decoration: ShapeDecoration(
                                 color: _showOnlyFavorites
-                                    ? const Color(
-                                        0xFF28A228,
-                                      ) // Solid green background when active
-                                    : const Color(
-                                        0xFFC0DEC0,
-                                      ), // Light green background when inactive
+                                    ? const Color(0xFF28A228)
+                                    : const Color(0xFFC0DEC0),
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
                                     width: 1,
@@ -411,20 +398,17 @@ class _StoreScreenState extends State<StoreScreen> {
                               ),
                               child: Center(
                                 child: Icon(
-                                  _showOnlyFavorites
-                                      ? Icons.favorite_border
-                                      : Icons.favorite_border,
+                                  Icons.favorite_border,
                                   color: _showOnlyFavorites
-                                      ? Colors.white // White heart outline when active (solid green background)
-                                      : AppColors.primaryGreen, // Dark green heart outline when inactive (light green background)
+                                      ? Colors.white
+                                      : AppColors.primaryGreen,
                                   size: 20.sp,
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 8.w,
-                          ), // Search Icon - Toggleable with tap functionality
+                          SizedBox(width: 8.w),
+                          // Search Icon
                           GestureDetector(
                             onTap: _toggleSearchMode,
                             child: Container(
@@ -432,26 +416,22 @@ class _StoreScreenState extends State<StoreScreen> {
                               height: 32.h,
                               decoration: ShapeDecoration(
                                 color: _isSearchMode
-                                    ? const Color(
-                                        0xFFC0DEC0,
-                                      ) // Light green background when search is active
-                                    : const Color(
-                                        0xFF28A228,
-                                      ), // Solid green background when search is inactive
+                                    ? const Color(0xFFC0DEC0)
+                                    : const Color(0xFF28A228),
                                 shape: RoundedRectangleBorder(
                                   side: const BorderSide(
                                     width: 1,
                                     color: Color(0xFF28A228),
-                                  ), // Always green border
+                                  ),
                                   borderRadius: BorderRadius.circular(16.r),
                                 ),
                               ),
                               child: Center(
                                 child: Icon(
-                                  Icons.search, // Always search icon (magnifying glass)
+                                  Icons.search,
                                   color: _isSearchMode
-                                      ? AppColors.primaryGreen // Green icon when search is active
-                                      : Colors.white, // White icon when search is inactive
+                                      ? AppColors.primaryGreen
+                                      : Colors.white,
                                   size: 20.sp,
                                 ),
                               ),
@@ -463,12 +443,19 @@ class _StoreScreenState extends State<StoreScreen> {
                   ),
                 ),
                 // Conditional Search Bar - shows when search mode is NOT active
+                // Conditional Search Bar - shows when search mode is NOT active
                 if (!_isSearchMode)
                   Container(
                     width: 343.w,
                     height: 43.h,
-                    margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                     decoration: ShapeDecoration(
                       color: const Color(0x26848484),
                       shape: RoundedRectangleBorder(
@@ -501,7 +488,9 @@ class _StoreScreenState extends State<StoreScreen> {
                             controller: _searchController,
                             onChanged: _onSearchChanged,
                             decoration: InputDecoration(
-                              hintText: isArabic ? 'ابحث عن منتج' : 'Search Product',
+                              hintText: isArabic
+                                  ? 'ابحث عن منتج'
+                                  : 'Search Product',
                               border: InputBorder.none,
                               hintStyle: TextStyle(
                                 color: const Color(0xBF848484),
@@ -518,7 +507,9 @@ class _StoreScreenState extends State<StoreScreen> {
                               fontWeight: FontWeight.w400,
                               height: 1.33,
                             ),
-                            textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                            textDirection: isArabic
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
                           ),
                         ),
                       ],
@@ -530,78 +521,85 @@ class _StoreScreenState extends State<StoreScreen> {
                   child: _isLoading
                       ? _buildShimmerLoader()
                       : _error != null
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    size: 64.sp,
-                                    color: AppColors.gray,
-                                  ),
-                                  SizedBox(height: 16.h),
-                                  LocalizedText(
-                                    isArabic ? 'فشل تحميل المنتجات' : 'Failed to load products',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.gray,
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  TextButton(
-                                    onPressed: _loadProducts,
-                                    child: LocalizedText(
-                                      isArabic ? 'إعادة المحاولة' : 'Retry',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.primaryGreen,
-                                    ),
-                                  ),
-                                ],
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                size: 64.sp,
+                                color: AppColors.gray,
                               ),
-                            )
-                          : _displayedProducts.isEmpty
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        _showOnlyFavorites
-                                            ? Icons.favorite_border
-                                            : Icons.search_off,
-                                        size: 64.sp,
-                                        color: AppColors.gray,
-                                      ),
-                                      SizedBox(height: 16.h),
-                                      LocalizedText(
-                                        _showOnlyFavorites
-                                            ? (isArabic ? 'لا توجد منتجات مفضلة بعد' : 'No favorite products yet')
-                                            : (isArabic ? 'لم يتم العثور على منتجات' : 'No products found'),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.gray,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : ListView.builder(
-                                  padding: EdgeInsets.only(
-                                    top: 16.h,
-                                    left: 16.w,
-                                    right: 16.w,
-                                  ),
-                                  itemCount: _displayedProducts.length,
-                                  itemBuilder: (context, index) {
-                                    final product = _displayedProducts[index];
-                                    return Padding(
-                                      padding: EdgeInsets.only(bottom: 16.h),
-                                      child: ProductCard(
-                                        product: product,
-                                        onFavoriteToggle: () => _onFavoriteToggle(product.id),
-                                        onTap: () => _onProductTap(product),
-                                      ),
-                                    );
-                                  },
+                              SizedBox(height: 16.h),
+                              LocalizedText(
+                                isArabic
+                                    ? 'فشل تحميل المنتجات'
+                                    : 'Failed to load products',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.gray,
+                              ),
+                              SizedBox(height: 8.h),
+                              TextButton(
+                                onPressed: _loadProducts,
+                                child: LocalizedText(
+                                  isArabic ? 'إعادة المحاولة' : 'Retry',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.primaryGreen,
                                 ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _displayedProducts.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                _showOnlyFavorites
+                                    ? Icons.favorite_border
+                                    : Icons.search_off,
+                                size: 64.sp,
+                                color: AppColors.gray,
+                              ),
+                              SizedBox(height: 16.h),
+                              LocalizedText(
+                                _showOnlyFavorites
+                                    ? (isArabic
+                                          ? 'لا توجد منتجات مفضلة بعد'
+                                          : 'No favorite products yet')
+                                    : (isArabic
+                                          ? 'لم يتم العثور على منتجات'
+                                          : 'No products found'),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.gray,
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsets.only(
+                            top: 16.h,
+                            left: 16.w,
+                            right: 16.w,
+                          ),
+                          itemCount: _displayedProducts.length,
+                          itemBuilder: (context, index) {
+                            final product = _displayedProducts[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 16.h),
+                              child: ProductCard(
+                                product: product,
+                                onFavoriteToggle: () =>
+                                    _onFavoriteToggle(product.id),
+                                onTap: () => _onProductTap(product),
+                              ),
+                            );
+                          },
+                        ),
                 ),
               ],
             );

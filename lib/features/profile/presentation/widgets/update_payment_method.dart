@@ -14,7 +14,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
   String? selectedPaymentMethod;
   bool isCardExpanded = false;
   bool showActionButtons = false;
-  
+
   final TextEditingController cardNumberController = TextEditingController();
   final TextEditingController expirationController = TextEditingController();
   final TextEditingController cvvController = TextEditingController();
@@ -33,15 +33,14 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
     super.dispose();
   }
 
-
   void _selectPaymentMethod(String method) {
     setState(() {
       selectedPaymentMethod = method;
       isCardExpanded = method == 'Card';
-      
+
       // Show action buttons when Card is selected
       showActionButtons = method == 'Card';
-      
+
       // Clear text when switching methods
       if (!isCardExpanded) {
         cardNumberController.clear();
@@ -81,7 +80,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                             blurRadius: 4.r,
                             offset: const Offset(0, 0),
                             spreadRadius: 0,
-                          )
+                          ),
                         ],
                       ),
                       child: Column(
@@ -143,37 +142,81 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
               top: 0,
               left: 0,
               right: 0,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: BoxDecoration(color: const Color(0x26848484)),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: SvgPicture.asset(
-                        'assets/logos/arrow_left.svg',
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1E1E1E),
-                          BlendMode.srcIn,
-                        ),
-                      ),
+              child: Builder(
+                builder: (context) {
+                  final isArabic =
+                      Localizations.localeOf(context).languageCode == 'ar';
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
                     ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Update payment Method',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        height: 0.89,
-                      ),
+                    decoration: BoxDecoration(color: const Color(0x26848484)),
+                    child: Row(
+                      mainAxisAlignment: isArabic
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (!isArabic) ...[
+                          GestureDetector(
+                            onTap: () => context.pop(),
+                            child: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: 24.w,
+                              height: 24.h,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF1E1E1E),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'Update payment Method',
+                            style: TextStyle(
+                              color: const Color(0xFF1E1E1E),
+                              fontSize: 18.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              height: 0.89,
+                            ),
+                          ),
+                        ],
+                        if (isArabic) ...[
+                          GestureDetector(
+                            onTap: () => context.pop(),
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(3.1415926535897932),
+                              child: SvgPicture.asset(
+                                'assets/logos/arrow_left.svg',
+                                width: 24.w,
+                                height: 24.h,
+                                colorFilter: const ColorFilter.mode(
+                                  Color(0xFF1E1E1E),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'Update payment Method',
+                            style: TextStyle(
+                              color: const Color(0xFF1E1E1E),
+                              fontSize: 18.sp,
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.w500,
+                              height: 0.89,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
 
@@ -184,7 +227,10 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                 left: 0,
                 right: 0,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 20.h,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -198,7 +244,10 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                         },
                         child: Container(
                           width: 246.w,
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 14.h,
+                          ),
                           decoration: ShapeDecoration(
                             gradient: const LinearGradient(
                               begin: Alignment(0.00, 0.50),
@@ -214,7 +263,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                                 blurRadius: 4.r,
                                 offset: const Offset(4, 0),
                                 spreadRadius: 0,
-                              )
+                              ),
                             ],
                           ),
                           child: Row(
@@ -272,7 +321,14 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
     );
   }
 
-  Widget _buildPaymentOption(String key, String imagePath, double imageWidth, double imageHeight, String label, {required bool isSelected}) {
+  Widget _buildPaymentOption(
+    String key,
+    String imagePath,
+    double imageWidth,
+    double imageHeight,
+    String label, {
+    required bool isSelected,
+  }) {
     return GestureDetector(
       onTap: () => _selectPaymentMethod(key),
       child: Container(
@@ -283,7 +339,9 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
             side: BorderSide(
               width: 1,
               strokeAlign: BorderSide.strokeAlignOutside,
-              color: isSelected ? const Color(0xFF28A228) : const Color(0x26848484),
+              color: isSelected
+                  ? const Color(0xFF28A228)
+                  : const Color(0x26848484),
             ),
             borderRadius: BorderRadius.circular(15.r),
           ),
@@ -316,7 +374,9 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                     width: key == 'Instapay' || key == 'PayPal' ? 55.w : 41.w,
                     child: Text(
                       label,
-                      textAlign: key == 'PayPal' ? TextAlign.start : TextAlign.center,
+                      textAlign: key == 'PayPal'
+                          ? TextAlign.start
+                          : TextAlign.center,
                       style: TextStyle(
                         color: const Color(0xFF1E1E1E),
                         fontSize: key == 'PayPal' ? 10.sp : 12.sp,
@@ -334,12 +394,16 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
               height: 20.h,
               padding: EdgeInsets.all(4.w),
               decoration: ShapeDecoration(
-                color: isSelected ? const Color(0xFF28A228) : Colors.transparent,
+                color: isSelected
+                    ? const Color(0xFF28A228)
+                    : Colors.transparent,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(
                     width: 1,
                     strokeAlign: BorderSide.strokeAlignOutside,
-                    color: isSelected ? const Color(0xFF28A228) : const Color(0xFF848484),
+                    color: isSelected
+                        ? const Color(0xFF28A228)
+                        : const Color(0xFF848484),
                   ),
                   borderRadius: BorderRadius.circular(11.r),
                 ),
@@ -359,9 +423,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                       child: Container(
                         width: 12.w,
                         height: 12.h,
-                        decoration: const ShapeDecoration(
-                          shape: OvalBorder(),
-                        ),
+                        decoration: const ShapeDecoration(shape: OvalBorder()),
                       ),
                     ),
             ),
@@ -386,21 +448,21 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-                     // Card Number Field
-           Container(
-             width: double.infinity,
-             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-             decoration: ShapeDecoration(
-               color: Colors.white,
-               shape: RoundedRectangleBorder(
-                 side: const BorderSide(
-                   width: 1,
-                   strokeAlign: BorderSide.strokeAlignOutside,
-                   color: Color(0x26848484),
-                 ),
-                 borderRadius: BorderRadius.circular(30.r),
-               ),
-             ),
+          // Card Number Field
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(
+                  width: 1,
+                  strokeAlign: BorderSide.strokeAlignOutside,
+                  color: Color(0x26848484),
+                ),
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -442,25 +504,28 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
             ),
           ),
           SizedBox(height: 8.h),
-          
+
           // Expiration and CVV Fields Row
           Row(
             children: [
-                             // Expiration Field
-               Expanded(
-                 child: Container(
-                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
-                   decoration: ShapeDecoration(
-                     color: Colors.white,
-                     shape: RoundedRectangleBorder(
-                       side: const BorderSide(
-                         width: 1,
-                         strokeAlign: BorderSide.strokeAlignOutside,
-                         color: Color(0x26848484),
-                       ),
-                       borderRadius: BorderRadius.circular(30.r),
-                     ),
-                   ),
+              // Expiration Field
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        color: Color(0x26848484),
+                      ),
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -502,23 +567,26 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                   ),
                 ),
               ),
-                             SizedBox(width: 12.w),
-               
-               // CVV Field
+              SizedBox(width: 12.w),
+
+              // CVV Field
               Expanded(
-                                 child: Container(
-                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
-                   decoration: ShapeDecoration(
-                     color: Colors.white,
-                     shape: RoundedRectangleBorder(
-                       side: const BorderSide(
-                         width: 1,
-                         strokeAlign: BorderSide.strokeAlignOutside,
-                         color: Color(0x26848484),
-                       ),
-                       borderRadius: BorderRadius.circular(30.r),
-                     ),
-                   ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        color: Color(0x26848484),
+                      ),
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.start,

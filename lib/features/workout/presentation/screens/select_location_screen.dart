@@ -85,43 +85,75 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
           child: Column(
             children: [
               // Header with back button and title
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                  horizontal: responsiveHelper.w(16),
-                  vertical: responsiveHelper.h(8),
-                ),
-                decoration: const BoxDecoration(color: Color(0x26848484)),
-                child: Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: SvgPicture.asset(
-                          'assets/logos/arrow_left.svg',
-                          width: responsiveHelper.w(24),
-                          height: responsiveHelper.h(24),
-                          colorFilter: const ColorFilter.mode(
-                            Color(0xFF1E1E1E),
-                            BlendMode.srcIn,
+              Builder(
+                builder: (context) {
+                  final isArabic =
+                      Localizations.localeOf(context).languageCode == 'ar';
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: responsiveHelper.w(16),
+                      vertical: responsiveHelper.h(8),
+                    ),
+                    decoration: const BoxDecoration(color: Color(0x26848484)),
+                    child: Row(
+                      mainAxisAlignment: isArabic
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (!isArabic) ...[
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: responsiveHelper.w(24),
+                              height: responsiveHelper.h(24),
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF1E1E1E),
+                                BlendMode.srcIn,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      SizedBox(width: responsiveHelper.w(8)),
-                      LocalizedText(
-                        AppLocalizations.of(context)!.selectLocation,
-                        fontSize: responsiveHelper.sp(18),
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1E1E1E),
-                        height: 0.89,
-                      ),
-                    ],
-                  ),
-                ),
+                          SizedBox(width: responsiveHelper.w(8)),
+                          LocalizedText(
+                            AppLocalizations.of(context)!.selectLocation,
+                            fontSize: responsiveHelper.sp(18),
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF1E1E1E),
+                            height: 0.89,
+                          ),
+                        ],
+                        if (isArabic) ...[
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(3.1415926535897932),
+                              child: SvgPicture.asset(
+                                'assets/logos/arrow_left.svg',
+                                width: responsiveHelper.w(24),
+                                height: responsiveHelper.h(24),
+                                colorFilter: const ColorFilter.mode(
+                                  Color(0xFF1E1E1E),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: responsiveHelper.w(8)),
+                          LocalizedText(
+                            AppLocalizations.of(context)!.selectLocation,
+                            fontSize: responsiveHelper.sp(18),
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF1E1E1E),
+                            height: 0.89,
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
               ),
 
               SizedBox(height: responsiveHelper.h(16)),

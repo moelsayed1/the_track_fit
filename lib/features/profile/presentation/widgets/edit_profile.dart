@@ -536,12 +536,11 @@ class _EditProfileState extends State<EditProfile> {
               Column(
                 children: [
                   // Header
-                  BlocBuilder<AuthCubit, AuthState>(
-                    builder: (context, state) {
+                  Builder(
+                    builder: (context) {
                       final l10n = AppLocalizations.of(context);
                       final isArabic =
                           Localizations.localeOf(context).languageCode == 'ar';
-
                       return Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
@@ -551,30 +550,45 @@ class _EditProfileState extends State<EditProfile> {
                         decoration: BoxDecoration(
                           color: const Color(0x26848484),
                         ),
-                        child: Directionality(
-                          textDirection: isArabic
-                              ? TextDirection.rtl
-                              : TextDirection.ltr,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                        child: Row(
+                          mainAxisAlignment: isArabic
+                              ? MainAxisAlignment.start
+                              : MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (!isArabic) ...[
+                              GestureDetector(
+                                onTap: () => context.pop(),
+                                child: SvgPicture.asset(
+                                  'assets/logos/arrow_left.svg',
+                                  width: 24.w,
+                                  height: 24.h,
+                                  colorFilter: const ColorFilter.mode(
+                                    Color(0xFF1E1E1E),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
                               Text(
                                 l10n?.editProfile ?? 'Edit Profile',
                                 style: TextStyle(
                                   color: const Color(0xFF1E1E1E),
                                   fontSize: 18.sp,
-                                  fontFamily: isArabic ? 'Cairo' : 'Poppins',
+                                  fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w500,
                                   height: 0.89,
                                 ),
                               ),
-                              SizedBox(width: 8.w),
+                            ],
+                            if (isArabic) ...[
                               GestureDetector(
                                 onTap: () => context.pop(),
-                                child: Transform.rotate(
-                                  angle: !isArabic
-                                      ? 3.14159
-                                      : 0, // Rotate 180 degrees for LTR
+                                child: Transform(
+                                  alignment: Alignment.center,
+                                  transform: Matrix4.rotationY(
+                                    3.1415926535897932,
+                                  ),
                                   child: SvgPicture.asset(
                                     'assets/logos/arrow_left.svg',
                                     width: 24.w,
@@ -586,8 +600,19 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                 ),
                               ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                l10n?.editProfile ?? 'Edit Profile',
+                                style: TextStyle(
+                                  color: const Color(0xFF1E1E1E),
+                                  fontSize: 18.sp,
+                                  fontFamily: 'Cairo',
+                                  fontWeight: FontWeight.w500,
+                                  height: 0.89,
+                                ),
+                              ),
                             ],
-                          ),
+                          ],
                         ),
                       );
                     },
@@ -624,11 +649,15 @@ class _EditProfileState extends State<EditProfile> {
                                     ),
                                   ),
                                   Positioned(
-                                                                      left: 96.w,
-                                  top: 112.h,
-                                  child: Tooltip(
-                                    message: AppLocalizations.of(context)?.tapToChangeProfilePicture ?? 'Tap to change profile picture',
-                                    child: GestureDetector(
+                                    left: 96.w,
+                                    top: 112.h,
+                                    child: Tooltip(
+                                      message:
+                                          AppLocalizations.of(
+                                            context,
+                                          )?.tapToChangeProfilePicture ??
+                                          'Tap to change profile picture',
+                                      child: GestureDetector(
                                         onTap: _showImageSourceDialog,
                                         child: Container(
                                           width: 46.w,
@@ -774,15 +803,20 @@ class _EditProfileState extends State<EditProfile> {
                                             ),
                                       ),
                                     ),
-                                                                        SizedBox(width: 8.w),
+                                    SizedBox(width: 8.w),
                                     Text(
-                                      AppLocalizations.of(context)?.saving ?? 'Saving...',
+                                      AppLocalizations.of(context)?.saving ??
+                                          'Saving...',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16.sp,
-                                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' 
-                                            ? 'Cairo' 
+                                        fontFamily:
+                                            Localizations.localeOf(
+                                                  context,
+                                                ).languageCode ==
+                                                'ar'
+                                            ? 'Cairo'
                                             : 'Poppins',
                                         fontWeight: FontWeight.w500,
                                         height: 1.50,
@@ -793,9 +827,13 @@ class _EditProfileState extends State<EditProfile> {
                                 );
                               }
                               final l10n = AppLocalizations.of(context);
-                              final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+                              final isArabic =
+                                  Localizations.localeOf(
+                                    context,
+                                  ).languageCode ==
+                                  'ar';
                               return Text(
-                                _hasChanges() 
+                                _hasChanges()
                                     ? (l10n?.saveChanges ?? 'Save Changes')
                                     : (l10n?.noChanges ?? 'No Changes'),
                                 textAlign: TextAlign.center,
@@ -821,21 +859,23 @@ class _EditProfileState extends State<EditProfile> {
                             _selectedImage = null;
                             _isAnyFieldEditing = false;
                           });
-                                              },
-                      child: Text(
-                        AppLocalizations.of(context)?.cancel ?? 'Cancel',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: const Color(0xFF848484),
-                          fontSize: 16.sp,
-                          fontFamily: Localizations.localeOf(context).languageCode == 'ar'
-                              ? 'Cairo'
-                              : 'Poppins',
-                          fontWeight: FontWeight.w400,
-                          height: 1.50,
-                          letterSpacing: 0.50,
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)?.cancel ?? 'Cancel',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: const Color(0xFF848484),
+                            fontSize: 16.sp,
+                            fontFamily:
+                                Localizations.localeOf(context).languageCode ==
+                                    'ar'
+                                ? 'Cairo'
+                                : 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            height: 1.50,
+                            letterSpacing: 0.50,
+                          ),
                         ),
-                      ),
                       ),
                     ],
                   ),
@@ -933,7 +973,7 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
   @override
   Widget build(BuildContext context) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
@@ -956,7 +996,9 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
                 if (_isEditing)
                   Expanded(
                     child: Directionality(
-                      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                       child: TextFormField(
                         controller: widget.controller,
                         obscureText: widget.isPassword && !_isPasswordVisible,

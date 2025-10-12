@@ -60,52 +60,88 @@ class _SubscriptionState extends State<Subscription> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
       body: SafeArea(
         child: Column(
           children: [
             // Header at the top
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: BoxDecoration(color: const Color(0x26848484)),
-              child: Directionality(
-                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n?.subscription ?? 'Subscription',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 18.sp,
-                        fontFamily: isArabic ? 'Cairo' : 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        height: 0.89,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Transform.rotate(
-                        angle: !isArabic ? 3.14159 : 0,
-                        child: SvgPicture.asset(
-                          'assets/logos/arrow_left.svg',
-                          width: 24.w,
-                          height: 24.h,
-                          colorFilter: const ColorFilter.mode(
-                            Color(0xFF1E1E1E),
-                            BlendMode.srcIn,
+            Builder(
+              builder: (context) {
+                final isArabic =
+                    Localizations.localeOf(context).languageCode == 'ar';
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(color: const Color(0x26848484)),
+                  child: Row(
+                    mainAxisAlignment: isArabic
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (!isArabic) ...[
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1E1E1E),
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          l10n?.subscription ?? 'Subscription',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 18.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            height: 0.89,
+                          ),
+                        ),
+                      ],
+                      if (isArabic) ...[
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(3.1415926535897932),
+                            child: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: 24.w,
+                              height: 24.h,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF1E1E1E),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          l10n?.subscription ?? 'Subscription',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 18.sp,
+                            fontFamily: 'Cairo',
+                            fontWeight: FontWeight.w500,
+                            height: 0.89,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
             ),
 
             // Main Content
@@ -195,7 +231,7 @@ class _SubscriptionState extends State<Subscription> {
   Widget _buildErrorState() {
     final l10n = AppLocalizations.of(context);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -218,9 +254,7 @@ class _SubscriptionState extends State<Subscription> {
               onPressed: _loadSubscription,
               child: Text(
                 l10n?.retry ?? 'Retry',
-                style: TextStyle(
-                  fontFamily: isArabic ? 'Cairo' : 'Poppins',
-                ),
+                style: TextStyle(fontFamily: isArabic ? 'Cairo' : 'Poppins'),
               ),
             ),
           ],
@@ -232,7 +266,7 @@ class _SubscriptionState extends State<Subscription> {
   Widget _buildNoSubscriptionContent() {
     final l10n = AppLocalizations.of(context);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+
     return Center(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -266,7 +300,8 @@ class _SubscriptionState extends State<Subscription> {
             ),
             SizedBox(height: 8.h),
             Text(
-              l10n?.youDontHaveAnActiveSubscriptionYet ?? 'You don\'t have an active subscription yet.\nChoose a plan to get started!',
+              l10n?.youDontHaveAnActiveSubscriptionYet ??
+                  'You don\'t have an active subscription yet.\nChoose a plan to get started!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: const Color(0xFF848484),
@@ -308,11 +343,11 @@ class _SubscriptionState extends State<Subscription> {
     );
   }
 
-    Widget _buildActiveSubscriptionContent() {
+  Widget _buildActiveSubscriptionContent() {
     final subscription = _subscriptionResponse!.data!;
     final l10n = AppLocalizations.of(context);
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -344,10 +379,12 @@ class _SubscriptionState extends State<Subscription> {
               ),
               child: Column(
                 children: [
-                                    Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Directionality(
-                      textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                      textDirection: isArabic
+                          ? TextDirection.rtl
+                          : TextDirection.ltr,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -357,7 +394,9 @@ class _SubscriptionState extends State<Subscription> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  isArabic ? subscription.arName : subscription.enName,
+                                  isArabic
+                                      ? subscription.arName
+                                      : subscription.enName,
                                   style: TextStyle(
                                     color: AppColors.primaryGreen,
                                     fontSize: 18.sp,
@@ -374,7 +413,9 @@ class _SubscriptionState extends State<Subscription> {
                                       style: TextStyle(
                                         color: const Color(0xFF1E1E1E),
                                         fontSize: 18.sp,
-                                        fontFamily: isArabic ? 'Cairo' : 'Poppins',
+                                        fontFamily: isArabic
+                                            ? 'Cairo'
+                                            : 'Poppins',
                                         fontWeight: FontWeight.w500,
                                         height: 0.89,
                                       ),
@@ -385,7 +426,9 @@ class _SubscriptionState extends State<Subscription> {
                                       style: TextStyle(
                                         color: const Color(0xBF1E1E1E),
                                         fontSize: 10.sp,
-                                        fontFamily: isArabic ? 'Cairo' : 'Poppins',
+                                        fontFamily: isArabic
+                                            ? 'Cairo'
+                                            : 'Poppins',
                                         fontWeight: FontWeight.w400,
                                         height: 1.60,
                                       ),
@@ -395,15 +438,15 @@ class _SubscriptionState extends State<Subscription> {
                               ],
                             ),
                           ),
-                          
+
                           // Right side - Plan status
                           Text(
                             subscription.isSubscriptionActive
                                 ? (l10n?.planActive ?? 'Plan Active')
                                 : (l10n?.planInactive ?? 'Plan Inactive'),
                             style: TextStyle(
-                              color: subscription.isSubscriptionActive 
-                                  ? const Color(0xFF28A228) 
+                              color: subscription.isSubscriptionActive
+                                  ? const Color(0xFF28A228)
                                   : const Color(0xFFEA4335),
                               fontSize: 14.sp,
                               fontFamily: isArabic ? 'Cairo' : 'Poppins',
@@ -502,7 +545,7 @@ class _SubscriptionState extends State<Subscription> {
 
   Widget _buildFeatureItem(String feature) {
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-    
+
     return Directionality(
       textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Row(

@@ -37,15 +37,17 @@ class ExerciseDetail extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: Color(0x26848484),
               ),
-              child: Directionality(
-                textDirection: TextDirection.ltr,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Localizations.localeOf(context).languageCode == 'ar'
+                          ? Matrix4.rotationY(3.1415926535897932)
+                          : Matrix4.identity(),
                       child: SvgPicture.asset(
                         'assets/logos/arrow_left.svg',
                         width: responsiveHelper.w(24),
@@ -56,16 +58,16 @@ class ExerciseDetail extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: responsiveHelper.w(8)),
-                    LocalizedText(
-                      AppLocalizations.of(context)!.exerciseDetail,
-                      fontSize: responsiveHelper.sp(18),
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1E1E1E),
-                      height: 0.89,
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: responsiveHelper.w(8)),
+                  LocalizedText(
+                    AppLocalizations.of(context)!.exerciseDetail,
+                    fontSize: responsiveHelper.sp(18),
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF1E1E1E),
+                    height: 0.89,
+                  ),
+                ],
               ),
             ),
             SizedBox(height: responsiveHelper.h(28)),
