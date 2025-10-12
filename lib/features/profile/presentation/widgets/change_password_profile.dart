@@ -17,7 +17,8 @@ class ChangePasswordProfile extends StatefulWidget {
 
 class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
   final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool isNewPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
@@ -32,9 +33,10 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
   }
 
   void _checkIfShouldShowButtons() {
-    bool hasText = newPasswordController.text.isNotEmpty ||
-                   confirmPasswordController.text.isNotEmpty;
-    
+    bool hasText =
+        newPasswordController.text.isNotEmpty ||
+        confirmPasswordController.text.isNotEmpty;
+
     if (hasText != showActionButtons) {
       setState(() {
         showActionButtons = hasText;
@@ -67,8 +69,8 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
         confirmPasswordController.text.isEmpty) {
       CustomSnackbar.show(
         context,
-        title: 'Validation Error',
-        message: 'Please fill in all fields',
+        title: AppLocalizations.of(context)!.validationError,
+        message: AppLocalizations.of(context)!.pleaseEnterANewPassword,
         type: SnackbarType.error,
       );
       return;
@@ -77,8 +79,8 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
     if (newPasswordController.text != confirmPasswordController.text) {
       CustomSnackbar.show(
         context,
-        title: 'Validation Error',
-        message: 'New passwords do not match',
+        title: AppLocalizations.of(context)!.validationError,
+        message: AppLocalizations.of(context)!.passwordsDoNotMatch,
         type: SnackbarType.error,
       );
       return;
@@ -87,8 +89,8 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
     if (newPasswordController.text.length < 6) {
       CustomSnackbar.show(
         context,
-        title: 'Validation Error',
-        message: 'New password must be at least 6 characters',
+        title: AppLocalizations.of(context)!.validationError,
+        message: AppLocalizations.of(context)!.passwordMustBeAtLeast6Characters,
         type: SnackbarType.error,
       );
       return;
@@ -107,7 +109,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
         if (state is AuthChangePasswordSuccess) {
           CustomSnackbar.show(
             context,
-            title: 'Success!',
+            title: AppLocalizations.of(context)!.success,
             message: state.message,
             type: SnackbarType.success,
           );
@@ -119,7 +121,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
         } else if (state is AuthChangePasswordError) {
           CustomSnackbar.show(
             context,
-            title: 'Change Password Failed',
+            title: AppLocalizations.of(context)!.changePasswordFailed,
             message: state.message,
             type: SnackbarType.error,
           );
@@ -128,7 +130,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
           final firstError = state.fieldErrors.values.first;
           CustomSnackbar.show(
             context,
-            title: 'Validation Error',
+            title: AppLocalizations.of(context)!.validationError,
             message: firstError,
             type: SnackbarType.error,
           );
@@ -140,39 +142,89 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
           child: Column(
             children: [
               // Custom Header at the top
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: const BoxDecoration(color: Color(0x26848484)),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: SvgPicture.asset(
-                        'assets/logos/arrow_left.svg',
-                        width: 24.w,
-                        height: 24.h,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFF1E1E1E),
-                          BlendMode.srcIn,
-                        ),
-                      ),
+              Builder(
+                builder: (context) {
+                  final isArabic =
+                      Localizations.localeOf(context).languageCode == 'ar';
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
                     ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Change Password',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        height: 0.89,
-                      ),
+                    decoration: const BoxDecoration(color: Color(0x26848484)),
+                    child: Row(
+                      mainAxisAlignment: isArabic
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (!isArabic) ...[
+                          GestureDetector(
+                            onTap: () => context.pop(),
+                            child: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: 24.w,
+                              height: 24.h,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF1E1E1E),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            AppLocalizations.of(context)!.changePassword,
+                            style: TextStyle(
+                              color: const Color(0xFF1E1E1E),
+                              fontSize: 18.sp,
+                              fontFamily:
+                                  Localizations.localeOf(
+                                        context,
+                                      ).languageCode ==
+                                      'ar'
+                                  ? 'Cairo'
+                                  : 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              height: 0.89,
+                            ),
+                          ),
+                        ],
+                        if (isArabic) ...[
+                          GestureDetector(
+                            onTap: () => context.pop(),
+                            child: Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.rotationY(3.1415926535897932),
+                              child: SvgPicture.asset(
+                                'assets/logos/arrow_left.svg',
+                                width: 24.w,
+                                height: 24.h,
+                                colorFilter: const ColorFilter.mode(
+                                  Color(0xFF1E1E1E),
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            AppLocalizations.of(context)!.changePassword,
+                            style: TextStyle(
+                              color: const Color(0xFF1E1E1E),
+                              fontSize: 18.sp,
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.w500,
+                              height: 0.89,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-              
+
               // Main Content (Input Fields)
               Expanded(
                 child: SingleChildScrollView(
@@ -183,16 +235,22 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                         SizedBox(height: 24.h),
                         _buildPasswordField(
                           controller: newPasswordController,
-                          hintText: AppLocalizations.of(context)!.newPasswordPlaceholder,
+                          hintText: AppLocalizations.of(
+                            context,
+                          )!.newPasswordPlaceholder,
                           isPasswordVisible: isNewPasswordVisible,
-                          onToggleVisibility: () => _togglePasswordVisibility('new'),
+                          onToggleVisibility: () =>
+                              _togglePasswordVisibility('new'),
                         ),
                         SizedBox(height: 16.h),
                         _buildPasswordField(
                           controller: confirmPasswordController,
-                          hintText: AppLocalizations.of(context)!.confirmPasswordPlaceholder,
+                          hintText: AppLocalizations.of(
+                            context,
+                          )!.confirmPasswordPlaceholder,
                           isPasswordVisible: isConfirmPasswordVisible,
-                          onToggleVisibility: () => _togglePasswordVisibility('confirm'),
+                          onToggleVisibility: () =>
+                              _togglePasswordVisibility('confirm'),
                         ),
                       ],
                     ),
@@ -212,7 +270,10 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                       children: [
                         Container(
                           width: 246.w,
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 14.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 14.h,
+                          ),
                           decoration: ShapeDecoration(
                             gradient: const LinearGradient(
                               begin: Alignment(0.00, 0.50),
@@ -228,7 +289,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                                 blurRadius: 4,
                                 offset: Offset(4, 0),
                                 spreadRadius: 0,
-                              )
+                              ),
                             ],
                           ),
                           child: Material(
@@ -241,19 +302,25 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                                   builder: (context, state) {
                                     if (state is AuthLoading) {
                                       return Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           SizedBox(
                                             width: 16.w,
                                             height: 16.h,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                    Colors.white,
+                                                  ),
                                             ),
                                           ),
                                           SizedBox(width: 8.w),
                                           Text(
-                                            'Changing...',
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.saving,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: Colors.white,
@@ -268,7 +335,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                                       );
                                     }
                                     return Text(
-                                      'Save Changes',
+                                      AppLocalizations.of(context)!.saveChanges,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.white,
@@ -291,7 +358,7 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                             confirmPasswordController.clear();
                           },
                           child: Text(
-                            'Cancel',
+                            AppLocalizations.of(context)!.cancel,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: const Color(0xFF848484),
@@ -364,7 +431,10 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                     style: TextStyle(
                       color: const Color(0xFF1E1E1E),
                       fontSize: 12.sp,
-                      fontFamily: 'Poppins',
+                      fontFamily:
+                          Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'Cairo'
+                          : 'Poppins',
                       fontWeight: FontWeight.w400,
                     ),
                     decoration: InputDecoration(
@@ -372,7 +442,10 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
                       hintStyle: TextStyle(
                         color: const Color(0xB2848484),
                         fontSize: 12.sp,
-                        fontFamily: 'Poppins',
+                        fontFamily:
+                            Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'Cairo'
+                            : 'Poppins',
                         fontWeight: FontWeight.w400,
                       ),
                       border: InputBorder.none,
@@ -386,7 +459,9 @@ class _ChangePasswordProfileState extends State<ChangePasswordProfile> {
           GestureDetector(
             onTap: onToggleVisibility,
             child: SvgPicture.asset(
-              isPasswordVisible ? 'assets/images/eye-slash.svg' : 'assets/images/eye.svg' ,
+              isPasswordVisible
+                  ? 'assets/images/eye-slash.svg'
+                  : 'assets/images/eye.svg',
               width: 20.w,
               height: 20.h,
               colorFilter: const ColorFilter.mode(

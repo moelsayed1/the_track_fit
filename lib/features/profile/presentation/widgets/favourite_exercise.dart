@@ -43,7 +43,6 @@ class _FavoriteExerciseContentState extends State<_FavoriteExerciseContent> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6FFF6),
@@ -51,44 +50,81 @@ class _FavoriteExerciseContentState extends State<_FavoriteExerciseContent> {
         child: Column(
           children: [
             // Custom Header
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: const BoxDecoration(color: Color(0x26848484)),
-              child: Directionality(
-                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n?.favouriteExercise ?? 'Favourite Exercise',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 18.sp,
-                        fontFamily: isArabic ? 'Cairo' : 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        height: 0.89,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Transform.rotate(
-                        angle: !isArabic ? 3.14159 : 0,
-                        child: SvgPicture.asset(
-                          'assets/logos/arrow_left.svg',
-                          width: 24.w,
-                          height: 24.h,
-                          colorFilter: const ColorFilter.mode(
-                            Color(0xFF1E1E1E),
-                            BlendMode.srcIn,
+            Builder(
+              builder: (context) {
+                final isArabic =
+                    Localizations.localeOf(context).languageCode == 'ar';
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: const BoxDecoration(color: Color(0x26848484)),
+                  child: Row(
+                    mainAxisAlignment: isArabic
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (!isArabic) ...[
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1E1E1E),
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          l10n?.favouriteExercise ?? 'Favourite Exercise',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 18.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            height: 0.89,
+                          ),
+                        ),
+                      ],
+                      if (isArabic) ...[
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(3.1415926535897932),
+                            child: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: 24.w,
+                              height: 24.h,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF1E1E1E),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          l10n?.favouriteExercise ?? 'Favourite Exercise',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 18.sp,
+                            fontFamily: 'Cairo',
+                            fontWeight: FontWeight.w500,
+                            height: 0.89,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
             ),
 
             // Main Content - Using BlocBuilder for dynamic updates

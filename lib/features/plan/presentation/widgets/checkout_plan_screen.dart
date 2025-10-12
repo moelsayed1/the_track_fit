@@ -226,156 +226,71 @@ class _CheckoutPlanScreenState extends State<CheckoutPlanScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: const BoxDecoration(color: Color(0x26848484)),
-      child: Builder(
-        builder: (context) {
-          if (isArabic) {
-            // Arabic: pay , button , arrow
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Title (Pay)
-                Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 8.w),
-                      Text(
-                        'الدفع',
-                        style: TextStyle(
-                          color: const Color(0xFF1E1E1E),
-                          fontSize: 18.sp,
-                          fontFamily: 'Cairo',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Arrow then title always on the far right, both for AR and EN
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: () => context.pop(),
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: isArabic
+                      ? Matrix4.rotationY(3.1415926535897932)
+                      : Matrix4.identity(),
+                  child: SvgPicture.asset(
+                    'assets/logos/arrow_left.svg',
+                    width: 24.w,
+                    height: 24.h,
+                    colorFilter: const ColorFilter.mode(
+                      Color(0xFF1E1E1E),
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
-                // Change Plan button
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFF28A228),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                        child: Text(
-                          'تغيير الباقة',
-                          style: TextStyle(
-                            color: const Color(0xFF28A228),
-                            fontSize: 12.sp,
-                            fontFamily: 'Cairo',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 20.w),
-
-                    // Arrow
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Transform.rotate(
-                          angle: isArabic
-                              ? 0
-                              : 3.14159, // Rotate 180 degrees for Arabic
-                          child: SvgPicture.asset(
-                            'assets/logos/arrow_left.svg',
-                            width: 24.w,
-                            height: 24.h,
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                isArabic ? 'الدفع' : 'Checkout',
+                style: TextStyle(
+                  color: const Color(0xFF1E1E1E),
+                  fontSize: 18.sp,
+                  fontFamily: isArabic ? 'Cairo' : 'Poppins',
+                  fontWeight: FontWeight.w500,
                 ),
-              ],
-            );
-          } else {
-            // English: arrow , button , pay
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: GestureDetector(
-                        onTap: () => context.pop(),
-                        child: Transform.rotate(
-                          angle: 0,
-                          child: SvgPicture.asset(
-                            'assets/logos/arrow_left.svg',
-                            width: 24.w,
-                            height: 24.h,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 20.w),
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFF28A228),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(30.r),
-                        ),
-                        child: Text(
-                          'Change Plan',
-                          style: TextStyle(
-                            color: const Color(0xFF28A228),
-                            fontSize: 12.sp,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              ),
+            ],
+          ),
+          // Button always far left
+          GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 6.h,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color(0xFF28A228),
+                  width: 1,
                 ),
-
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 8.w),
-                      Text(
-                        'Checkout',
-                        style: TextStyle(
-                          color: const Color(0xFF1E1E1E),
-                          fontSize: 18.sp,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              child: Text(
+                isArabic ? 'تغيير الباقة' : 'Change Plan',
+                style: TextStyle(
+                  color: const Color(0xFF28A228),
+                  fontSize: 12.sp,
+                  fontFamily: isArabic ? 'Cairo' : 'Poppins',
+                  fontWeight: FontWeight.w500,
                 ),
-
-                // Title (Pay)
-              ],
-            );
-          }
-        },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

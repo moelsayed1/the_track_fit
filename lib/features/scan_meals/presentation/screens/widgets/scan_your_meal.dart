@@ -77,22 +77,29 @@ class _ScanYourMealState extends State<ScanYourMeal> {
             decoration: const BoxDecoration(
               color: Color(0x26848484),
             ),
-             child: Directionality(
-               textDirection: context.textDirection,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Localizations.localeOf(context).languageCode == 'ar'
+                        ? Matrix4.rotationY(3.1415926535897932)
+                        : Matrix4.identity(),
                     child: SvgPicture.asset(
                       'assets/logos/arrow_left.svg',
                       width: 24.w,
                       height: 24.h,
+                      colorFilter: const ColorFilter.mode(
+                        Color(0xFF1E1E1E),
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 8.w),
+                ),
+                SizedBox(width: 8.w),
                 Text(
                   AppLocalizations.of(context)!.scanYourMeal,
                   style: TextStyle(
@@ -105,7 +112,6 @@ class _ScanYourMealState extends State<ScanYourMeal> {
                 ),
               ],
             ),
-          ),
           ),
           SizedBox(height: 50.h),
           // Main Content

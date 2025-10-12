@@ -26,7 +26,7 @@ class _NotificationProfileState extends State<NotificationProfile> {
   Future<void> _loadNotifications() async {
     try {
       // Add a test notification for debugging/demo purposes
-   //   await _addTestNotification();
+      //   await _addTestNotification();
       final notifications = await NotificationService.getNotifications();
       setState(() {
         _notifications = notifications;
@@ -48,8 +48,6 @@ class _NotificationProfileState extends State<NotificationProfile> {
     await NotificationService.markAllAsRead();
     _loadNotifications(); // Reload to update UI
   }
-
-
 
   String _formatTimeAgo(DateTime timestamp) {
     final now = DateTime.now();
@@ -86,46 +84,81 @@ class _NotificationProfileState extends State<NotificationProfile> {
         child: Column(
           children: [
             // Header with back button and title
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: const BoxDecoration(color: Color(0x26848484)),
-              child: Directionality(
-                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n?.notificationsTitle ?? 'Notifications',
-                      style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
-                        fontSize: 18.sp,
-                        fontFamily: isArabic ? 'Cairo' : 'Poppins',
-                        fontWeight: FontWeight.w500,
-                        height: 0.89,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Transform.rotate(
-                        angle: !isArabic
-                            ? 3.14159
-                            : 0, // Rotate 180 degrees for Arabic
-                        child: SvgPicture.asset(
-                          'assets/logos/arrow_left.svg',
-                          width: 24.w,
-                          height: 24.h,
-                          colorFilter: const ColorFilter.mode(
-                            Color(0xFF1E1E1E),
-                            BlendMode.srcIn,
+            Builder(
+              builder: (context) {
+                final isArabic =
+                    Localizations.localeOf(context).languageCode == 'ar';
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: const BoxDecoration(color: Color(0x26848484)),
+                  child: Row(
+                    mainAxisAlignment: isArabic
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (!isArabic) ...[
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: SvgPicture.asset(
+                            'assets/logos/arrow_left.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1E1E1E),
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          l10n?.notificationsTitle ?? 'Notifications',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 18.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                            height: 0.89,
+                          ),
+                        ),
+                      ],
+                      if (isArabic) ...[
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(3.1415926535897932),
+                            child: SvgPicture.asset(
+                              'assets/logos/arrow_left.svg',
+                              width: 24.w,
+                              height: 24.h,
+                              colorFilter: const ColorFilter.mode(
+                                Color(0xFF1E1E1E),
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          l10n?.notificationsTitle ?? 'Notifications',
+                          style: TextStyle(
+                            color: const Color(0xFF1E1E1E),
+                            fontSize: 18.sp,
+                            fontFamily: 'Cairo',
+                            fontWeight: FontWeight.w500,
+                            height: 0.89,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              },
             ),
 
             // Notifications List

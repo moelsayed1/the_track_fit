@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionService {
-  static const String _notificationPermissionKey =
-      'notification_permission_requested';
 
   /// Request notification permission with proper handling for release builds
   static Future<bool> requestNotificationPermission() async {
