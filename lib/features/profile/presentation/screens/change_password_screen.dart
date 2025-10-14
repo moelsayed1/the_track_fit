@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
@@ -20,7 +21,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _isCurrentPasswordVisible = false;
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -69,18 +70,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             message: AppLocalizations.of(context)!.passwordChangedSuccessfully,
             type: SnackbarType.success,
           );
-          
+
           // Clear form
           _currentPasswordController.clear();
           _newPasswordController.clear();
           _confirmPasswordController.clear();
-          
+
           // Navigate back
           context.pop();
         }
       } else {
         // Handle error response
-        final errorMessage = response.data['message'] ?? AppLocalizations.of(context)!.failedToChangePassword;
+        final errorMessage =
+            response.data['message'] ??
+            AppLocalizations.of(context)!.failedToChangePassword;
         if (mounted) {
           CustomSnackbar.show(
             context,
@@ -95,7 +98,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         CustomSnackbar.show(
           context,
           title: AppLocalizations.of(context)!.error,
-          message: AppLocalizations.of(context)!.failedToChangePasswordPleaseTryAgain,
+          message: AppLocalizations.of(
+            context,
+          )!.failedToChangePasswordPleaseTryAgain,
           type: SnackbarType.error,
         );
       }
@@ -121,7 +126,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             width: 24.w,
             height: 24.h,
             colorFilter: const ColorFilter.mode(
-              Color(0xFF1E1E1E),
+              AppColors.white,
               BlendMode.srcIn,
             ),
           ),
@@ -130,7 +135,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         title: Text(
           AppLocalizations.of(context)!.changePassword,
           style: TextStyle(
-            color: const Color(0xFF1E1E1E),
+            color: AppColors.white,
             fontSize: 18.sp,
             fontFamily: context.fontFamily,
             fontWeight: FontWeight.w600,
@@ -146,7 +151,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 24.h),
-              
+
               // Current Password Field
               _buildPasswordField(
                 controller: _currentPasswordController,
@@ -159,14 +164,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterYourCurrentPassword;
+                    return AppLocalizations.of(
+                      context,
+                    )!.pleaseEnterYourCurrentPassword;
                   }
                   return null;
                 },
               ),
-              
+
               SizedBox(height: 24.h),
-              
+
               // New Password Field
               _buildPasswordField(
                 controller: _newPasswordController,
@@ -179,17 +186,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseEnterANewPassword;
+                    return AppLocalizations.of(
+                      context,
+                    )!.pleaseEnterANewPassword;
                   }
                   if (value.length < 8) {
-                    return AppLocalizations.of(context)!.passwordMustBeAtLeast8Characters;
+                    return AppLocalizations.of(
+                      context,
+                    )!.passwordMustBeAtLeast8Characters;
                   }
                   return null;
                 },
               ),
-              
+
               SizedBox(height: 24.h),
-              
+
               // Confirm Password Field
               _buildPasswordField(
                 controller: _confirmPasswordController,
@@ -202,7 +213,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)!.pleaseConfirmYourPassword;
+                    return AppLocalizations.of(
+                      context,
+                    )!.pleaseConfirmYourPassword;
                   }
                   if (value != _newPasswordController.text) {
                     return AppLocalizations.of(context)!.passwordsDoNotMatch;
@@ -210,9 +223,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   return null;
                 },
               ),
-              
+
               SizedBox(height: 40.h),
-              
+
               // Save Button
               SizedBox(
                 width: double.infinity,
@@ -233,7 +246,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           height: 20.h,
                           child: const CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Text(
@@ -266,7 +281,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         Text(
           label,
           style: TextStyle(
-            color: const Color(0xFF1E1E1E),
+            color: AppColors.white,
             fontSize: 14.sp,
             fontFamily: context.fontFamily,
             fontWeight: FontWeight.w500,
@@ -280,7 +295,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           style: TextStyle(
             fontSize: 16.sp,
             fontFamily: context.fontFamily,
-            color: const Color(0xFF1E1E1E),
+            color: AppColors.white,
           ),
           decoration: InputDecoration(
             hintText: label,

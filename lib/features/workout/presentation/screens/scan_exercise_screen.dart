@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/core/constants/app_assets.dart';
 import 'package:the_track_fit/core/widgets/localized_text.dart';
@@ -320,7 +321,9 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(30.r),
-                                    color: Colors.black.withValues(alpha: 0.3),
+                                    color: AppColors.black.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                   child: Center(
                                     child: Column(
@@ -330,7 +333,7 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                                         Container(
                                           padding: EdgeInsets.all(12.w),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withValues(
+                                            color: AppColors.white.withValues(
                                               alpha: 0.9,
                                             ),
                                             shape: BoxShape.circle,
@@ -448,7 +451,7 @@ class _ScanExerciseScreenState extends State<ScanExerciseScreen> {
                             : AppLocalizations.of(context)!.stopScan,
                         fontSize: responsiveHelper.sp(16),
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: AppColors.white,
                       ),
                     ),
                   ),

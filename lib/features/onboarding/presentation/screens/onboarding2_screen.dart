@@ -20,7 +20,7 @@ class Onboarding2Screen extends StatelessWidget {
         width: responsive.screenWidth,
         height: responsive.screenHeight,
         clipBehavior: Clip.antiAlias,
-        decoration: const BoxDecoration(color: AppColors.white),
+        decoration: const BoxDecoration(color: AppColors.background),
         child: Stack(
           children: [
             // Background image with crop effect
@@ -75,7 +75,7 @@ class Onboarding2Screen extends StatelessWidget {
                             l10n.levelUpYourHealthWithSmartMeals,
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.black,
+                            color: AppColors.white,
                             textAlign: TextAlign.center,
                             letterSpacing: 0.50,
                             style: TextStyle(height: 1.2),
@@ -93,7 +93,7 @@ class Onboarding2Screen extends StatelessWidget {
                             l10n.followDailyMealPlans,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
-                            color: AppColors.gray,
+                            color: AppColors.white,
                             textAlign: TextAlign.center,
                             style: TextStyle(height: 1.4),
                           );

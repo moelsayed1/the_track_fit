@@ -140,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6FFF6), // Light green background
+        backgroundColor: AppColors.background, // Dark background
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: responsive.wp(4.3)),

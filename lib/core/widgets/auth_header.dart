@@ -22,8 +22,8 @@ class AuthHeader extends StatelessWidget {
 
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
         final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
 
@@ -53,7 +53,7 @@ class AuthHeader extends StatelessWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.darkGray,
+                      color: AppColors.white,
                       fontSize: responsive.sp(20),
                       fontFamily: fontFamily,
                       fontWeight: FontWeight.w500,
@@ -64,7 +64,7 @@ class AuthHeader extends StatelessWidget {
                     subtitle,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: AppColors.grayMedium,
+                      color: AppColors.white,
                       fontSize: responsive.sp(12),
                       fontFamily: fontFamily,
                       fontWeight: FontWeight.w400,

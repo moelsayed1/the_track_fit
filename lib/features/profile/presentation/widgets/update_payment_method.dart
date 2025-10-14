@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 
 class UpdatePaymentMethod extends StatefulWidget {
   const UpdatePaymentMethod({super.key});
@@ -167,7 +168,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                               width: 24.w,
                               height: 24.h,
                               colorFilter: const ColorFilter.mode(
-                                Color(0xFF1E1E1E),
+                                AppColors.white,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -176,7 +177,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                           Text(
                             'Update payment Method',
                             style: TextStyle(
-                              color: const Color(0xFF1E1E1E),
+                              color: AppColors.white,
                               fontSize: 18.sp,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
@@ -195,7 +196,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                                 width: 24.w,
                                 height: 24.h,
                                 colorFilter: const ColorFilter.mode(
-                                  Color(0xFF1E1E1E),
+                                  AppColors.white,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -205,7 +206,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                           Text(
                             'Update payment Method',
                             style: TextStyle(
-                              color: const Color(0xFF1E1E1E),
+                              color: AppColors.white,
                               fontSize: 18.sp,
                               fontFamily: 'Cairo',
                               fontWeight: FontWeight.w500,
@@ -378,7 +379,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                           ? TextAlign.start
                           : TextAlign.center,
                       style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
+                        color: AppColors.white,
                         fontSize: key == 'PayPal' ? 10.sp : 12.sp,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
@@ -453,7 +454,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
             decoration: ShapeDecoration(
-              color: Colors.white,
+              color: AppColors.surfaceVariant,
               shape: RoundedRectangleBorder(
                 side: const BorderSide(
                   width: 1,
@@ -493,7 +494,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                       ),
                     ),
                     style: const TextStyle(
-                      color: Color(0xFF1E1E1E),
+                      color: AppColors.white,
                       fontSize: 12,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
@@ -556,7 +557,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                             ),
                           ),
                           style: const TextStyle(
-                            color: Color(0xFF1E1E1E),
+                            color: AppColors.white,
                             fontSize: 12,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,
@@ -617,7 +618,7 @@ class _UpdatePaymentMethodState extends State<UpdatePaymentMethod> {
                             ),
                           ),
                           style: const TextStyle(
-                            color: Color(0xFF1E1E1E),
+                            color: AppColors.white,
                             fontSize: 12,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,

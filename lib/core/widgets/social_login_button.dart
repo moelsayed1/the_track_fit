@@ -31,13 +31,14 @@ class SocialLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
 
-    final buttonWidth = width ?? responsive.screenWidth - (responsive.wp(8) * 2);
+    final buttonWidth =
+        width ?? responsive.screenWidth - (responsive.wp(8) * 2);
     final buttonHeight = height ?? responsive.hp(6);
 
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
         final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
 
@@ -65,7 +66,9 @@ class SocialLoginButton extends StatelessWidget {
                       height: responsive.sp(20),
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.darkGray),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.white,
+                        ),
                       ),
                     ),
                     SizedBox(width: responsive.wp(2)),
@@ -89,7 +92,7 @@ class SocialLoginButton extends StatelessWidget {
                   Text(
                     text,
                     style: TextStyle(
-                      color: AppColors.darkGray,
+                      color: AppColors.white,
                       fontSize: responsive.sp(16),
                       fontFamily: fontFamily,
                       fontWeight: FontWeight.w400,

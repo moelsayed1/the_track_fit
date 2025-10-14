@@ -564,7 +564,7 @@ class _EditProfileState extends State<EditProfile> {
                                   width: 24.w,
                                   height: 24.h,
                                   colorFilter: const ColorFilter.mode(
-                                    Color(0xFF1E1E1E),
+                                    AppColors.white,
                                     BlendMode.srcIn,
                                   ),
                                 ),
@@ -573,7 +573,7 @@ class _EditProfileState extends State<EditProfile> {
                               Text(
                                 l10n?.editProfile ?? 'Edit Profile',
                                 style: TextStyle(
-                                  color: const Color(0xFF1E1E1E),
+                                  color: AppColors.white,
                                   fontSize: 18.sp,
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w500,
@@ -594,7 +594,7 @@ class _EditProfileState extends State<EditProfile> {
                                     width: 24.w,
                                     height: 24.h,
                                     colorFilter: const ColorFilter.mode(
-                                      Color(0xFF1E1E1E),
+                                      AppColors.white,
                                       BlendMode.srcIn,
                                     ),
                                   ),
@@ -604,7 +604,7 @@ class _EditProfileState extends State<EditProfile> {
                               Text(
                                 l10n?.editProfile ?? 'Edit Profile',
                                 style: TextStyle(
-                                  color: const Color(0xFF1E1E1E),
+                                  color: AppColors.white,
                                   fontSize: 18.sp,
                                   fontFamily: 'Cairo',
                                   fontWeight: FontWeight.w500,
@@ -677,7 +677,7 @@ class _EditProfileState extends State<EditProfile> {
                                               height: 24.h,
                                               colorFilter:
                                                   const ColorFilter.mode(
-                                                    Color(0xFF1E1E1E),
+                                                    AppColors.white,
                                                     BlendMode.srcIn,
                                                   ),
                                             ),
@@ -1003,7 +1003,7 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
                         controller: widget.controller,
                         obscureText: widget.isPassword && !_isPasswordVisible,
                         style: TextStyle(
-                          color: const Color(0xFF1E1E1E),
+                          color: AppColors.white,
                           fontSize: 14.sp,
                           fontFamily: isArabic ? 'Cairo' : 'Poppins',
                           fontWeight: FontWeight.w500,
@@ -1061,7 +1061,7 @@ class _EditableTextFormFieldState extends State<_EditableTextFormField> {
                         : widget.label,
                     style: TextStyle(
                       color: widget.controller.text.isNotEmpty
-                          ? const Color(0xFF1E1E1E)
+                          ? AppColors.white
                           : const Color(0xB2848484),
                       fontSize: 12.sp,
                       fontFamily: isArabic ? 'Cairo' : 'Poppins',
