@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import 'package:the_track_fit/core/utils/font_helper.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
@@ -463,7 +464,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                     width: 18.w,
                     height: 18.w,
                     decoration: const BoxDecoration(
-                      color: Colors.black,
+                      color: AppColors.black,
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
@@ -486,7 +487,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                     )!.pleaseFinishThePreviousChallengeFirst,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
+                      color: AppColors.white,
                       fontSize: 12.sp,
                       fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w500,
@@ -544,7 +545,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
             Text(
               day,
               style: TextStyle(
-                color: isSelected ? const Color(0xFF28A228) : Colors.white,
+                color: isSelected ? AppColors.primaryGreen : Colors.white,
                 fontSize: 11.sp,
                 fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
@@ -573,12 +574,12 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(color: const Color(0xFF28A228)),
+            CircularProgressIndicator(color: AppColors.primaryGreen),
             SizedBox(height: 16.h),
             Text(
               AppLocalizations.of(context)!.loading,
               style: TextStyle(
-                color: const Color(0xFF1E1E1E),
+                color: AppColors.white,
                 fontSize: 16.sp,
                 fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w500,
@@ -638,7 +639,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
                   return Text(
                     '${AppLocalizations.of(context)!.hi} $userName! 👋',
                     style: TextStyle(
-                      color: const Color(0xFF1E1E1E),
+                      color: AppColors.white,
                       fontSize: 16.sp,
                       fontFamily: context.fontFamily,
                       fontWeight: FontWeight.w400,
@@ -660,7 +661,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               gradient: const LinearGradient(
                 begin: Alignment(0.00, 0.50),
                 end: Alignment(1.00, 0.50),
-                colors: [Color(0xFF28A228), Color(0xD85CD65C)],
+                colors: [Color(0xFFFF4A2A), Color(0xFFF27660)],
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.r),
@@ -756,7 +757,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
               Text(
                 AppLocalizations.of(context)!.newProducts,
                 style: TextStyle(
-                  color: const Color(0xFF1E1E1E),
+                  color: AppColors.white,
                   fontSize: 18.sp,
                   fontFamily: context.fontFamily,
                   fontWeight: FontWeight.w500,
@@ -826,7 +827,7 @@ class _HomeScreenFeatureState extends State<HomeScreenFeature> {
           child: Text(
             AppLocalizations.of(context)!.yourActivity,
             style: TextStyle(
-              color: const Color(0xFF1E1E1E),
+              color: AppColors.white,
               fontSize: 18.sp,
               fontFamily: context.fontFamily,
               fontWeight: FontWeight.w500,
@@ -1373,7 +1374,7 @@ class ProductCard extends StatelessWidget {
                 Text(
                   productName,
                   style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
+                    color: AppColors.white,
                     fontSize: 12.sp,
                     fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
@@ -1496,7 +1497,7 @@ class ExerciseCard extends StatelessWidget {
                 Text(
                   exerciseTitle,
                   style: TextStyle(
-                    color: const Color(0xFF1E1E1E),
+                    color: AppColors.white,
                     fontSize: 18.sp,
                     fontFamily: context.fontFamily,
                     fontWeight: FontWeight.w500,
@@ -1585,7 +1586,7 @@ class _Header extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                color: const Color(0xFF1E1E1E),
+                color: AppColors.white,
                 fontSize: 24.sp,
                 fontFamily: context.fontFamily,
                 fontWeight: FontWeight.w600,

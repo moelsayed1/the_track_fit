@@ -27,7 +27,7 @@ class LanguageToggleButton extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Colors.deepOrange,
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
                 color: Colors.white.withOpacity(0.3),

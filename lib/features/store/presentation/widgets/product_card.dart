@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import '../../domain/models/product.dart';
 
 class ProductCard extends StatelessWidget {
@@ -23,7 +24,7 @@ class ProductCard extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: ShapeDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           shape: RoundedRectangleBorder(
             side: const BorderSide(
               width: 1,

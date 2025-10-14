@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/widgets/localized_text.dart';
 import 'package:the_track_fit/core/extensions/localization_extensions.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
@@ -46,7 +47,7 @@ class _ReportScreenState extends State<ReportScreen> {
     final responsiveHelper = ResponsiveHelper(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -56,7 +57,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 AppLocalizations.of(context)!.report,
                 fontSize: responsiveHelper.sp(24),
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF1E1E1E),
+                color: AppColors.white,
               ),
             ),
             SizedBox(height: responsiveHelper.h(30)),
@@ -135,7 +136,7 @@ class _ReportScreenState extends State<ReportScreen> {
             value,
             fontSize: responsiveHelper.sp(24),
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF1E1E1E),
+            color: AppColors.white,
           ),
           SizedBox(height: responsiveHelper.h(12)),
           LocalizedText(
@@ -157,10 +158,7 @@ class _ReportScreenState extends State<ReportScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFF6FFF6),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.2), width: 1),
       ),
       child: Stack(
         clipBehavior: Clip.none,
@@ -176,7 +174,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       AppLocalizations.of(context)!.statistics,
                       fontSize: responsiveHelper.sp(18),
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xFF1E1E1E),
+                      color: AppColors.white,
                     ),
                     GestureDetector(
                       onTap: () {
@@ -194,9 +192,9 @@ class _ReportScreenState extends State<ReportScreen> {
                           color: const Color(0xFFF6FFF6),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
+                              color: AppColors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
-                            )
+                            ),
                           ],
                         ),
                         child: Row(
@@ -206,14 +204,14 @@ class _ReportScreenState extends State<ReportScreen> {
                               selectedPeriod,
                               fontSize: responsiveHelper.sp(14),
                               fontWeight: FontWeight.w500,
-                              color: const Color(0xFF1E1E1E),
+                              color: AppColors.white,
                             ),
                             SizedBox(width: responsiveHelper.w(8)),
                             Icon(
                               isDropdownOpen
                                   ? Icons.keyboard_arrow_up
                                   : Icons.keyboard_arrow_down,
-                              color: const Color(0xFF1E1E1E),
+                              color: AppColors.white,
                               size: responsiveHelper.sp(20),
                             ),
                           ],
@@ -234,163 +232,183 @@ class _ReportScreenState extends State<ReportScreen> {
                 child: Stack(
                   children: [
                     BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    maxY: 140,
-                    barTouchData: BarTouchData(
-                      enabled: true,
-                      touchTooltipData: BarTouchTooltipData(
-                        tooltipRoundedRadius: 15.r,
-                        getTooltipColor: (group) {
-                          return Colors.white;
-                        },
-                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                          final item = stats[groupIndex];
-                          String label;
-                          
-                          if (rodIndex == 0) {
-                            // Minutes bar
-                            label = "🔥 ${item["minutes"]} Min";
-                          } else {
-                            // Kcal bar
-                            label = "⚡ ${item["kcal"]} Kcal";
-                          }
-                          
-                          return BarTooltipItem(
-                            label,
-                            TextStyle(
-                              color: Colors.black,
-                              fontSize: responsiveHelper.sp(16),
-                              fontFamily: context.fontFamily,
-                              fontWeight: FontWeight.w500,
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        maxY: 140,
+                        barTouchData: BarTouchData(
+                          enabled: true,
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipRoundedRadius: 15.r,
+                            getTooltipColor: (group) {
+                              return Colors.white;
+                            },
+                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                              final item = stats[groupIndex];
+                              String label;
+
+                              if (rodIndex == 0) {
+                                // Minutes bar
+                                label = "🔥 ${item["minutes"]} Min";
+                              } else {
+                                // Kcal bar
+                                label = "⚡ ${item["kcal"]} Kcal";
+                              }
+
+                              return BarTooltipItem(
+                                label,
+                                TextStyle(
+                                  color: AppColors.black,
+                                  fontSize: responsiveHelper.sp(16),
+                                  fontFamily: context.fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        titlesData: FlTitlesData(
+                          show: true,
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: responsiveHelper.h(1),
+                                  ),
+                                  child: LocalizedText(
+                                    stats[value.toInt()]["day"].toString(),
+                                    fontSize: responsiveHelper.sp(12),
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.black,
+                                  ),
+                                );
+                              },
                             ),
+                          ),
+                          leftTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                        ),
+                        borderData: FlBorderData(show: false),
+                        barGroups: List.generate(stats.length, (index) {
+                          final item = stats[index];
+                          return BarChartGroupData(
+                            x: index,
+                            barsSpace: 5,
+                            barRods: [
+                              BarChartRodData(
+                                toY: item["minutes"],
+                                color: const Color(0xFF28A228),
+                                width: responsiveHelper.w(8),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12.r),
+                                  topRight: Radius.circular(12.r),
+                                ),
+                              ),
+                              BarChartRodData(
+                                toY: item["kcal"],
+                                color: const Color(0xFFCB574D),
+                                width: responsiveHelper.w(8),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12.r),
+                                  topRight: Radius.circular(12.r),
+                                ),
+                              ),
+                            ],
                           );
-                        },
+                        }),
+                        gridData: const FlGridData(show: false),
                       ),
                     ),
-                    titlesData: FlTitlesData(
-                      show: true,
-                      rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
-                      topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: responsiveHelper.h(1)),
-                              child: LocalizedText(
-                                stats[value.toInt()]["day"].toString(),
-                                fontSize: responsiveHelper.sp(12),
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                            );
-                          },
+                    if (hoveredTooltip != null && tooltipPosition != null)
+                      Positioned(
+                        left: tooltipPosition!.dx,
+                        top: tooltipPosition!.dy,
+                        child: _buildCustomTooltip(
+                          hoveredTooltip!,
+                          hoveredImagePath!,
+                          responsiveHelper,
                         ),
                       ),
-                      leftTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
-                    ),
-                    borderData: FlBorderData(show: false),
-                    barGroups: List.generate(stats.length, (index) {
-                      final item = stats[index];
-                      return BarChartGroupData(
-                        x: index,
-                        barsSpace: 5,
-                        barRods: [
-                          BarChartRodData(
-                            toY: item["minutes"],
-                            color: const Color(0xFF28A228),
-                            width: responsiveHelper.w(8),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12.r),
-                              topRight: Radius.circular(12.r),
-                            ),
+                    // Dropdown positioned relative to the Stack
+                    if (isDropdownOpen)
+                      Positioned(
+                        top: responsiveHelper.h(0),
+                        right: -responsiveHelper.w(10),
+                        child: Container(
+                          width: responsiveHelper.w(160),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.black.withValues(alpha: 0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          BarChartRodData(
-                            toY: item["kcal"],
-                            color: const Color(0xFFCB574D),
-                            width: responsiveHelper.w(8),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12.r),
-                              topRight: Radius.circular(12.r),
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildDropdownItem(
+                                AppLocalizations.of(context)!.today,
+                                responsiveHelper,
+                              ),
+                              _buildDropdownItem(
+                                AppLocalizations.of(context)!.thisWeek,
+                                responsiveHelper,
+                              ),
+                              _buildDropdownItem(
+                                AppLocalizations.of(context)!.lastWeek,
+                                responsiveHelper,
+                              ),
+                              _buildDropdownItem(
+                                AppLocalizations.of(context)!.lastMonth,
+                                responsiveHelper,
+                              ),
+                              _buildDropdownItem(
+                                AppLocalizations.of(context)!.last6Months,
+                                responsiveHelper,
+                              ),
+                            ],
                           ),
-                        ],
-                      );
-                    }),
-                    gridData: const FlGridData(show: false),
-                  ),
+                        ),
+                      ),
+                  ],
                 ),
-                                 if (hoveredTooltip != null && tooltipPosition != null)
-                   Positioned(
-                     left: tooltipPosition!.dx,
-                     top: tooltipPosition!.dy,
-                     child: _buildCustomTooltip(
-                       hoveredTooltip!,
-                       hoveredImagePath!,
-                       responsiveHelper,
-                     ),
-                   ),
-                 // Dropdown positioned relative to the Stack
-                                   if (isDropdownOpen)
-                    Positioned(
-                      top: responsiveHelper.h(0),
-                      right: -responsiveHelper.w(10),
-                      child: Container(
-                       width: responsiveHelper.w(160),
-                       decoration: BoxDecoration(
-                         color: Colors.white,
-                         borderRadius: BorderRadius.circular(12.r),
-                         boxShadow: [
-                           BoxShadow(
-                             color: Colors.black.withValues(alpha: 0.1),
-                             blurRadius: 8,
-                             offset: const Offset(0, 4),
-                           ),
-                         ],
-                       ),
-                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           _buildDropdownItem(AppLocalizations.of(context)!.today, responsiveHelper),
-                           _buildDropdownItem(AppLocalizations.of(context)!.thisWeek, responsiveHelper),
-                           _buildDropdownItem(AppLocalizations.of(context)!.lastWeek, responsiveHelper),
-                           _buildDropdownItem(AppLocalizations.of(context)!.lastMonth, responsiveHelper),
-                           _buildDropdownItem(AppLocalizations.of(context)!.last6Months, responsiveHelper),
-                         ],
-                       ),
-                     ),
-                   ),
-               ],
-             ),
-           ),
-           SizedBox(height: responsiveHelper.h(24)),
-           Divider(
-             color: Colors.grey.withValues(alpha: 0.2),
-             height: 1,
-             thickness: 2,
-           ),
-           SizedBox(height: responsiveHelper.h(24)),
-           Row(
-             mainAxisAlignment: MainAxisAlignment.center,
-             children: [
-               _buildLegend(
-                 responsiveHelper: responsiveHelper,
-                 color: const Color(0xFF28A228),
-                 text: AppLocalizations.of(context)!.minutes,
-               ),
-               SizedBox(width: responsiveHelper.w(80)),
-               _buildLegend(
-                 responsiveHelper: responsiveHelper,
-                 color: const Color(0xFFCB574D),
-                 text: AppLocalizations.of(context)!.kcal,
-               ),
-             ],
-           ),
-                       ],
+              ),
+              SizedBox(height: responsiveHelper.h(24)),
+              Divider(
+                color: Colors.grey.withValues(alpha: 0.2),
+                height: 1,
+                thickness: 2,
+              ),
+              SizedBox(height: responsiveHelper.h(24)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildLegend(
+                    responsiveHelper: responsiveHelper,
+                    color: const Color(0xFF28A228),
+                    text: AppLocalizations.of(context)!.minutes,
+                  ),
+                  SizedBox(width: responsiveHelper.w(80)),
+                  _buildLegend(
+                    responsiveHelper: responsiveHelper,
+                    color: const Color(0xFFCB574D),
+                    text: AppLocalizations.of(context)!.kcal,
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -423,7 +441,7 @@ class _ReportScreenState extends State<ReportScreen> {
           fontWeight: selectedPeriod == text
               ? FontWeight.w600
               : FontWeight.w400,
-          color: Colors.black,
+          color: AppColors.black,
         ),
       ),
     );
@@ -439,10 +457,7 @@ class _ReportScreenState extends State<ReportScreen> {
         Container(
           width: responsiveHelper.w(14),
           height: responsiveHelper.h(14),
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: responsiveHelper.w(6)),
         LocalizedText(
@@ -450,12 +465,16 @@ class _ReportScreenState extends State<ReportScreen> {
           fontSize: responsiveHelper.sp(14),
           fontWeight: FontWeight.w400,
           color: const Color(0xFF848484),
-        )
+        ),
       ],
     );
   }
 
-  Widget _buildCustomTooltip(String label, String imagePath, ResponsiveHelper responsiveHelper) {
+  Widget _buildCustomTooltip(
+    String label,
+    String imagePath,
+    ResponsiveHelper responsiveHelper,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: responsiveHelper.w(12),
@@ -464,13 +483,10 @@ class _ReportScreenState extends State<ReportScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15.r),
-        border: Border.all(
-          color: Colors.grey.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: AppColors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -489,7 +505,7 @@ class _ReportScreenState extends State<ReportScreen> {
             label,
             fontSize: responsiveHelper.sp(12),
             fontWeight: FontWeight.w500,
-            color: Colors.black,
+            color: AppColors.black,
           ),
         ],
       ),

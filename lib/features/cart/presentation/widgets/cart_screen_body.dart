@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/features/cart/presentation/cubit/cart_cubit.dart';
 import 'package:the_track_fit/features/cart/domain/models/cart_item.dart';
 import 'package:the_track_fit/features/store/domain/models/product.dart';
@@ -14,7 +15,6 @@ import 'package:the_track_fit/features/store/data/repositories/product_repositor
 import 'package:the_track_fit/features/store/data/datasources/product_remote_datasource.dart';
 import 'package:the_track_fit/features/store/presentation/widgets/product_card.dart';
 import 'package:the_track_fit/core/services/api_service.dart';
-import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import 'package:the_track_fit/core/utils/font_helper.dart';
 
@@ -446,7 +446,7 @@ class _CartScreenBodyState extends State<CartScreenBody> {
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
       decoration: ShapeDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.r),
         ),

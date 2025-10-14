@@ -9,46 +9,233 @@ import '../../core/router/app_router.dart';
 
 /// Widget منفصل لإدارة الترجمة مع Bloc
 class LocalizedApp extends StatelessWidget {
-  const LocalizedApp({super.key});
+  const LocalizedApp({super.key, required ThemeMode themeMode});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLocale = languageState is LanguageLoaded 
+        final currentLocale = languageState is LanguageLoaded
             ? Locale(languageState.currentLanguage)
             : LanguageService.instance.currentLocale;
-        
+
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: AppConstants.appName,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.splashDarkGreen),
-            fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins',
+          themeMode: ThemeMode.dark,
+          darkTheme: ThemeData.dark().copyWith(
+            scaffoldBackgroundColor: AppColors.background,
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.primaryGreen,
+              secondary: AppColors.primaryGreenLight,
+              surface: AppColors.surface,
+              background: AppColors.background,
+              onPrimary: AppColors.white,
+              onSecondary: AppColors.white,
+              onSurface: AppColors.white,
+              onBackground: AppColors.white,
+            ),
             textTheme: TextTheme(
-              displayLarge: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              displayMedium: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              displaySmall: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              headlineLarge: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              headlineMedium: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              headlineSmall: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              titleLarge: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              titleMedium: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              titleSmall: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              bodyLarge: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              bodyMedium: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              bodySmall: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              labelLarge: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              labelMedium: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
-              labelSmall: TextStyle(fontFamily: currentLocale.languageCode == 'ar' ? 'Cairo' : 'Poppins'),
+              displayLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              displayMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              displaySmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              headlineLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              headlineMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              headlineSmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              titleLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              titleMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              titleSmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              bodyLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              bodyMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.gray,
+              ),
+              bodySmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.gray,
+              ),
+              labelLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              labelMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              labelSmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+            ),
+          ),
+          theme: ThemeData.dark().copyWith(
+            scaffoldBackgroundColor: AppColors.background,
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.primaryGreen,
+              secondary: AppColors.primaryGreenLight,
+              surface: AppColors.surface,
+              background: AppColors.background,
+              onPrimary: AppColors.white,
+              onSecondary: AppColors.white,
+              onSurface: AppColors.white,
+              onBackground: AppColors.white,
+            ),
+            textTheme: TextTheme(
+              displayLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              displayMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              displaySmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              headlineLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              headlineMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              headlineSmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              titleLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              titleMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              titleSmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              bodyLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              bodyMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.gray,
+              ),
+              bodySmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.gray,
+              ),
+              labelLarge: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              labelMedium: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
+              labelSmall: TextStyle(
+                fontFamily: currentLocale.languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
+                color: AppColors.white,
+              ),
             ),
           ),
           routerConfig: AppRouter.router,
           locale: currentLocale, // 👈 اللغة حسب الـ Bloc
-          supportedLocales: const [
-            Locale('en'),
-            Locale('ar'),
-          ],
+          supportedLocales: const [Locale('en'), Locale('ar')],
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -56,7 +243,9 @@ class LocalizedApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           localeResolutionCallback: (locale, supportedLocales) {
-            return supportedLocales.contains(locale) ? locale : const Locale('ar');
+            return supportedLocales.contains(locale)
+                ? locale
+                : const Locale('ar');
           },
         );
       },
@@ -73,10 +262,10 @@ class LanguageTestWidget extends StatelessWidget {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
         final l10n = AppLocalizations.of(context)!;
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
-        
+
         return Scaffold(
           appBar: AppBar(
             title: Text(l10n.home),
@@ -109,7 +298,7 @@ class LanguageTestWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               // النصوص المترجمة
               Expanded(
                 child: ListView(
@@ -153,10 +342,10 @@ class LanguageTestWidget extends StatelessWidget {
   Widget _buildTextCard(String englishText, String localizedText) {
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
-        
+
         return Card(
           margin: EdgeInsets.symmetric(vertical: 4),
           child: ListTile(
@@ -187,17 +376,19 @@ class LanguageTestWidget extends StatelessWidget {
       context: context,
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
-        
+
         return BlocBuilder<LanguageBloc, LanguageState>(
           builder: (context, languageState) {
-            final currentLanguage = languageState is LanguageLoaded 
-                ? languageState.currentLanguage 
+            final currentLanguage = languageState is LanguageLoaded
+                ? languageState.currentLanguage
                 : 'ar';
-            
+
             return AlertDialog(
               title: Text(
                 l10n.language,
-                style: TextStyle(fontFamily: currentLanguage == 'ar' ? 'Cairo' : 'Poppins'),
+                style: TextStyle(
+                  fontFamily: currentLanguage == 'ar' ? 'Cairo' : 'Poppins',
+                ),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -205,13 +396,19 @@ class LanguageTestWidget extends StatelessWidget {
                   RadioListTile<String>(
                     title: Text(
                       l10n.english,
-                      style: TextStyle(fontFamily: currentLanguage == 'ar' ? 'Cairo' : 'Poppins'),
+                      style: TextStyle(
+                        fontFamily: currentLanguage == 'ar'
+                            ? 'Cairo'
+                            : 'Poppins',
+                      ),
                     ),
                     value: 'en',
                     groupValue: currentLanguage,
                     onChanged: (value) {
                       if (value != null) {
-                        context.read<LanguageBloc>().add(LanguageChanged(value));
+                        context.read<LanguageBloc>().add(
+                          LanguageChanged(value),
+                        );
                         Navigator.pop(context);
                       }
                     },
@@ -219,13 +416,19 @@ class LanguageTestWidget extends StatelessWidget {
                   RadioListTile<String>(
                     title: Text(
                       l10n.arabic,
-                      style: TextStyle(fontFamily: currentLanguage == 'ar' ? 'Cairo' : 'Poppins'),
+                      style: TextStyle(
+                        fontFamily: currentLanguage == 'ar'
+                            ? 'Cairo'
+                            : 'Poppins',
+                      ),
                     ),
                     value: 'ar',
                     groupValue: currentLanguage,
                     onChanged: (value) {
                       if (value != null) {
-                        context.read<LanguageBloc>().add(LanguageChanged(value));
+                        context.read<LanguageBloc>().add(
+                          LanguageChanged(value),
+                        );
                         Navigator.pop(context);
                       }
                     },
@@ -237,7 +440,9 @@ class LanguageTestWidget extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     l10n.cancel,
-                    style: TextStyle(fontFamily: currentLanguage == 'ar' ? 'Cairo' : 'Poppins'),
+                    style: TextStyle(
+                      fontFamily: currentLanguage == 'ar' ? 'Cairo' : 'Poppins',
+                    ),
                   ),
                 ),
               ],

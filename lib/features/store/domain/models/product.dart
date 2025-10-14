@@ -32,41 +32,59 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'] as int,
-      enName: json['en_name'] as String,
-      arName: json['ar_name'] as String,
-      enDescription: json['en_description'] as String,
-      arDescription: json['ar_description'] as String,
-      price: json['price'] as String,
-      image: json['image'] as String,
+      enName: json['en_name'] as String? ?? '',
+      arName: json['ar_name'] as String? ?? '',
+      enDescription: json['en_description'] as String? ?? '',
+      arDescription: json['ar_description'] as String? ?? '',
+      price: json['price'] as String? ?? '',
+      image: json['image'] as String? ?? '',
       stock: json['stock'] as int,
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
-      isFavorite: json['is_favorite'] as bool? ?? false, // Default to false if not provided
+      createdAt: json['created_at'] as String? ?? '',
+      updatedAt: json['updated_at'] as String? ?? '',
+      isFavorite:
+          json['is_favorite'] as bool? ??
+          false, // Default to false if not provided
     );
   }
 
   // Getter for display name (localized)
   String get name {
     final currentLang = LanguageService.instance.currentLanguage;
-    return ApiLocalizationHelper.getLocalizedValueSync(arName, enName, currentLang);
+    return ApiLocalizationHelper.getLocalizedValueSync(
+      arName,
+      enName,
+      currentLang,
+    );
   }
 
   // Getter for display description (localized)
   String get description {
     final currentLang = LanguageService.instance.currentLanguage;
-    return ApiLocalizationHelper.getLocalizedValueSync(arDescription, enDescription, currentLang);
+    return ApiLocalizationHelper.getLocalizedValueSync(
+      arDescription,
+      enDescription,
+      currentLang,
+    );
   }
 
   // Async getter for display name with translation
   Future<String> get localizedName async {
     final currentLang = LanguageService.instance.currentLanguage;
-    return await ApiLocalizationHelper.getLocalizedValue(arName, enName, currentLang);
+    return await ApiLocalizationHelper.getLocalizedValue(
+      arName,
+      enName,
+      currentLang,
+    );
   }
 
   // Async getter for display description with translation
   Future<String> get localizedDescription async {
     final currentLang = LanguageService.instance.currentLanguage;
-    return await ApiLocalizationHelper.getLocalizedValue(arDescription, enDescription, currentLang);
+    return await ApiLocalizationHelper.getLocalizedValue(
+      arDescription,
+      enDescription,
+      currentLang,
+    );
   }
 
   // Getter for display price as double

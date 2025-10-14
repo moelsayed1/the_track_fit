@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 
 class PremiumPlan extends StatelessWidget {
   const PremiumPlan({super.key});
@@ -7,7 +8,7 @@ class PremiumPlan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Stack(
           children: [
@@ -18,9 +19,7 @@ class PremiumPlan extends StatelessWidget {
               child: Container(
                 width: 375.w,
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF28A228),
-                ),
+                decoration: const BoxDecoration(color: Color(0xFF28A228)),
                 child: Text(
                   'You\'re on the Premium Plan',
                   textAlign: TextAlign.center,
@@ -33,7 +32,7 @@ class PremiumPlan extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             // Plan expiration info
             Positioned(
               left: 16.w,
@@ -61,7 +60,7 @@ class PremiumPlan extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Change Plan section
             Positioned(
               left: 16.w,
@@ -74,36 +73,44 @@ class PremiumPlan extends StatelessWidget {
                     Text(
                       'Change Plan',
                       style: TextStyle(
-                        color: const Color(0xFF1E1E1E),
+                        color: AppColors.white,
                         fontSize: 16.sp,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
                       ),
                     ),
                     SizedBox(height: 16.h),
-                    
+
                     // First plan card (with Most Popular badge)
                     _buildPlanCard(
                       planName: 'Pro Plan',
                       price: '30',
                       isMostPopular: true,
-                      features: ['AI feedback', 'Advanced analytics', 'Save progress'],
+                      features: [
+                        'AI feedback',
+                        'Advanced analytics',
+                        'Save progress',
+                      ],
                     ),
-                    
+
                     SizedBox(height: 10.h),
-                    
+
                     // Second plan card (without Most Popular badge)
                     _buildPlanCard(
                       planName: 'Pro Plan',
                       price: '30',
                       isMostPopular: false,
-                      features: ['AI feedback', 'Advanced analytics', 'Save progress'],
+                      features: [
+                        'AI feedback',
+                        'Advanced analytics',
+                        'Save progress',
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-            
+
             // Bottom navigation bar
             Positioned(
               left: 0,
@@ -114,9 +121,13 @@ class PremiumPlan extends StatelessWidget {
                   children: [
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.only(top: 8.h, left: 12.w, right: 12.w),
+                      padding: EdgeInsets.only(
+                        top: 8.h,
+                        left: 12.w,
+                        right: 12.w,
+                      ),
                       decoration: const ShapeDecoration(
-                        color: Colors.white,
+                        color: AppColors.surface,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30),
@@ -129,10 +140,10 @@ class PremiumPlan extends StatelessWidget {
                             blurRadius: 4,
                             offset: Offset(4, 0),
                             spreadRadius: 0,
-                          )
+                          ),
                         ],
                       ),
-                    ),  
+                    ),
                   ],
                 ),
               ),
@@ -153,7 +164,7 @@ class PremiumPlan extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 16.h),
       decoration: ShapeDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         shape: RoundedRectangleBorder(
           side: const BorderSide(
             width: 1,
@@ -168,7 +179,7 @@ class PremiumPlan extends StatelessWidget {
             blurRadius: 4,
             offset: const Offset(0, 0),
             spreadRadius: 0,
-          )
+          ),
         ],
       ),
       child: Column(
@@ -189,7 +200,7 @@ class PremiumPlan extends StatelessWidget {
                           Text(
                             planName,
                             style: TextStyle(
-                              color: Colors.black,
+                              color: AppColors.white,
                               fontSize: 18.sp,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
@@ -198,7 +209,10 @@ class PremiumPlan extends StatelessWidget {
                           if (isMostPopular) ...[
                             SizedBox(width: 8.w),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 4.h,
+                              ),
                               decoration: ShapeDecoration(
                                 color: const Color(0x26FBBC05),
                                 shape: RoundedRectangleBorder(
@@ -235,7 +249,7 @@ class PremiumPlan extends StatelessWidget {
                           Text(
                             '$price \$',
                             style: TextStyle(
-                              color: const Color(0xFF1E1E1E),
+                              color: AppColors.white,
                               fontSize: 18.sp,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w500,
@@ -257,7 +271,10 @@ class PremiumPlan extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   decoration: ShapeDecoration(
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(
@@ -281,50 +298,50 @@ class PremiumPlan extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Divider line
           SizedBox(height: 16.h),
-          Container(
-            width: 311.w,
-            height: 1,
-            color: const Color(0x26848484),
-          ),
-          
+          Container(width: 311.w, height: 1, color: const Color(0x26848484)),
+
           // Features list
           SizedBox(height: 16.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
-              children: features.map((feature) => Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 20.w,
-                      height: 20.h,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF28A228),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.check,
-                        size: 14.sp,
-                        color: Colors.white,
+              children: features
+                  .map(
+                    (feature) => Padding(
+                      padding: EdgeInsets.only(bottom: 16.h),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 20.w,
+                            height: 20.h,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF28A228),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              size: 14.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            feature,
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 16.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      feature,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              )).toList(),
+                  )
+                  .toList(),
             ),
           ),
         ],

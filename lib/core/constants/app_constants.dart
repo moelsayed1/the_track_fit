@@ -2,28 +2,28 @@ class AppConstants {
   // App information
   static const String appName = 'Track Fit';
   static const String appVersion = '1.0.0';
-  
+
   // Animation durations
   static const Duration splashDuration = Duration(seconds: 5);
   static const Duration fadeInDuration = Duration(milliseconds: 1500);
   static const Duration transitionDuration = Duration(milliseconds: 500);
-  
+
   // Dimensions (will be made responsive with ScreenUtil)
   static const double buttonHeight = 56.0;
   static const double buttonBorderRadius = 30.0;
   static const double logoSize = 120.0;
-  
+
   // Responsive breakpoints
   static const double mobileBreakpoint = 600.0;
   static const double tabletBreakpoint = 900.0;
   static const double desktopBreakpoint = 1200.0;
-  
+
   // Padding and margins
   static const double defaultPadding = 16.0;
   static const double defaultMargin = 16.0;
   static const double smallPadding = 8.0;
   static const double largePadding = 24.0;
-  
+
   // Font sizes
   static const double smallTextSize = 12.0;
   static const double normalTextSize = 14.0;
@@ -31,16 +31,16 @@ class AppConstants {
   static const double largeTextSize = 18.0;
   static const double titleTextSize = 24.0;
   static const double headingTextSize = 28.0;
-  
+
   // Font families (using system defaults for now)
   // static const String primaryFont = 'Poppins';
   static const String secondaryFont = 'Arial';
-  
+
   // Asset paths (imported from app_assets.dart)
   // Use AppAssets class for all asset paths
-  
+
   // API Configuration
-  static const String baseUrl = 'https://thetrackfit.com'; 
+  static const String baseUrl = 'https://thetrackfit.com';
   static const String registerEndpoint = '/api/register';
   static const String loginEndpoint = '/api/login';
   static const String googleAuthEndpoint = '/api/auth/google';
@@ -52,16 +52,20 @@ class AppConstants {
   static const String mainGoalOptionEndpoint = '/api/main-goal-option';
   static const String updateMainGoalEndpoint = '/api/update-main-goal';
   static const String getAllExercisesEndpoint = '/api/get-all-exercises';
-  static const String getExercisesCategoryEndpoint = '/api/get-exercises-category';
-  static const String getExercisesByLocationEndpoint = '/api/get-exercises-filter';
-  static const String getExercisesByEquipmentEndpoint = '/api/get-exercises-filter';
+  static const String getExercisesCategoryEndpoint =
+      '/api/get-exercises-category';
+  static const String getExercisesByLocationEndpoint =
+      '/api/get-exercises-filter';
+  static const String getExercisesByEquipmentEndpoint =
+      '/api/get-exercises-filter';
   static const String getExercisesByDayEndpoint = '/api/get-exercises-by-day';
   static const String newProductsEndpoint = '/api/new-products';
   static const String storeInCartEndpoint = '/api/store-in-cart';
   static const String getCartItemsEndpoint = '/api/get-cart';
   static const String removeFromCartEndpoint = '/api/remove-from-cart';
   static const String storeSaleEndpoint = '/api/store-sale';
-  static const String getShippingGovernmentsEndpoint = '/api/get-shipping-governments';
+  static const String getShippingGovernmentsEndpoint =
+      '/api/get-shipping-governments';
   static const String favoritesToggleEndpoint = '/api/favorites/toggle';
   static const String favoritesProductsEndpoint = '/api/favorites/products';
   static const String favoritesExercisesEndpoint = '/api/favorites/exercises';
@@ -69,27 +73,28 @@ class AppConstants {
   static const String getQuestionsEndpoint = '/api/get-questions';
   static const String submitAnswersEndpoint = '/api/submit-answers';
   static const String getActivePackagesEndpoint = '/api/get-active-packages';
-  static const String getCurrentSubscriptionEndpoint = '/api/current-subscription-package';
+  static const String getCurrentSubscriptionEndpoint =
+      '/api/current-subscription-package';
   static const String applyCouponEndpoint = '/api/apply-coupon';
   static const String storeSubscriptionEndpoint = '/api/store-subscription';
   static const String saveDeviceTokenEndpoint = '/api/save-device-token';
-  
+
   // Language Configuration
-  static const String defaultLanguage = 'ar';
+  static const String defaultLanguage = englishLanguage;
   static const String arabicLanguage = 'ar';
   static const String englishLanguage = 'en';
-  
+
   // Supported Languages
   static const List<String> supportedLanguages = ['en', 'ar'];
-  
+
   // Language-specific API endpoints
   static String getEndpointWithLanguage(String endpoint, String language) {
     final separator = endpoint.contains('?') ? '&' : '?';
     return '$endpoint${separator}lang=$language';
   }
-  
+
   // API Helper Methods
   static String getNewProductsUrl({int perPage = 10, int page = 1}) {
     return '$newProductsEndpoint?per_page=$perPage&page=$page';
   }
-} 
+}
