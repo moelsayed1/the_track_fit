@@ -16,7 +16,7 @@ class AppColors {
   // Dark mode text colors (primary)
   static const Color white = Colors.white;
   static const Color black = Color(0xFF1E1E1E);
-  static const Color gray = Color(0xFFB0B0B0); // Lighter gray for dark mode
+  static const Color gray = Colors.white; // Lighter gray for dark mode
   static const Color grayMedium = Color(0xFF9E9E9E);
   static const Color grayLight = Color(
     0x7FB0B0B0,

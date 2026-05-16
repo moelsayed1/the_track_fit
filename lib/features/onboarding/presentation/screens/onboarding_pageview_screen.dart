@@ -162,10 +162,10 @@ class OnboardingScreenWrapper extends StatelessWidget {
                       builder: (context) {
                         final l10n = AppLocalizations.of(context)!;
                         return LocalizedText(
-                          l10n.dontHaveAccount,
+                          "${l10n.dontHaveAccount} ",
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.grayMedium,
+                          color: AppColors.white,
                         );
                       },
                     ),
