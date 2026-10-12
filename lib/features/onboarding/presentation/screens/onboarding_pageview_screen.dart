@@ -166,6 +166,10 @@ class OnboardingScreenWrapper extends StatelessWidget {
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColors.grayMedium,
+                          "${l10n.dontHaveAccount} ",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.white,
                         );
                       },
                     ),

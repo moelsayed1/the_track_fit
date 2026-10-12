@@ -71,7 +71,7 @@ class AppIcons {
 }
 
 class AppAnimations {
-  static const String trackFitLogo = 'assets/the_track_fit_logo_animation.json';
+  static const String avengerzLogo = 'assets/avengerz_logo.json';
   static const String doneGif = 'assets/images/done_gif.gif';
 }
 
