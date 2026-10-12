@@ -16,7 +16,8 @@ class TargetWeightQuestionBody extends StatefulWidget {
   const TargetWeightQuestionBody({super.key});
 
   @override
-  State<TargetWeightQuestionBody> createState() => _TargetWeightQuestionBodyState();
+  State<TargetWeightQuestionBody> createState() =>
+      _TargetWeightQuestionBodyState();
 }
 
 class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
@@ -26,11 +27,11 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
   bool _isLoading = false;
   final int _currentStep = 6; // This is question 6 of 14
   final int _totalSteps = 14;
-  
+
   // Services
   final QuestionsService _questionsService = QuestionsService.instance;
   final AnswersService _answersService = AnswersService.instance;
-  
+
   String _questionText = 'What\'s your Target Weight?';
 
   @override
@@ -43,22 +44,19 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
 
   Future<void> _loadTargetWeightQuestion() async {
     try {
-      setState(() {
-      });
+      setState(() {});
 
       final question = await _questionsService.getTargetWeightQuestion();
-      
+
       if (question != null) {
         setState(() {
           _questionText = question.localizedText;
         });
       } else {
-        setState(() {
-        });
+        setState(() {});
       }
     } catch (e) {
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
@@ -93,11 +91,11 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
         if (question != null) {
           // Add the answer to the answers service (as single value)
           _answersService.addAnswer(question.id, _targetWeightController.text);
-          
+
           // Submit answers to API
           await _answersService.submitAnswers();
         }
-        
+
         if (mounted) {
           // Navigate to main goal question after target weight selection
           context.push(AppRouter.mainGoalQuestion);
@@ -117,7 +115,7 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    
+
     return Directionality(
       textDirection: context.textDirection,
       child: Container(
@@ -126,31 +124,31 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
         color: const Color(0xFFF6FFF6), // Background color from Figma
         child: Column(
           children: [
-          SizedBox(height: responsive.h(2)),
-          
-          // Question Header
-          QuestionHeader(
-            title: AppLocalizations.of(context)!.letsSetUpYourPlan,
-            currentStep: _currentStep,
-            totalSteps: _totalSteps,
-          ),
-          
-          SizedBox(height: responsive.h(34.5)),
-          
-          // Question Text
-          _buildQuestion(responsive),
-          
-          SizedBox(height: responsive.h(24)),
-          
-          // Target Weight Input Field
-          _buildTargetWeightInputField(responsive),
-          
-          const Spacer(),
-          
-          // Continue Button (always show, but disabled when no input)
-          _buildContinueButton(responsive),
-          
-          SizedBox(height: responsive.h(24)),
+            SizedBox(height: responsive.h(2)),
+
+            // Question Header
+            QuestionHeader(
+              title: AppLocalizations.of(context)!.letsSetUpYourPlan,
+              currentStep: _currentStep,
+              totalSteps: _totalSteps,
+            ),
+
+            SizedBox(height: responsive.h(34.5)),
+
+            // Question Text
+            _buildQuestion(responsive),
+
+            SizedBox(height: responsive.h(24)),
+
+            // Target Weight Input Field
+            _buildTargetWeightInputField(responsive),
+
+            const Spacer(),
+
+            // Continue Button (always show, but disabled when no input)
+            _buildContinueButton(responsive),
+
+            SizedBox(height: responsive.h(24)),
           ],
         ),
       ),
@@ -165,7 +163,7 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
         _questionText,
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: AppColors.black,
+        color: AppColors.white,
         textAlign: TextAlign.start,
       ),
     );
@@ -175,10 +173,15 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
     return Container(
       width: double.infinity,
       height: responsive.h(50), // Reduced height from default
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12), // Reduced vertical padding
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 12,
+      ), // Reduced vertical padding
       decoration: BoxDecoration(
         border: Border.all(
-          color: _targetWeightFocusNode.hasFocus ? AppColors.primaryGreen : AppColors.gray, // Green when focused, gray when not
+          color: _targetWeightFocusNode.hasFocus
+              ? AppColors.primaryGreen
+              : AppColors.gray, // Green when focused, gray when not
           width: 1,
         ),
         borderRadius: BorderRadius.circular(15),
@@ -192,7 +195,7 @@ class _TargetWeightQuestionBodyState extends State<TargetWeightQuestionBody> {
           textAlign: TextAlign.center,
           textAlignVertical: TextAlignVertical.center,
           style: TextStyle(
-            color: AppColors.black,
+            color: AppColors.white,
             fontSize: responsive.sp(20),
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w400,

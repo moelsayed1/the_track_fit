@@ -3,6 +3,7 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/core/utils/responsive_helper.dart';
 import 'package:the_track_fit/features/workout/domain/models/workout_type.dart';
 import 'package:the_track_fit/features/workout/data/cubit/exercise_cubit.dart';
@@ -119,12 +120,12 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
     final responsiveHelper = ResponsiveHelper(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(color: Color(0xFFF6FFF6)),
+          decoration: const BoxDecoration(color: AppColors.background),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -154,7 +155,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                               width: responsiveHelper.w(24),
                               height: responsiveHelper.h(24),
                               colorFilter: const ColorFilter.mode(
-                                Color(0xFF1E1E1E),
+                                AppColors.white,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -164,7 +165,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                             AppLocalizations.of(context)!.selectType,
                             fontSize: responsiveHelper.sp(18),
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1E1E1E),
+                            color: AppColors.white,
                             height: 0.89,
                           ),
                         ],
@@ -179,7 +180,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                                 width: responsiveHelper.w(24),
                                 height: responsiveHelper.h(24),
                                 colorFilter: const ColorFilter.mode(
-                                  Color(0xFF1E1E1E),
+                                  AppColors.white,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -190,7 +191,7 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                             AppLocalizations.of(context)!.selectType,
                             fontSize: responsiveHelper.sp(18),
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFF1E1E1E),
+                            color: AppColors.white,
                             height: 0.89,
                           ),
                         ],
@@ -332,7 +333,8 @@ class _SelectTypeScreenState extends State<SelectTypeScreen> {
                   ? const Color(
                       0xFFD8F1D8,
                     ) // Light green background when selected
-                  : Colors.white, // White background when not selected
+                  : AppColors
+                        .surface, // Dark surface background when not selected
             ),
             child: Row(
               mainAxisSize: MainAxisSize.max,

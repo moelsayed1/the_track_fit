@@ -10,6 +10,7 @@ import 'package:the_track_fit/core/router/app_router.dart';
 import 'package:the_track_fit/core/widgets/custom_snackbar.dart';
 import 'package:the_track_fit/core/services/language_service.dart';
 import 'package:the_track_fit/core/bloc/language/language_bloc.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import 'package:the_track_fit/generated/l10n/app_localizations.dart';
 import '../../../auth/data/cubit/auth_cubit.dart';
 import '../../../auth/data/cubit/auth_states.dart';
@@ -34,30 +35,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _toggleLanguage() async {
     if (_isChangingLanguage) return; // Prevent multiple taps
-    
+
     setState(() {
       _isChangingLanguage = true;
       selectedSection = 'Language';
     });
-    
+
     try {
       final currentLang = LanguageService.instance.currentLanguage;
       final newLang = currentLang == 'ar' ? 'en' : 'ar';
-      
+
       // Change language using Bloc
       context.read<LanguageBloc>().add(LanguageChanged(newLang));
-      
+
       // Show success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(newLang == 'ar' ? AppLocalizations.of(context)!.languageChangedToArabic : AppLocalizations.of(context)!.languageChangedToEnglish),
+            content: Text(
+              newLang == 'ar'
+                  ? AppLocalizations.of(context)!.languageChangedToArabic
+                  : AppLocalizations.of(context)!.languageChangedToEnglish,
+            ),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
         );
       }
-      
     } catch (e) {
       // Show error message
       if (mounted) {
@@ -79,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _handleLogout() {
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Show confirmation dialog
     showGeneralDialog(
       context: context,
@@ -94,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: 250.w,
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: Column(
@@ -106,10 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    l10n.areYouSureLogout,
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  Text(l10n.areYouSureLogout, style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -163,22 +164,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (state is AuthUserProfileLoaded) {
           log('ProfileScreen: AuthUserProfileLoaded received in listener');
           log('ProfileScreen: imagePath = ${state.imagePath}');
-          
+
           // Show success message only when it's a refresh action
           if (_isRefreshing) {
             CustomSnackbar.show(
               context,
               title: AppLocalizations.of(context)!.profileUpdated,
-              message: AppLocalizations.of(context)!.yourProfileDataHasBeenRefreshedSuccessfully,
+              message: AppLocalizations.of(
+                context,
+              )!.yourProfileDataHasBeenRefreshedSuccessfully,
               type: SnackbarType.success,
             );
           }
         }
-        
+
         if (state is AuthLoading) {
-          log('ProfileScreen: Loading state received - showing loading indicator');
+          log(
+            'ProfileScreen: Loading state received - showing loading indicator',
+          );
         }
-        
+
         if (state is AuthLogoutSuccess) {
           // Show success message with Custom Snackbar
           CustomSnackbar.show(
@@ -187,7 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             message: state.message,
             type: SnackbarType.success,
           );
- 
+
           // Navigate to login screen
           context.go('/login');
         } else if (state is AuthError) {
@@ -259,7 +264,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 //     return const SizedBox.shrink();
                 //   },
                 // ),
-
                 SafeArea(
                   child: Column(
                     children: [
@@ -280,22 +284,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileImage(String? imagePath) {
-    log('ProfileScreen: imagePath = $imagePath, type: ${imagePath.runtimeType}');
+    log(
+      'ProfileScreen: imagePath = $imagePath, type: ${imagePath.runtimeType}',
+    );
     if (imagePath != null && imagePath.isNotEmpty) {
       // Check if it's a base64 image - improved detection
       bool isBase64 = false;
-      
+
       // Method 1: Check for data URL format
       if (imagePath.startsWith('data:image/')) {
         isBase64 = true;
         log('ProfileScreen: Detected base64 via data URL format');
       }
       // Method 2: Check if it's a long string without file path indicators
-      else if (imagePath.length > 100 && 
-               !imagePath.startsWith('/') && 
-               !imagePath.startsWith('file://') &&
-               !imagePath.contains('\\') &&
-               !imagePath.contains('.')) {
+      else if (imagePath.length > 100 &&
+          !imagePath.startsWith('/') &&
+          !imagePath.startsWith('file://') &&
+          !imagePath.contains('\\') &&
+          !imagePath.contains('.')) {
         isBase64 = true;
         log('ProfileScreen: Detected base64 via length and format heuristic');
       }
@@ -309,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           log('ProfileScreen: Not base64 - decode test failed: $e');
         }
       }
-      
+
       if (isBase64) {
         // It's a base64 image
         try {
@@ -329,7 +335,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } else {
         // It's a file path
         final imageFile = File(imagePath);
-        log('ProfileScreen: imageFile.existsSync() = ${imageFile.existsSync()}');
+        log(
+          'ProfileScreen: imageFile.existsSync() = ${imageFile.existsSync()}',
+        );
         log('ProfileScreen: imageFile.path = ${imageFile.path}');
         if (imageFile.existsSync()) {
           log('ProfileScreen: Displaying image from file: ${imageFile.path}');
@@ -353,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       log('ProfileScreen: imagePath is null or empty');
     }
-    
+
     // Default person icon
     log('ProfileScreen: Using default profile image');
     return _buildDefaultProfileImage();
@@ -367,35 +375,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
         shape: BoxShape.circle,
         color: const Color(0xFFE0E0E0),
       ),
-      child: Icon(
-        Icons.person,
-        size: 40.sp,
-        color: const Color(0xFF9E9E9E),
-      ),
+      child: Icon(Icons.person, size: 40.sp, color: const Color(0xFF9E9E9E)),
     );
   }
 
   Widget _buildProfileHeader() {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
-        log('ProfileScreen: _buildProfileHeader called with state: ${state.runtimeType}');
+        log(
+          'ProfileScreen: _buildProfileHeader called with state: ${state.runtimeType}',
+        );
         String displayName = 'User';
         String? imagePath;
-        
+
         if (state is AuthUserProfileLoaded) {
           log('ProfileScreen: AuthUserProfileLoaded state received');
           log('ProfileScreen: state.name = ${state.name}');
           log('ProfileScreen: state.imagePath = ${state.imagePath}');
-          log('ProfileScreen: state.imagePath type = ${state.imagePath.runtimeType}');
-          log('ProfileScreen: state.imagePath length = ${state.imagePath?.length ?? 0}');
-          log('ProfileScreen: state.imagePath is not null = ${state.imagePath != null}');
-          log('ProfileScreen: state.imagePath is not empty = ${state.imagePath?.isNotEmpty ?? false}');
+          log(
+            'ProfileScreen: state.imagePath type = ${state.imagePath.runtimeType}',
+          );
+          log(
+            'ProfileScreen: state.imagePath length = ${state.imagePath?.length ?? 0}',
+          );
+          log(
+            'ProfileScreen: state.imagePath is not null = ${state.imagePath != null}',
+          );
+          log(
+            'ProfileScreen: state.imagePath is not empty = ${state.imagePath?.isNotEmpty ?? false}',
+          );
           displayName = state.name.isNotEmpty ? state.name : 'User';
           imagePath = state.imagePath;
         } else {
           log('ProfileScreen: Not AuthUserProfileLoaded state, using defaults');
         }
-        
+
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
@@ -416,7 +430,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 24.w,
                       height: 24.h,
                       colorFilter: const ColorFilter.mode(
-                        Color(0xFF1E1E1E),
+                        AppColors.white,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -435,11 +449,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 120.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xFFE0E0E0),
+                        color: AppColors.surfaceVariant,
                       ),
-                      child: ClipOval(
-                        child: _buildProfileImage(imagePath),
-                      ),
+                      child: ClipOval(child: _buildProfileImage(imagePath)),
                     ),
                     SizedBox(height: 8.h),
                     Text(
@@ -447,8 +459,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1E1E1E),
-                        fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                        color: AppColors.surface,
+                        fontFamily:
+                            Localizations.localeOf(context).languageCode == 'ar'
+                            ? 'Cairo'
+                            : 'Poppins',
                       ),
                     ),
                   ],
@@ -500,9 +515,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // Logout Section
           _buildLogoutSection(),
-          
+
           // SizedBox(height: 16.h),
-          
+
           // Language Test Section (for debugging)
           // _buildLanguageTestSection(),
         ],
@@ -521,7 +536,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0x2628A228) : Colors.white,
+          color: isSelected ? const Color(0x2628A228) : AppColors.surface,
           borderRadius: BorderRadius.circular(15.r),
           border: Border.all(
             color: isSelected
@@ -547,10 +562,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-                color: isSelected
-                    ? const Color(0xFF28A228)
-                    : const Color(0xFF1E1E1E),
-                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                color: isSelected ? const Color(0xFF28A228) : AppColors.surface,
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
               ),
             ),
           ],
@@ -568,8 +583,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w400,
-            color: const Color(0xFF1E1E1E),
-            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+            color: AppColors.surface,
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
           ),
         ),
         SizedBox(height: 8.h),
@@ -577,7 +594,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: double.infinity,
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(15.r),
             border: Border.all(color: const Color(0x26848484), width: 1.w),
             boxShadow: [
@@ -620,9 +637,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Text(
           AppLocalizations.of(context)!.settings,
           style: TextStyle(
-            color: const Color(0xFF1E1E1E),
+            color: AppColors.surface,
             fontSize: 14.sp,
-            fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+            fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                ? 'Cairo'
+                : 'Poppins',
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -631,7 +650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: double.infinity,
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(15.r),
             border: Border.all(color: const Color(0x26848484), width: 1.w),
             boxShadow: [
@@ -659,7 +678,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildNotificationsSection() {
-    bool isSelected = selectedSection == AppLocalizations.of(context)!.notifications;
+    bool isSelected =
+        selectedSection == AppLocalizations.of(context)!.notifications;
     return GestureDetector(
       onTap: () {
         _selectSection(AppLocalizations.of(context)!.notifications);
@@ -669,7 +689,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0x2628A228) : Colors.white,
+          color: isSelected ? const Color(0x2628A228) : AppColors.surface,
           borderRadius: BorderRadius.circular(15.r),
           border: Border.all(
             color: isSelected
@@ -693,11 +713,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               AppLocalizations.of(context)!.notifications,
               style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF28A228)
-                    : const Color(0xFF1E1E1E),
+                color: isSelected ? const Color(0xFF28A228) : AppColors.surface,
                 fontSize: 16.sp,
-                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -718,7 +738,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0x2628A228) : Colors.white,
+          color: isSelected ? const Color(0x2628A228) : AppColors.surface,
           borderRadius: BorderRadius.circular(15.r),
           border: Border.all(
             color: isSelected
@@ -742,11 +762,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               AppLocalizations.of(context)!.dailyGoal,
               style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF28A228)
-                    : const Color(0xFF1E1E1E),
+                color: isSelected ? const Color(0xFF28A228) : AppColors.surface,
                 fontSize: 16.sp,
-                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -757,7 +777,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildFavouriteExerciseSection() {
-    bool isSelected = selectedSection == AppLocalizations.of(context)!.favouriteExercise;
+    bool isSelected =
+        selectedSection == AppLocalizations.of(context)!.favouriteExercise;
     return GestureDetector(
       onTap: () {
         _selectSection(AppLocalizations.of(context)!.favouriteExercise);
@@ -767,7 +788,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0x2628A228) : Colors.white,
+          color: isSelected ? const Color(0x2628A228) : AppColors.surface,
           borderRadius: BorderRadius.circular(15.r),
           border: Border.all(
             color: isSelected
@@ -791,11 +812,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               AppLocalizations.of(context)!.workout,
               style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF28A228)
-                    : const Color(0xFF1E1E1E),
+                color: isSelected ? const Color(0xFF28A228) : AppColors.surface,
                 fontSize: 16.sp,
-                fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                fontFamily: Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'Cairo'
+                    : 'Poppins',
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
             ),
@@ -814,7 +835,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: double.infinity,
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(15.r),
               border: Border.all(
                 color: const Color(0x26FF4444), // Light red border
@@ -830,11 +851,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  state is AuthLoading ? AppLocalizations.of(context)!.loading : AppLocalizations.of(context)!.logout,
+                  state is AuthLoading
+                      ? AppLocalizations.of(context)!.loading
+                      : AppLocalizations.of(context)!.logout,
                   style: TextStyle(
                     color: const Color(0xFFFF4444),
                     fontSize: 16.sp,
-                    fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -846,7 +872,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                       Color(0xFFFF4444),
+                        Color(0xFFFF4444),
                       ),
                     ),
                   ),
@@ -906,9 +932,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: TextStyle(
                   color: isSelected
                       ? const Color(0xFF28A228)
-                      : const Color(0xFF1E1E1E),
+                      : AppColors.surface,
                   fontSize: 16.sp,
-                  fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                  fontFamily:
+                      Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'Cairo'
+                      : 'Poppins',
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
                 ),
               ),
@@ -961,9 +990,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: TextStyle(
                     color: isSelected
                         ? const Color(0xFF28A228)
-                        : const Color(0xFF1E1E1E),
+                        : AppColors.surface,
                     fontSize: 16.sp,
-                    fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                    fontFamily:
+                        Localizations.localeOf(context).languageCode == 'ar'
+                        ? 'Cairo'
+                        : 'Poppins',
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
                   ),
                 ),
@@ -980,15 +1012,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               )
             else
               Text(
-                LanguageService.instance.currentLanguage == 'ar' 
-                    ? AppLocalizations.of(context)!.arabic 
+                LanguageService.instance.currentLanguage == 'ar'
+                    ? AppLocalizations.of(context)!.arabic
                     : AppLocalizations.of(context)!.english,
                 style: TextStyle(
                   color: isSelected
                       ? const Color(0xFF28A228)
-                      : const Color(0xFF1E1E1E),
+                      : AppColors.surface,
                   fontSize: 14.sp,
-                  fontFamily: Localizations.localeOf(context).languageCode == 'ar' ? 'Cairo' : 'Poppins',
+                  fontFamily:
+                      Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'Cairo'
+                      : 'Poppins',
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -997,7 +1032,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
 }
 
 // Custom Clipper to create the wave shape precisely as in the image

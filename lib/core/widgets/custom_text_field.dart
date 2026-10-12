@@ -41,15 +41,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
     return BlocBuilder<LanguageBloc, LanguageState>(
       builder: (context, languageState) {
-        final currentLanguage = languageState is LanguageLoaded 
-            ? languageState.currentLanguage 
+        final currentLanguage = languageState is LanguageLoaded
+            ? languageState.currentLanguage
             : 'ar';
         final fontFamily = currentLanguage == 'ar' ? 'Cairo' : 'Poppins';
 
         return Container(
           width: double.infinity,
           decoration: ShapeDecoration(
-            color: AppColors.white,
+            color: AppColors.surfaceVariant,
             shape: RoundedRectangleBorder(
               side: BorderSide(
                 width: 1,
@@ -65,7 +65,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             enabled: widget.enabled,
             obscureText: widget.isPassword ? _obscurePassword : false,
             style: TextStyle(
-              color: AppColors.darkGray,
+              color: AppColors.white,
               fontSize: responsive.sp(12),
               fontFamily: fontFamily,
               fontWeight: FontWeight.w400,
@@ -73,7 +73,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(
-                color: AppColors.grayMedium.withValues(alpha: 0.7),
+                color: AppColors.white,
                 fontSize: responsive.sp(12),
                 fontFamily: fontFamily,
                 fontWeight: FontWeight.w400,
@@ -115,43 +115,43 @@ class _CustomTextFieldState extends State<CustomTextField> {
     );
   }
 
-   Widget? _buildPrefixIcon(ResponsiveHelper responsive) {
-     if (widget.prefixIconAsset != null) {
-       return Padding(
-         padding: EdgeInsets.symmetric(
-           horizontal: responsive.wp(4),
-           vertical: responsive.hp(1.5),
-         ),
-         child: widget.prefixIconAsset!.endsWith('.svg')
-             ? SvgPicture.asset(
-                 widget.prefixIconAsset!,
-                 width: responsive.sp(16),
-                 height: responsive.sp(16),
-                 colorFilter: ColorFilter.mode(
-                   AppColors.primaryGreen,
-                   BlendMode.srcIn,
-                 ),
-               )
-             : Image.asset(
-                 widget.prefixIconAsset!,
-                 width: responsive.sp(16),
-                 height: responsive.sp(16),
-                 color: AppColors.primaryGreen,
-               ),
-       );
-     } else if (widget.prefixIcon != null) {
-       return Padding(
-         padding: EdgeInsets.symmetric(
-           horizontal: responsive.wp(4),
-           vertical: responsive.hp(1.5),
-         ),
-         child: Icon(
-           widget.prefixIcon,
-           size: responsive.sp(16),
-           color: AppColors.primaryGreen,
-         ),
-       );
-     }
-     return null;
-   }
+  Widget? _buildPrefixIcon(ResponsiveHelper responsive) {
+    if (widget.prefixIconAsset != null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: responsive.wp(4),
+          vertical: responsive.hp(1.5),
+        ),
+        child: widget.prefixIconAsset!.endsWith('.svg')
+            ? SvgPicture.asset(
+                widget.prefixIconAsset!,
+                width: responsive.sp(16),
+                height: responsive.sp(16),
+                colorFilter: ColorFilter.mode(
+                  AppColors.primaryGreen,
+                  BlendMode.srcIn,
+                ),
+              )
+            : Image.asset(
+                widget.prefixIconAsset!,
+                width: responsive.sp(16),
+                height: responsive.sp(16),
+                color: AppColors.primaryGreen,
+              ),
+      );
+    } else if (widget.prefixIcon != null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: responsive.wp(4),
+          vertical: responsive.hp(1.5),
+        ),
+        child: Icon(
+          widget.prefixIcon,
+          size: responsive.sp(16),
+          color: AppColors.primaryGreen,
+        ),
+      );
+    }
+    return null;
+  }
 }

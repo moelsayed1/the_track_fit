@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import '../../../../core/utils/responsive_helper.dart';
 import 'widgets/main_goal_question_body.dart';
 
@@ -8,12 +9,11 @@ class MainGoalQuestionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6), // Light green background
+      backgroundColor: AppColors.background, // Dark background
       body: SafeArea(
-        child: 
-        Padding(
+        child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: responsive.wp(4.3), // 16px equivalent
           ),

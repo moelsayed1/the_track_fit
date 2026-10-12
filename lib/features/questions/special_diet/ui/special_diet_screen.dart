@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import '../../../../core/utils/responsive_helper.dart';
 import 'widgets/special_diet_question_body.dart';
 
@@ -8,9 +9,9 @@ class SpecialDietQuestionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
-    
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6), // Light green background
+      backgroundColor: AppColors.background, // Dark background
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(

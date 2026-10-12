@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../extensions/localization_extensions.dart';
+import '../constants/app_colors.dart';
 
 enum SnackbarType { success, error, warning, info }
 
@@ -40,14 +41,10 @@ class CustomSnackbar {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
+                  color: AppColors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 24.w,
-                ),
+                child: Icon(icon, color: AppColors.white, size: 24.w),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -58,7 +55,7 @@ class CustomSnackbar {
                     Text(
                       title,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.white,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         fontFamily: context.fontFamily,
@@ -68,7 +65,7 @@ class CustomSnackbar {
                     Text(
                       message,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: AppColors.white.withValues(alpha: 0.9),
                         fontSize: 14.sp,
                         fontFamily: context.fontFamily,
                       ),

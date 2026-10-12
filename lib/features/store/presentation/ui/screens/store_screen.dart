@@ -296,7 +296,7 @@ class _StoreScreenState extends State<StoreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6FFF6),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Builder(
           builder: (context) {
@@ -308,7 +308,10 @@ class _StoreScreenState extends State<StoreScreen> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   decoration: const BoxDecoration(color: Color(0x26848484)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -319,7 +322,9 @@ class _StoreScreenState extends State<StoreScreen> {
                         onTap: () => Navigator.pop(context),
                         child: Transform(
                           alignment: Alignment.center,
-                          transform: Localizations.localeOf(context).languageCode == 'ar'
+                          transform:
+                              Localizations.localeOf(context).languageCode ==
+                                  'ar'
                               ? Matrix4.rotationY(3.1415926535897932)
                               : Matrix4.identity(),
                           child: SvgPicture.asset(
@@ -327,7 +332,7 @@ class _StoreScreenState extends State<StoreScreen> {
                             width: 24.w,
                             height: 24.h,
                             colorFilter: const ColorFilter.mode(
-                              Color(0xFF1E1E1E),
+                              AppColors.white,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -338,7 +343,7 @@ class _StoreScreenState extends State<StoreScreen> {
                         AppLocalizations.of(context)!.store,
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1E1E1E),
+                        color: AppColors.white,
                         height: 0.89,
                       ),
                       Spacer(),
@@ -501,7 +506,7 @@ class _StoreScreenState extends State<StoreScreen> {
                               ),
                             ),
                             style: TextStyle(
-                              color: const Color(0xFF1E1E1E),
+                              color: AppColors.white,
                               fontSize: 12.sp,
                               fontFamily: fontFamily,
                               fontWeight: FontWeight.w400,

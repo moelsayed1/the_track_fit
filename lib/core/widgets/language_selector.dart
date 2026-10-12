@@ -84,7 +84,7 @@ class LanguageSelector extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.languageChanged),
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.green   ,
             ),
           );
         }

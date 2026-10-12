@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/api_service.dart';
 import '../../../../core/services/storage_service.dart';
@@ -196,7 +197,7 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
                             width: 24.w,
                             height: 24.h,
                             colorFilter: const ColorFilter.mode(
-                              Color(0xFF1E1E1E),
+                              AppColors.white,
                               BlendMode.srcIn,
                             ),
                           ),
@@ -205,7 +206,7 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
                         Text(
                           l10n?.mainGoal ?? 'Main Goal',
                           style: TextStyle(
-                            color: const Color(0xFF1E1E1E),
+                            color: AppColors.white,
                             fontSize: 18.sp,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
@@ -224,7 +225,7 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
                               width: 24.w,
                               height: 24.h,
                               colorFilter: const ColorFilter.mode(
-                                Color(0xFF1E1E1E),
+                                AppColors.white,
                                 BlendMode.srcIn,
                               ),
                             ),
@@ -234,7 +235,7 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
                         Text(
                           l10n?.mainGoal ?? 'Main Goal',
                           style: TextStyle(
-                            color: const Color(0xFF1E1E1E),
+                            color: AppColors.white,
                             fontSize: 18.sp,
                             fontFamily: 'Cairo',
                             fontWeight: FontWeight.w500,
@@ -384,7 +385,7 @@ class _MainGoalProfileState extends State<MainGoalProfile> {
                 child: Text(
                   title,
                   style: TextStyle(
-                    color: Colors.black,
+                    color: AppColors.white,
                     fontSize: 16.sp,
                     fontFamily: isArabic ? 'Cairo' : 'Poppins',
                     fontWeight: FontWeight.w500,

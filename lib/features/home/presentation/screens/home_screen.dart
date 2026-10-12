@@ -15,6 +15,7 @@ import 'package:the_track_fit/features/workout/presentation/index.dart';
 import 'package:the_track_fit/core/services/storage_service.dart';
 import 'package:the_track_fit/core/widgets/app_scaffold.dart';
 import 'package:the_track_fit/core/widgets/shimmer_loading.dart';
+import 'package:the_track_fit/core/constants/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final hasSystemNavBar = bottomInset > 0;
 
     return AppScaffoldWithCustomSafeArea(
-      backgroundColor: const Color(0xFFF6FFF6),
+      backgroundColor: AppColors.background,
       resizeToAvoidBottomInset: false,
       bottom: false,
       body: Column(
@@ -502,8 +503,8 @@ class _BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const ShapeDecoration(
-        color: Colors.white,
+      decoration: ShapeDecoration(
+        color: AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
@@ -529,8 +530,8 @@ class _BottomNavBar extends StatelessWidget {
                   ? bottomInset
                   : 0, // إضافة padding من الأسفل إذا كان هناك system nav bar
             ),
-            decoration: const ShapeDecoration(
-              color: Colors.white,
+            decoration: ShapeDecoration(
+              color: AppColors.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),

@@ -51,7 +51,7 @@ class OtpInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
     final isArabic = context.isArabic;
-    
+
     return Container(
       width: responsive.w(40),
       height: responsive.h(48),
@@ -60,14 +60,16 @@ class OtpInputField extends StatelessWidget {
         vertical: responsive.h(6),
       ),
       decoration: ShapeDecoration(
-        color: Colors.white,
+        color: AppColors.surfaceVariant,
         shape: RoundedRectangleBorder(
-                     side: BorderSide(
-             width: 1.5,
-             color: isActive 
-               ? Color(0xff28A228) 
-               : (isFilled ? AppColors.gray : AppColors.grayLight.withValues(alpha: 0.15)),
-           ),
+          side: BorderSide(
+            width: 1.5,
+            color: isActive
+                ? Color(0xff28A228)
+                : (isFilled
+                      ? AppColors.gray
+                      : AppColors.grayLight.withValues(alpha: 0.15)),
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
@@ -87,15 +89,12 @@ class OtpInputField extends StatelessWidget {
           inputFormatters: [
             LengthLimitingTextInputFormatter(1),
             FilteringTextInputFormatter.digitsOnly,
-            OtpInputFormatter(
-              index: index,
-              onBackspace: onBackspace,
-            ),
+            OtpInputFormatter(index: index, onBackspace: onBackspace),
           ],
           style: TextStyle(
             fontSize: responsive.sp(20),
             fontWeight: FontWeight.w700,
-            color: const Color(0xFF111827), // Dark gray for better visibility
+            color: AppColors.white, // White text for dark mode
             height: 1.0,
             fontFamily: isArabic ? 'Cairo' : 'Poppins',
           ),

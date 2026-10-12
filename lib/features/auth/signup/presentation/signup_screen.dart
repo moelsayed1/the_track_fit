@@ -176,7 +176,7 @@ class _SignupScreenState extends State<SignupScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF6FFF6), // Light green background
+        backgroundColor: AppColors.background, // Dark background
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: responsive.wp(4.3)),
@@ -277,12 +277,16 @@ class _SignupScreenState extends State<SignupScreen> {
                                     decoration: BoxDecoration(
                                       color: _selectedGender == 'male'
                                           ? AppColors.primaryGreen
-                                          : Colors.grey.shade200,
+                                          : Colors
+                                                .grey
+                                                .shade900, // dark gray bg for inactive
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: _selectedGender == 'male'
                                             ? AppColors.primaryGreen
-                                            : Colors.grey.shade300,
+                                            : Colors
+                                                  .grey
+                                                  .shade700, // darker border
                                         width: 1,
                                       ),
                                     ),
@@ -299,7 +303,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                             border: Border.all(
                                               color: _selectedGender == 'male'
                                                   ? Colors.white
-                                                  : Colors.grey.shade500,
+                                                  : Colors.grey.shade400,
                                               width: 2,
                                             ),
                                           ),
@@ -332,10 +336,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 style: TextStyle(
                                                   fontSize: 14.sp,
                                                   fontWeight: FontWeight.w600,
-                                                  color:
-                                                      _selectedGender == 'male'
-                                                      ? Colors.white
-                                                      : Colors.grey.shade700,
+                                                  color: Colors.white,
                                                   fontFamily: 'Cairo',
                                                 ),
                                               ),
@@ -362,12 +363,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                     decoration: BoxDecoration(
                                       color: _selectedGender == 'female'
                                           ? AppColors.primaryGreen
-                                          : Colors.grey.shade200,
+                                          : Colors.grey[900],
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: _selectedGender == 'female'
                                             ? AppColors.primaryGreen
-                                            : Colors.grey.shade300,
+                                            : Colors.grey[800]!,
                                         width: 1,
                                       ),
                                     ),
@@ -384,7 +385,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                             border: Border.all(
                                               color: _selectedGender == 'female'
                                                   ? Colors.white
-                                                  : Colors.grey.shade500,
+                                                  : Colors.grey[700]!,
                                               width: 2,
                                             ),
                                           ),
@@ -417,11 +418,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 style: TextStyle(
                                                   fontSize: 14.sp,
                                                   fontWeight: FontWeight.w600,
-                                                  color:
-                                                      _selectedGender ==
-                                                          'female'
-                                                      ? Colors.white
-                                                      : Colors.grey.shade700,
+                                                  color: Colors.white,
                                                   fontFamily: 'Cairo',
                                                 ),
                                               ),
@@ -507,7 +504,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.grayMedium,
+                          color: AppColors.white,
                           fontFamily:
                               Localizations.localeOf(context).languageCode ==
                                   'ar'

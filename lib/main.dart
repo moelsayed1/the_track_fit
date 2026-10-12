@@ -96,11 +96,34 @@ class TrackFit extends StatelessWidget {
                           ..add(const LanguageInitialized()),
                   ),
                 ],
-                child: const LocalizedApp(), // 👈 استخدام LocalizedApp المنفصل
+                child: const LocalizedApp(
+                  themeMode: ThemeMode.dark, // 👈 Force dark theme
+                ),
               );
             } else {
-              return const MaterialApp(
-                home: ShimmerLoadingScreen(message: 'Initializing app...'),
+              return MaterialApp(
+                themeMode: ThemeMode.dark,
+                darkTheme: ThemeData.dark().copyWith(
+                  scaffoldBackgroundColor: const Color(0xFF121212),
+                  colorScheme: ColorScheme.dark(
+                    primary: const Color(0xFFFF4A2A),
+                    secondary: const Color(0xFFF27660),
+                    surface: const Color(0xFF1E1E1E),
+                    background: const Color(0xFF121212),
+                  ),
+                ),
+                theme: ThemeData.dark().copyWith(
+                  scaffoldBackgroundColor: const Color(0xFF121212),
+                  colorScheme: ColorScheme.dark(
+                    primary: const Color(0xFFFF4A2A),
+                    secondary: const Color(0xFFF27660),
+                    surface: const Color(0xFF1E1E1E),
+                    background: const Color(0xFF121212),
+                  ),
+                ),
+                home: const ShimmerLoadingScreen(
+                  message: 'Initializing app...',
+                ),
               );
             }
           },
